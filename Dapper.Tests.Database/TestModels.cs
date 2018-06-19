@@ -14,9 +14,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.SqlServerCe;
 #endif
 
-#if !NET452
-using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
-#endif
 
 namespace Dapper.Tests.Database
 {
