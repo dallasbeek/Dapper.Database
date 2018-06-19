@@ -18,8 +18,8 @@ namespace Dapper.Tests.Database
     // If we want to support a new provider, they need only be added here - not in multiple places
 
 #if !NET451
-    [XunitTestCaseDiscoverer("Dapper.Tests.SkippableFactDiscoverer", "Dapper.Tests.Contrib")]
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [XunitTestCaseDiscoverer( "Dapper.Tests.SkippableFactDiscoverer", "Dapper.Tests.Contrib" )]
+    [AttributeUsage( AttributeTargets.Method, AllowMultiple = false )]
     public class SkippableFactAttribute : FactAttribute
     {
     }
@@ -30,7 +30,7 @@ namespace Dapper.Tests.Database
         private const string DbName = "tempdb";
         public static string ConnectionString =>
             IsAppVeyor
-                ? @"Server=(local)\SQL2016;Database=tempdb;User ID=sa;Password=Password12!"
+                ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
                 : $"Data Source=(local);Initial Catalog={DbName};Integrated Security=True";
         public override IDbConnection GetConnection () => new SqlConnection( ConnectionString );
 
