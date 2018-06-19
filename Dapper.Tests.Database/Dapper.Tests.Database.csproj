@@ -57,10 +57,10 @@
 
   <ItemGroup>
     <None Update="sqlite3_64.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="sqlite3_86.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -68,10 +68,12 @@
     <PostBuildEvent>
       if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
       xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Types\14.0.314.76\NativeBinaries\x86\*.*" "$(TargetDir)x86"
-      echo F|xcopy /y /q /f "$(SolutionDir)\Dapper.Tests.Database\sqlite3_86.dll" "$(TargetDir)x86\sqlite3.dll"
+      echo F|xcopy /y /q /f ".\sqlite3_86.dll" "$(TargetDir)x86\sqlite3.dll"
+      del ".\sqlite3_86.dll"
       if not exist "$(TargetDir)x64" md "$(TargetDir)x64"
       xcopy /s /y /q "$(NuGetPackageRoot)\Microsoft.SqlServer.Types\14.0.314.76\NativeBinaries\x64\*.*" "$(TargetDir)x64"
-      echo F|xcopy /y /q /f "$(SolutionDir)\Dapper.Tests.Database\sqlite3_64.dll" "$(TargetDir)x64\sqlite3.dll"
+      echo F|xcopy /y /q /f ".\sqlite3_64.dll" "$(TargetDir)x64\sqlite3.dll"
+      del ".\sqlite3_64.dll"
     </PostBuildEvent>
   </PropertyGroup>
 
