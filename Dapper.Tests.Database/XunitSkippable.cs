@@ -11,7 +11,7 @@ namespace Dapper.Tests
 {
     public class SkipTestException : Exception
     {
-        public SkipTestException(string reason) : base(reason)
+        public SkipTestException ( string reason ) : base( reason )
         {
         }
     }
@@ -22,44 +22,44 @@ namespace Dapper.Tests
     {
         private readonly IMessageSink _diagnosticMessageSink;
 
-        public SkippableFactDiscoverer(IMessageSink diagnosticMessageSink)
+        public SkippableFactDiscoverer ( IMessageSink diagnosticMessageSink )
         {
             _diagnosticMessageSink = diagnosticMessageSink;
         }
 
-        public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
+        public IEnumerable<IXunitTestCase> Discover ( ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute )
         {
-            yield return new SkippableFactTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod);
+            yield return new SkippableFactTestCase( _diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod );
         }
     }
 
     public class SkippableFactTestCase : XunitTestCase
     {
-        [Obsolete("Called by the de-serializer; should only be called by deriving classes for de-serialization purposes")]
-        public SkippableFactTestCase()
+        [Obsolete( "Called by the de-serializer; should only be called by deriving classes for de-serialization purposes" )]
+        public SkippableFactTestCase ()
         {
         }
 
-        public SkippableFactTestCase(IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, ITestMethod testMethod, object[] testMethodArguments = null)
-            : base(diagnosticMessageSink, defaultMethodDisplay, testMethod, testMethodArguments)
+        public SkippableFactTestCase ( IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, ITestMethod testMethod, object[] testMethodArguments = null )
+            : base( diagnosticMessageSink, defaultMethodDisplay, testMethod, testMethodArguments )
         {
         }
 
-        public override async Task<RunSummary> RunAsync(
+        public override async Task<RunSummary> RunAsync (
             IMessageSink diagnosticMessageSink,
             IMessageBus messageBus,
             object[] constructorArguments,
             ExceptionAggregator aggregator,
-            CancellationTokenSource cancellationTokenSource)
+            CancellationTokenSource cancellationTokenSource )
         {
-            var skipMessageBus = new SkippableFactMessageBus(messageBus);
+            var skipMessageBus = new SkippableFactMessageBus( messageBus );
             var result = await base.RunAsync(
                 diagnosticMessageSink,
                 skipMessageBus,
                 constructorArguments,
                 aggregator,
-                cancellationTokenSource).ConfigureAwait(false);
-            if (skipMessageBus.DynamicallySkippedTestCount > 0)
+                cancellationTokenSource ).ConfigureAwait( false );
+            if ( skipMessageBus.DynamicallySkippedTestCount > 0 )
             {
                 result.Failed -= skipMessageBus.DynamicallySkippedTestCount;
                 result.Skipped += skipMessageBus.DynamicallySkippedTestCount;
@@ -72,29 +72,29 @@ namespace Dapper.Tests
     public class SkippableFactMessageBus : IMessageBus
     {
         private readonly IMessageBus _innerBus;
-        public SkippableFactMessageBus(IMessageBus innerBus)
+        public SkippableFactMessageBus ( IMessageBus innerBus )
         {
             _innerBus = innerBus;
         }
 
         public int DynamicallySkippedTestCount { get; private set; }
 
-        public void Dispose()
+        public void Dispose ()
         {
         }
 
-        public bool QueueMessage(IMessageSinkMessage message)
+        public bool QueueMessage ( IMessageSinkMessage message )
         {
-            if (message is ITestFailed testFailed)
+            if ( message is ITestFailed testFailed )
             {
                 var exceptionType = testFailed.ExceptionTypes.FirstOrDefault();
-                if (exceptionType == typeof(SkipTestException).FullName)
+                if ( exceptionType == typeof( SkipTestException ).FullName )
                 {
                     DynamicallySkippedTestCount++;
-                    return _innerBus.QueueMessage(new TestSkipped(testFailed.Test, testFailed.Messages.FirstOrDefault()));
+                    return _innerBus.QueueMessage( new TestSkipped( testFailed.Test, testFailed.Messages.FirstOrDefault() ) );
                 }
             }
-            return _innerBus.QueueMessage(message);
+            return _innerBus.QueueMessage( message );
         }
     }
 }

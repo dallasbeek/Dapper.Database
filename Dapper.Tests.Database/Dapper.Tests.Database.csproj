@@ -14,10 +14,6 @@
     <None Remove="Test.DB.sdf" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <DefineConstants>TRACE;DEBUG;NETFULL</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Database\Dapper.Database.csproj" />
     <PackageReference Include="Dapper" Version="1.50.5" />

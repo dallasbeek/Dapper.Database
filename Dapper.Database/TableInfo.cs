@@ -29,11 +29,11 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="type"></param>
         /// <param name="tablenameMapper"></param>
-        public TableInfo(Type type, TableNameMapperDelegate tablenameMapper)
+        public TableInfo ( Type type, TableNameMapperDelegate tablenameMapper )
         {
-            if (tablenameMapper != null)
+            if ( tablenameMapper != null )
             {
-                TableName = TableNameMapper(type);
+                TableName = TableNameMapper( type );
             }
             else
             {
@@ -42,12 +42,12 @@ namespace Dapper.Database
 #if NETSTANDARD1_3
                 .GetTypeInfo()
 #endif
-                .GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "TableAttribute") as dynamic;
+                .GetCustomAttributes( false ).SingleOrDefault( attr => attr.GetType().Name == "TableAttribute" ) as dynamic;
 
-                if (tableAttr != null)
+                if ( tableAttr != null )
                 {
                     TableName = tableAttr.Name;
-                    if (tableAttr.Schema != null)
+                    if ( tableAttr.Schema != null )
                     {
                         SchemaName = tableAttr.Schema;
                     }
@@ -55,47 +55,47 @@ namespace Dapper.Database
                 else
                 {
                     TableName = type.Name + "s";
-                    if (type.IsInterface() && TableName.StartsWith("I"))
-                        TableName = TableName.Substring(1);
+                    if ( type.IsInterface() && TableName.StartsWith( "I" ) )
+                        TableName = TableName.Substring( 1 );
                 }
             }
 
             ColumnInfos = type.GetProperties()
-                .Where(t => t.GetCustomAttributes(typeof(IgnoreAttribute), false).Count() == 0)
-                .Select(t =>
-                {
-                    var columnAtt = t.GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "ColumnAttribute") as dynamic;
+                .Where( t => t.GetCustomAttributes( typeof( IgnoreAttribute ), false ).Count() == 0 )
+                .Select( t =>
+                 {
+                     var columnAtt = t.GetCustomAttributes( false ).SingleOrDefault( attr => attr.GetType().Name == "ColumnAttribute" ) as dynamic;
 
-                    var ci = new ColumnInfo
-                    {
-                        Property = t,
-                        ColumnName = columnAtt?.Name ?? t.Name,
-                        PropertyName = t.Name,
-                        IsKey = t.GetCustomAttributes(true).Any(a => a is KeyAttribute),
-                        IsIdentity = t.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
-                          && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity),
-                        IsGenerated = t.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
-                            && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption != DatabaseGeneratedOption.None),
-                        ExcludeOnSelect = t.GetCustomAttributes(true).Any(a => a is IgnoreSelectAttribute)
-                    };
+                     var ci = new ColumnInfo
+                     {
+                         Property = t,
+                         ColumnName = columnAtt?.Name ?? t.Name,
+                         PropertyName = t.Name,
+                         IsKey = t.GetCustomAttributes( true ).Any( a => a is KeyAttribute ),
+                         IsIdentity = t.GetCustomAttributes( true ).Any( a => a is DatabaseGeneratedAttribute
+                             && ( a as DatabaseGeneratedAttribute ).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity ),
+                         IsGenerated = t.GetCustomAttributes( true ).Any( a => a is DatabaseGeneratedAttribute
+                               && ( a as DatabaseGeneratedAttribute ).DatabaseGeneratedOption != DatabaseGeneratedOption.None ),
+                         ExcludeOnSelect = t.GetCustomAttributes( true ).Any( a => a is IgnoreSelectAttribute )
+                     };
 
-                    ci.ExcludeOnInsert = ci.IsGenerated
-                        || t.GetCustomAttributes(true).Any(a => a is IgnoreInsertAttribute)
-                        || t.GetCustomAttributes(true).Any(a => a is ReadOnlyAttribute);
+                     ci.ExcludeOnInsert = ci.IsGenerated
+                         || t.GetCustomAttributes( true ).Any( a => a is IgnoreInsertAttribute )
+                         || t.GetCustomAttributes( true ).Any( a => a is ReadOnlyAttribute );
 
-                    ci.ExcludeOnUpdate = ci.IsGenerated
-                        || t.GetCustomAttributes(true).Any(a => a is IgnoreUpdateAttribute)
-                        || t.GetCustomAttributes(true).Any(a => a is ReadOnlyAttribute);
+                     ci.ExcludeOnUpdate = ci.IsGenerated
+                         || t.GetCustomAttributes( true ).Any( a => a is IgnoreUpdateAttribute )
+                         || t.GetCustomAttributes( true ).Any( a => a is ReadOnlyAttribute );
 
-                    return ci;
-                })
+                     return ci;
+                 } )
                 .ToArray();
 
-            if (!ColumnInfos.Any(k => k.IsKey))
+            if ( !ColumnInfos.Any( k => k.IsKey ) )
             {
-                var idProp = ColumnInfos.FirstOrDefault(p => string.Equals(p.PropertyName, "id", StringComparison.CurrentCultureIgnoreCase));
+                var idProp = ColumnInfos.FirstOrDefault( p => string.Equals( p.PropertyName, "id", StringComparison.CurrentCultureIgnoreCase ) );
 
-                if(idProp != null)
+                if ( idProp != null )
                 {
                     idProp.IsKey = idProp.IsGenerated = idProp.IsIdentity = idProp.ExcludeOnInsert = idProp.ExcludeOnUpdate = true;
                 }
@@ -124,31 +124,31 @@ namespace Dapper.Database
         /// <param name="format"></param>
         /// <param name="withSchema"></param>
         /// <returns></returns>
-        public string GetTableName(string format, bool withSchema = false) => 
-            withSchema && !string.IsNullOrEmpty(SchemaName) ?  string.Format(format, SchemaName)  + "." : null + string.Format(format, TableName);
+        public string GetTableName ( string format, bool withSchema = false ) =>
+            withSchema && !string.IsNullOrEmpty( SchemaName ) ? string.Format( format, SchemaName ) + "." : null + string.Format( format, TableName );
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="format"></param>
         /// <returns></returns>
-        public string GetInsertColumns(string format) => string.Join(",",
-                ColumnInfos.Where(ci => !ci.ExcludeOnInsert)
-                .Select(ci => string.Format(format, ci.ColumnName)));
+        public string GetInsertColumns ( string format ) => string.Join( ",",
+                ColumnInfos.Where( ci => !ci.ExcludeOnInsert )
+                .Select( ci => string.Format( format, ci.ColumnName ) ) );
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public string GetInsertParameters() => string.Join(",",
-                ColumnInfos.Where(ci => !ci.ExcludeOnInsert)
-                .Select(ci => string.Format("@{0}", ci.PropertyName)));
+        public string GetInsertParameters () => string.Join( ",",
+                ColumnInfos.Where( ci => !ci.ExcludeOnInsert )
+                .Select( ci => string.Format( "@{0}", ci.PropertyName ) ) );
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> GetInsertGeneratedAndKey() => ColumnInfos.Where(ci => ci.IsGenerated && ci.IsKey);
+        public IEnumerable<ColumnInfo> GetInsertGeneratedAndKey () => ColumnInfos.Where( ci => ci.IsGenerated && ci.IsKey );
 
         /// <summary>
         /// 
@@ -156,18 +156,18 @@ namespace Dapper.Database
         /// <param name="format"></param>
         /// <param name="updateColumns"></param>
         /// <returns></returns>
-        public string GetUpdateValues(string format, IEnumerable<string> updateColumns) => string.Join(",",
-            ColumnInfos.Where(ci => !ci.ExcludeOnUpdate && (updateColumns == null || !updateColumns.Any() || updateColumns.Contains(ci.PropertyName)))
-            .Select(ci => string.Format(format, ci.ColumnName, ci.PropertyName)));
+        public string GetUpdateValues ( string format, IEnumerable<string> updateColumns ) => string.Join( ",",
+            ColumnInfos.Where( ci => !ci.ExcludeOnUpdate && ( updateColumns == null || !updateColumns.Any() || updateColumns.Contains( ci.PropertyName ) ) )
+            .Select( ci => string.Format( format, ci.ColumnName, ci.PropertyName ) ) );
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="format"></param>
         /// <returns></returns>
-        public string GetUpdateWhere(string format) => string.Join(" and ",
-                ColumnInfos.Where(ci => ci.IsKey)
-                .Select(ci => string.Format(format, ci.ColumnName, ci.PropertyName)));
+        public string GetUpdateWhere ( string format ) => string.Join( " and ",
+                ColumnInfos.Where( ci => ci.IsKey )
+                .Select( ci => string.Format( format, ci.ColumnName, ci.PropertyName ) ) );
     }
 
     /// <summary>
