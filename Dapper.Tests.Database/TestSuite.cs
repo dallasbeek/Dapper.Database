@@ -404,8 +404,8 @@ namespace Dapper.Tests.Database
             }
         }
 
-#if NET451
-                [Fact(Skip = "Not parallel friendly - thinking about how to test this")]
+#if NET452
+        [Fact(Skip = "Not parallel friendly - thinking about how to test this")]
                 public void InsertWithCustomDbType()
                 {
                     SqlMapperExtensions.GetDatabaseType = conn => "SQLiteConnection";
