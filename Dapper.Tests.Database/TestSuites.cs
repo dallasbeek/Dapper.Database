@@ -97,7 +97,7 @@ namespace Dapper.Tests.Database
 
         public static string ConnectionString { get; } =
             IsAppVeyor
-                ? "Server=localhost;Uid=root;Pwd=Password12!;"
+                ? "Server=localhost;Uid=root;Pwd=Password12!;SslMode=none"
                 : "Server=localhost;Uid=test;Pwd=pass;";
 
         public override IDbConnection GetConnection()
