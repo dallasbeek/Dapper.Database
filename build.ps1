@@ -51,17 +51,10 @@ Write-Host "Base Version: $(CalculateVersion)"
 
 $packageOutputFolder = "$PSScriptRoot\.nupkgs"
 $projectsToBuild =
-    'Dapper',
-    'Dapper.StrongName',
-    'Dapper.Contrib',
-    'Dapper.EntityFramework',
-    'Dapper.EntityFramework.StrongName',
-    'Dapper.Rainbow',
-    'Dapper.SqlBuilder'
+    'Dapper.Database'
 
 $testsToRun =
-    'Dapper.Tests',
-    'Dapper.Tests.Contrib'
+    'Dapper.Tests.Database'
 
 if (!$Version -and !$BuildNumber) {
     Write-Host "ERROR: You must supply either a -Version or -BuildNumber argument. `
