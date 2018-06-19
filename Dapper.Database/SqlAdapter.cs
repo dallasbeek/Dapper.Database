@@ -378,7 +378,7 @@ public partial class MySqlAdapter : ISqlAdapter
     /// <summary>
     /// Returns the format for table name
     /// </summary>
-    public string EscapeTableName => "[{0}]";
+    public string EscapeTableName => "`{0}`";
 
     /// <summary>
     /// Returns the sql identifier format
