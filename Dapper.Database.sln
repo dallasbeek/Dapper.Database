@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EBF0E48B-BAE2-4101-9ECB-D1A0E517269D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{53E40F54-51C5-43B0-90BA-37F282F06440}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EC4E506-0335-44D8-8753-D95FE36758AD}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		appveyor.yml = appveyor.yml
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		License.txt = License.txt
+		Readme.md = Readme.md
+		semver.txt = semver.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Tests.Database", "Dapper.Tests.Database\Dapper.Tests.Database.csproj", "{D36B9203-4568-4912-BCF1-D87852F060A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Database", "Dapper.Database\Dapper.Database.csproj", "{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D36B9203-4568-4912-BCF1-D87852F060A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D36B9203-4568-4912-BCF1-D87852F060A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D36B9203-4568-4912-BCF1-D87852F060A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D36B9203-4568-4912-BCF1-D87852F060A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D36B9203-4568-4912-BCF1-D87852F060A7} = {53E40F54-51C5-43B0-90BA-37F282F06440}
+		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE} = {EBF0E48B-BAE2-4101-9ECB-D1A0E517269D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB77A014-BDE3-4DAC-AB63-0D5EF30CE9BF}
+	EndGlobalSection
+EndGlobal
