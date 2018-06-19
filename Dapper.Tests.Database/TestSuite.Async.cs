@@ -350,49 +350,6 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        public async Task DeleteEnumerableAsync ()
-        {
-            await DeleteHelperAsync( src => src.AsEnumerable() ).ConfigureAwait( false );
-        }
-
-        [Fact]
-        public async Task DeleteArrayAsync ()
-        {
-            await DeleteHelperAsync( src => src.ToArray() ).ConfigureAwait( false );
-        }
-
-        [Fact]
-        public async Task DeleteListAsync ()
-        {
-            await DeleteHelperAsync( src => src.ToList() ).ConfigureAwait( false );
-        }
-
-        private async Task DeleteHelperAsync<T> ( Func<IEnumerable<User>, T> helper )
-            where T : class
-        {
-            const int numberOfEntities = 10;
-
-            var users = new List<User>();
-            for ( var i = 0; i < numberOfEntities; i++ )
-                users.Add( new User { Name = "User " + i, Age = i } );
-
-            using ( var connection = GetOpenConnection() )
-            {
-                await connection.DeleteAllAsync<User>().ConfigureAwait( false );
-
-                Assert.True( await connection.InsertAsync( helper( users ) ).ConfigureAwait( false ) );
-
-                users = connection.Query<User>( "select * from Users" ).ToList();
-                Assert.Equal( users.Count, numberOfEntities );
-
-                var usersToDelete = users.Take( 10 ).ToList();
-                await connection.DeleteAsync( helper( usersToDelete ) ).ConfigureAwait( false );
-                users = connection.Query<User>( "select * from Users" ).ToList();
-                Assert.Equal( users.Count, numberOfEntities - 10 );
-            }
-        }
-
-        [Fact]
         public async Task GetAllAsync ()
         {
             const int numberOfEntities = 10;
@@ -451,21 +408,6 @@ namespace Dapper.Tests.Database
 
                 var result = await connection.GetAsync<Result>( id ).ConfigureAwait( false );
                 Assert.Equal( 1, result.Order );
-            }
-        }
-
-        [Fact]
-        public async Task DeleteAllAsync ()
-        {
-            using ( var connection = GetOpenConnection() )
-            {
-                await connection.DeleteAllAsync<User>().ConfigureAwait( false );
-
-                var id1 = await connection.InsertAsync( new User { Name = "Alice", Age = 32 } ).ConfigureAwait( false );
-                var id2 = await connection.InsertAsync( new User { Name = "Bob", Age = 33 } ).ConfigureAwait( false );
-                await connection.DeleteAllAsync<User>().ConfigureAwait( false );
-                Assert.Null( await connection.GetAsync<User>( id1 ).ConfigureAwait( false ) );
-                Assert.Null( await connection.GetAsync<User>( id2 ).ConfigureAwait( false ) );
             }
         }
 
@@ -559,38 +501,6 @@ namespace Dapper.Tests.Database
                 Assert.Equal( "Readonly", obj.Readonly );
             }
         }
-
-        [Fact]
-        public async Task ExistsQueryAsync ()
-        {
-            using ( var connection = GetOpenConnection() )
-            {
-                var u1 = new ObjectQ { Readonly = "Ignored On Insert or Update" };
-                Assert.True( await connection.InsertAsync( u1 ).ConfigureAwait( false ) );
-
-                Assert.True( await connection.ExistsAsync<ObjectQ>( u1.Id ).ConfigureAwait( false ) );
-
-                Assert.False( await connection.ExistsAsync<ObjectQ>( -100 ).ConfigureAwait( false ) );
-
-            }
-        }
-
-        [Fact]
-        public async Task ExistsClauseQueryAsync ()
-        {
-            using ( var connection = GetOpenConnection() )
-            {
-                var u1 = new ObjectQ { IgnoreUpdate = "FetchMe" };
-                Assert.True( await connection.InsertAsync( u1 ).ConfigureAwait( false ) );
-
-                Assert.True( await connection.ExistsAsync<ObjectQ>( "[IgnoreUpdate] = @FetchMe", new { FetchMe = "FetchMe" } ).ConfigureAwait( false ) );
-
-                Assert.False( await connection.ExistsAsync<ObjectQ>( "[IgnoreUpdate] = @FetchMe", new { FetchMe = "junk" } ).ConfigureAwait( false ) );
-
-            }
-
-        }
-
 
         [Fact]
         public async Task UpdateColumnsSpecifiedAsync ()

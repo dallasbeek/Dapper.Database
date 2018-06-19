@@ -704,36 +704,6 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        public void ExistsQuery ()
-        {
-            using ( var connection = GetOpenConnection() )
-            {
-                var u1 = new ObjectQ { };
-                Assert.True( connection.Insert( u1 ) );
-
-                Assert.True( connection.Exists<ObjectQ>( u1.Id ) );
-
-                Assert.False( connection.Exists<ObjectQ>( -100 ) );
-
-            }
-        }
-
-        [Fact]
-        public void ExistsClauseQuery ()
-        {
-            using ( var connection = GetOpenConnection() )
-            {
-                var u1 = new ObjectQ { IgnoreUpdate = "FetchMe" };
-                Assert.True( connection.Insert( u1 ) );
-
-                Assert.True( connection.Exists<ObjectQ>( "[IgnoreUpdate] = @FetchMe", new { FetchMe = "FetchMe" } ) );
-
-                Assert.False( connection.Exists<ObjectQ>( "[IgnoreUpdate] = @FetchMe", new { FetchMe = "junk" } ) );
-
-            }
-        }
-
-        [Fact]
         public void UpdateColumnsSpecified ()
         {
             using ( var connection = GetOpenConnection() )

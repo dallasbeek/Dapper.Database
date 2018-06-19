@@ -5,6 +5,7 @@ using System.Linq;
 
 using Dapper.Database.Extensions;
 using Xunit;
+using System.Threading.Tasks;
 
 #if NET452
 using System.Transactions;
@@ -19,47 +20,47 @@ namespace Dapper.Tests.Database
     {
 
         [Fact]
-        [Trait( "Category", "Delete" )]
-        public void DeleteAll ()
+        [Trait( "Category", "DeleteAsync")]
+        public async Task DeleteAllAsync ()
         {
             using ( var connection = GetOpenConnection() )
             {
                 var u1 = new User { Name = "Alice", Age = 32 };
                 var u2 = new User { Name = "Bob", Age = 33 };
 
-                Assert.True( connection.Insert( u1 ) );
-                Assert.True( connection.Insert( u2 ) );
-                Assert.True( connection.DeleteAll<User>() );
-                Assert.Null( connection.Get<User>( u1.Id ) );
-                Assert.Null( connection.Get<User>( u2.Id ) );
+                Assert.True(await connection.InsertAsync( u1 ).ConfigureAwait(false) );
+                Assert.True(await connection.InsertAsync( u2 ).ConfigureAwait(false));
+                Assert.True(await connection.DeleteAllAsync<User>().ConfigureAwait(false) );
+                Assert.Null(await connection.GetAsync<User>( u1.Id ).ConfigureAwait(false));
+                Assert.Null(await connection.GetAsync<User>( u2.Id ).ConfigureAwait(false));
             }
         }
 
 
         [Fact]
-        [Trait( "Category", "Delete" )]
-        public void DeleteEnumerable ()
+        [Trait( "Category", "DeleteAsync")]
+        public async Task DeleteEnumerableAsync()
         {
-            DeleteHelper( src => src.AsEnumerable() );
+            await DeleteHelperAsync( src => src.AsEnumerable() ).ConfigureAwait(false); ;
         }
 
         [Fact]
-        [Trait( "Category", "Delete" )]
-        public void DeleteArray ()
+        [Trait( "Category", "DeleteAsync" )]
+        public async Task DeleteArrayAsync()
         {
-            DeleteHelper( src => src.ToArray() );
+           await  DeleteHelperAsync( src => src.ToArray() ).ConfigureAwait(false); ;
         }
 
         [Fact]
-        [Trait( "Category", "Delete" )]
-        public void DeleteList ()
+        [Trait( "Category", "DeleteAsync")]
+        public async Task DeleteListAsync()
         {
-            DeleteHelper( src => src.ToList() );
+            await DeleteHelperAsync( src => src.ToList() ).ConfigureAwait(false); ;
         }
 
         [Fact]
-        [Trait( "Category", "Delete" )]
-        public void DeleteEntity ()
+        [Trait( "Category", "DeleteAsync")]
+        public async Task DeleteEntityAsync()
         {
             using ( var connection = GetOpenConnection() )
             {
@@ -67,15 +68,15 @@ namespace Dapper.Tests.Database
 
                 Assert.True( connection.Insert( u1 ) );
 
-                connection.Delete( u1 );
+                await connection.DeleteAsync( u1 ).ConfigureAwait(false); ;
 
                 Assert.False( connection.Update( u1 ) );
             }
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
-        public void DeleteById()
+        [Trait("Category", "DeleteAsync")]
+        public async Task DeleteByIdAsync()
         {
             using (var connection = GetOpenConnection())
             {
@@ -83,22 +84,22 @@ namespace Dapper.Tests.Database
 
                 Assert.True(connection.Insert(u1));
 
-                connection.Delete<User>(u1.Id);
+                await connection.DeleteAsync<User>(u1.Id).ConfigureAwait(false);
 
                 Assert.False(connection.Update(u1));
             }
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
-        public void DeleteByClause()
+        [Trait("Category", "DeleteAsync")]
+        public async Task DeleteByClauseAsync()
         {
             using (var connection = GetOpenConnection())
             {
                 var u1 = new User { Name = "DeleteMe", Age = 33 };
                 Assert.True(connection.Insert(u1));
 
-                connection.Delete<User>("Age = @a", new { a = 33 });
+                await  connection.DeleteAsync<User>("Age = @a", new { a = 33 }).ConfigureAwait(false);
 
                 Assert.False(connection.Update(u1));
             }
@@ -148,28 +149,28 @@ namespace Dapper.Tests.Database
         //    }
         //}
 
-        private void DeleteHelper<T> ( Func<IEnumerable<User>, T> helper )
+        private async Task DeleteHelperAsync<T>(Func<IEnumerable<User>, T> helper)
             where T : class
         {
             const int numberOfEntities = 10;
 
             var users = new List<User>();
-            for ( var i = 0; i < numberOfEntities; i++ )
-                users.Add( new User { Name = "User " + i, Age = i } );
+            for (var i = 0; i < numberOfEntities; i++)
+                users.Add(new User { Name = "User " + i, Age = i });
 
-            using ( var connection = GetOpenConnection() )
+            using (var connection = GetOpenConnection())
             {
-                connection.DeleteAll<User>();
+                await connection.DeleteAllAsync<User>().ConfigureAwait(false);
 
-                var total = connection.Insert( helper( users ) );
-                //Assert.Equal(total, numberOfEntities);
-                users = connection.Query<User>( "select * from Users" ).ToList();
-                Assert.Equal( users.Count, numberOfEntities );
+                Assert.True(await connection.InsertAsync(helper(users)).ConfigureAwait(false));
 
-                var usersToDelete = users.Take( 10 ).ToList();
-                connection.Delete( helper( usersToDelete ) );
-                users = connection.Query<User>( "select * from Users" ).ToList();
-                Assert.Equal( users.Count, numberOfEntities - 10 );
+                users = connection.Query<User>("select * from Users").ToList();
+                Assert.Equal(users.Count, numberOfEntities);
+
+                var usersToDelete = users.Take(10).ToList();
+                await connection.DeleteAsync(helper(usersToDelete)).ConfigureAwait(false);
+                users = connection.Query<User>("select * from Users").ToList();
+                Assert.Equal(users.Count, numberOfEntities - 10);
             }
         }
     }
