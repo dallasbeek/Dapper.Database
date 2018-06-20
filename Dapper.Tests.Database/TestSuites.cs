@@ -34,57 +34,58 @@ namespace Dapper.Tests.Database
             IsAppVeyor
                 ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
                 : $"Data Source=(local);Initial Catalog={DbName};Integrated Security=True";
-        public override IDbConnection GetConnection() => new SqlConnection(ConnectionString);
+        public override IDbConnection GetConnection () => new SqlConnection( ConnectionString );
 
-        static SqlServerTestSuite()
+        static SqlServerTestSuite ()
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using ( var connection = new SqlConnection( ConnectionString ) )
             {
                 // ReSharper disable once AccessToDisposedClosure
-                Action<string> dropTable = name => connection.Execute($"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; ");
+                Action<string> dropTable = name => connection.Execute( $"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; " );
                 connection.Open();
-                dropTable("Stuff");
-                connection.Execute("CREATE TABLE Stuff (TheId int IDENTITY(1,1) not null, Name nvarchar(100) not null, Created DateTime null);");
-                dropTable("People");
-                connection.Execute("CREATE TABLE People (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null);");
-                dropTable("Users");
-                connection.Execute("CREATE TABLE Users (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, Age int not null);");
-                dropTable("Automobiles");
-                connection.Execute("CREATE TABLE Automobiles (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null);");
-                dropTable("Results");
-                connection.Execute("CREATE TABLE Results (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, [Order] int not null);");
-                dropTable("ObjectX");
-                connection.Execute("CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null);");
-                dropTable("ObjectY");
-                connection.Execute("CREATE TABLE ObjectY (ObjectYId int not null, Name nvarchar(100) not null);");
-                dropTable("ObjectZ");
-                connection.Execute("CREATE TABLE ObjectZ (Id int not null, Name nvarchar(100) not null);");
-                dropTable("GenericType");
-                connection.Execute("CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null);");
-                dropTable("NullableDates");
-                connection.Execute("CREATE TABLE NullableDates (Id int IDENTITY(1,1) not null, DateValue DateTime null);");
-                dropTable("PkGuid");
-                connection.Execute("CREATE TABLE PkGuid (GuidId uniqueidentifier not null, Name nvarchar(100) not null);");
-                dropTable("ObjectQ");
-                connection.Execute("CREATE TABLE ObjectQ (Id int IDENTITY(1,1) not null, IgnoreInsert nvarchar(100) null, IgnoreUpdate nvarchar(100) null, IgnoreSelect nvarchar(100) null, Computed nvarchar(100) DEFAULT 'Computed', Readonly nvarchar(100) DEFAULT 'Readonly');");
+                dropTable( "Customers" );
+                connection.Execute( @"CREATE TABLE [dbo].[Customers](
+	                [Id] [int] IDENTITY(1,1) NOT NULL,
+	                [IId] [int] NULL,
+	                [GId] [uniqueidentifier] NULL,
+	                [SId] [varchar](100) NULL,
+	                [FirstName] [nvarchar](100) NULL,
+	                [LastName] [nvarchar](100) NULL,
+	                [FullName]  AS ((isnull([FirstName],'')+' ')+isnull([LastName],'')),
+	                [Age] [int] NULL,
+	                [UpdatedOn] [datetime] NULL,
+	                [CreatedOn] [datetime] NULL
+                );" );
+                dropTable( "Stuff" );
+                dropTable( "People" );
+                dropTable( "Users" );
+                dropTable( "Automobiles" );
+                dropTable( "Results" );
+                dropTable( "ObjectX" );
+                dropTable( "ObjectY" );
+                dropTable( "ObjectZ" );
+                dropTable( "GenericType" );
+                dropTable( "NullableDates" );
+                dropTable( "PkGuid" );
+                dropTable( "ObjectQ" );
             }
         }
 
 #if NET452
         [Fact]
-        public void TransactionScope()
+        public void TransactionScope ()
         {
-            using (var txscope = new TransactionScope())
+            using ( var txscope = new TransactionScope() )
             {
-                using (var connection = GetConnection())
+                using ( var connection = GetConnection() )
                 {
-                    var c1 = new Car { Name = "one car" };
+                    var c1 = new Car { FirstName = "one car" };
 
-                    Assert.True(connection.Insert(c1));   //inser car within transaction
+                    Assert.True( connection.Insert( c1 ) );   //inser car within transaction
 
                     txscope.Dispose();  //rollback
 
-                    Assert.Null(connection.Get<Car>(c1.Id));   //returns null - car with that id should not exist
+                    Assert.Null( connection.Get<Car>( c1.Id ) );   //returns null - car with that id should not exist
                 }
             }
         }
@@ -150,67 +151,67 @@ namespace Dapper.Tests.Database
     //    }
     //}
 
-    public class SQLiteTestSuite : TestSuite
-    {
-        private const string FileName = "Test.DB.sqlite";
-        public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
-        public override IDbConnection GetConnection() => new SqliteConnection(ConnectionString);
+    //public class SQLiteTestSuite : TestSuite
+    //{
+    //    private const string FileName = "Test.DB.sqlite";
+    //    public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
+    //    public override IDbConnection GetConnection () => new SqliteConnection( ConnectionString );
 
-        static SQLiteTestSuite()
-        {
-            if (File.Exists(FileName))
-            {
-                File.Delete(FileName);
-            }
-            using (var connection = new SqliteConnection(ConnectionString))
-            {
-                connection.Open();
-                connection.Execute("CREATE TABLE Stuff (TheId integer primary key autoincrement not null, Name nvarchar(100) not null, Created DateTime null) ");
-                connection.Execute("CREATE TABLE People (Id integer primary key autoincrement not null, Name nvarchar(100) not null) ");
-                connection.Execute("CREATE TABLE Users (Id integer primary key autoincrement not null, Name nvarchar(100) not null, Age int not null) ");
-                connection.Execute("CREATE TABLE Automobiles (Id integer primary key autoincrement not null, Name nvarchar(100) not null) ");
-                connection.Execute("CREATE TABLE Results (Id integer primary key autoincrement not null, Name nvarchar(100) not null, [Order] int not null) ");
-                connection.Execute("CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null) ");
-                connection.Execute("CREATE TABLE ObjectY (ObjectYId integer not null, Name nvarchar(100) not null) ");
-                connection.Execute("CREATE TABLE ObjectZ (Id integer not null, Name nvarchar(100) not null) ");
-                connection.Execute("CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null) ");
-                connection.Execute("CREATE TABLE NullableDates (Id integer primary key autoincrement not null, DateValue DateTime) ");
-                connection.Execute("CREATE TABLE ObjectQ (Id integer primary key autoincrement not null, IgnoreInsert nvarchar(100) null, IgnoreUpdate nvarchar(100) null, IgnoreSelect nvarchar(100) null, Computed nvarchar(100) DEFAULT 'Computed', Readonly nvarchar(100) DEFAULT 'Readonly');");
-            }
-        }
-    }
+    //    static SQLiteTestSuite ()
+    //    {
+    //        if ( File.Exists( FileName ) )
+    //        {
+    //            File.Delete( FileName );
+    //        }
+    //        using ( var connection = new SqliteConnection( ConnectionString ) )
+    //        {
+    //            connection.Open();
+    //            connection.Execute( "CREATE TABLE Stuff (TheId integer primary key autoincrement not null, Name nvarchar(100) not null, Created DateTime null) " );
+    //            connection.Execute( "CREATE TABLE People (Id integer primary key autoincrement not null, Name nvarchar(100) not null) " );
+    //            connection.Execute( "CREATE TABLE Users (Id integer primary key autoincrement not null, Name nvarchar(100) not null, Age int not null) " );
+    //            connection.Execute( "CREATE TABLE Automobiles (Id integer primary key autoincrement not null, Name nvarchar(100) not null) " );
+    //            connection.Execute( "CREATE TABLE Results (Id integer primary key autoincrement not null, Name nvarchar(100) not null, [Order] int not null) " );
+    //            connection.Execute( "CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null) " );
+    //            connection.Execute( "CREATE TABLE ObjectY (ObjectYId integer not null, Name nvarchar(100) not null) " );
+    //            connection.Execute( "CREATE TABLE ObjectZ (Id integer not null, Name nvarchar(100) not null) " );
+    //            connection.Execute( "CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null) " );
+    //            connection.Execute( "CREATE TABLE NullableDates (Id integer primary key autoincrement not null, DateValue DateTime) " );
+    //            connection.Execute( "CREATE TABLE ObjectQ (Id integer primary key autoincrement not null, IgnoreInsert nvarchar(100) null, IgnoreUpdate nvarchar(100) null, IgnoreSelect nvarchar(100) null, Computed nvarchar(100) DEFAULT 'Computed', Readonly nvarchar(100) DEFAULT 'Readonly');" );
+    //        }
+    //    }
+    //}
 
-//#if NET452
-//    public class SqlCETestSuite : TestSuite
-//    {
-//        const string FileName = "Test.DB.sdf";
-//        public static string ConnectionString => $"Data Source={FileName};";
-//        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
+    //#if NET452
+    //    public class SqlCETestSuite : TestSuite
+    //    {
+    //        const string FileName = "Test.DB.sdf";
+    //        public static string ConnectionString => $"Data Source={FileName};";
+    //        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
 
-//        static SqlCETestSuite()
-//        {
-//            if (File.Exists(FileName))
-//            {
-//                File.Delete(FileName);
-//            }
-//            var engine = new SqlCeEngine(ConnectionString);
-//            engine.CreateDatabase();
-//            using (var connection = new SqlCeConnection(ConnectionString))
-//            {
-//                connection.Open();
-//                connection.Execute(@"CREATE TABLE Stuff (TheId int IDENTITY(1,1) not null, Name nvarchar(100) not null, Created DateTime null) ");
-//                connection.Execute(@"CREATE TABLE People (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null) ");
-//                connection.Execute(@"CREATE TABLE Users (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, Age int not null) ");
-//                connection.Execute(@"CREATE TABLE Automobiles (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null) ");
-//                connection.Execute(@"CREATE TABLE Results (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, [Order] int not null) ");
-//                connection.Execute(@"CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null) ");
-//                connection.Execute(@"CREATE TABLE ObjectY (ObjectYId int not null, Name nvarchar(100) not null) ");
-//                connection.Execute(@"CREATE TABLE ObjectZ (Id int not null, Name nvarchar(100) not null) ");
-//                connection.Execute(@"CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null) ");
-//                connection.Execute(@"CREATE TABLE NullableDates (Id int IDENTITY(1,1) not null, DateValue DateTime null) ");
-//            }
-//            Console.WriteLine("Created database");
-//        }
-//    }
-//#endif
+    //        static SqlCETestSuite()
+    //        {
+    //            if (File.Exists(FileName))
+    //            {
+    //                File.Delete(FileName);
+    //            }
+    //            var engine = new SqlCeEngine(ConnectionString);
+    //            engine.CreateDatabase();
+    //            using (var connection = new SqlCeConnection(ConnectionString))
+    //            {
+    //                connection.Open();
+    //                connection.Execute(@"CREATE TABLE Stuff (TheId int IDENTITY(1,1) not null, Name nvarchar(100) not null, Created DateTime null) ");
+    //                connection.Execute(@"CREATE TABLE People (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null) ");
+    //                connection.Execute(@"CREATE TABLE Users (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, Age int not null) ");
+    //                connection.Execute(@"CREATE TABLE Automobiles (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null) ");
+    //                connection.Execute(@"CREATE TABLE Results (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, [Order] int not null) ");
+    //                connection.Execute(@"CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null) ");
+    //                connection.Execute(@"CREATE TABLE ObjectY (ObjectYId int not null, Name nvarchar(100) not null) ");
+    //                connection.Execute(@"CREATE TABLE ObjectZ (Id int not null, Name nvarchar(100) not null) ");
+    //                connection.Execute(@"CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null) ");
+    //                connection.Execute(@"CREATE TABLE NullableDates (Id int IDENTITY(1,1) not null, DateValue DateTime null) ");
+    //            }
+    //            Console.WriteLine("Created database");
+    //        }
+    //    }
+    //#endif
 }

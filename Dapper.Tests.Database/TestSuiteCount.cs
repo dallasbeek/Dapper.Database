@@ -25,17 +25,17 @@ namespace Dapper.Tests.Database
         {
             const int numberOfEntities = 10;
 
-            var users = new List<User>();
+            var users = new List<CustomerProxy>();
             for (var i = 0; i < numberOfEntities; i++)
-                users.Add(new User { Name = "User " + i, Age = i });
+                users.Add(new CustomerProxy { FirstName = "User " + i, Age = i });
 
             using (var connection = GetOpenConnection())
             {
-                connection.DeleteAll<User>();
+                connection.DeleteAll<CustomerProxy>();
                 var total = connection.Insert(users);
 
-                Assert.Equal(numberOfEntities, connection.Count<User>("1 = 1", null));
-                Assert.Equal(5, connection.Count<User>("Age > @age", new { age = 4 }));
+                Assert.Equal(numberOfEntities, connection.Count<CustomerProxy>("1 = 1", null));
+                Assert.Equal(5, connection.Count<CustomerProxy>("Age > @age", new { age = 4 }));
             }
 
         }

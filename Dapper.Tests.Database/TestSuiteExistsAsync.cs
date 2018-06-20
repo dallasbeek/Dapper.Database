@@ -24,11 +24,11 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new User {Name= "Exists" };
+                var u1 = new CustomerProxy {FirstName= "Exists" };
                 Assert.True(await connection.InsertAsync(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<User>(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<User>(u1.Id).ConfigureAwait(false));
-                Assert.False(await connection.ExistsAsync<User>(-100).ConfigureAwait(false));
+                Assert.True(await connection.ExistsAsync<CustomerProxy>(u1).ConfigureAwait(false));
+                Assert.True(await connection.ExistsAsync<CustomerProxy>(u1.Id).ConfigureAwait(false));
+                Assert.False(await connection.ExistsAsync<CustomerProxy>(-100).ConfigureAwait(false));
 
             }
         }
@@ -39,10 +39,10 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new User { Name = "FetchMe" };
+                var u1 = new CustomerProxy { FirstName = "FetchMe" };
                 Assert.True(await connection.InsertAsync(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<User>("[Name] = @Name", new { Name = "FetchMe" }).ConfigureAwait(false));
-                Assert.False(await connection.ExistsAsync<User>("[Name] = @Name", new { Name = "junk" }).ConfigureAwait(false));
+                Assert.True(await connection.ExistsAsync<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "FetchMe" }).ConfigureAwait(false));
+                Assert.False(await connection.ExistsAsync<CustomerProxy>("[FIrstName] = @FirstName", new { FirstName = "junk" }).ConfigureAwait(false));
 
             }
         }

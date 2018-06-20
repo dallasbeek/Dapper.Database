@@ -24,14 +24,14 @@ namespace Dapper.Tests.Database
         {
             using ( var connection = GetOpenConnection() )
             {
-                var u1 = new User { Name = "Alice", Age = 32 };
-                var u2 = new User { Name = "Bob", Age = 33 };
+                var u1 = new CustomerProxy { FirstName = "Alice", Age = 32 };
+                var u2 = new CustomerProxy { FirstName = "Bob", Age = 33 };
 
                 Assert.True( connection.Insert( u1 ) );
                 Assert.True( connection.Insert( u2 ) );
-                Assert.True( connection.DeleteAll<User>() );
-                Assert.Null( connection.Get<User>( u1.Id ) );
-                Assert.Null( connection.Get<User>( u2.Id ) );
+                Assert.True( connection.DeleteAll<CustomerProxy>() );
+                Assert.Null( connection.Get<CustomerProxy>( u1.Id ) );
+                Assert.Null( connection.Get<CustomerProxy>( u2.Id ) );
             }
         }
 
@@ -63,7 +63,7 @@ namespace Dapper.Tests.Database
         {
             using ( var connection = GetOpenConnection() )
             {
-                var u1 = new User { Name = "DeleteMe", Age = 33 };
+                var u1 = new CustomerProxy { FirstName = "DeleteMe", Age = 33 };
 
                 Assert.True( connection.Insert( u1 ) );
 
@@ -79,11 +79,11 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new User { Name = "DeleteMe", Age = 33 };
+                var u1 = new CustomerProxy { FirstName = "DeleteMe", Age = 33 };
 
                 Assert.True(connection.Insert(u1));
 
-                connection.Delete<User>(u1.Id);
+                connection.Delete<CustomerProxy>(u1.Id);
 
                 Assert.False(connection.Update(u1));
             }
@@ -95,10 +95,10 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new User { Name = "DeleteMe", Age = 33 };
+                var u1 = new CustomerProxy { FirstName = "DeleteMe", Age = 33 };
                 Assert.True(connection.Insert(u1));
 
-                connection.Delete<User>("Age = @a", new { a = 33 });
+                connection.Delete<CustomerProxy>("Age = @a", new { a = 33 });
 
                 Assert.False(connection.Update(u1));
             }
@@ -148,27 +148,27 @@ namespace Dapper.Tests.Database
         //    }
         //}
 
-        private void DeleteHelper<T> ( Func<IEnumerable<User>, T> helper )
+        private void DeleteHelper<T> ( Func<IEnumerable<CustomerProxy>, T> helper )
             where T : class
         {
             const int numberOfEntities = 10;
 
-            var users = new List<User>();
+            var users = new List<CustomerProxy>();
             for ( var i = 0; i < numberOfEntities; i++ )
-                users.Add( new User { Name = "User " + i, Age = i } );
+                users.Add( new CustomerProxy { FirstName = "User " + i, Age = i } );
 
             using ( var connection = GetOpenConnection() )
             {
-                connection.DeleteAll<User>();
+                connection.DeleteAll<CustomerProxy>();
 
                 var total = connection.Insert( helper( users ) );
                 //Assert.Equal(total, numberOfEntities);
-                users = connection.Query<User>( "select * from Users" ).ToList();
+                users = connection.Query<CustomerProxy>( "select * from Customers" ).ToList();
                 Assert.Equal( users.Count, numberOfEntities );
 
                 var usersToDelete = users.Take( 10 ).ToList();
                 connection.Delete( helper( usersToDelete ) );
-                users = connection.Query<User>( "select * from Users" ).ToList();
+                users = connection.Query<CustomerProxy>( "select * from Customers" ).ToList();
                 Assert.Equal( users.Count, numberOfEntities - 10 );
             }
         }

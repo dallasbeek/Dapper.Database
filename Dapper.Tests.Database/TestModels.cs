@@ -18,8 +18,8 @@ using System.Data.SqlServerCe;
 namespace Dapper.Tests.Database
 {
 
-    [Table( "ObjectQ" )]
-    public class ObjectQ
+    [Table( "Customers" )]
+    public class CustomerAttribute
     {
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,47 +28,40 @@ namespace Dapper.Tests.Database
 #endif
         public int Id { get; set; }
         [IgnoreInsert]
-        public string IgnoreInsert { get; set; }
+        public string FirstName { get; set; }
         [IgnoreUpdate]
-        public string IgnoreUpdate { get; set; }
+        public string LastName { get; set; }
         [IgnoreSelect]
-        public string IgnoreSelect { get; set; }
+        public int? Age { get; set; }
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 #else
         [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Computed )]
 #endif
-        public string Computed { get; set; }
+        public string FullName { get; set; }
         [ReadOnly]
-        public string Readonly { get; set; }
+        public Guid  GId { get; set; }
     }
 
-
-    [Table( "ObjectX" )]
-    public class ObjectX
+    [Table( "Customers" )]
+    public class CustomerStringId
     {
         [Key]
-        public string ObjectXId { get; set; }
-        public string Name { get; set; }
+        public string SId { get; set; }
+        public string FirstName { get; set; }
+
     }
 
-    [Table( "ObjectY" )]
-    public class ObjectY
+    [Table( "Customers" )]
+    public class CustomerIntegerId
     {
         [Key]
-        public int ObjectYId { get; set; }
-        public string Name { get; set; }
+        public int IId { get; set; }
+        public string FirstName { get; set; }
+
     }
 
-    [Table( "ObjectZ" )]
-    public class ObjectZ
-    {
-        [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
-
-    public interface IUser
+    public interface ICustomer
     {
         [Key]
 #if NET452
@@ -77,18 +70,29 @@ namespace Dapper.Tests.Database
         [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
 #endif
         int Id { get; set; }
-        string Name { get; set; }
+        string FirstName { get; set; }
         int Age { get; set; }
+        DateTime? UpdatedOn { get; set; }
     }
 
-    public class User : IUser
+    [Table("Customers")]
+    public class CustomerProxy : ICustomer
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string FirstName { get; set; }
         public int Age { get; set; }
+        public DateTime? UpdatedOn { get; set; }
     }
 
-    public interface INullableDate
+
+    public class CustomerMapped
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+    }
+
+    [Table( "Customers" )]
+    public class CustomerShortId
     {
         [Key]
 #if NET452
@@ -96,68 +100,43 @@ namespace Dapper.Tests.Database
 #else
         [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
 #endif
-        int Id { get; set; }
-        DateTime? DateValue { get; set; }
+        public short Id { get; set; }
+        public string FirstName { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
-    public class NullableDate : INullableDate
-    {
-        public int Id { get; set; }
-        public DateTime? DateValue { get; set; }
-    }
-
-    public class Person
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
-
-    [Table( "Stuff" )]
-    public class Stuff
-    {
-        [Key]
-#if NET452
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-#else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
-#endif
-        public short TheId { get; set; }
-        public string Name { get; set; }
-        public DateTime? Created { get; set; }
-    }
-
-    [Table( "Automobiles" )]
+    [Table( "Customers" )]
     public class Car
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string FirstName { get; set; }
 
         [Ignore]
         public string Computed { get; set; }
     }
 
-    [Table( "Results" )]
+    [Table( "Customers" )]
     public class Result
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public int Order { get; set; }
+        public string FirstName { get; set; }
+        public int Age { get; set; }
     }
 
-    [Table( "GenericType" )]
+    [Table( "Customers" )]
     public class GenericType<T>
     {
         [Key]
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string SId { get; set; }
+        public string FirstName { get; set; }
     }
 
-    [Table( "PkGuid" )]
-    public class PKGuid
+    [Table( "Customers" )]
+    public class CustomersGuidId
     {
         [Key]
-        public Guid GuidId { get; set; }
-        public string Name { get; set; }
+        public Guid GId { get; set; }
+        public string FirstName { get; set; }
 
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
