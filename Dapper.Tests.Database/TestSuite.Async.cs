@@ -393,8 +393,8 @@ namespace Dapper.Tests.Database
 
                 var value3 = await connection.GetAllAsync<ICustomer>().ConfigureAwait( false );
                 var valuesList = value3.ToList();
-                Assert.Equal( new DateTime( 2011, 07, 14 ), valuesList[ 0 ].UpdatedOn.Value );
-                Assert.True( valuesList[ 1 ].UpdatedOn == null );
+                Assert.Equal( new DateTime( 2011, 07, 14 ), value3.ToList().Find( c => c.Id == d1.Id ).UpdatedOn.Value );
+                Assert.True( value3.ToList().Find( c => c.Id == d2.Id ).UpdatedOn == null );
             }
         }
 

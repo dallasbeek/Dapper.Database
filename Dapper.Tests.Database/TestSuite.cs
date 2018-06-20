@@ -460,8 +460,8 @@ namespace Dapper.Tests.Database
                 Assert.True( value2.UpdatedOn == null );
 
                 var value3 = connection.GetAll<ICustomer>().ToList();
-                Assert.Equal( new DateTime( 2011, 07, 14 ), value3[ 0 ].UpdatedOn.Value );
-                Assert.True( value3[ 1 ].UpdatedOn == null );
+                Assert.Equal( new DateTime( 2011, 07, 14 ), value3.Find(c => c.Id == nd1.Id).UpdatedOn.Value );
+                Assert.True( value3.Find( c => c.Id == nd2.Id ).UpdatedOn == null );
             }
         }
 
