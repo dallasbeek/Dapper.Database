@@ -47,5 +47,17 @@ namespace Dapper.Tests.Database
             }
         }
 
+        [Fact]
+        [Trait("Category", "ExistsAsync")]
+        public async Task ExistsCompositeAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                var u1 = new CustomerComposite { IId = 8, GId = Guid.NewGuid() };
+                Assert.True(await connection.InsertAsync(u1).ConfigureAwait(false));
+                Assert.True(await connection.ExistsAsync<CustomerComposite>(u1).ConfigureAwait(false));
+            }
+        }
+
     }
 }

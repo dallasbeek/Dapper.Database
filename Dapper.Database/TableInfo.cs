@@ -177,6 +177,15 @@ namespace Dapper.Database
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public string GetSelectColumns(string format) => string.Join(",",
+                ColumnInfos.Where(ci => !ci.ExcludeOnSelect)
+                .Select(ci => string.Format(format, ci.ColumnName)));
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
         public ColumnInfo GetSingleKey(string method)

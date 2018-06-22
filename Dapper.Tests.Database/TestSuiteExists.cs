@@ -46,5 +46,17 @@ namespace Dapper.Tests.Database
             }
         }
 
+        [Fact]
+        [Trait("Category", "Exists")]
+        public void ExistsComposite()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                var u1 = new CustomerComposite {  IId = 8, GId = Guid.NewGuid() };
+                Assert.True(connection.Insert(u1));
+                Assert.True(connection.Exists<CustomerComposite>(u1));
+            }
+        }
+
     }
 }

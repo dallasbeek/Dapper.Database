@@ -84,6 +84,39 @@ namespace Dapper.Tests.Database
         public DateTime? UpdatedOn { get; set; }
     }
 
+    [Table("Customers")]
+    public class CustomerComposite
+    {
+#if NET452
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+#else
+        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
+#endif
+        public int Id { get; set; }
+
+        [Key]
+        public int IId { get; set; }
+
+        [Key]
+        public Guid GId { get; set; }
+
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+#if NET452
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+#else
+        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Computed )]
+#endif
+        public string FullName { get; set; }
+
+        public int? Age { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
+    }
+
 
     public class CustomerMapped
     {

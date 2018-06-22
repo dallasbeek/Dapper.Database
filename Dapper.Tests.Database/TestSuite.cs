@@ -239,21 +239,6 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        public void TestSimpleGet ()
-        {
-            using ( var connection = GetOpenConnection() )
-            {
-                var u1 = new CustomerProxy { FirstName = "Adama", Age = 10 };
-                Assert.True( connection.Insert( u1 ) );
-                var id = u1.Id;
-                var user = connection.Get<CustomerProxy>( id );
-                Assert.Equal( user.Id, ( int ) id );
-                Assert.Equal( "Adama", user.FirstName );
-                connection.Delete( user );
-            }
-        }
-
-        [Fact]
         public void TestClosedConnection ()
         {
             using ( var connection = GetConnection() )

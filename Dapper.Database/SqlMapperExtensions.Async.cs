@@ -12,63 +12,6 @@ namespace Dapper.Database.Extensions
     public static partial class SqlMapperExtensions
     {
         /// <summary>
-        /// Returns a single entity by a single id from table "Ts" asynchronously using .NET 4.5 Task. T must be of interface type. 
-        /// Id must be marked with [Key] attribute.
-        /// Created entity is tracked/intercepted for changes and used by the Update() extension. 
-        /// </summary>
-        /// <typeparam name="T">Interface type to create and populate</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="id">Id of the entity to get, must be marked with [Key] attribute</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>Entity of T</returns>
-        public static async Task<T> GetAsync<T>(this IDbConnection connection, dynamic id, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
-        {
-            var type = typeof(T);
-            if (!GetQueries.TryGetValue(type.TypeHandle, out string sql))
-            {
-                var key = GetSingleKey<T>(nameof(GetAsync));
-                var name = GetTableName(type, connection);
-
-                var sbColumnList = GetSelectColumns(connection, type);
-                sql = $"SELECT {sbColumnList} FROM {name} WHERE {key.Name} = @id";
-                GetQueries[type.TypeHandle] = sql;
-            }
-
-            var dynParms = new DynamicParameters();
-            dynParms.Add("@id", id);
-
-            if (!type.IsInterface())
-                return (await connection.QueryAsync<T>(sql, dynParms, transaction, commandTimeout).ConfigureAwait(false)).FirstOrDefault();
-
-            var res = (await connection.QueryAsync<dynamic>(sql, dynParms).ConfigureAwait(false)).FirstOrDefault() as IDictionary<string, object>;
-
-            if (res == null)
-                return null;
-
-            var obj = ProxyGenerator.GetInterfaceProxy<T>();
-
-            foreach (var property in TypePropertiesCache(type))
-            {
-                var val = res[property.Name];
-                if (val == null) continue;
-                if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    var genericType = Nullable.GetUnderlyingType(property.PropertyType);
-                    if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
-                }
-                else
-                {
-                    property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
-                }
-            }
-
-            ((IProxy)obj).IsDirty = false;   //reset change tracking and return
-
-            return obj;
-        }
-
-        /// <summary>
         /// Returns a list of entites from table "Ts".  
         /// Id of T must be marked with [Key] attribute.
         /// Entities created from interfaces are tracked/intercepted for changes and used by the Update() extension
@@ -446,6 +389,186 @@ namespace Dapper.Database.Extensions
 
         #endregion
 
+        #region Get Extensions
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <typeparam name="T">Type of entity</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entityToGet">Entity to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static async Task<T> GetAsync<T>(this IDbConnection connection, T entityToGet, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            if (entityToGet == null)
+                throw new ArgumentException("Cannot Get null Object", nameof(entityToGet));
+
+            var type = typeof(T);
+
+            var adapter = GetFormatter(connection);
+
+            var tinfo = TableInfoCache(type);
+
+            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
+            var selectColumns = tinfo.GetSelectColumns(adapter.EscapeSqlIdentifier);
+
+            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
+
+            if (string.IsNullOrEmpty(sbWhereClause))
+                throw new ArgumentException("Entity must have at least one [Key] property");
+
+            return await connection.GetAsync<T>(adapter, name, selectColumns, sbWhereClause, entityToGet, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="primaryKey">a Single primary key to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static async Task<T> GetAsync<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+
+            var adapter = GetFormatter(connection);
+
+            var tinfo = TableInfoCache(type);
+
+            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
+            var selectColumns = tinfo.GetSelectColumns(adapter.EscapeSqlIdentifier);
+            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
+
+            if (string.IsNullOrEmpty(sbWhereClause))
+                throw new ArgumentException("Entity must have at least one [Key] property");
+
+            var key = tinfo.GetSingleKey("Get");
+            var dynParms = new DynamicParameters();
+
+            dynParms.Add(key.ColumnName, primaryKey);
+
+            return await connection.GetAsync<T>(adapter, name, selectColumns, sbWhereClause, dynParms, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="whereClause">The where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static async Task<T> GetAsync<T>(this IDbConnection connection, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+
+            var adapter = GetFormatter(connection);
+
+            var tinfo = TableInfoCache(type);
+
+            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
+            var selectColumns = tinfo.GetSelectColumns(adapter.EscapeSqlIdentifier);
+
+            return await connection.GetAsync<T>(adapter, name, selectColumns, whereClause, parameters, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Performs a SQL Get
+        /// </summary>
+        /// <param name="connection">Sql Connection</param>
+        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
+        /// <param name="tableName">The name of the table to delete from</param>
+        /// <param name="selectColumns">The columns to select</param>
+        /// <param name="whereClause">The where clause</param>
+        /// <param name="parameters">Parameters of the where clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>True if records are deleted</returns>
+        private static async Task<T> GetAsync<T>(this IDbConnection connection, ISqlAdapter adapter, string tableName, string selectColumns, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+
+            var sql = $"select {selectColumns} from {tableName} where {whereClause}";
+
+            if (!type.IsInterface())
+                return (await connection.QueryAsync<T>(sql, parameters, transaction, commandTimeout).ConfigureAwait(false)).SingleOrDefault();
+
+            var res = (await connection.QueryAsync<dynamic>(sql, parameters).ConfigureAwait(false)).SingleOrDefault() as IDictionary<string, object>;
+
+            if (res == null)
+                return null;
+
+            var obj = ProxyGenerator.GetInterfaceProxy<T>();
+
+            foreach (var property in TypePropertiesCache(type))
+            {
+                var val = res[property.Name];
+                if (val == null) continue;
+                if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    var genericType = Nullable.GetUnderlyingType(property.PropertyType);
+                    if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
+                }
+                else
+                {
+                    property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
+                }
+            }
+
+                ((IProxy)obj).IsDirty = false;   //reset change tracking and return
+
+            return obj;
+        }
+
+        //public static async Task<T> GetAsync<T>(this IDbConnection connection, dynamic id, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        //{
+        //    var type = typeof(T);
+        //    if (!GetQueries.TryGetValue(type.TypeHandle, out string sql))
+        //    {
+        //        var key = GetSingleKey<T>(nameof(GetAsync));
+        //        var name = GetTableName(type, connection);
+
+        //        var sbColumnList = GetSelectColumns(connection, type);
+        //        sql = $"SELECT {sbColumnList} FROM {name} WHERE {key.Name} = @id";
+        //        GetQueries[type.TypeHandle] = sql;
+        //    }
+
+        //    var dynParms = new DynamicParameters();
+        //    dynParms.Add("@id", id);
+
+        //    if (!type.IsInterface())
+        //        return (await connection.QueryAsync<T>(sql, dynParms, transaction, commandTimeout).ConfigureAwait(false)).FirstOrDefault();
+
+        //    var res = (await connection.QueryAsync<dynamic>(sql, dynParms).ConfigureAwait(false)).FirstOrDefault() as IDictionary<string, object>;
+
+        //    if (res == null)
+        //        return null;
+
+        //    var obj = ProxyGenerator.GetInterfaceProxy<T>();
+
+        //    foreach (var property in TypePropertiesCache(type))
+        //    {
+        //        var val = res[property.Name];
+        //        if (val == null) continue;
+        //        if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+        //        {
+        //            var genericType = Nullable.GetUnderlyingType(property.PropertyType);
+        //            if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
+        //        }
+        //        else
+        //        {
+        //            property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
+        //        }
+        //    }
+
+        //    ((IProxy)obj).IsDirty = false;   //reset change tracking and return
+
+        //    return obj;
+        //}
+        #endregion
 
         /// <summary>
         /// Inserts an entity into table "Ts" asynchronously using .NET 4.5 Task and returns identity id.
