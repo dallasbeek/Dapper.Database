@@ -585,7 +585,7 @@ namespace Dapper.Database.Extensions
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
 
-            return connection.Delete<T>(adapter, null, entityToDelete, transaction, commandTimeout);
+            return connection.Execute(adapter.DeleteQuery(tinfo, null), entityToDelete, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -607,7 +607,7 @@ namespace Dapper.Database.Extensions
             var dynParms = new DynamicParameters();
             dynParms.Add(key.ColumnName, primaryKey);
 
-            return connection.Delete<T>(adapter, null, dynParms, transaction, commandTimeout);
+            return connection.Execute(adapter.DeleteQuery(tinfo, null), dynParms, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -624,27 +624,8 @@ namespace Dapper.Database.Extensions
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
-            return connection.Delete<T>(adapter, whereClause, parameters, transaction, commandTimeout);
-        }
-
-        /// <summary>
-        /// Performs a SQL Get
-        /// </summary>
-        /// <param name="connection">Sql Connection</param>
-        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="whereClause">The where clause</param>
-        /// <param name="parameters">Parameters of the where clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>True if records are deleted</returns>
-        private static bool Delete<T>(this IDbConnection connection, ISqlAdapter adapter, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
-        {
-            var type = typeof(T);
-            var tinfo = TableInfoCache(type);
-            var sql = adapter.GetQuery(tinfo, whereClause);
             return connection.Execute(adapter.DeleteQuery(tinfo, whereClause), parameters, transaction, commandTimeout) > 0;
         }
-
 
         /// <summary>
         /// Delete all entities in the table related to the type T.
