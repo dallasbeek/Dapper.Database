@@ -34,7 +34,7 @@ namespace Dapper.Tests.Database
                 connection.DeleteAll<CustomerProxy>();
                 var total = connection.Insert(users);
 
-                Assert.Equal(numberOfEntities, connection.Count<CustomerProxy>("1 = 1", null));
+                Assert.Equal(numberOfEntities, connection.Count<CustomerProxy>(null, null));
                 Assert.Equal(5, connection.Count<CustomerProxy>("Age > @age", new { age = 4 }));
             }
 

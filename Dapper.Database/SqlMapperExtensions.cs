@@ -439,18 +439,17 @@ namespace Dapper.Database.Extensions
 
             var tinfo = TableInfoCache(type);
 
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var sbColumnList = tinfo.GetInsertColumns(adapter.EscapeSqlIdentifier);
-            var sbParameterList = tinfo.GetInsertParameters();
-            var generatedColumns = tinfo.GetInsertGeneratedAndKey();
 
             if (!isList)    //single entity
             {
-                return adapter.Insert(connection, transaction, commandTimeout, name, sbColumnList.ToString(),
-                    sbParameterList.ToString(), generatedColumns, entityToInsert);
+                return adapter.Insert(connection, transaction, commandTimeout,tinfo, entityToInsert);
             }
             else
             {
+                var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
+                var sbColumnList = tinfo.GetInsertColumns(adapter.EscapeSqlIdentifier);
+                var sbParameterList = tinfo.GetInsertParameters();
+
                 //insert list of entities
                 var cmd = $"insert into {name} ({sbColumnList}) values ({sbParameterList})";
                 return connection.Execute(cmd, entityToInsert, transaction, commandTimeout) > 0;
@@ -584,16 +583,9 @@ namespace Dapper.Database.Extensions
             }
 
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
 
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
-
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
-
-            return connection.Delete(name, sbWhereClause, entityToDelete, transaction, commandTimeout);
+            return connection.Delete<T>(adapter, null, entityToDelete, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -609,22 +601,13 @@ namespace Dapper.Database.Extensions
             var type = typeof(T);
 
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
-
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
 
             var key = tinfo.GetSingleKey("Delete");
             var dynParms = new DynamicParameters();
-
             dynParms.Add(key.ColumnName, primaryKey);
 
-
-            return connection.Delete(name, sbWhereClause, dynParms, transaction, commandTimeout);
+            return connection.Delete<T>(adapter, null, dynParms, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -639,31 +622,29 @@ namespace Dapper.Database.Extensions
         public static bool Delete<T>(this IDbConnection connection, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-
-            return connection.Delete(name, whereClause, parameters, transaction, commandTimeout);
+            return connection.Delete<T>(adapter, whereClause, parameters, transaction, commandTimeout);
         }
 
         /// <summary>
-        /// Performs and SQL Delete
+        /// Performs a SQL Get
         /// </summary>
         /// <param name="connection">Sql Connection</param>
-        /// <param name="tableName">The name of the table to delete from</param>
+        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
         /// <param name="whereClause">The where clause</param>
         /// <param name="parameters">Parameters of the where clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>True if records are deleted</returns>
-        private static bool Delete(this IDbConnection connection, string tableName, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null)
+        private static bool Delete<T>(this IDbConnection connection, ISqlAdapter adapter, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var sb = $"delete from {tableName} where {whereClause}";
-            return connection.Execute(sb, parameters, transaction, commandTimeout) > 0;
+            var type = typeof(T);
+            var tinfo = TableInfoCache(type);
+            var sql = adapter.GetQuery(tinfo, whereClause);
+            return connection.Execute(adapter.DeleteQuery(tinfo, whereClause), parameters, transaction, commandTimeout) > 0;
         }
+
 
         /// <summary>
         /// Delete all entities in the table related to the type T.
@@ -697,15 +678,9 @@ namespace Dapper.Database.Extensions
         public static int Count<T>(this IDbConnection connection, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
-            var tableName = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-
-            var sb = $"select count(*) from {tableName} where {whereClause}";
-            return connection.ExecuteScalar<int>(sb, parameters, transaction, commandTimeout);
+            return connection.ExecuteScalar<int>(adapter.CountQuery(tinfo, whereClause), parameters, transaction, commandTimeout);
         }
         #endregion
 
@@ -725,18 +700,9 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentException("Cannot Exists null Object", nameof(entityToExists));
 
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
-
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
-
-            return connection.Exists(adapter, name, sbWhereClause, entityToExists, transaction, commandTimeout);
+            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, null), entityToExists, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -750,23 +716,12 @@ namespace Dapper.Database.Extensions
         public static bool Exists<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
-
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
-
             var key = tinfo.GetSingleKey("Exists");
             var dynParms = new DynamicParameters();
-
             dynParms.Add(key.ColumnName, primaryKey);
-
-            return connection.Exists(adapter, name, sbWhereClause, dynParms, transaction, commandTimeout);
+            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, null), dynParms, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -781,30 +736,9 @@ namespace Dapper.Database.Extensions
         public static bool Exists<T>(this IDbConnection connection, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-
-            return connection.Exists(adapter, name, whereClause, parameters, transaction, commandTimeout);
-        }
-
-        /// <summary>
-        /// Performs a SQL Exists
-        /// </summary>
-        /// <param name="connection">Sql Connection</param>
-        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="tableName">The name of the table to delete from</param>
-        /// <param name="whereClause">The where clause</param>
-        /// <param name="parameters">Parameters of the where clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>True if records are deleted</returns>
-        private static bool Exists(this IDbConnection connection, ISqlAdapter adapter, string tableName, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null)
-        {
-            return connection.ExecuteScalar<bool>(adapter.GetExistsSql(tableName, whereClause), parameters, transaction, commandTimeout);
+            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, whereClause), parameters, transaction, commandTimeout);
         }
 
         #endregion
@@ -824,21 +758,9 @@ namespace Dapper.Database.Extensions
             if (entityToGet == null)
                 throw new ArgumentException("Cannot Get null Object", nameof(entityToGet));
 
-            var type = typeof(T);
-
             var adapter = GetFormatter(connection);
 
-            var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var selectColumns = tinfo.GetSelectColumns(adapter.EscapeSqlIdentifier);
-
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
-
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
-
-            return connection.Get<T>(adapter, name, selectColumns, sbWhereClause, entityToGet, transaction, commandTimeout);
+            return connection.Get<T>(adapter, null, entityToGet, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -852,24 +774,15 @@ namespace Dapper.Database.Extensions
         public static T Get<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
             var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var selectColumns = tinfo.GetSelectColumns(adapter.EscapeSqlIdentifier);
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
-
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
 
             var key = tinfo.GetSingleKey("Get");
             var dynParms = new DynamicParameters();
-
             dynParms.Add(key.ColumnName, primaryKey);
 
-            return connection.Get<T>(adapter, name, selectColumns, sbWhereClause, dynParms, transaction, commandTimeout);
+            return connection.Get<T>(adapter, null, dynParms, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -884,15 +797,8 @@ namespace Dapper.Database.Extensions
         public static T Get<T>(this IDbConnection connection, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
             var adapter = GetFormatter(connection);
-
-            var tinfo = TableInfoCache(type);
-
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var selectColumns = tinfo.GetSelectColumns(adapter.EscapeSqlIdentifier);
-
-            return connection.Get<T>(adapter, name, selectColumns, whereClause, parameters, transaction, commandTimeout);
+            return connection.Get<T>(adapter,  whereClause, parameters, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -900,18 +806,16 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Sql Connection</param>
         /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="tableName">The name of the table to delete from</param>
-        /// <param name="selectColumns">The columns to select</param>
         /// <param name="whereClause">The where clause</param>
         /// <param name="parameters">Parameters of the where clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>True if records are deleted</returns>
-        private static T Get<T>(this IDbConnection connection, ISqlAdapter adapter, string tableName, string selectColumns, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        private static T Get<T>(this IDbConnection connection, ISqlAdapter adapter, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-
-            var sql = $"select {selectColumns} from {tableName} where {whereClause}";
+            var tinfo = TableInfoCache(type);
+            var sql = adapter.GetQuery(tinfo, whereClause);
 
             T obj;
 

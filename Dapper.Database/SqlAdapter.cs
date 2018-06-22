@@ -29,18 +29,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 public partial interface ISqlAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// 
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="generatedProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>true if inserted</returns>
-    bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<ColumnInfo> generatedProperties, object entityToInsert);
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToInsert"></param>
+    /// <returns></returns>
+    bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert);
 
     /// <summary>
     /// Adds the name of a column.
@@ -89,43 +86,233 @@ public partial interface ISqlAdapter
     /// 
     /// </summary>
     bool SupportsSchemas { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    string CountQuery(TableInfo tableInfo, string whereClause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    string DeleteQuery(TableInfo tableInfo, string whereClause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    string ExistsQuery(TableInfo tableInfo, string whereClause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    string GetQuery(TableInfo tableInfo, string whereClause);
 }
+
+/// <summary>
+/// Base class for SqlAdapter handlers - provides default/common handling for different database engines
+/// </summary>
+public abstract class SqlAdapter
+{
+
+    ///// <summary>
+    ///// Returns the format for table name
+    ///// </summary>
+    //public virtual string EscapeTableName => "[{0}]";
+
+    ///// <summary>
+    ///// Returns the sql identifier format
+    ///// </summary>
+    //public virtual string EscapeSqlIdentifier => "[{0}]";
+
+    ///// <summary>
+    ///// Returns the escaped assignment format
+    ///// </summary>
+    //public virtual string EscapeSqlAssignment => "[{0}] = @{1}";
+
+    ///// <summary>
+    ///// Returns true if schemas are supported in database
+    ///// </summary>
+    //public virtual bool SupportsSchemas => true;
+
+    ///// <summary>
+    ///// Returns the escaped assignment format
+    ///// </summary>
+    //public virtual string EscapeParameter => "@{1}";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToInsert"></param>
+    /// <returns></returns>
+    public virtual bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>   
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    public virtual string CountQuery(TableInfo tableInfo, string whereClause)
+    {
+        if (string.IsNullOrWhiteSpace(whereClause))
+        {
+            return $"select count(*) from {EscapeTableNamee(tableInfo)}";
+        }
+        else
+        {
+            return $"select count(*) from {EscapeTableNamee(tableInfo)} where {whereClause}";
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    public virtual string DeleteQuery(TableInfo tableInfo, string whereClause)
+    {
+        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
+        return $"delete from {EscapeTableNamee(tableInfo)} where {wc}";
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    public virtual string ExistsQuery(TableInfo tableInfo, string whereClause)
+    {
+        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
+        return $"select exists (select 1 from {EscapeTableNamee(tableInfo)} where {wc})";
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    public virtual string GetQuery(TableInfo tableInfo, string whereClause)
+    {
+        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
+        return $"select {EscapeColumnList(tableInfo.SelectColumns)} from {EscapeTableNamee(tableInfo)} where {wc}";
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <returns></returns>
+    public virtual string EscapeTableNamee(TableInfo tableInfo) => EscapeTableNamee(tableInfo.TableName);
+
+    /// <summary>
+    /// Returns the format for table name
+    /// </summary>
+    public virtual string EscapeTableNamee(string value) => $"[{value}]";
+
+    /// <summary>
+    /// Returns the format for table name
+    /// </summary>
+    public virtual string EscapeColumnn(string value) => $"[{value}]";
+
+    /// <summary>
+    /// Returns the format for table name
+    /// </summary>
+    public virtual string EscapeParameter(string value) => $"@{value}";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="columns"></param>
+    /// <returns></returns>
+    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns) => string.Join(",", columns.Select(ci => EscapeColumnn(ci.ColumnName)));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="columns"></param>
+    /// <returns></returns>
+    public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns) => string.Join(" and ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="columns"></param>
+    /// <returns></returns>
+    public virtual string EscapeParameters(IEnumerable<ColumnInfo> columns) => string.Join(",", columns.Select(ci => EscapeParameter(ci.PropertyName)));
+
+}
+
 
 /// <summary>
 /// The SQL Server database adapter.
 /// </summary>
-public partial class SqlServerAdapter : ISqlAdapter
+public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 {
 
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// 
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="insertProperties">Generated or Key columns to retrieve values for.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>true if inserted</returns>
-    public bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<ColumnInfo> insertProperties, object entityToInsert)
+    /// <param name="tableInfo"></param>
+    /// <returns></returns>
+    public override string EscapeTableNamee(TableInfo tableInfo) =>
+        !string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableNamee(tableInfo.SchemaName) + "." : null + EscapeTableNamee(tableInfo.TableName);
+
+
+
+    //private object EscapeColumnList(Func<IEnumerable<ColumnInfo>> insertColumns)
+    //{
+    //    throw new NotImplementedException();
+    //}
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToInsert"></param>
+    /// <returns></returns>
+    public override bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
     {
-        var cmd = new StringBuilder($"insert into {tableName} ({columnList}) values ({parameterList}); ");
+        var cmd = new StringBuilder($"insert into { EscapeTableNamee(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); ");
 
-        if (insertProperties.Any(k => k.IsKey))
+        if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.AppendFormat("select {0} from {1} ", string.Join(",", insertProperties.Select(g => string.Format("[{0}]", g.ColumnName))), tableName);
+            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
 
-            var autoProperty = insertProperties.SingleOrDefault(k => k.IsKey && k.IsIdentity);
-
-            if (autoProperty != null)
+            if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
-                cmd.AppendFormat("where [{0}] = SCOPE_IDENTITY();", autoProperty.ColumnName);
+                cmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = SCOPE_IDENTITY();");
             }
             else
             {
-                cmd.AppendFormat("where {0};", string.Join(" and ", insertProperties.Where(k => k.IsKey).Select(kp => string.Format("[{0}] = @{1}", kp.ColumnName, kp.PropertyName))));
+                cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
             }
 
             var multi = connection.QueryMultiple(cmd.ToString(), entityToInsert, transaction, commandTimeout);
@@ -139,7 +326,7 @@ public partial class SqlServerAdapter : ISqlAdapter
             foreach (var key in rvals.Keys)
             {
                 var rval = rvals[key];
-                var p = insertProperties.Single(gp => gp.ColumnName == key).Property;
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
                 p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
             }
 
@@ -150,6 +337,18 @@ public partial class SqlServerAdapter : ISqlAdapter
             return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    public override string ExistsQuery(TableInfo tableInfo, string whereClause)
+    {
+        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
+        return $"if exists (select 1 from {EscapeTableNamee(tableInfo)} where {wc}) select 1 else select 0";
     }
 
     /// <summary>
@@ -213,7 +412,7 @@ public partial class SqlServerAdapter : ISqlAdapter
 /// <summary>
 /// The SQL Server Compact Edition database adapter.
 /// </summary>
-public partial class SqlCeServerAdapter : ISqlAdapter
+public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
 {
     /// <summary>
     /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
@@ -307,7 +506,7 @@ public partial class SqlCeServerAdapter : ISqlAdapter
 /// <summary>
 /// The MySQL database adapter.
 /// </summary>
-public partial class MySqlAdapter : ISqlAdapter
+public partial class MySqlAdapter : SqlAdapter, ISqlAdapter
 {
     /// <summary>
     /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
@@ -400,7 +599,7 @@ public partial class MySqlAdapter : ISqlAdapter
 /// <summary>
 /// The Postgres database adapter.
 /// </summary>
-public partial class PostgresAdapter : ISqlAdapter
+public partial class PostgresAdapter : SqlAdapter, ISqlAdapter
 {
     /// <summary>
     /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
@@ -514,7 +713,7 @@ public partial class PostgresAdapter : ISqlAdapter
 /// <summary>
 /// The SQLite database adapter.
 /// </summary>
-public partial class SQLiteAdapter : ISqlAdapter
+public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 {
     /// <summary>
     /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
@@ -607,7 +806,7 @@ public partial class SQLiteAdapter : ISqlAdapter
 /// <summary>
 /// The Firebase SQL adapeter.
 /// </summary>
-public partial class FbAdapter : ISqlAdapter
+public partial class FbAdapter : SqlAdapter, ISqlAdapter
 {
     /// <summary>
     /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.

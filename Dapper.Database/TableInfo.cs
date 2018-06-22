@@ -121,7 +121,7 @@ namespace Dapper.Database
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<ColumnInfo> ColumnInfos { get; private set; }
+        private IEnumerable<ColumnInfo> ColumnInfos { get; set; }
 
         /// <summary>
         /// 
@@ -198,6 +198,38 @@ namespace Dapper.Database
             return keys[0];
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ColumnInfo> InsertColumns => ColumnInfos.Where(ci => !ci.ExcludeOnInsert);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ColumnInfo> UpdateColumns => ColumnInfos.Where(ci => !ci.ExcludeOnUpdate);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ColumnInfo> SelectColumns => ColumnInfos.Where(ci => !ci.ExcludeOnSelect);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ColumnInfo> KeyColumns => ColumnInfos.Where(ci => ci.IsKey);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ColumnInfo> GeneratedColumns => ColumnInfos.Where(ci => ci.IsGenerated);
+
     }
 
     /// <summary>
