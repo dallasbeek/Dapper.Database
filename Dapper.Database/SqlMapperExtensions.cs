@@ -436,9 +436,7 @@ namespace Dapper.Database.Extensions
             }
 
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
-
 
             if (!isList)    //single entity
             {
@@ -446,13 +444,7 @@ namespace Dapper.Database.Extensions
             }
             else
             {
-                var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-                var sbColumnList = tinfo.GetInsertColumns(adapter.EscapeSqlIdentifier);
-                var sbParameterList = tinfo.GetInsertParameters();
-
-                //insert list of entities
-                var cmd = $"insert into {name} ({sbColumnList}) values ({sbParameterList})";
-                return connection.Execute(cmd, entityToInsert, transaction, commandTimeout) > 0;
+                return connection.Execute(adapter.InsertQuery(tinfo), entityToInsert, transaction, commandTimeout) > 0;
             }
         }
 
@@ -488,9 +480,11 @@ namespace Dapper.Database.Extensions
             }
 
             var type = typeof(T);
+            var isList = false;
 
             if (type.IsArray)
             {
+                isList = true;
                 type = type.GetElementType();
             }
             else if (type.IsGenericType())
@@ -502,24 +496,31 @@ namespace Dapper.Database.Extensions
 
                 if (implementsGenericIEnumerableOrIsGenericIEnumerable)
                 {
+                    isList = true;
                     type = type.GetGenericArguments()[0];
                 }
             }
 
             var adapter = GetFormatter(connection);
-
             var tinfo = TableInfoCache(type);
 
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var sbColumnList = tinfo.GetUpdateValues(adapter.EscapeSqlAssignment, columnsToUpdate);
-            var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
+            if (!isList)
+            {
+                return adapter.Update(connection, transaction, commandTimeout, tinfo, entityToUpdate, columnsToUpdate);
+            }
+            else {
+                return connection.Execute(adapter.UpdateQuery(tinfo, columnsToUpdate), entityToUpdate, transaction, commandTimeout) > 0;
+            }
+            //var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
+            //var sbColumnList = tinfo.GetUpdateValues(adapter.EscapeSqlAssignment, columnsToUpdate);
+            //var sbWhereClause = tinfo.GetUpdateWhere(adapter.EscapeSqlAssignment);
 
-            if (string.IsNullOrEmpty(sbWhereClause))
-                throw new ArgumentException("Entity must have at least one [Key] property");
+            //if (string.IsNullOrEmpty(sbWhereClause))
+            //    throw new ArgumentException("Entity must have at least one [Key] property");
 
-            var sb = $"update {name} set {sbColumnList} where {sbWhereClause}";
+            //var sb = $"update {name} set {sbColumnList} where {sbWhereClause}";
 
-            return connection.Execute(sb, entityToUpdate, commandTimeout: commandTimeout, transaction: transaction) > 0;
+            //return connection.Execute(sb, entityToUpdate, commandTimeout: commandTimeout, transaction: transaction) > 0;
         }
 
         /// <summary>

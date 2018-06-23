@@ -40,6 +40,18 @@ public partial interface ISqlAdapter
     bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert);
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToUpdate"></param>
+    /// <param name="columnsToUpdate"></param>
+    /// <returns></returns>
+    bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate);
+
+    /// <summary>
     /// Adds the name of a column.
     /// </summary>
     /// <param name="sb">The string builder  to append to.</param>
@@ -86,6 +98,21 @@ public partial interface ISqlAdapter
     /// 
     /// </summary>
     bool SupportsSchemas { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <returns></returns>
+    string InsertQuery(TableInfo tableInfo);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="columnsToUpdate"></param>
+    /// <returns></returns>
+    string UpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate);
 
     /// <summary>
     /// 
@@ -151,6 +178,7 @@ public abstract class SqlAdapter
     ///// </summary>
     //public virtual string EscapeParameter => "@{1}";
 
+
     /// <summary>
     /// 
     /// </summary>
@@ -168,6 +196,45 @@ public abstract class SqlAdapter
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToUpdate"></param>
+    /// <param name="columnsToUpdate"></param>
+    /// <returns></returns>
+    public virtual bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate)
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <returns></returns>
+    public virtual string InsertQuery(TableInfo tableInfo)
+    {
+        return $"insert into { EscapeTableNamee(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); ";
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="columnsToUpdate"></param>
+    /// <returns></returns>
+    public virtual string UpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+    {
+        var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
+        return $"update {EscapeTableNamee(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}; ";
+        //return $"insert into { EscapeTableNamee(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); ";
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="tableInfo"></param>   
     /// <param name="whereClause"></param>
     /// <returns></returns>
@@ -175,11 +242,11 @@ public abstract class SqlAdapter
     {
         if (string.IsNullOrWhiteSpace(whereClause))
         {
-            return $"select count(*) from {EscapeTableNamee(tableInfo)}";
+            return $"select count(*) from {EscapeTableNamee(tableInfo)}; ";
         }
         else
         {
-            return $"select count(*) from {EscapeTableNamee(tableInfo)} where {whereClause}";
+            return $"select count(*) from {EscapeTableNamee(tableInfo)} where {whereClause}; ";
         }
     }
 
@@ -192,7 +259,7 @@ public abstract class SqlAdapter
     public virtual string DeleteQuery(TableInfo tableInfo, string whereClause)
     {
         var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"delete from {EscapeTableNamee(tableInfo)} where {wc}";
+        return $"delete from {EscapeTableNamee(tableInfo)} where {wc}; ";
     }
 
     /// <summary>
@@ -204,7 +271,7 @@ public abstract class SqlAdapter
     public virtual string ExistsQuery(TableInfo tableInfo, string whereClause)
     {
         var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"select exists (select 1 from {EscapeTableNamee(tableInfo)} where {wc})";
+        return $"select exists (select 1 from {EscapeTableNamee(tableInfo)} where {wc}); ";
     }
 
     /// <summary>
@@ -216,7 +283,7 @@ public abstract class SqlAdapter
     public virtual string GetQuery(TableInfo tableInfo, string whereClause)
     {
         var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"select {EscapeColumnList(tableInfo.SelectColumns)} from {EscapeTableNamee(tableInfo)} where {wc}";
+        return $"select {EscapeColumnList(tableInfo.SelectColumns)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
     }
 
 
@@ -248,7 +315,7 @@ public abstract class SqlAdapter
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns) => string.Join(",", columns.Select(ci => EscapeColumnn(ci.ColumnName)));
+    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => EscapeColumnn(ci.ColumnName)));
 
     /// <summary>
     /// 
@@ -262,7 +329,15 @@ public abstract class SqlAdapter
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public virtual string EscapeParameters(IEnumerable<ColumnInfo> columns) => string.Join(",", columns.Select(ci => EscapeParameter(ci.PropertyName)));
+    public virtual string EscapeParameters(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => EscapeParameter(ci.PropertyName)));
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="columns"></param>
+    /// <returns></returns>
+    public virtual string EscapeAssignmentList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
+
 
 }
 
@@ -300,7 +375,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
     /// <returns></returns>
     public override bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
     {
-        var cmd = new StringBuilder($"insert into { EscapeTableNamee(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); ");
+        var cmd = new StringBuilder(InsertQuery(tableInfo));
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
@@ -314,6 +389,49 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
             {
                 cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
             }
+
+            var multi = connection.QueryMultiple(cmd.ToString(), entityToInsert, transaction, commandTimeout);
+
+            var vals = multi.Read().ToList();
+
+            if (!vals.Any()) return false;
+
+            var rvals = ((IDictionary<string, object>)vals[0]);
+
+            foreach (var key in rvals.Keys)
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+            }
+
+            return true;
+        }
+        else
+        {
+            return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+        }
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToInsert"></param>
+    /// <param name="columnsToUpdate"></param>
+    /// <returns></returns>
+    public override bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert, IEnumerable<string> columnsToUpdate)
+    {
+        var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+
+        if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+        {
+            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi = connection.QueryMultiple(cmd.ToString(), entityToInsert, transaction, commandTimeout);
 
