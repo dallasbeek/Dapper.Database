@@ -126,66 +126,6 @@ namespace Dapper.Database
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="format"></param>
-        /// <param name="withSchema"></param>
-        /// <returns></returns>
-        public string GetTableName(string format, bool withSchema = false) =>
-            withSchema && !string.IsNullOrEmpty(SchemaName) ? string.Format(format, SchemaName) + "." : null + string.Format(format, TableName);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns></returns>
-        public string GetInsertColumns(string format) => string.Join(",",
-                ColumnInfos.Where(ci => !ci.ExcludeOnInsert)
-                .Select(ci => string.Format(format, ci.ColumnName)));
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string GetInsertParameters() => string.Join(",",
-                ColumnInfos.Where(ci => !ci.ExcludeOnInsert)
-                .Select(ci => string.Format("@{0}", ci.PropertyName)));
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<ColumnInfo> GetInsertGeneratedAndKey() => ColumnInfos.Where(ci => ci.IsGenerated && ci.IsKey);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="format"></param>
-        /// <param name="updateColumns"></param>
-        /// <returns></returns>
-        public string GetUpdateValues(string format, IEnumerable<string> updateColumns) => string.Join(",",
-            ColumnInfos.Where(ci => !ci.ExcludeOnUpdate && (updateColumns == null || !updateColumns.Any() || updateColumns.Contains(ci.PropertyName)))
-            .Select(ci => string.Format(format, ci.ColumnName, ci.PropertyName)));
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns></returns>
-        public string GetUpdateWhere(string format) => string.Join(" and ",
-                ColumnInfos.Where(ci => ci.IsKey)
-                .Select(ci => string.Format(format, ci.ColumnName, ci.PropertyName)));
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns></returns>
-        public string GetSelectColumns(string format) => string.Join(",",
-                ColumnInfos.Where(ci => !ci.ExcludeOnSelect)
-                .Select(ci => string.Format(format, ci.ColumnName)));
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
         public ColumnInfo GetSingleKey(string method)
@@ -217,7 +157,6 @@ namespace Dapper.Database
         /// <returns></returns>
         public IEnumerable<ColumnInfo> SelectColumns => ColumnInfos.Where(ci => !ci.ExcludeOnSelect);
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -229,6 +168,12 @@ namespace Dapper.Database
         /// </summary>
         /// <returns></returns>
         public IEnumerable<ColumnInfo> GeneratedColumns => ColumnInfos.Where(ci => ci.IsGenerated);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<PropertyInfo> PropertyList => ColumnInfos.Select(ci => ci.Property);
 
     }
 

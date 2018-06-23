@@ -10,6 +10,13 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="TestSuite.Async.cs" />
+    <Compile Remove="TestSuiteCountAsync.cs" />
+    <Compile Remove="TestSuiteDeleteAsync.cs" />
+    <Compile Remove="TestSuiteExistsAsync.cs" />
+    <Compile Remove="TestSuiteGetAsync.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\Dapper.Database\TypeExtensions.cs" />
     <None Remove="Test.DB.sdf" />
   </ItemGroup>

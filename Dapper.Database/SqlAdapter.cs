@@ -52,54 +52,6 @@ public partial interface ISqlAdapter
     bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate);
 
     /// <summary>
-    /// Adds the name of a column.
-    /// </summary>
-    /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    void AppendColumnName(StringBuilder sb, string columnName);
-
-    /// <summary>
-    /// Adds a column equality to a parameter.
-    /// </summary>
-    /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    void AppendColumnNameEqualsValue(StringBuilder sb, string columnName);
-
-    /// <summary>
-    /// Returns the table name for the database type
-    /// </summary>
-    /// <param name="tableName"></param>
-    /// <param name="schema"></param>
-    /// <returns></returns>
-    string FormatSchemaTable(string tableName, string schema);
-
-    /// <summary>
-    /// Returns the sql for testing for existence
-    /// </summary>
-    /// <returns>sql string</returns>
-    string GetExistsSql(string tableName, string whereClause);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    string EscapeTableName { get; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    string EscapeSqlIdentifier { get; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    string EscapeSqlAssignment { get; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    bool SupportsSchemas { get; }
-
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="tableInfo"></param>
@@ -229,7 +181,6 @@ public abstract class SqlAdapter
     {
         var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
         return $"update {EscapeTableNamee(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}; ";
-        //return $"insert into { EscapeTableNamee(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); ";
     }
 
     /// <summary>

@@ -100,306 +100,53 @@ namespace Dapper.Database.Extensions
             return tInfo;
         }
 
-        private static List<PropertyInfo> IgnoreInsertPropertiesCache(Type type)
-        {
-            if (IgnoreInsertProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo> pi))
-            {
-                return pi.ToList();
-            }
+        //public static IEnumerable<T> GetAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        //{
+        //    var type = typeof(T);
+        //    var cacheType = typeof(List<T>);
 
-            var ignoreInsertProperties = TypePropertiesCache(type).Where(p =>
-                p.GetCustomAttributes(true).Any(a =>
-                    a is IgnoreInsertAttribute
-                    || a is ReadOnlyAttribute
-                    || (a is DatabaseGeneratedAttribute && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)
-                )
-            ).ToList();
+        //    if (!GetQueries.TryGetValue(cacheType.TypeHandle, out string sql))
+        //    {
+        //        GetSingleKey<T>(nameof(GetAll));
+        //        var name = GetTableName(type, connection);
 
-            TypePropertiesCache(type).Where(p => p.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)).ToList();
+        //        var sbColumnList = GetSelectColumns(connection, type);
 
-            IgnoreInsertProperties[type.TypeHandle] = ignoreInsertProperties;
-            return ignoreInsertProperties;
-        }
+        //        sql = $"select {sbColumnList} from {name}";
+        //        GetQueries[cacheType.TypeHandle] = sql;
+        //    }
 
-        private static List<PropertyInfo> IgnoreUpdatePropertiesCache(Type type)
-        {
-            if (IgnoreUpdateProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo> pi))
-            {
-                return pi.ToList();
-            }
+        //    if (!type.IsInterface()) return connection.Query<T>(sql, null, transaction, commandTimeout: commandTimeout);
 
-            var ignoreUpdateProperties = TypePropertiesCache(type).Where(p =>
-                p.GetCustomAttributes(true).Any(a =>
-                    a is IgnoreUpdateAttribute
-                    || a is ReadOnlyAttribute
-                    || (a is DatabaseGeneratedAttribute && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)
-                )
-            ).ToList();
-
-            TypePropertiesCache(type).Where(p => p.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)).ToList();
-
-            IgnoreUpdateProperties[type.TypeHandle] = ignoreUpdateProperties;
-            return ignoreUpdateProperties;
-        }
-
-        private static List<PropertyInfo> IgnoreSelectPropertiesCache(Type type)
-        {
-            if (IgnoreSelectProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo> pi))
-            {
-                return pi.ToList();
-            }
-
-            var ignoreSelectProperties = TypePropertiesCache(type).Where(p =>
-                p.GetCustomAttributes(true).Any(a =>
-                    a is IgnoreSelectAttribute
-               )
-            ).ToList();
-
-            TypePropertiesCache(type).Where(p => p.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)).ToList();
-
-            IgnoreSelectProperties[type.TypeHandle] = ignoreSelectProperties;
-            return ignoreSelectProperties;
-        }
-
-        private static List<PropertyInfo> ExplicitKeyPropertiesCache(Type type)
-        {
-            if (ExplicitKeyProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo> pi))
-            {
-                return pi.ToList();
-            }
-
-            var explicitKeyProperties = TypePropertiesCache(type).Where(p =>
-                p.GetCustomAttributes(true).Any(a => a is KeyAttribute)
-                    && !p.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
-                    && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity)
-            ).ToList();
-
-            ExplicitKeyProperties[type.TypeHandle] = explicitKeyProperties;
-            return explicitKeyProperties;
-        }
-
-        private static List<PropertyInfo> KeyPropertiesCache(Type type)
-        {
-            if (KeyProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo> pi))
-            {
-                return pi.ToList();
-            }
-
-            var allProperties = TypePropertiesCache(type);
-
-            var keyProperties = allProperties.Where(p =>
-                p.GetCustomAttributes(true).Any(a => a is KeyAttribute)
-                    && p.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
-                    && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity)
-                ).ToList();
-
-            if (keyProperties.Count == 0)
-            {
-                var idProp = allProperties.Find(p => string.Equals(p.Name, "id", StringComparison.CurrentCultureIgnoreCase));
-                if (idProp != null && !idProp.GetCustomAttributes(true).Any(a => a is KeyAttribute))
-                {
-                    keyProperties.Add(idProp);
-                }
-            }
-
-            KeyProperties[type.TypeHandle] = keyProperties;
-            return keyProperties;
-        }
-
-        private static List<PropertyInfo> TypePropertiesCache(Type type)
-        {
-            if (TypeProperties.TryGetValue(type.TypeHandle, out IEnumerable<PropertyInfo> pis))
-            {
-                return pis.ToList();
-            }
-
-            var properties = type.GetProperties().Where(IsWriteable).ToArray();
-            TypeProperties[type.TypeHandle] = properties;
-            return properties.ToList();
-        }
-
-        private static bool IsWriteable(PropertyInfo pi)
-        {
-            var attributes = pi.GetCustomAttributes(typeof(IgnoreAttribute), false).AsList();
-            if (attributes.Count != 1) return true;
-
-            return false;
-        }
-
-        private static PropertyInfo GetSingleKey<T>(string method)
-        {
-            return GetSingleKey(typeof(T), method);
-        }
-
-        private static PropertyInfo GetSingleKey(Type type, string method)
-        {
-            var keys = KeyPropertiesCache(type);
-            var explicitKeys = ExplicitKeyPropertiesCache(type);
-            var keyCount = keys.Count + explicitKeys.Count;
-            if (keyCount > 1)
-                throw new DataException($"{method}<T> only supports an entity with a single [Key] or [ExplicitKey] property");
-            if (keyCount == 0)
-                throw new DataException($"{method}<T> only supports an entity with a [Key] or an [ExplicitKey] property");
-
-            return keys.Count > 0 ? keys[0] : explicitKeys[0];
-        }
-
-        private static string GetSelectColumns(IDbConnection connection, Type type)
-        {
-            var sbColumnList = new StringBuilder(null);
-            var allProperties = TypePropertiesCache(type);
-            var ignoreSelectProperties = IgnoreSelectPropertiesCache(type);
-            var allPropertiesExceptIgnored = allProperties.Except(ignoreSelectProperties).ToList();
-
-            var adapter = GetFormatter(connection);
-
-            for (var i = 0; i < allPropertiesExceptIgnored.Count; i++)
-            {
-                var property = allPropertiesExceptIgnored[i];
-                adapter.AppendColumnName(sbColumnList, property.Name);
-                if (i < allPropertiesExceptIgnored.Count - 1)
-                    sbColumnList.Append(", ");
-            }
-            return sbColumnList.ToString();
-        }
-
-        /// <summary>
-        /// Returns true if entity exists  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToCheck">Entity to check</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if found else false</returns>
-        public static bool Exists(this IDbConnection connection, object entityToCheck, IDbTransaction transaction = null, int? commandTimeout = null)
-        {
-            var type = entityToCheck.GetType();
-
-            var name = GetTableName(type, connection);
-
-            var adapter = GetFormatter(connection);
-
-            var keyProperties = KeyPropertiesCache(type);
-            var explicitKeyProperties = ExplicitKeyPropertiesCache(type);
-            if (keyProperties.Count == 0 && explicitKeyProperties.Count == 0)
-                throw new ArgumentException("Entity must have at least one [Key] or [ExplicitKey] property");
-
-            keyProperties.AddRange(explicitKeyProperties);
-
-            var sb = new StringBuilder();
-            for (var i = 0; i < keyProperties.Count; i++)
-            {
-                var property = keyProperties[i];
-                adapter.AppendColumnNameEqualsValue(sb, property.Name);
-                if (i < keyProperties.Count - 1)
-                    sb.Append(" AND ");
-            }
-
-            var sql = string.Format(adapter.GetExistsSql(name, sb.ToString()));
-
-            return connection.ExecuteScalar<int>(sql, entityToCheck, transaction, commandTimeout: commandTimeout) != 0;
-        }
-
-
-        /// <summary>
-        /// Returns a list of entites from table "Ts".  
-        /// Id of T must be marked with [Key] attribute.
-        /// Entities created from interfaces are tracked/intercepted for changes and used by the Update() extension
-        /// for optimal performance. 
-        /// </summary>
-        /// <typeparam name="T">Interface or type to create and populate</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>Entity of T</returns>
-        public static IEnumerable<T> GetAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
-        {
-            var type = typeof(T);
-            var cacheType = typeof(List<T>);
-
-            if (!GetQueries.TryGetValue(cacheType.TypeHandle, out string sql))
-            {
-                GetSingleKey<T>(nameof(GetAll));
-                var name = GetTableName(type, connection);
-
-                var sbColumnList = GetSelectColumns(connection, type);
-
-                sql = $"select {sbColumnList} from {name}";
-                GetQueries[cacheType.TypeHandle] = sql;
-            }
-
-            if (!type.IsInterface()) return connection.Query<T>(sql, null, transaction, commandTimeout: commandTimeout);
-
-            var result = connection.Query(sql);
-            var list = new List<T>();
-            foreach (IDictionary<string, object> res in result)
-            {
-                var obj = ProxyGenerator.GetInterfaceProxy<T>();
-                foreach (var property in TypePropertiesCache(type))
-                {
-                    var val = res[property.Name];
-                    if (val == null) continue;
-                    if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    {
-                        var genericType = Nullable.GetUnderlyingType(property.PropertyType);
-                        if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
-                    }
-                    else
-                    {
-                        property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
-                    }
-                }
-                ((IProxy)obj).IsDirty = false;   //reset change tracking and return
-                list.Add(obj);
-            }
-            return list;
-        }
+        //    var result = connection.Query(sql);
+        //    var list = new List<T>();
+        //    foreach (IDictionary<string, object> res in result)
+        //    {
+        //        var obj = ProxyGenerator.GetInterfaceProxy<T>();
+        //        foreach (var property in TypePropertiesCache(type))
+        //        {
+        //            var val = res[property.Name];
+        //            if (val == null) continue;
+        //            if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+        //            {
+        //                var genericType = Nullable.GetUnderlyingType(property.PropertyType);
+        //                if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
+        //            }
+        //            else
+        //            {
+        //                property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
+        //            }
+        //        }
+        //        ((IProxy)obj).IsDirty = false;   //reset change tracking and return
+        //        list.Add(obj);
+        //    }
+        //    return list;
+        //}
 
         /// <summary>
         /// Specify a custom table name mapper based on the POCO type name
         /// </summary>
         public static TableNameMapperDelegate TableNameMapper;
-
-        private static string GetTableName(Type type, IDbConnection connection)
-        {
-            var adapter = GetFormatter(connection);
-
-            if (TypeTableName.TryGetValue(type.TypeHandle, out string name)) return name;
-
-            string schema = null;
-
-            if (TableNameMapper != null)
-            {
-                name = TableNameMapper(type);
-            }
-            else
-            {
-                //NOTE: This as dynamic trick should be able to handle both our own Table-attribute as well as the one in EntityFramework 
-                var tableAttr = type
-#if NETSTANDARD1_3
-                    .GetTypeInfo()
-#endif
-                    .GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "TableAttribute") as dynamic;
-                if (tableAttr != null)
-                {
-                    name = tableAttr.Name;
-                    if (tableAttr.Schema != null)
-                    {
-                        schema = tableAttr.Schema;
-                    }
-                }
-                else
-                {
-                    name = type.Name + "s";
-                    if (type.IsInterface() && name.StartsWith("I"))
-                        name = name.Substring(1);
-                }
-            }
-
-            var formatted = adapter.FormatSchemaTable(name, schema);
-            TypeTableName[type.TypeHandle] = formatted;
-            return formatted;
-        }
 
         /// <summary>
         /// Inserts an entity into table "Ts" and returns identity id or number of inserted rows if inserting a list.
@@ -638,12 +385,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if none found</returns>
         public static bool DeleteAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-            var statement = $"delete from {name}";
-            return connection.Execute(statement, null, transaction, commandTimeout) > 0;
+            return connection.Delete<T>("1 = 1", null, transaction, commandTimeout);
         }
         #endregion
 
@@ -664,6 +406,20 @@ namespace Dapper.Database.Extensions
             var tinfo = TableInfoCache(type);
             return connection.ExecuteScalar<int>(adapter.CountQuery(tinfo, whereClause), parameters, transaction, commandTimeout);
         }
+
+
+        /// <summary>
+        /// Count of entity in table "Ts".
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static int CountAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return connection.Count<T>("1 = 1", null, transaction, commandTimeout);
+        }
+
         #endregion
 
         #region Exists Extensions
@@ -758,8 +514,6 @@ namespace Dapper.Database.Extensions
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
-            var name = tinfo.GetTableName(adapter.EscapeTableName, adapter.SupportsSchemas);
-
             var key = tinfo.GetSingleKey("Get");
             var dynParms = new DynamicParameters();
             dynParms.Add(key.ColumnName, primaryKey);
@@ -810,7 +564,7 @@ namespace Dapper.Database.Extensions
 
                 obj = ProxyGenerator.GetInterfaceProxy<T>();
 
-                foreach (var property in TypePropertiesCache(type))
+                foreach (var property in tinfo.PropertyList)
                 {
                     var val = res[property.Name];
                     if (val == null) continue;
