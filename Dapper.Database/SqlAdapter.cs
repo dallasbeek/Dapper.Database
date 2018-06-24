@@ -118,32 +118,6 @@ public abstract class SqlAdapter
     /// </summary>
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> UpdateQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 
-    ///// <summary>
-    ///// Returns the format for table name
-    ///// </summary>
-    //public virtual string EscapeTableName => "[{0}]";
-
-    ///// <summary>
-    ///// Returns the sql identifier format
-    ///// </summary>
-    //public virtual string EscapeSqlIdentifier => "[{0}]";
-
-    ///// <summary>
-    ///// Returns the escaped assignment format
-    ///// </summary>
-    //public virtual string EscapeSqlAssignment => "[{0}] = @{1}";
-
-    ///// <summary>
-    ///// Returns true if schemas are supported in database
-    ///// </summary>
-    //public virtual bool SupportsSchemas => true;
-
-    ///// <summary>
-    ///// Returns the escaped assignment format
-    ///// </summary>
-    //public virtual string EscapeParameter => "@{1}";
-
-
     /// <summary>
     /// 
     /// </summary>
@@ -181,8 +155,8 @@ public abstract class SqlAdapter
     public virtual string InsertQuery(TableInfo tableInfo)
     {
         return InsertQueries.Acquire(
-            tableInfo.ClassType.TypeHandle, 
-            () => true, 
+            tableInfo.ClassType.TypeHandle,
+            () => true,
             () => $"insert into { EscapeTableNamee(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); "
         );
     }
@@ -261,7 +235,8 @@ public abstract class SqlAdapter
         GetQueries.Acquire(
             tableInfo.ClassType.TypeHandle,
             () => cache && string.IsNullOrEmpty(whereClause),
-            () => {
+            () =>
+            {
                 var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
                 return $"select {EscapeColumnList(tableInfo.SelectColumns)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
             }
@@ -445,72 +420,154 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 /// </summary>
 public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
 {
+
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// 
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>true if inserted</returns>
-    public bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<ColumnInfo> keyProperties, object entityToInsert)
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToInsert"></param>
+    /// <returns></returns>
+    public override bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
     {
-        var cmd = $"insert into {tableName} ({columnList}) values ({parameterList})";
-        connection.Execute(cmd, entityToInsert, transaction, commandTimeout);
-        var r = connection.Query("select @@IDENTITY id", transaction: transaction, commandTimeout: commandTimeout).ToList();
+        var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-        if (r[0].id == null) return false;
-        var id = (int)r[0].id;
+        if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+        {
 
-        var propertyInfos = keyProperties.Select(p => p.Property).ToArray();
-        if (propertyInfos.Length == 0) return false;
+            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
 
-        var idProperty = propertyInfos[0];
-        idProperty.SetValue(entityToInsert, Convert.ChangeType(id, idProperty.PropertyType), null);
+            if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
+            {
+                selectcmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = @@IDENTITY;");
+            }
+            else
+            {
+                selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+            }
 
-        return propertyInfos.Length > 0;
+            var wasClosed = connection.State == ConnectionState.Closed;
+            if (wasClosed) connection.Open();
+
+            connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout);
+            var r = connection.Query(selectcmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
+
+            if (wasClosed) connection.Close();
+
+            var vals = r.ToList();
+
+            if (!vals.Any()) return false;
+
+            var rvals = ((IDictionary<string, object>)vals[0]);
+
+            foreach (var key in rvals.Keys)
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+            }
+
+            return true;
+        }
+        else
+        {
+            return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+        }
+
     }
 
     /// <summary>
-    /// Returns the schema and table name
+    /// 
     /// </summary>
-    /// <param name="tableName">The table</param>
-    /// <param name="schema">The Schema if it was specified</param>
-    /// <returns>schema + table</returns>
-    public string FormatSchemaTable(string tableName, string schema)
+    /// <param name="connection"></param>
+    /// <param name="transaction"></param>
+    /// <param name="commandTimeout"></param>
+    /// <param name="tableInfo"></param>
+    /// <param name="entityToInsert"></param>
+    /// <param name="columnsToUpdate"></param>
+    /// <returns></returns>
+    public override bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert, IEnumerable<string> columnsToUpdate)
     {
-        return $"[{tableName}]"; //CE doesn't support schema
+        var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+
+        if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+        {
+            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+
+            connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout);
+            var r = connection.Query(selectcmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
+
+            var vals = r.ToList();
+
+            if (!vals.Any()) return false;
+
+            var rvals = ((IDictionary<string, object>)vals[0]);
+
+            foreach (var key in rvals.Keys)
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+            }
+
+            return true;
+        }
+        else
+        {
+            return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+        }
     }
 
     /// <summary>
-    /// Returns sql existence statement
+    /// 
     /// </summary>
-    /// <returns>sql</returns>
-    public string GetExistsSql(string tableName, string whereClause) => $"IF EXISTS (SELECT 1 FROM {tableName} WHERE {whereClause}) SELECT 1 ELSE SELECT 0";
+    /// <param name="tableInfo"></param>
+    /// <param name="whereClause"></param>
+    /// <returns></returns>
+    public override string ExistsQuery(TableInfo tableInfo, string whereClause)
+    {
+        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
+        return $"select 1 from {EscapeTableNamee(tableInfo)} where {wc}; ";
+    }
+    ///// <summary>
+    ///// Returns the schema and table name
+    ///// </summary>
+    ///// <param name="tableName">The table</param>
+    ///// <param name="schema">The Schema if it was specified</param>
+    ///// <returns>schema + table</returns>
+    //public string FormatSchemaTable(string tableName, string schema)
+    //{
+    //    return $"[{tableName}]"; //CE doesn't support schema
+    //}
 
-    /// <summary>
-    /// Returns the format for table name
-    /// </summary>
-    public string EscapeTableName => "[{0}]";
+    ///// <summary>
+    ///// Returns sql existence statement
+    ///// </summary>
+    ///// <returns>sql</returns>
+    //public string GetExistsSql(string tableName, string whereClause) => $"IF EXISTS (SELECT 1 FROM {tableName} WHERE {whereClause}) SELECT 1 ELSE SELECT 0";
 
-    /// <summary>
-    /// Returns the sql identifier format
-    /// </summary>
-    public string EscapeSqlIdentifier => "[{0}]";
+    ///// <summary>
+    ///// Returns the format for table name
+    ///// </summary>
+    //public string EscapeTableName => "[{0}]";
 
-    /// <summary>
-    /// Returns the escaped assignment format
-    /// </summary>
-    public string EscapeSqlAssignment => "[{0}] = @{1}";
+    ///// <summary>
+    ///// Returns the sql identifier format
+    ///// </summary>
+    //public string EscapeSqlIdentifier => "[{0}]";
 
-    /// <summary>
-    /// Returns true if schemas are supported in database
-    /// </summary>
-    public bool SupportsSchemas => false;
+    ///// <summary>
+    ///// Returns the escaped assignment format
+    ///// </summary>
+    //public string EscapeSqlAssignment => "[{0}] = @{1}";
+
+    ///// <summary>
+    ///// Returns true if schemas are supported in database
+    ///// </summary>
+    //public bool SupportsSchemas => false;
 
 }
 
@@ -726,7 +783,6 @@ public partial class PostgresAdapter : SqlAdapter, ISqlAdapter
 /// </summary>
 public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 {
-
     /// <summary>
     /// 
     /// </summary>
@@ -818,93 +874,6 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
             return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
     }
-
-    ///// <summary>
-    ///// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
-    ///// </summary>
-    ///// <param name="connection">The connection to use.</param>
-    ///// <param name="transaction">The transaction to use.</param>
-    ///// <param name="commandTimeout">The command timeout to use.</param>
-    ///// <param name="tableName">The table to insert into.</param>
-    ///// <param name="columnList">The columns to set with this insert.</param>
-    ///// <param name="parameterList">The parameters to set for this insert.</param>
-    ///// <param name="keyProperties">The key columns in this table.</param>
-    ///// <param name="entityToInsert">The entity to insert.</param>
-    ///// <returns>true if inserted</returns>
-    //public bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<ColumnInfo> keyProperties, object entityToInsert)
-    //{
-    //    var cmd = $"INSERT INTO {tableName} ({columnList}) VALUES ({parameterList}); SELECT last_insert_rowid() id";
-    //    var multi = connection.QueryMultiple(cmd, entityToInsert, transaction, commandTimeout);
-
-    //    var id = multi.Read().First().id;
-    //    var propertyInfos = keyProperties.Select(p => p.Property).ToArray();
-    //    if (id != null && propertyInfos.Any())
-    //    {
-    //        var idp = propertyInfos[0];
-    //        idp.SetValue(entityToInsert, Convert.ChangeType(id, idp.PropertyType), null);
-    //    }
-
-    //    return id != null;
-    //}
-
-    /// <summary>
-    /// Adds the name of a column.
-    /// </summary>
-    /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnName(StringBuilder sb, string columnName)
-    {
-        sb.AppendFormat("\"{0}\"", columnName);
-    }
-
-    /// <summary>
-    /// Adds a column equality to a parameter.
-    /// </summary>
-    /// <param name="sb">The string builder  to append to.</param>
-    /// <param name="columnName">The column name.</param>
-    public void AppendColumnNameEqualsValue(StringBuilder sb, string columnName)
-    {
-        sb.AppendFormat("\"{0}\" = @{1}", columnName, columnName);
-    }
-
-    /// <summary>
-    /// Returns the schema and table name
-    /// </summary>
-    /// <param name="tableName">The table</param>
-    /// <param name="schema">The Schema if it was specified</param>
-    /// <returns>schema + table</returns>
-    public string FormatSchemaTable(string tableName, string schema)
-    {
-        return $"[{tableName}]"; //sqllite doesn't support schema
-    }
-
-    /// <summary>
-    /// Returns sql existence statement
-    /// </summary>
-    /// <returns>sql</returns>
-    public string GetExistsSql(string tableName, string whereClause) => $"SELECT 1 FROM {tableName} WHERE {whereClause}";
-
-    /// <summary>
-    /// Returns the format for table name
-    /// </summary>
-    public string EscapeTableName => "[{0}]";
-
-    /// <summary>
-    /// Returns the sql identifier format
-    /// </summary>
-    public string EscapeSqlIdentifier => "\"{0}\"";
-
-    /// <summary>
-    /// Returns the escaped assignment format
-    /// </summary>
-    public string EscapeSqlAssignment => "\"{0}\" = @{1}";
-
-    /// <summary>
-    /// Returns true if schemas are supported in database
-    /// </summary>
-    public bool SupportsSchemas => false;
-
-
 }
 
 /// <summary>

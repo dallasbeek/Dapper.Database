@@ -299,37 +299,39 @@ namespace Dapper.Tests.Database
         }
     }
 
-    //#if NET452
-    //    public class SqlCETestSuite : TestSuite
-    //    {
-    //        const string FileName = "Test.DB.sdf";
-    //        public static string ConnectionString => $"Data Source={FileName};";
-    //        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
+#if NET452
+    public class SqlCETestSuite : TestSuite
+    {
+        const string FileName = "Test.DB.sdf";
+        public static string ConnectionString => $"Data Source={FileName};";
+        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
 
-    //        static SqlCETestSuite()
-    //        {
-    //            if (File.Exists(FileName))
-    //            {
-    //                File.Delete(FileName);
-    //            }
-    //            var engine = new SqlCeEngine(ConnectionString);
-    //            engine.CreateDatabase();
-    //            using (var connection = new SqlCeConnection(ConnectionString))
-    //            {
-    //                connection.Open();
-    //                connection.Execute(@"CREATE TABLE Stuff (TheId int IDENTITY(1,1) not null, Name nvarchar(100) not null, Created DateTime null) ");
-    //                connection.Execute(@"CREATE TABLE People (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null) ");
-    //                connection.Execute(@"CREATE TABLE Users (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, Age int not null) ");
-    //                connection.Execute(@"CREATE TABLE Automobiles (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null) ");
-    //                connection.Execute(@"CREATE TABLE Results (Id int IDENTITY(1,1) not null, Name nvarchar(100) not null, [Order] int not null) ");
-    //                connection.Execute(@"CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null) ");
-    //                connection.Execute(@"CREATE TABLE ObjectY (ObjectYId int not null, Name nvarchar(100) not null) ");
-    //                connection.Execute(@"CREATE TABLE ObjectZ (Id int not null, Name nvarchar(100) not null) ");
-    //                connection.Execute(@"CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null) ");
-    //                connection.Execute(@"CREATE TABLE NullableDates (Id int IDENTITY(1,1) not null, DateValue DateTime null) ");
-    //            }
-    //            Console.WriteLine("Created database");
-    //        }
-    //    }
-    //#endif
+        static SqlCETestSuite()
+        {
+            if (File.Exists(FileName))
+            {
+                File.Delete(FileName);
+            }
+            var engine = new SqlCeEngine(ConnectionString);
+            engine.CreateDatabase();
+            using (var connection = new SqlCeConnection(ConnectionString))
+            {
+                connection.Open();
+                connection.Execute(@"CREATE TABLE Customers(
+	                Id int IDENTITY(1,1) not null,
+	                IId int null,
+	                GId nvarchar(100) null,
+	                SId nvarchar(100) null,
+	                FirstName nvarchar(100) null,
+	                LastName nvarchar(100) null,
+	                FullName nvarchar(100) null,
+	                Age int null,
+	                UpdatedOn datetime null,
+	                CreatedOn datetime null
+                );");
+            }
+            Console.WriteLine("Created database");
+        }
+    }
+#endif
 }

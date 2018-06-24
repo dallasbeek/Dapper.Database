@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyName>Dapper.Database</AssemblyName>
@@ -6,7 +6,7 @@
     <Title>Dapper.Database</Title>
     <Description>The official collection of get, insert, update and delete helpers for Dapper.net. Also handles lists of entities and optional "dirty" tracking of interface-based entities.</Description>
     <Authors>Sam Saffron;Johan Danforth</Authors>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;net451</TargetFrameworks>
+    <TargetFrameworks>net451;netstandard1.3;netstandard2.0</TargetFrameworks>
     <!-- TODO: Docs -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
