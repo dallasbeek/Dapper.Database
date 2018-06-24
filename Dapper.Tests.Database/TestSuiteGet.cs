@@ -60,23 +60,5 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [Fact]
-        [Trait("Category", "Exists")]
-        public void GetComposite()
-        {
-            using (var connection = GetOpenConnection())
-            {
-                var u1 = new CustomerComposite {  IId = 8, GId = Guid.NewGuid(), Age = 55, FirstName = "Emily" };
-                Assert.True(connection.Insert(u1));
-                var ur1 = connection.Get<CustomerComposite>(u1);
-                Assert.Equal(u1.IId, ur1.IId);
-                Assert.Equal(u1.GId, ur1.GId);
-                Assert.Equal(u1.FirstName, ur1.FirstName);
-                Assert.Equal(u1.Age, ur1.Age);
-                connection.Delete(u1);
-
-            }
-        }
-
     }
 }

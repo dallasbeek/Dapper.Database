@@ -22,7 +22,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 #endif
 
 
-namespace Dapper.Database.Extensions
+namespace Dapper.Database.Attributes
 {
 
 #if NETSTANDARD1_3 || NETSTANDARD2_0 

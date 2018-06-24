@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 
 using Dapper.Database.Extensions;
+using Dapper.Database.Attributes;
 using Dapper;
 using Xunit;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,7 +25,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
 #endif
         public int Id { get; set; }
         [IgnoreInsert]
@@ -36,7 +37,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Computed )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Computed )]
 #endif
         public string FullName { get; set; }
         [ReadOnly]
@@ -67,7 +68,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
 #endif
         int Id { get; set; }
         string FirstName { get; set; }
@@ -90,7 +91,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
 #endif
         public int Id { get; set; }
 
@@ -107,7 +108,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Computed )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Computed )]
 #endif
         public string FullName { get; set; }
 
@@ -131,7 +132,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
 #endif
         public short Id { get; set; }
         public string FirstName { get; set; }
@@ -174,7 +175,7 @@ namespace Dapper.Tests.Database
 #if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 #else
-        [Dapper.Database.Extensions.DatabaseGenerated( Dapper.Database.Extensions.DatabaseGeneratedOption.Identity )]
+        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
 #endif
         [Column( "Name" )]
         public string ComputedName { get; set; }

@@ -7,6 +7,8 @@ using Xunit;
 using Xunit.Sdk;
 using Dapper.Database.Extensions;
 using MySql.Data.MySqlClient;
+using System.Linq;
+using System.Collections.Generic;
 
 #if NET452
 using System.Data.SqlServerCe;
@@ -90,6 +92,121 @@ namespace Dapper.Tests.Database
             }
         }
 #endif
+
+        [Fact]
+        [Trait("Category", "Exists")]
+        public void GetComposite()
+        {
+            using (var connection = GetConnection())
+            {
+                var u1 = new CustomerComposite { IId = 8, GId = Guid.NewGuid(), Age = 55, FirstName = "Emily" };
+                Assert.True(connection.Insert(u1));
+                var ur1 = connection.Get<CustomerComposite>(u1);
+                Assert.Equal(u1.IId, ur1.IId);
+                Assert.Equal(u1.GId, ur1.GId);
+                Assert.Equal(u1.FirstName, ur1.FirstName);
+                Assert.Equal(u1.Age, ur1.Age);
+                connection.Delete(u1);
+
+            }
+        }
+
+
+        [Fact]
+        public void ComputedAttribute()
+        {
+            using (var connection = GetConnection())
+            {
+                var u1 = new CustomerAttribute { FirstName = "Jim", LastName = "Bob", FullName = "Ignored On Insert or Update" };
+                Assert.True(connection.Insert(u1));
+                Assert.Equal(" Bob", u1.FullName);
+
+                var obj = connection.Get<CustomerAttribute>(u1.Id);
+                Assert.Equal(" Bob", obj.FullName);
+
+                u1.LastName = "This should not be changed";
+                Assert.True(connection.Update(u1));
+                Assert.Equal("Jim Bob", u1.FullName);
+
+                obj = connection.Get<CustomerAttribute>(u1.Id);
+                Assert.Equal("Jim Bob", obj.FullName);
+            }
+        }
+
+
+        /// <summary>
+        /// Tests for issue #351 
+        /// </summary>
+        [Fact]
+        public void InsertGetUpdateDeleteWithExplicitKey()
+        {
+            using (var connection = GetConnection())
+            {
+                var guid = Guid.NewGuid().ToString();
+                var o1 = new CustomerStringId { SId = guid, FirstName = "Foo" };
+                var originalxCount = connection.Query<long>("Select Count(*) From Customers").First();
+                connection.Insert(o1);
+                var list1 = connection.Query<CustomerStringId>("select * from Customers").ToList();
+                Assert.Equal(list1.Count, originalxCount + 1);
+                o1 = connection.Get<CustomerStringId>(guid);
+                Assert.Equal(o1.SId, guid);
+                o1.FirstName = "Bar";
+                connection.Update(o1);
+                o1 = connection.Get<CustomerStringId>(guid);
+                Assert.Equal("Bar", o1.FirstName);
+                connection.Delete(o1);
+                o1 = connection.Get<CustomerStringId>(guid);
+                Assert.Null(o1);
+
+                const int id = 42;
+                var o2 = new CustomerIntegerId { IId = id, FirstName = "Foo" };
+                var originalyCount = connection.Query<int>("Select Count(*) From Customers").First();
+                connection.Insert(o2);
+                var list2 = connection.Query<CustomerIntegerId>("select * from Customers").ToList();
+                Assert.Equal(list2.Count, originalyCount + 1);
+                o2 = connection.Get<CustomerIntegerId>(id);
+                Assert.Equal(o2.IId, id);
+                o2.FirstName = "Bar";
+                connection.Update(o2);
+                o2 = connection.Get<CustomerIntegerId>(id);
+                Assert.Equal("Bar", o2.FirstName);
+                connection.Delete(o2);
+                o2 = connection.Get<CustomerIntegerId>(id);
+                Assert.Null(o2);
+            }
+        }
+
+
+        [Fact]
+        public void BuilderSelectClause()
+        {
+            using (var connection = GetConnection())
+            {
+                var rand = new Random(8675309);
+                var data = new List<CustomerProxy>();
+                for (int i = 0; i < 100; i++)
+                {
+                    var nU = new CustomerProxy { Age = rand.Next(70), Id = i, FirstName = Guid.NewGuid().ToString() };
+                    data.Add(nU);
+                    connection.Insert(nU);
+                }
+
+                var builder = new SqlBuilder();
+                var justId = builder.AddTemplate("SELECT /**select**/ FROM Customers");
+                var all = builder.AddTemplate("SELECT FirstName, /**select**/, Age FROM Customers");
+
+                builder.Select("Id");
+
+                var ids = connection.Query<long>(justId.RawSql, justId.Parameters);
+                var users = connection.Query<CustomerProxy>(all.RawSql, all.Parameters);
+
+                foreach (var u in data)
+                {
+                    if (!ids.Any(i => u.Id == i)) throw new Exception("Missing ids in select");
+                    if (!users.Any(a => a.Id == u.Id && a.FirstName == u.FirstName && a.Age == u.Age)) throw new Exception("Missing users in select");
+                }
+            }
+        }
     }
 
     //public class MySqlServerTestSuite : TestSuite
@@ -151,35 +268,36 @@ namespace Dapper.Tests.Database
     //    }
     //}
 
-    //public class SQLiteTestSuite : TestSuite
-    //{
-    //    private const string FileName = "Test.DB.sqlite";
-    //    public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
-    //    public override IDbConnection GetConnection () => new SqliteConnection( ConnectionString );
+    public class SQLiteTestSuite : TestSuite
+    {
+        private const string FileName = "Test.DB.sqlite";
+        public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
+        public override IDbConnection GetConnection() => new SqliteConnection(ConnectionString);
 
-    //    static SQLiteTestSuite ()
-    //    {
-    //        if ( File.Exists( FileName ) )
-    //        {
-    //            File.Delete( FileName );
-    //        }
-    //        using ( var connection = new SqliteConnection( ConnectionString ) )
-    //        {
-    //            connection.Open();
-    //            connection.Execute( "CREATE TABLE Stuff (TheId integer primary key autoincrement not null, Name nvarchar(100) not null, Created DateTime null) " );
-    //            connection.Execute( "CREATE TABLE People (Id integer primary key autoincrement not null, Name nvarchar(100) not null) " );
-    //            connection.Execute( "CREATE TABLE Users (Id integer primary key autoincrement not null, Name nvarchar(100) not null, Age int not null) " );
-    //            connection.Execute( "CREATE TABLE Automobiles (Id integer primary key autoincrement not null, Name nvarchar(100) not null) " );
-    //            connection.Execute( "CREATE TABLE Results (Id integer primary key autoincrement not null, Name nvarchar(100) not null, [Order] int not null) " );
-    //            connection.Execute( "CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null) " );
-    //            connection.Execute( "CREATE TABLE ObjectY (ObjectYId integer not null, Name nvarchar(100) not null) " );
-    //            connection.Execute( "CREATE TABLE ObjectZ (Id integer not null, Name nvarchar(100) not null) " );
-    //            connection.Execute( "CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null) " );
-    //            connection.Execute( "CREATE TABLE NullableDates (Id integer primary key autoincrement not null, DateValue DateTime) " );
-    //            connection.Execute( "CREATE TABLE ObjectQ (Id integer primary key autoincrement not null, IgnoreInsert nvarchar(100) null, IgnoreUpdate nvarchar(100) null, IgnoreSelect nvarchar(100) null, Computed nvarchar(100) DEFAULT 'Computed', Readonly nvarchar(100) DEFAULT 'Readonly');" );
-    //        }
-    //    }
-    //}
+        static SQLiteTestSuite()
+        {
+            if (File.Exists(FileName))
+            {
+                File.Delete(FileName);
+            }
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                connection.Open();
+                connection.Execute(@"CREATE TABLE Customers(
+	                Id integer primary key autoincrement not null,
+	                IId integer null,
+	                GId nvarchar(100) null,
+	                SId nvarchar(100) null,
+	                FirstName nvarchar(100) null,
+	                LastName nvarchar(100) null,
+	                FullName nvarchar(100) null,
+	                Age integer null,
+	                UpdatedOn datetime null,
+	                CreatedOn datetime null
+                );");
+            }
+        }
+    }
 
     //#if NET452
     //    public class SqlCETestSuite : TestSuite

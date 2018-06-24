@@ -128,48 +128,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-        /// <summary>
-        /// Tests for issue #351 
-        /// </summary>
-        [Fact]
-        public void InsertGetUpdateDeleteWithExplicitKey()
-        {
-            using (var connection = GetOpenConnection())
-            {
-                var guid = Guid.NewGuid().ToString();
-                var o1 = new CustomerStringId { SId = guid, FirstName = "Foo" };
-                var originalxCount = connection.Query<int>("Select Count(*) From Customers").First();
-                connection.Insert(o1);
-                var list1 = connection.Query<CustomerStringId>("select * from Customers").ToList();
-                Assert.Equal(list1.Count, originalxCount + 1);
-                o1 = connection.Get<CustomerStringId>(guid);
-                Assert.Equal(o1.SId, guid);
-                o1.FirstName = "Bar";
-                connection.Update(o1);
-                o1 = connection.Get<CustomerStringId>(guid);
-                Assert.Equal("Bar", o1.FirstName);
-                connection.Delete(o1);
-                o1 = connection.Get<CustomerStringId>(guid);
-                Assert.Null(o1);
-
-                const int id = 42;
-                var o2 = new CustomerIntegerId { IId = id, FirstName = "Foo" };
-                var originalyCount = connection.Query<int>("Select Count(*) From Customers").First();
-                connection.Insert(o2);
-                var list2 = connection.Query<CustomerIntegerId>("select * from Customers").ToList();
-                Assert.Equal(list2.Count, originalyCount + 1);
-                o2 = connection.Get<CustomerIntegerId>(id);
-                Assert.Equal(o2.IId, id);
-                o2.FirstName = "Bar";
-                connection.Update(o2);
-                o2 = connection.Get<CustomerIntegerId>(id);
-                Assert.Equal("Bar", o2.FirstName);
-                connection.Delete(o2);
-                o2 = connection.Get<CustomerIntegerId>(id);
-                Assert.Null(o2);
-            }
-        }
-
         [Fact]
         public void GetAllWithExplicitKey()
         {
@@ -440,6 +398,8 @@ namespace Dapper.Tests.Database
                 var value2 = connection.Get<ICustomer>(nd2.Id);
                 Assert.True(value2.UpdatedOn == null);
 
+                var valueset = connection.Fetch<ICustomer>("Id = @Id", new { nd1.Id });
+                Assert.Equal(new DateTime(2011, 07, 14), valueset.ToList()[0].UpdatedOn.Value);
             }
         }
 
@@ -475,36 +435,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [Fact]
-        public void BuilderSelectClause()
-        {
-            using (var connection = GetOpenConnection())
-            {
-                var rand = new Random(8675309);
-                var data = new List<CustomerProxy>();
-                for (int i = 0; i < 100; i++)
-                {
-                    var nU = new CustomerProxy { Age = rand.Next(70), Id = i, FirstName = Guid.NewGuid().ToString() };
-                    data.Add(nU);
-                    connection.Insert(nU);
-                }
-
-                var builder = new SqlBuilder();
-                var justId = builder.AddTemplate("SELECT /**select**/ FROM Customers");
-                var all = builder.AddTemplate("SELECT FirstName, /**select**/, Age FROM Customers");
-
-                builder.Select("Id");
-
-                var ids = connection.Query<int>(justId.RawSql, justId.Parameters);
-                var users = connection.Query<CustomerProxy>(all.RawSql, all.Parameters);
-
-                foreach (var u in data)
-                {
-                    if (!ids.Any(i => u.Id == i)) throw new Exception("Missing ids in select");
-                    if (!users.Any(a => a.Id == u.Id && a.FirstName == u.FirstName && a.Age == u.Age)) throw new Exception("Missing users in select");
-                }
-            }
-        }
 
         [Fact]
         public void BuilderTemplateWithoutComposition()
@@ -589,25 +519,6 @@ namespace Dapper.Tests.Database
 
                 var obj = connection.Get<CustomerAttribute>(u1.Id);
                 Assert.Null(obj.Age);
-            }
-        }
-
-        [Fact]
-        public void ComputedAttribute()
-        {
-            using (var connection = GetOpenConnection())
-            {
-                var u1 = new CustomerAttribute { FirstName = "Jim", LastName = "Bob", FullName = "Ignored On Insert or Update" };
-                Assert.True(connection.Insert(u1));
-
-                var obj = connection.Get<CustomerAttribute>(u1.Id);
-                Assert.Equal(" Bob", obj.FullName);
-
-                u1.LastName = "This should not be changed";
-                Assert.True(connection.Update(u1));
-
-                obj = connection.Get<CustomerAttribute>(u1.Id);
-                Assert.Equal("Jim Bob", obj.FullName);
             }
         }
 

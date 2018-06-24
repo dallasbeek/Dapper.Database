@@ -9,6 +9,7 @@ using System.Data;
 
 using Dapper;
 using Dapper.Database;
+using Dapper.Database.Attributes;
 
 #if NETSTANDARD1_3
 using DataException = System.InvalidOperationException;
@@ -36,6 +37,8 @@ namespace Dapper.Database
         /// <param name="tablenameMapper"></param>
         public TableInfo(Type type, TableNameMapperDelegate tablenameMapper)
         {
+            ClassType = type;
+
             if (tablenameMapper != null)
             {
                 TableName = TableNameMapper(type);
@@ -107,6 +110,11 @@ namespace Dapper.Database
             }
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Type ClassType { get; private set; }
 
         /// <summary>
         /// 
