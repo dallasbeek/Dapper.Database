@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Collections.Concurrent;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 using Dapper;
 using Dapper.Database;
@@ -98,6 +99,15 @@ public partial interface ISqlAdapter
     /// <param name="fromCache"></param>
     /// <returns></returns>
     string GetQuery(TableInfo tableInfo, string whereClause, bool fromCache = false);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    string FetchQuery(TableInfo tableInfo, string sql);
+
 }
 
 /// <summary>
@@ -105,6 +115,9 @@ public partial interface ISqlAdapter
 /// </summary>
 public abstract class SqlAdapter
 {
+    static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+    static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
     /// <summary>
     /// 
     /// </summary>
@@ -238,9 +251,39 @@ public abstract class SqlAdapter
             () =>
             {
                 var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-                return $"select {EscapeColumnList(tableInfo.SelectColumns)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
+                return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
             }
         );
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    public virtual string FetchQuery(TableInfo tableInfo, string sql)
+    {
+        if (sql.StartsWith(";"))
+            return sql.Substring(1);
+
+        if (!rxSelect.IsMatch(sql))
+        {
+            //var pd = PocoData.ForType(typeof(T));
+            var tableName = EscapeTableNamee(tableInfo);
+            var cols = EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName);
+
+            if (!rxFrom.IsMatch(sql))
+                sql = $"select {cols} from {tableName} {sql}";
+            else
+                sql = $"select {cols} {sql}";
+        }
+        return sql;
+    }
+
+
+    //var wc = string.IsNullOrWhiteSpace(sql) ? EscapeWhereList(tableInfo.KeyColumns) : sql;
+    //    return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
 
     /// <summary>
     /// 
@@ -268,8 +311,9 @@ public abstract class SqlAdapter
     /// 
     /// </summary>
     /// <param name="columns"></param>
+    /// <param name="tableName"></param> 
     /// <returns></returns>
-    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => EscapeColumnn(ci.ColumnName)));
+    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableNamee(tableName) + "." : "") + EscapeColumnn(ci.ColumnName)));
 
     /// <summary>
     /// 
@@ -325,7 +369,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -376,7 +420,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} ");
             cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi = connection.QueryMultiple(cmd.ToString(), entityToInsert, transaction, commandTimeout);
@@ -437,7 +481,7 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
 
-            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -494,7 +538,7 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} ");
             selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout);
@@ -798,7 +842,7 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -849,7 +893,7 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns)} from {EscapeTableNamee(tableInfo)} ");
+            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} ");
             cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi = connection.QueryMultiple(cmd.ToString(), entityToInsert, transaction, commandTimeout);

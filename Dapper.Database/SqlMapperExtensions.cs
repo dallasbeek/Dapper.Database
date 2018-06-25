@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Collections.Concurrent;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 using Dapper;
 using Dapper.Database;
@@ -544,17 +545,33 @@ namespace Dapper.Database.Extensions
         /// Returns a single entity by a single id from table "Ts".  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="whereClause">The where clause to delete</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T> Fetch<T>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+            var adapter = GetFormatter(connection);
+            return connection.Fetch<T>(adapter, sql, null, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static IEnumerable<T> Fetch<T>(this IDbConnection connection, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static IEnumerable<T> Fetch<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
             var adapter = GetFormatter(connection);
-            return connection.Fetch<T>(adapter, whereClause, parameters, transaction, commandTimeout);
+            return connection.Fetch<T>(adapter, sql, parameters, transaction, commandTimeout);
         }
+
 
 
         /// <summary>
@@ -562,23 +579,23 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Sql Connection</param>
         /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="whereClause">The where clause</param>
+        /// <param name="sql">The where clause</param>
         /// <param name="parameters">Parameters of the where clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <param name="fromCache">Cache the query.</param>
         /// <returns>True if records are deleted</returns>
-        private static IEnumerable<T> Fetch<T>(this IDbConnection connection, ISqlAdapter adapter, string whereClause, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
+        private static IEnumerable<T> Fetch<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
         {
             var type = typeof(T);
             var tinfo = TableInfoCache(type);
-            var sql = adapter.GetQuery(tinfo, whereClause, fromCache);
+            var selectSql = adapter.FetchQuery(tinfo, sql);
 
             T obj;
 
+            var result = connection.Query(selectSql, parameters, transaction, commandTimeout: commandTimeout);
             if (type.IsInterface())
             {
-                var result = connection.Query(sql, parameters, transaction, commandTimeout: commandTimeout);
 
                 if (result == null)
                     return null;
@@ -610,52 +627,9 @@ namespace Dapper.Database.Extensions
             }
             else
             {
-                return connection.Query<T>(sql, parameters, transaction, commandTimeout: commandTimeout);
+                return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout);
             }
         }
-
-        //public static IEnumerable<T> GetAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
-        //{
-        //    var type = typeof(T);
-        //    var cacheType = typeof(List<T>);
-
-        //    if (!GetQueries.TryGetValue(cacheType.TypeHandle, out string sql))
-        //    {
-        //        GetSingleKey<T>(nameof(GetAll));
-        //        var name = GetTableName(type, connection);
-
-        //        var sbColumnList = GetSelectColumns(connection, type);
-
-        //        sql = $"select {sbColumnList} from {name}";
-        //        GetQueries[cacheType.TypeHandle] = sql;
-        //    }
-
-        //    if (!type.IsInterface()) return connection.Query<T>(sql, null, transaction, commandTimeout: commandTimeout);
-
-        //    var result = connection.Query(sql);
-        //    var list = new List<T>();
-        //    foreach (IDictionary<string, object> res in result)
-        //    {
-        //        var obj = ProxyGenerator.GetInterfaceProxy<T>();
-        //        foreach (var property in TypePropertiesCache(type))
-        //        {
-        //            var val = res[property.Name];
-        //            if (val == null) continue;
-        //            if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-        //            {
-        //                var genericType = Nullable.GetUnderlyingType(property.PropertyType);
-        //                if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
-        //            }
-        //            else
-        //            {
-        //                property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
-        //            }
-        //        }
-        //        ((IProxy)obj).IsDirty = false;   //reset change tracking and return
-        //        list.Add(obj);
-        //    }
-        //    return list;
-        //}
 
         #endregion
         /// <summary>

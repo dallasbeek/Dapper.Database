@@ -398,7 +398,7 @@ namespace Dapper.Tests.Database
                 var value2 = connection.Get<ICustomer>(nd2.Id);
                 Assert.True(value2.UpdatedOn == null);
 
-                var valueset = connection.Fetch<ICustomer>("Id = @Id", new { nd1.Id });
+                var valueset = connection.Fetch<ICustomer>("where Id = @Id", new { nd1.Id });
                 Assert.Equal(new DateTime(2011, 07, 14), valueset.ToList()[0].UpdatedOn.Value);
             }
         }
