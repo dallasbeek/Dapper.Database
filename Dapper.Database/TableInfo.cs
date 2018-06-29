@@ -17,12 +17,8 @@ using DataException = System.InvalidOperationException;
 using System.Threading;
 #endif
 
-#if NETSTANDARD1_3 || NETSTANDARD2_0
-using Dapper.Database.Attributes.Schema;
-#else
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-#endif
 
 namespace Dapper.Database
 {

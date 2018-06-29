@@ -4,14 +4,11 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using Dapper.Mapper;
-using System.Text;
 using System.Collections.Concurrent;
 using System.Reflection.Emit;
-using System.Text.RegularExpressions;
 
 using Dapper;
-using Dapper.Database;
-using Dapper.Database.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 #if NETSTANDARD1_3
 using DataException = System.InvalidOperationException;
@@ -19,13 +16,6 @@ using DataException = System.InvalidOperationException;
 using System.Threading;
 #endif
 
-
-#if NETSTANDARD1_3 || NETSTANDARD2_0
-using Dapper.Database.Attributes.Schema;
-#else
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-#endif
 
 
 namespace Dapper.Database.Extensions

@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
-
-using Dapper.Database.Extensions;
 using Dapper.Database.Attributes;
-using Dapper;
-using Xunit;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
-
 
 namespace Dapper.Tests.Database
 {
