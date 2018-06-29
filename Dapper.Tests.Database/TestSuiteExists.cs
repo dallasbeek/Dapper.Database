@@ -38,9 +38,9 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerProxy { FirstName = "FetchMe" };
+                var u1 = new CustomerProxy { FirstName = "GetManyMe" };
                 Assert.True(connection.Insert(u1));
-                Assert.True(connection.Exists<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "FetchMe" }));
+                Assert.True(connection.Exists<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "GetManyMe" }));
                 Assert.False(connection.Exists<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "junk" }));
 
             }

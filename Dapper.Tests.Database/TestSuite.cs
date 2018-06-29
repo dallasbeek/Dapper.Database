@@ -129,19 +129,6 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        public void GetAllWithExplicitKey()
-        {
-            using (var connection = GetOpenConnection())
-            {
-                var guid = Guid.NewGuid().ToString();
-                var o1 = new CustomerStringId { SId = guid, FirstName = "Foo" };
-                connection.Insert(o1);
-
-                Assert.True(connection.CountAll<CustomerStringId>() >0);
-            }
-        }
-
-        [Fact]
         public void ShortIdentity()
         {
             using (var connection = GetOpenConnection())
@@ -383,7 +370,7 @@ namespace Dapper.Tests.Database
         /// Test for issue #933
         /// </summary>
         [Fact]
-        public void GetAndGetAllWithNullableValues()
+        public void GetAndGetManyWithNullableValues()
         {
             using (var connection = GetOpenConnection())
             {
@@ -398,7 +385,7 @@ namespace Dapper.Tests.Database
                 var value2 = connection.Get<ICustomer>(nd2.Id);
                 Assert.True(value2.UpdatedOn == null);
 
-                var valueset = connection.Fetch<ICustomer>("where Id = @Id", new { nd1.Id });
+                var valueset = connection.GetMany<ICustomer>("where Id = @Id", new { nd1.Id });
                 Assert.Equal(new DateTime(2011, 07, 14), valueset.ToList()[0].UpdatedOn.Value);
             }
         }
@@ -428,7 +415,6 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetOpenConnection())
             {
-                Assert.Null(connection.Get<ICustomer>(3));
                 CustomerProxy user = new CustomerProxy { FirstName = "Adamb", Age = 10 };
                 Assert.True(connection.Insert(user));
                 Assert.True(user.Id > 0);

@@ -106,7 +106,7 @@ public partial interface ISqlAdapter
     /// <param name="tableInfo"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    string FetchQuery(TableInfo tableInfo, string sql);
+    string GetManyQuery(TableInfo tableInfo, string sql);
 
 }
 
@@ -262,7 +262,7 @@ public abstract class SqlAdapter
     /// <param name="tableInfo"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    public virtual string FetchQuery(TableInfo tableInfo, string sql)
+    public virtual string GetManyQuery(TableInfo tableInfo, string sql)
     {
         if (sql.StartsWith(";"))
             return sql.Substring(1);
@@ -352,7 +352,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
     /// <param name="tableInfo"></param>
     /// <returns></returns>
     public override string EscapeTableNamee(TableInfo tableInfo) =>
-        !string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableNamee(tableInfo.SchemaName) + "." : null + EscapeTableNamee(tableInfo.TableName);
+        (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableNamee(tableInfo.SchemaName) + "." : null) + EscapeTableNamee(tableInfo.TableName);
 
     /// <summary>
     /// 

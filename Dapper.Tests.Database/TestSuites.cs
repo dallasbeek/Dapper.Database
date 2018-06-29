@@ -9,6 +9,7 @@ using Dapper.Database.Extensions;
 using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 #if NET452
 using System.Data.SqlServerCe;
@@ -29,7 +30,8 @@ namespace Dapper.Tests.Database
     }
 #endif
 
-    public class SqlServerTestSuite : TestSuite
+        [Trait("Category", "SqlServer")]
+    public partial class SqlServerTestSuite : TestSuite
     {
         private const string DbName = "tempdb";
         public static string ConnectionString =>
@@ -58,18 +60,25 @@ namespace Dapper.Tests.Database
 	                [UpdatedOn] [datetime] NULL,
 	                [CreatedOn] [datetime] NULL
                 );" );
-                dropTable( "Stuff" );
-                dropTable( "People" );
-                dropTable( "Users" );
-                dropTable( "Automobiles" );
-                dropTable( "Results" );
-                dropTable( "ObjectX" );
-                dropTable( "ObjectY" );
-                dropTable( "ObjectZ" );
-                dropTable( "GenericType" );
-                dropTable( "NullableDates" );
-                dropTable( "PkGuid" );
-                dropTable( "ObjectQ" );
+
+                var awfile = File.ReadAllText("sqlserverawlite.sql");
+                try
+                {
+                    connection.Execute(awfile);
+
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+
+                //var scripts = Regex.Split(awfile, @"^\w+GO$", RegexOptions.Multiline);
+                //foreach (var splitScript in scripts)
+                //{
+                //    connection.Execute( splitScript);
+                //}
+            
             }
         }
 

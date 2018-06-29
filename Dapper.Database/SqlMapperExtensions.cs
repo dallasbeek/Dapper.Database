@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using Dapper.Mapper;
 using System.Text;
 using System.Collections.Concurrent;
 using System.Reflection.Emit;
@@ -18,7 +19,10 @@ using DataException = System.InvalidOperationException;
 using System.Threading;
 #endif
 
-#if NET451
+
+#if NETSTANDARD1_3 || NETSTANDARD2_0
+using Dapper.Database.Attributes.Schema;
+#else
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
@@ -540,20 +544,19 @@ namespace Dapper.Database.Extensions
         }
         #endregion
 
-        #region Fetch Queries
+        #region GetMany Queries
         /// <summary>
-        /// Returns a single entity by a single id from table "Ts".  
+        /// Returns many entities of type T.  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static IEnumerable<T> Fetch<T>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        /// <returns>enumerable list of entities</returns>
+        public static IEnumerable<T> GetMany<T>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
             var adapter = GetFormatter(connection);
-            return connection.Fetch<T>(adapter, sql, null, transaction, commandTimeout);
+            return connection.GetMany<T>(adapter, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -565,14 +568,187 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static IEnumerable<T> Fetch<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static IEnumerable<T> GetMany<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
             var adapter = GetFormatter(connection);
-            return connection.Fetch<T>(adapter, sql, parameters, transaction, commandTimeout);
+            return connection.GetMany<T>(adapter, sql, parameters, transaction, commandTimeout);
         }
 
 
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T1> GetMany<T1, T2>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2>(sql, null, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T1> GetMany<T1, T2>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T1> GetMany<T1, T2, T3>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2, T3>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T1> GetMany<T1, T2, T3>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2, T3>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) }));
+        }
+
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T1> GetMany<T1, T2, T3, T4>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2, T3, T4>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<T1> GetMany<T1, T2, T3, T4>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2, T3, T4>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<TRet> GetMany<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2, TRet>(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<TRet> GetMany<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<TRet> GetMany<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<TRet> GetMany<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2,T3, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) }));
+        }
+
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<TRet> GetMany<T1, T2, T3,T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
+        }
+
+        /// <summary>
+        /// Returns a single entity by a single id from table "Ts".  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static IEnumerable<TRet> GetMany<T1, T2, T3,T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
+        }
+
+        private static string SplitOnArgument(IList<Type> types)
+        {
+            return string.Join(",", types.Select(t => TableInfoCache(t).GetSingleKey("SplitOnArgument").PropertyName));
+        }
 
         /// <summary>
         /// Performs a SQL Get
@@ -585,11 +761,11 @@ namespace Dapper.Database.Extensions
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <param name="fromCache">Cache the query.</param>
         /// <returns>True if records are deleted</returns>
-        private static IEnumerable<T> Fetch<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
+        private static IEnumerable<T> GetMany<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
         {
             var type = typeof(T);
             var tinfo = TableInfoCache(type);
-            var selectSql = adapter.FetchQuery(tinfo, sql);
+            var selectSql = adapter.GetManyQuery(tinfo, sql);
 
             T obj;
 
@@ -795,6 +971,12 @@ namespace Dapper.Database.Extensions
                 typeBuilder.DefineMethodOverride(currGetPropMthdBldr, getMethod);
                 typeBuilder.DefineMethodOverride(currSetPropMthdBldr, setMethod);
             }
+
+            /// <summary>
+            /// Dummy type for excluding from multi-map
+            /// </summary>
+            private class DontMap { /* hiding constructor */ }
+
         }
     }
 }

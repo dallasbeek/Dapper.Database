@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -7,13 +6,10 @@ using Dapper.Database.Extensions;
 using Dapper.Database.Attributes;
 using Dapper;
 using Xunit;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-#if NET452
-using System.Transactions;
-using System.ComponentModel.DataAnnotations;
-using System.Data.SqlServerCe;
-#endif
 
 
 namespace Dapper.Tests.Database
@@ -22,11 +18,7 @@ namespace Dapper.Tests.Database
     [Table( "Customers" )]
     public class CustomerAttribute
     {
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
-#endif
         public int Id { get; set; }
         [IgnoreInsert]
         public string FirstName { get; set; }
@@ -34,11 +26,7 @@ namespace Dapper.Tests.Database
         public string LastName { get; set; }
         [IgnoreSelect]
         public int? Age { get; set; }
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Computed )]
-#endif
         public string FullName { get; set; }
         [ReadOnly]
         public Guid  GId { get; set; }
@@ -65,11 +53,7 @@ namespace Dapper.Tests.Database
     public interface ICustomer
     {
         [Key]
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
-#endif
         int Id { get; set; }
         string FirstName { get; set; }
         int Age { get; set; }
@@ -88,11 +72,7 @@ namespace Dapper.Tests.Database
     [Table("Customers")]
     public class CustomerComposite
     {
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
-#endif
         public int Id { get; set; }
 
         [Key]
@@ -105,11 +85,7 @@ namespace Dapper.Tests.Database
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Computed )]
-#endif
         public string FullName { get; set; }
 
         public int? Age { get; set; }
@@ -129,11 +105,7 @@ namespace Dapper.Tests.Database
     public class CustomerShortId
     {
         [Key]
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
-#endif
         public short Id { get; set; }
         public string FirstName { get; set; }
         public DateTime? CreatedOn { get; set; }
@@ -172,11 +144,7 @@ namespace Dapper.Tests.Database
         public Guid GId { get; set; }
         public string FirstName { get; set; }
 
-#if NET452
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-#else
-        [Dapper.Database.Attributes.DatabaseGenerated( Dapper.Database.Attributes.DatabaseGeneratedOption.Identity )]
-#endif
         [Column( "Name" )]
         public string ComputedName { get; set; }
     }
