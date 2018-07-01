@@ -15,6 +15,7 @@
     <Compile Remove="TestSuiteDeleteAsync.cs" />
     <Compile Remove="TestSuiteExistsAsync.cs" />
     <Compile Remove="TestSuiteGetAsync.cs" />
+    <Compile Remove="TestSuiteGetPaged.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Dapper.Database\TypeExtensions.cs" />

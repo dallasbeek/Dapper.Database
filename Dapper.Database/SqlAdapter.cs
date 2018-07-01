@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Collections.Concurrent;
-using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 
 using Dapper;
@@ -15,11 +13,6 @@ using Dapper.Database;
 using DataException = System.InvalidOperationException;
 #else
 using System.Threading;
-#endif
-
-#if NET451
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 #endif
 
 
@@ -108,7 +101,37 @@ public partial interface ISqlAdapter
     /// <returns></returns>
     string GetManyQuery(TableInfo tableInfo, string sql);
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    PageQueries GetPageQueries(TableInfo tableInfo, long page, long pageSize, string sql);
 }
+
+/// <summary>
+/// 
+/// </summary>
+public class PageQueries
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public string CountQuery { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public string PageQuery { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public dynamic Arguments { get; set; }
+}
+
 
 /// <summary>
 /// Base class for SqlAdapter handlers - provides default/common handling for different database engines
@@ -117,6 +140,9 @@ public abstract class SqlAdapter
 {
     static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
     static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+    static readonly Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+    static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+    static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
 
     /// <summary>
     /// 
@@ -255,7 +281,6 @@ public abstract class SqlAdapter
             }
         );
 
-
     /// <summary>
     /// 
     /// </summary>
@@ -281,10 +306,54 @@ public abstract class SqlAdapter
         return sql;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    public PageQueries GetPageQueries(TableInfo tableInfo, long page, long pageSize, string sql)
+    {
+        var selectQuery = GetManyQuery(tableInfo, sql);
+        var m = rxColumns.Match(selectQuery);
+        var g = m.Groups[1];
+        var sqlSelectRemoved = selectQuery.Substring(g.Index);
 
-    //var wc = string.IsNullOrWhiteSpace(sql) ? EscapeWhereList(tableInfo.KeyColumns) : sql;
-    //    return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
+        var sqlCount = selectQuery.Substring(0, g.Index) + "COUNT(*) " + selectQuery.Substring(g.Index + g.Length);
+        if (rxDistinct.IsMatch(sqlSelectRemoved))
+        {
+            sqlCount = selectQuery.Substring(0, g.Index) + "COUNT(" + m.Groups[1].ToString().Trim() + ") " + selectQuery.Substring(g.Index + g.Length);
+        }
 
+        m = rxOrderBy.Match(sqlCount);
+
+        string sqlOrderBy = null;
+        if (m.Success)
+        {
+            g = m.Groups[0];
+            sqlOrderBy = g.ToString();
+            sqlCount = sqlCount.Substring(0, g.Index) + sqlCount.Substring(g.Index + g.Length);
+        }
+
+
+        var columnsOnly = rxOrderBy.Replace(sqlSelectRemoved, "", 1);
+
+        if (rxDistinct.IsMatch(columnsOnly))
+        {
+            columnsOnly = "calc_inner.* FROM (SELECT " + columnsOnly + ") calc_inner";
+        }
+
+        var sqlPage = string.Format("SELECT * FROM (SELECT ROW_NUMBER() OVER ({0}) calc_rn, {1}) calc_paged WHERE calc_rn>@calc_start AND calc_rn<=@calc_end",
+                      sqlOrderBy == null ? "ORDER BY (SELECT NULL)" : sqlOrderBy, columnsOnly);
+
+        return new PageQueries
+        {
+            PageQuery = selectQuery,
+            CountQuery = sqlCount
+        };
+    }
     /// <summary>
     /// 
     /// </summary>

@@ -23,14 +23,14 @@ namespace Dapper.Tests.Database
     // If we want to support a new provider, they need only be added here - not in multiple places
 
 #if !NET452
-    [XunitTestCaseDiscoverer( "Dapper.Tests.SkippableFactDiscoverer", "Dapper.Tests.Contrib" )]
-    [AttributeUsage( AttributeTargets.Method, AllowMultiple = false )]
+    [XunitTestCaseDiscoverer("Dapper.Tests.SkippableFactDiscoverer", "Dapper.Tests.Contrib")]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class SkippableFactAttribute : FactAttribute
     {
     }
 #endif
 
-        [Trait("Category", "SqlServer")]
+    [Trait("Category", "SqlServer")]
     public partial class SqlServerTestSuite : TestSuite
     {
         private const string DbName = "tempdb";
@@ -38,17 +38,17 @@ namespace Dapper.Tests.Database
             IsAppVeyor
                 ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
                 : $"Data Source=(local)\\Dallas;Initial Catalog={DbName};Integrated Security=True";
-        public override IDbConnection GetConnection () => new SqlConnection( ConnectionString );
+        public override IDbConnection GetConnection() => new SqlConnection(ConnectionString);
 
-        static SqlServerTestSuite ()
+        static SqlServerTestSuite()
         {
-            using ( var connection = new SqlConnection( ConnectionString ) )
+            using (var connection = new SqlConnection(ConnectionString))
             {
                 // ReSharper disable once AccessToDisposedClosure
-                Action<string> dropTable = name => connection.Execute( $"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; " );
+                Action<string> dropTable = name => connection.Execute($"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; ");
                 connection.Open();
-                dropTable( "Customers" );
-                connection.Execute( @"CREATE TABLE [dbo].[Customers](
+                dropTable("Customers");
+                connection.Execute(@"CREATE TABLE [dbo].[Customers](
 	                [Id] [int] IDENTITY(1,1) NOT NULL,
 	                [IId] [int] NULL,
 	                [GId] [uniqueidentifier] NULL,
@@ -59,26 +59,11 @@ namespace Dapper.Tests.Database
 	                [Age] [int] NULL,
 	                [UpdatedOn] [datetime] NULL,
 	                [CreatedOn] [datetime] NULL
-                );" );
+                );");
 
                 var awfile = File.ReadAllText("sqlserverawlite.sql");
-                try
-                {
-                    connection.Execute(awfile);
+                connection.Execute(awfile);
 
-                }
-                catch (Exception ex)
-                {
-
-                    throw;
-                }
-
-                //var scripts = Regex.Split(awfile, @"^\w+GO$", RegexOptions.Multiline);
-                //foreach (var splitScript in scripts)
-                //{
-                //    connection.Execute( splitScript);
-                //}
-            
             }
         }
 
