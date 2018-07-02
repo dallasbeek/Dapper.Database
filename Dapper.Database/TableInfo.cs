@@ -4,7 +4,6 @@ using System.Text;
 using System.Reflection;
 using System.Linq;
 using Dapper.Database.Extensions;
-using static Dapper.Database.Extensions.SqlMapperExtensions;
 using System.Data;
 
 using Dapper;
@@ -19,6 +18,7 @@ using System.Threading;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static Dapper.Database.Extensions.SqlMapperExtensions;
 
 namespace Dapper.Database
 {

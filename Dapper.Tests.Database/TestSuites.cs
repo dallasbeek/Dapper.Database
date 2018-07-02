@@ -23,7 +23,7 @@ namespace Dapper.Tests.Database
     // If we want to support a new provider, they need only be added here - not in multiple places
 
 #if !NET452
-    [XunitTestCaseDiscoverer("Dapper.Tests.SkippableFactDiscoverer", "Dapper.Tests.Contrib")]
+    [XunitTestCaseDiscoverer("Dapper.Database.SkippableFactDiscoverer", "Dapper.Tests.Database")]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class SkippableFactAttribute : FactAttribute
     {
@@ -270,25 +270,17 @@ namespace Dapper.Tests.Database
 
         static SQLiteTestSuite()
         {
-            if (File.Exists(FileName))
+            if (!File.Exists(FileName))
             {
-                File.Delete(FileName);
-            }
-            using (var connection = new SqliteConnection(ConnectionString))
-            {
-                connection.Open();
-                connection.Execute(@"CREATE TABLE Customers(
-	                Id integer primary key autoincrement not null,
-	                IId integer null,
-	                GId nvarchar(100) null,
-	                SId nvarchar(100) null,
-	                FirstName nvarchar(100) null,
-	                LastName nvarchar(100) null,
-	                FullName nvarchar(100) null,
-	                Age integer null,
-	                UpdatedOn datetime null,
-	                CreatedOn datetime null
-                );");
+                using (var connection = new SqliteConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    var awfile = File.ReadAllText("sqliteawlite.sql");
+                    connection.Execute(awfile);
+
+                    connection.Execute("delete from [Customers]");
+                }
             }
         }
     }
