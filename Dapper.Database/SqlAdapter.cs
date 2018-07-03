@@ -88,10 +88,10 @@ public partial interface ISqlAdapter
     /// 
     /// </summary>
     /// <param name="tableInfo"></param>
-    /// <param name="whereClause"></param>
+    /// <param name="sql"></param>
     /// <param name="fromCache"></param>
     /// <returns></returns>
-    string GetQuery(TableInfo tableInfo, string whereClause, bool fromCache = false);
+    string GetQuery(TableInfo tableInfo, string sql, bool fromCache = false);
 
     /// <summary>
     /// 
@@ -267,19 +267,36 @@ public abstract class SqlAdapter
     /// 
     /// </summary>
     /// <param name="tableInfo"></param>
-    /// <param name="whereClause"></param>
+    /// <param name="sql"></param>
     /// <param name="cache"></param>
     /// <returns></returns>
-    public virtual string GetQuery(TableInfo tableInfo, string whereClause, bool cache = false) =>
-        GetQueries.Acquire(
-            tableInfo.ClassType.TypeHandle,
-            () => cache && string.IsNullOrEmpty(whereClause),
-            () =>
-            {
-                var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-                return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableNamee(tableInfo)} where {wc}; ";
-            }
-        );
+    public virtual string GetQuery(TableInfo tableInfo, string sql, bool cache = false)
+    {
+        var q = sql ?? "";
+
+        if (q.StartsWith(";"))
+            return q.Substring(1);
+
+        if (!rxSelect.IsMatch(q))
+        {
+            return GetQueries.Acquire(
+                tableInfo.ClassType.TypeHandle,
+                () => cache && string.IsNullOrEmpty(q),
+                () =>
+                {
+                    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+
+                    if (!rxFrom.IsMatch(q))
+                        return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableNamee(tableInfo)} {wc}";
+                    else
+                       return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                }
+            );
+
+        }
+        return sql;
+
+    }
 
     /// <summary>
     /// 
@@ -382,7 +399,7 @@ public abstract class SqlAdapter
     /// <param name="columns"></param>
     /// <param name="tableName"></param> 
     /// <returns></returns>
-    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableNamee(tableName) + "." : "") + EscapeColumnn(ci.ColumnName)));
+    public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableNamee(tableName) + "." : "") + EscapeColumnn(ci.ColumnName) + (ci.ColumnName != ci.PropertyName ? " AS " + EscapeColumnn(ci.PropertyName) : "")));
 
     /// <summary>
     /// 

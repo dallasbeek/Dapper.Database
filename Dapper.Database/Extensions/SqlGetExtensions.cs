@@ -28,7 +28,7 @@ namespace Dapper.Database.Extensions
 
         #region Get Queries
         /// <summary>
-        /// Returns a single entity by a single id from table.  
+        /// Returns a single entity of type 'T'.  
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -47,7 +47,7 @@ namespace Dapper.Database.Extensions
         }
 
         /// <summary>
-        /// Returns a single entity by a single id from table.  
+        /// Returns a single entity of type 'T'.  
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -64,11 +64,11 @@ namespace Dapper.Database.Extensions
             var dynParms = new DynamicParameters();
             dynParms.Add(key.ColumnName, primaryKey);
 
-            return connection.Get<T>(adapter, null, dynParms, transaction, commandTimeout);
+            return connection.Get<T>(adapter, null, dynParms, transaction, commandTimeout, true);
         }
 
         /// <summary>
-        /// Returns a single entity by a single id from table.  
+        /// Returns a single entity of type 'T'.  
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -85,7 +85,163 @@ namespace Dapper.Database.Extensions
         }
 
         /// <summary>
-        /// Returns a single entity by a single id from table.  
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static T1 Get<T1, T2>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return connection.Query<T1, T2>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static T1 Get<T1, T2, T3>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
+        {
+            return connection.Query<T1, T2, T3>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static T1 Get<T1, T2, T3>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3: class
+        {
+            return connection.Query<T1, T2, T3>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static T1 Get<T1, T2, T3, T4>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return connection.Query<T1, T2, T3, T4>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static  T1 Get<T1, T2, T3, T4>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return connection.Query<T1, T2, T3, T4>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
+        {
+            return connection.Query<T1, T2, TRet>(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type T.  
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -102,39 +258,41 @@ namespace Dapper.Database.Extensions
             var tinfo = TableInfoCache(type);
             var selectSql = adapter.GetQuery(tinfo, sql, fromCache);
 
-            T obj;
+            return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
 
-            if (type.IsInterface())
-            {
-                var res = connection.Query(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault() as IDictionary<string, object>;
+            //T obj;
 
-                if (res == null)
-                    return null;
+            //if (type.IsInterface())
+            //{
+            //    var res = connection.Query(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault() as IDictionary<string, object>;
 
-                obj = ProxyGenerator.GetInterfaceProxy<T>();
+            //    if (res == null)
+            //        return null;
 
-                foreach (var property in tinfo.PropertyList)
-                {
-                    var val = res[property.Name];
-                    if (val == null) continue;
-                    if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    {
-                        var genericType = Nullable.GetUnderlyingType(property.PropertyType);
-                        if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
-                    }
-                    else
-                    {
-                        property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
-                    }
-                }
+            //    obj = ProxyGenerator.GetInterfaceProxy<T>();
 
-                ((IProxy)obj).IsDirty = false;   //reset change tracking and return
-            }
-            else
-            {
-                obj = connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
-            }
-            return obj;
+            //    foreach (var property in tinfo.PropertyList)
+            //    {
+            //        var val = res[property.Name];
+            //        if (val == null) continue;
+            //        if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            //        {
+            //            var genericType = Nullable.GetUnderlyingType(property.PropertyType);
+            //            if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
+            //        }
+            //        else
+            //        {
+            //            property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
+            //        }
+            //    }
+
+            //    ((IProxy)obj).IsDirty = false;   //reset change tracking and return
+            //}
+            //else
+            //{
+            //    obj = connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
+            //}
+            //return obj;
         }
         #endregion
 

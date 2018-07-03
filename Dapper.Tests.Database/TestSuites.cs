@@ -10,6 +10,7 @@ using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Dapper;
 
 #if NET452
 using System.Data.SqlServerCe;
@@ -30,7 +31,8 @@ namespace Dapper.Tests.Database
     }
 #endif
 
-    [Trait("Category", "SqlServer")]
+    [Trait("Provider", "SqlServer")]
+    [Provider(Provider.SqlServer)]
     public partial class SqlServerTestSuite : TestSuite
     {
         private const string DbName = "tempdb";
@@ -38,17 +40,28 @@ namespace Dapper.Tests.Database
             IsAppVeyor
                 ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
                 : $"Data Source=(local)\\Dallas;Initial Catalog={DbName};Integrated Security=True";
-        public override IDbConnection GetConnection() => new SqlConnection(ConnectionString);
+
+        public override IDbConnection GetConnection()
+        {
+            if (_skip) throw new SkipTestException("Skipping Sql Server Tests - no server.");
+            return new SqlConnection(ConnectionString);
+        }
+
+        public Provider GetProvider() => Provider.SqlServer;
+
+        private static readonly bool _skip;
 
         static SqlServerTestSuite()
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            try
             {
-                // ReSharper disable once AccessToDisposedClosure
-                Action<string> dropTable = name => connection.Execute($"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; ");
-                connection.Open();
-                dropTable("Customers");
-                connection.Execute(@"CREATE TABLE [dbo].[Customers](
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    // ReSharper disable once AccessToDisposedClosure
+                    Action<string> dropTable = name => connection.Execute($"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; ");
+                    connection.Open();
+                    dropTable("Customers");
+                    connection.Execute(@"CREATE TABLE [dbo].[Customers](
 	                [Id] [int] IDENTITY(1,1) NOT NULL,
 	                [IId] [int] NULL,
 	                [GId] [uniqueidentifier] NULL,
@@ -61,27 +74,35 @@ namespace Dapper.Tests.Database
 	                [CreatedOn] [datetime] NULL
                 );");
 
-                var awfile = File.ReadAllText("sqlserverawlite.sql");
-                connection.Execute(awfile);
+                    var awfile = File.ReadAllText("sqlserverawlite.sql");
+                    connection.Execute(awfile);
 
+                }
+            }
+            catch (SqlException e)
+            {
+                if (e.Message.Contains("The server was not found "))
+                    _skip = true;
+                else
+                    throw;
             }
         }
 
 #if NET452
         [Fact]
-        public void TransactionScope ()
+        public void TransactionScope()
         {
-            using ( var txscope = new TransactionScope() )
+            using (var txscope = new TransactionScope())
             {
-                using ( var connection = GetConnection() )
+                using (var connection = GetConnection())
                 {
                     var c1 = new Car { FirstName = "one car" };
 
-                    Assert.True( connection.Insert( c1 ) );   //inser car within transaction
+                    Assert.True(connection.Insert(c1));   //inser car within transaction
 
                     txscope.Dispose();  //rollback
 
-                    Assert.Null( connection.Get<Car>( c1.Id ) );   //returns null - car with that id should not exist
+                    Assert.Null(connection.Get<Car>(c1.Id));   //returns null - car with that id should not exist
                 }
             }
         }
@@ -203,6 +224,7 @@ namespace Dapper.Tests.Database
         }
     }
 
+    //[Provider(Provider.SqlServer)]
     //public class MySqlServerTestSuite : TestSuite
     //{
     //    private const string DbName = "DapperContribTests";
@@ -262,48 +284,62 @@ namespace Dapper.Tests.Database
     //    }
     //}
 
+    [Trait("Provider", "SQLite")]
+    [Provider(Provider.SQLite)]
     public class SQLiteTestSuite : TestSuite
     {
         private const string FileName = "Test.DB.sqlite";
         public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
         public override IDbConnection GetConnection() => new SqliteConnection(ConnectionString);
 
+        public Provider GetProvider() => Provider.SqlCE;
+
         static SQLiteTestSuite()
         {
-            if (!File.Exists(FileName))
+            SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
+
+            //if (File.Exists(FileName))
+            //{
+            //    File.Delete(FileName);
+            //}
+
+            using (var connection = new SqliteConnection(ConnectionString))
             {
-                using (var connection = new SqliteConnection(ConnectionString))
+                if (!File.Exists(FileName))
                 {
                     connection.Open();
 
                     var awfile = File.ReadAllText("sqliteawlite.sql");
                     connection.Execute(awfile);
 
-                    connection.Execute("delete from [Customers]");
                 }
+                connection.Execute("delete from [Customers]");
             }
+
+
         }
     }
 
 #if NET452
+    [Trait("Provider", "SqlCE")]
+    [Provider(Provider.SqlCE)]
     public class SqlCETestSuite : TestSuite
     {
         const string FileName = "Test.DB.sdf";
         public static string ConnectionString => $"Data Source={FileName};";
         public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
 
+
         static SqlCETestSuite()
         {
-            if (File.Exists(FileName))
+            if (!File.Exists(FileName))
             {
-                File.Delete(FileName);
-            }
-            var engine = new SqlCeEngine(ConnectionString);
-            engine.CreateDatabase();
-            using (var connection = new SqlCeConnection(ConnectionString))
-            {
-                connection.Open();
-                connection.Execute(@"CREATE TABLE Customers(
+                var engine = new SqlCeEngine(ConnectionString);
+                engine.CreateDatabase();
+                using (var connection = new SqlCeConnection(ConnectionString))
+                {
+                    connection.Open();
+                    connection.Execute(@"CREATE TABLE Customers(
 	                Id int IDENTITY(1,1) not null,
 	                IId int null,
 	                GId nvarchar(100) null,
@@ -315,8 +351,33 @@ namespace Dapper.Tests.Database
 	                UpdatedOn datetime null,
 	                CreatedOn datetime null
                 );");
+
+                    var line = string.Empty;
+                    var commandText = string.Empty;
+                    var file = new StreamReader("sqlceawlite.sql");
+
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
+                        {
+                            connection.Execute(commandText);
+                            commandText = string.Empty;
+                        }
+                        else
+                        {
+                            commandText += "\r\n" + line;
+                        }
+                    }
+                }
+                Console.WriteLine("Created database");
             }
-            Console.WriteLine("Created database");
+            else
+            {
+                using (var connection = new SqlCeConnection(ConnectionString))
+                {
+                    connection.Execute("delete from [Customers]");
+                }
+            }
         }
     }
 #endif

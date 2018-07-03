@@ -18,7 +18,6 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
 
-
         [Fact]
         [Trait( "Category", "Count" )]
         public void CountEnumerable()

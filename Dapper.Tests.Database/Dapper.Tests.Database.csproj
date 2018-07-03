@@ -19,7 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Dapper.Database\TypeExtensions.cs" />
-    <None Remove="Test.DB.sdf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +66,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="sqlceawlite.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="sqlite3_64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -77,6 +79,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="sqlserverawlite.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test.DB.sdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test.DB.sqlite">

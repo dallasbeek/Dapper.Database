@@ -28,6 +28,8 @@ namespace Dapper.Tests.Database
             return connection;
         }
 
+        public bool NoDatabaseAvailable { get; protected set; }
+
         [Fact]
         public void TypeWithGenericParameterCanBeInserted()
         {
@@ -239,7 +241,7 @@ namespace Dapper.Tests.Database
             UpdateHelper(src => src.ToArray());
         }
 
-        [Fact]
+        [Fact(Skip = "Proxy Test")]
         public void UpdateList()
         {
             UpdateHelper(src => src.ToList());
@@ -273,7 +275,7 @@ namespace Dapper.Tests.Database
         }
 
 
-        [Fact]
+        [Fact(Skip = "Proxy Test")]
         public void InsertGetUpdate()
         {
             using (var connection = GetOpenConnection())
@@ -369,7 +371,7 @@ namespace Dapper.Tests.Database
         /// <summary>
         /// Test for issue #933
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Proxy Test")]
         public void GetAndGetManyWithNullableValues()
         {
             using (var connection = GetOpenConnection())
