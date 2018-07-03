@@ -17,26 +17,67 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-        [Fact]
-        [Trait( "Category", "Count" )]
-        public void CountEnumerable()
+        [ProviderFact]
+        [Trait("Category", "Count")]
+        public void CountAll()
         {
-            const int numberOfEntities = 10;
-
-            var users = new List<CustomerProxy>();
-            for (var i = 0; i < numberOfEntities; i++)
-                users.Add(new CustomerProxy { FirstName = "User " + i, Age = i });
-
             using (var connection = GetOpenConnection())
             {
-                connection.DeleteAll<CustomerProxy>();
-                var total = connection.Insert(users);
-
-                Assert.Equal(numberOfEntities, connection.Count<CustomerProxy>(null, null));
-                Assert.Equal(5, connection.Count<CustomerProxy>("Age > @age", new { age = 4 }));
+                Assert.Equal(295, connection.Count<Product>());
             }
-
         }
+
+        [ProviderFact]
+        [Trait("Category", "Count")]
+        public void CountWithWhereClause()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, connection.Count<Product>("where Color = 'Black'" ));
+            }
+        }
+
+
+        [ProviderFact]
+        [Trait("Category", "Count")]
+        public void CountWithWhereClauseParameter()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, connection.Count<Product>("where Color = @Color", new { Color = "Black" }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Count")]
+        public void CountWithSelectClause()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, connection.Count<Product>("select * from Product where Color = 'Black'"));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Count")]
+        public void CountWithSelectClauseParameter()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, connection.Count<Product>("select * from Product where Color = @Color", new { Color = "Black" }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Count")]
+        public void CountShortCircuit()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, connection.Count<Product>(";select count(*) from Product where Color = @Color", new { Color = "Black" }));
+            }
+        }
+
+
     }
 }

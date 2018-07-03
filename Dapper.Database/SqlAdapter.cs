@@ -138,11 +138,11 @@ public class PageQueries
 /// </summary>
 public abstract class SqlAdapter
 {
-    static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-    static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-    static readonly Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-    static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-    static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+    protected static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+    protected static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+    protected static readonly Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+    protected static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+    protected static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
 
     /// <summary>
     /// 
@@ -225,18 +225,25 @@ public abstract class SqlAdapter
     /// 
     /// </summary>
     /// <param name="tableInfo"></param>   
-    /// <param name="whereClause"></param>
+    /// <param name="sql"></param>
     /// <returns></returns>
-    public virtual string CountQuery(TableInfo tableInfo, string whereClause)
+    public virtual string CountQuery(TableInfo tableInfo, string sql)
     {
-        if (string.IsNullOrWhiteSpace(whereClause))
+        var q = sql ?? "";
+
+        if (q.StartsWith(";"))
+            return q.Substring(1);
+
+        if (!rxSelect.IsMatch(q))
         {
-            return $"select count(*) from {EscapeTableNamee(tableInfo)}; ";
+            if (!rxFrom.IsMatch(q))
+                return $"select count(*) from { EscapeTableNamee(tableInfo)} {q}";
+            else
+                return $"select count(*) {q}";
+
         }
-        else
-        {
-            return $"select count(*) from {EscapeTableNamee(tableInfo)} where {whereClause}; ";
-        }
+        return $"select count(*) from ({sql}) calc_innter";
+
     }
 
     /// <summary>
@@ -255,12 +262,26 @@ public abstract class SqlAdapter
     /// 
     /// </summary>
     /// <param name="tableInfo"></param>
-    /// <param name="whereClause"></param>
+    /// <param name="sql"></param>
     /// <returns></returns>
-    public virtual string ExistsQuery(TableInfo tableInfo, string whereClause)
+    public virtual string ExistsQuery(TableInfo tableInfo, string sql)
     {
-        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"select exists (select 1 from {EscapeTableNamee(tableInfo)} where {wc}); ";
+        var q = sql ?? "";
+
+        if (q.StartsWith(";"))
+            return q.Substring(1);
+
+        if (!rxSelect.IsMatch(q))
+        {
+            var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+
+            if (!rxFrom.IsMatch(q))
+                return $"select 1 where exists (select 1 from { EscapeTableNamee(tableInfo)} {wc})";
+            else
+                return $"select 1 where exists (select 1 {wc})";
+
+        }
+        return $"select 1 where exists ({sql})";
     }
 
     /// <summary>
@@ -289,7 +310,7 @@ public abstract class SqlAdapter
                     if (!rxFrom.IsMatch(q))
                         return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableNamee(tableInfo)} {wc}";
                     else
-                       return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                        return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
                 }
             );
 
@@ -297,6 +318,7 @@ public abstract class SqlAdapter
         return sql;
 
     }
+
 
     /// <summary>
     /// 
@@ -306,22 +328,48 @@ public abstract class SqlAdapter
     /// <returns></returns>
     public virtual string GetManyQuery(TableInfo tableInfo, string sql)
     {
-        if (sql.StartsWith(";"))
-            return sql.Substring(1);
+        var q = sql ?? "";
 
-        if (!rxSelect.IsMatch(sql))
+        if (q.StartsWith(";"))
+            return q.Substring(1);
+
+        if (!rxSelect.IsMatch(q))
         {
-            //var pd = PocoData.ForType(typeof(T));
-            var tableName = EscapeTableNamee(tableInfo);
-            var cols = EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName);
+            var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
 
-            if (!rxFrom.IsMatch(sql))
-                sql = $"select {cols} from {tableName} {sql}";
+            if (!rxFrom.IsMatch(q))
+                return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableNamee(tableInfo)} {wc}";
             else
-                sql = $"select {cols} {sql}";
+                return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
         }
         return sql;
+
     }
+
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    ///// <param name="tableInfo"></param>
+    ///// <param name="sql"></param>
+    ///// <returns></returns>
+    //public virtual string GetManyQuery(TableInfo tableInfo, string sql)
+    //{
+    //    if (sql.StartsWith(";"))
+    //        return sql.Substring(1);
+
+    //    if (!rxSelect.IsMatch(sql))
+    //    {
+    //        //var pd = PocoData.ForType(typeof(T));
+    //        var tableName = EscapeTableNamee(tableInfo);
+    //        var cols = EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName);
+
+    //        if (!rxFrom.IsMatch(sql))
+    //            sql = $"select {cols} from {tableName} {sql}";
+    //        else
+    //            sql = $"select {cols} {sql}";
+    //    }
+    //    return sql;
+    //}
 
     /// <summary>
     /// 
@@ -532,17 +580,6 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="tableInfo"></param>
-    /// <param name="whereClause"></param>
-    /// <returns></returns>
-    public override string ExistsQuery(TableInfo tableInfo, string whereClause)
-    {
-        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"if exists (select 1 from {EscapeTableNamee(tableInfo)} where {wc}) select 1 else select 0";
-    }
 }
 
 /// <summary>
@@ -650,55 +687,6 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
             return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="tableInfo"></param>
-    /// <param name="whereClause"></param>
-    /// <returns></returns>
-    public override string ExistsQuery(TableInfo tableInfo, string whereClause)
-    {
-        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"select 1 from {EscapeTableNamee(tableInfo)} where {wc}; ";
-    }
-    ///// <summary>
-    ///// Returns the schema and table name
-    ///// </summary>
-    ///// <param name="tableName">The table</param>
-    ///// <param name="schema">The Schema if it was specified</param>
-    ///// <returns>schema + table</returns>
-    //public string FormatSchemaTable(string tableName, string schema)
-    //{
-    //    return $"[{tableName}]"; //CE doesn't support schema
-    //}
-
-    ///// <summary>
-    ///// Returns sql existence statement
-    ///// </summary>
-    ///// <returns>sql</returns>
-    //public string GetExistsSql(string tableName, string whereClause) => $"IF EXISTS (SELECT 1 FROM {tableName} WHERE {whereClause}) SELECT 1 ELSE SELECT 0";
-
-    ///// <summary>
-    ///// Returns the format for table name
-    ///// </summary>
-    //public string EscapeTableName => "[{0}]";
-
-    ///// <summary>
-    ///// Returns the sql identifier format
-    ///// </summary>
-    //public string EscapeSqlIdentifier => "[{0}]";
-
-    ///// <summary>
-    ///// Returns the escaped assignment format
-    ///// </summary>
-    //public string EscapeSqlAssignment => "[{0}] = @{1}";
-
-    ///// <summary>
-    ///// Returns true if schemas are supported in database
-    ///// </summary>
-    //public bool SupportsSchemas => false;
-
 }
 
 /// <summary>

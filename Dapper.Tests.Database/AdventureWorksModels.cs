@@ -9,7 +9,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the Address table.
     /// </summary>
-	[Table("Address", Schema = "dbo")]
+	[Table("Address")]
     public partial class Address
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -35,7 +35,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the Customer table.
     /// </summary>
-	[Table("Customer", Schema = "dbo")]
+	[Table("Customer")]
     public partial class Customer
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -76,7 +76,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the CustomerAddress table.
     /// </summary>
-	[Table("CustomerAddress", Schema = "dbo")]
+	[Table("CustomerAddress")]
     public partial class CustomerAddress
     {
         [Column, Key]
@@ -94,7 +94,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the Product table.
     /// </summary>
-	[Table("Product", Schema = "dbo")]
+	[Table("Product")]
     public partial class Product
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -141,7 +141,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the ProductCategory table.
     /// </summary>
-	[Table("ProductCategory", Schema = "dbo")]
+	[Table("ProductCategory")]
     public partial class ProductCategory
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -161,7 +161,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the ProductDescription table.
     /// </summary>
-	[Table("ProductDescription", Schema = "dbo")]
+	[Table("ProductDescription")]
     public partial class ProductDescription
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -177,7 +177,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the ProductModel table.
     /// </summary>
-	[Table("ProductModel", Schema = "dbo")]
+	[Table("ProductModel")]
     public partial class ProductModel
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -197,7 +197,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the ProductModelProductDescription table.
     /// </summary>
-	[Table("ProductModelProductDescription", Schema = "dbo")]
+	[Table("ProductModelProductDescription")]
     public partial class ProductModelProductDescription
     {
         [Column, Key]
@@ -217,7 +217,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the SalesOrderDetail table.
     /// </summary>
-	[Table("SalesOrderDetail", Schema = "dbo")]
+	[Table("SalesOrderDetail")]
     public partial class SalesOrderDetail
     {
         [Column, Key]
@@ -243,7 +243,7 @@ namespace Dapper.Tests.Database
     /// <summary>
     /// A class which represents the SalesOrderHeader table.
     /// </summary>
-	[Table("SalesOrderHeader", Schema = "dbo")]
+	[Table("SalesOrderHeader")]
     public partial class SalesOrderHeader
     {
         [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

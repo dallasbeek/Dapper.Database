@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <TargetFrameworks>net452;netcoreapp2.0;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0;net452;netcoreapp2.0</TargetFrameworks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
@@ -15,6 +15,7 @@
     <Compile Remove="TestSuiteDeleteAsync.cs" />
     <Compile Remove="TestSuiteExistsAsync.cs" />
     <Compile Remove="TestSuiteGetAsync.cs" />
+    <Compile Remove="TestSuiteGetMany.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
   </ItemGroup>
   <ItemGroup>

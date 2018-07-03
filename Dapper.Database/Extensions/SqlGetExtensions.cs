@@ -73,7 +73,7 @@ namespace Dapper.Database.Extensions
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <param name="parameters">The parameters of the sql</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>the entity, else null</returns>
@@ -88,8 +88,8 @@ namespace Dapper.Database.Extensions
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">The parameters of the sql</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -102,7 +102,7 @@ namespace Dapper.Database.Extensions
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -115,7 +115,7 @@ namespace Dapper.Database.Extensions
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
@@ -129,7 +129,7 @@ namespace Dapper.Database.Extensions
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -142,7 +142,7 @@ namespace Dapper.Database.Extensions
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
@@ -157,7 +157,7 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -171,8 +171,8 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -186,7 +186,7 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -200,8 +200,8 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -216,7 +216,7 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="sql">The sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -230,8 +230,8 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -247,7 +247,7 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
         /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the where clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <param name="fromCache">Cache the query.</param>

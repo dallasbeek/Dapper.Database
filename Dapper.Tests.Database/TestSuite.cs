@@ -43,7 +43,7 @@ namespace Dapper.Tests.Database
                 };
                 connection.Insert(objectToInsert);
 
-                Assert.Equal(1, connection.CountAll<GenericType<string>>());
+                Assert.Equal(1, connection.Count<GenericType<string>>());
 
                 var objectsToInsert = new List<GenericType<string>>
                 {
@@ -61,7 +61,7 @@ namespace Dapper.Tests.Database
 
                 connection.Insert(objectsToInsert);
 
-                Assert.Equal(3, connection.CountAll<GenericType<string>>());
+                Assert.Equal(3, connection.Count<GenericType<string>>());
             }
         }
 
@@ -126,7 +126,7 @@ namespace Dapper.Tests.Database
                     FirstName = "Someone else"
                 };
                 connection.Insert(insertObject);
-                Assert.Equal(1, connection.CountAll<CustomerStringId>());
+                Assert.Equal(1, connection.Count<CustomerStringId>());
             }
         }
 
@@ -188,7 +188,7 @@ namespace Dapper.Tests.Database
             {
                 connection.DeleteAll<CustomerProxy>();
                 Assert.True(connection.Insert(new CustomerProxy { FirstName = "Adama", Age = 10 }));
-                Assert.True( connection.CountAll<CustomerProxy>() >0);
+                Assert.True( connection.Count<CustomerProxy>() >0);
             }
         }
 
@@ -387,7 +387,7 @@ namespace Dapper.Tests.Database
                 var value2 = connection.Get<ICustomer>(nd2.Id);
                 Assert.True(value2.UpdatedOn == null);
 
-                var valueset = connection.GetMany<ICustomer>("where Id = @Id", new { nd1.Id });
+                var valueset = connection.GetList<ICustomer>("where Id = @Id", new { nd1.Id });
                 Assert.Equal(new DateTime(2011, 07, 14), valueset.ToList()[0].UpdatedOn.Value);
             }
         }

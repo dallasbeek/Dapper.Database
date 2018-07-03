@@ -17,44 +17,83 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-        [Fact]
+        [ProviderFact]
         [Trait("Category", "Exists")]
-        public void Exists()
+        public void ExistsNoArgs()
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerProxy {FirstName= "Exists" };
-                Assert.True(connection.Insert(u1));
-                Assert.True(connection.Exists<CustomerProxy>(u1));
-                Assert.True(connection.Exists<CustomerProxy>(u1.Id));
-                Assert.False(connection.Exists<CustomerProxy>(-100));
-
+                Assert.True(connection.Exists<Product>());
             }
         }
 
-        [Fact]
+
+        [ProviderFact]
         [Trait("Category", "Exists")]
-        public void ExistsClauseQuery()
+        public void ExistsByEntity()
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerProxy { FirstName = "GetManyMe" };
-                Assert.True(connection.Insert(u1));
-                Assert.True(connection.Exists<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "GetManyMe" }));
-                Assert.False(connection.Exists<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "junk" }));
+                var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
+                Assert.True(connection.Exists(p));
 
+                p.ProductID = -1;
+                Assert.False(connection.Exists(p));
             }
         }
 
-        [Fact]
+        [ProviderFact]
         [Trait("Category", "Exists")]
-        public void ExistsComposite()
+        public void ExistsByIntegerId()
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerComposite {  IId = 8, GId = Guid.NewGuid() };
-                Assert.True(connection.Insert(u1));
-                Assert.True(connection.Exists<CustomerComposite>(u1));
+                Assert.True(connection.Exists<Product>(806));
+                Assert.False(connection.Exists<Product>(-1));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Exists")]
+        public void ExistsByGuidIdWhereClause()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(connection.Exists<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                Assert.False(connection.Exists<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Exists")]
+        public void ExistsPartialBySelect()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(connection.Exists<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 }));
+                Assert.False(connection.Exists<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = -1 }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Exists")]
+        public void ExistsBySelect()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(connection.Exists<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
+                Assert.False(connection.Exists<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = -1 }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "Exists")]
+        public void ExistsShortCircuitSemiColon()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True( connection.Exists<Product>("; select 1 AS ProductId"));
+                Assert.False(connection.Exists<Product>("; select 0 AS ProductId"));
             }
         }
 
