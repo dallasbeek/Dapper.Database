@@ -12,6 +12,7 @@
   <ItemGroup>
     <Compile Remove="TestSuite.Async.cs" />
     <Compile Remove="TestSuiteCountAsync.cs" />
+    <Compile Remove="TestSuiteDelete.cs" />
     <Compile Remove="TestSuiteDeleteAsync.cs" />
     <Compile Remove="TestSuiteExistsAsync.cs" />
     <Compile Remove="TestSuiteGetAsync.cs" />

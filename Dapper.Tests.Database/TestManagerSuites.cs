@@ -39,9 +39,9 @@ namespace Dapper.Tests.Database
         {
             using (var em = GetEntityManager())
             {
-                var cp = new CustomerProxy { FirstName = "Dallas" };
+                var cp = new PersonIdentity { FirstName = "Dallas" };
                 Assert.True(em.Insert(cp));
-                Assert.True(cp.Id > 0);
+                Assert.True(cp.IdentityId > 0);
             }
         }
 
@@ -49,11 +49,11 @@ namespace Dapper.Tests.Database
         public void InsertTransactionRollback()
         {
             var em = GetEntityManager();
-            var cp = new CustomerProxy { FirstName = "Dallas" };
+            var cp = new PersonIdentity { FirstName = "Dallas" };
             using (var trans = em.GetTransaction())
             {
                 Assert.True(em.Insert(cp));
-                Assert.True(cp.Id > 0);
+                Assert.True(cp.IdentityId > 0);
             }
             Assert.Null(em.Get(cp));
             em.Dispose();
@@ -64,11 +64,11 @@ namespace Dapper.Tests.Database
         public void InsertTransactionCommit()
         {
             var em = GetEntityManager();
-            var cp = new CustomerProxy { FirstName = "Dallas" };
+            var cp = new PersonIdentity { FirstName = "Dallas" };
             using (var trans = em.GetTransaction())
             {
                 Assert.True(em.Insert(cp));
-                Assert.True(cp.Id > 0);
+                Assert.True(cp.IdentityId > 0);
                 trans.Complete();
             }
             Assert.NotNull(em.Get(cp));

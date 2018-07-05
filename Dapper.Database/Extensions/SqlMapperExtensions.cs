@@ -92,56 +92,6 @@ namespace Dapper.Database.Extensions
         /// </summary>
         public static TableNameMapperDelegate TableNameMapper;
 
-        #region Insert Queries
-        /// <summary>
-        /// Inserts an entity into table "Ts" and returns identity id or number of inserted rows if inserting a list.
-        /// </summary>
-        /// <typeparam name="T">The type to insert.</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToInsert">Entity to insert, can be list of entities</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>the entity to insert or the list of entities</returns>
-        public static bool Insert<T>(this IDbConnection connection, T entityToInsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
-        {
-            var isList = false;
-
-            var type = typeof(T);
-
-            if (type.IsArray)
-            {
-                isList = true;
-                type = type.GetElementType();
-            }
-            else if (type.IsGenericType())
-            {
-                var typeInfo = type.GetTypeInfo();
-                bool implementsGenericIEnumerableOrIsGenericIEnumerable =
-                    typeInfo.ImplementedInterfaces.Any(ti => ti.IsGenericType() && ti.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
-                    typeInfo.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-
-                if (implementsGenericIEnumerableOrIsGenericIEnumerable)
-                {
-                    isList = true;
-                    type = type.GetGenericArguments()[0];
-                }
-            }
-
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            if (!isList)    //single entity
-            {
-                return adapter.Insert(connection, transaction, commandTimeout, tinfo, entityToInsert);
-            }
-            else
-            {
-                return connection.Execute(adapter.InsertQuery(tinfo), entityToInsert, transaction, commandTimeout) > 0;
-            }
-        }
-
-        #endregion
-
         #region Update Queries
         /// <summary>
         /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
