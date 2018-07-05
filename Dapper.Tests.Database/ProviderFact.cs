@@ -32,6 +32,7 @@ namespace Dapper.Tests.Database
     }
 
     [XunitTestCaseDiscoverer("Dapper.Tests.Database.ProviderFactDiscoverer", "Dapper.Tests.Database")]
+    [AttributeUsage(AttributeTargets.Method)]
     public class ProviderFactAttribute : FactAttribute
     {
 
