@@ -99,7 +99,7 @@ public partial interface ISqlAdapter
     /// <param name="tableInfo"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    string GetManyQuery(TableInfo tableInfo, string sql);
+    string GetListQuery(TableInfo tableInfo, string sql);
 
 
     /// <summary>
@@ -110,28 +110,8 @@ public partial interface ISqlAdapter
     /// <param name="pageSize"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    PageQueries GetPageQueries(TableInfo tableInfo, long page, long pageSize, string sql);
+    string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql);
 }
-
-/// <summary>
-/// 
-/// </summary>
-public class PageQueries
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    public string CountQuery { get; set; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public string PageQuery { get; set; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public dynamic Arguments { get; set; }
-}
-
 
 /// <summary>
 /// Base class for SqlAdapter handlers - provides default/common handling for different database engines
@@ -234,6 +214,13 @@ public abstract class SqlAdapter
         if (q.StartsWith(";"))
             return q.Substring(1);
 
+        var m = rxOrderBy.Match(q);
+
+        if (m.Success)
+        {
+            q = q.Replace(m.Groups[0].ToString(), "");
+        }
+
         if (!rxSelect.IsMatch(q))
         {
             if (!rxFrom.IsMatch(q))
@@ -242,7 +229,9 @@ public abstract class SqlAdapter
                 return $"select count(*) {q}";
 
         }
-        return $"select count(*) from ({sql}) calc_innter";
+
+
+        return $"select count(*) from ({q}) calc_inner";
 
     }
 
@@ -326,7 +315,7 @@ public abstract class SqlAdapter
     /// <param name="tableInfo"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    public virtual string GetManyQuery(TableInfo tableInfo, string sql)
+    public virtual string GetListQuery(TableInfo tableInfo, string sql)
     {
         var q = sql ?? "";
 
@@ -379,46 +368,29 @@ public abstract class SqlAdapter
     /// <param name="pageSize"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    public PageQueries GetPageQueries(TableInfo tableInfo, long page, long pageSize, string sql)
+    public virtual string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
     {
-        var selectQuery = GetManyQuery(tableInfo, sql);
+        var selectQuery = GetListQuery(tableInfo, sql);
+
         var m = rxColumns.Match(selectQuery);
         var g = m.Groups[1];
         var sqlSelectRemoved = selectQuery.Substring(g.Index);
+        var sqlOrderBy = "order by (select null)";
 
-        var sqlCount = selectQuery.Substring(0, g.Index) + "COUNT(*) " + selectQuery.Substring(g.Index + g.Length);
-        if (rxDistinct.IsMatch(sqlSelectRemoved))
-        {
-            sqlCount = selectQuery.Substring(0, g.Index) + "COUNT(" + m.Groups[1].ToString().Trim() + ") " + selectQuery.Substring(g.Index + g.Length);
-        }
+        var pageSkip = (page - 1) * pageSize;
 
-        m = rxOrderBy.Match(sqlCount);
+        m = rxOrderBy.Match(selectQuery);
 
-        string sqlOrderBy = null;
         if (m.Success)
         {
             g = m.Groups[0];
             sqlOrderBy = g.ToString();
-            sqlCount = sqlCount.Substring(0, g.Index) + sqlCount.Substring(g.Index + g.Length);
         }
 
+        return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
 
-        var columnsOnly = rxOrderBy.Replace(sqlSelectRemoved, "", 1);
-
-        if (rxDistinct.IsMatch(columnsOnly))
-        {
-            columnsOnly = "calc_inner.* FROM (SELECT " + columnsOnly + ") calc_inner";
-        }
-
-        var sqlPage = string.Format("SELECT * FROM (SELECT ROW_NUMBER() OVER ({0}) calc_rn, {1}) calc_paged WHERE calc_rn>@calc_start AND calc_rn<=@calc_end",
-                      sqlOrderBy == null ? "ORDER BY (SELECT NULL)" : sqlOrderBy, columnsOnly);
-
-        return new PageQueries
-        {
-            PageQuery = selectQuery,
-            CountQuery = sqlCount
-        };
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -580,6 +552,40 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+    {
+        var selectQuery = GetListQuery(tableInfo, sql);
+
+        var m = rxColumns.Match(selectQuery);
+        var g = m.Groups[1];
+        var sqlSelectRemoved = selectQuery.Substring(g.Index);
+        var sqlOrderBy = "order by (select null)";
+
+        var pageSkip = (page - 1) * pageSize;
+        var pageTake = pageSkip + pageSize;
+
+        m = rxOrderBy.Match(selectQuery);
+
+        if (m.Success)
+        {
+            g = m.Groups[0];
+            sqlOrderBy = g.ToString();
+        }
+
+        var columnsOnly = $"page_inner.* FROM (select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)}) page_inner";
+
+        return $"select * from (select  row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {pageSkip} and page_rn <= {pageTake}";
+
+    }
+
 }
 
 /// <summary>
@@ -686,6 +692,37 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
         {
             return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="sql"></param>
+    /// <returns></returns>
+    public virtual string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+    {
+        var selectQuery = GetListQuery(tableInfo, sql);
+
+        var m = rxColumns.Match(selectQuery);
+        var g = m.Groups[1];
+        var sqlSelectRemoved = selectQuery.Substring(g.Index);
+        var sqlOrderBy = string.Empty;
+
+        var pageSkip = (page - 1) * pageSize;
+
+        m = rxOrderBy.Match(selectQuery);
+
+        if (m.Success)
+        {
+            g = m.Groups[0];
+            sqlOrderBy = g.ToString();
+        }
+
+        return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} offset {pageSkip} rows fetch next {pageSize} rows only";
+
     }
 }
 

@@ -12,17 +12,17 @@ namespace Dapper.Database
         /// <summary>
         /// Current Page Requested
         /// </summary>
-        long CurrentPage { get; }
+        int CurrentPage { get; }
 
         /// <summary>
         /// Size of the Page Requested
         /// </summary>
-        long PageSize { get; }
+        int PageSize { get; }
 
         /// <summary>
         /// Total Matching records
         /// </summary>
-        long TotalCount { get; }
+        int TotalCount { get; }
     }
 
     /// <summary>
@@ -34,17 +34,17 @@ namespace Dapper.Database
         /// <summary>
         /// Current Page
         /// </summary>
-        public long CurrentPage { get; set; }
+        public int CurrentPage { get; set; }
 
         /// <summary>
         /// Page Size Requested
         /// </summary>
-        public long PageSize { get; set; }
+        public int PageSize { get; set; }
 
         /// <summary>
         /// Total count of matching records
         /// </summary>
-        public long TotalCount { get; set; }
+        public int TotalCount { get; set; }
 
         /// <summary>
         /// Constructor
@@ -53,7 +53,7 @@ namespace Dapper.Database
         /// <param name="currentPage"></param>
         /// <param name="pageSize"></param>
         /// <param name="totalCount"></param>
-        public PagedList(IEnumerable<T> source, long currentPage, long pageSize, long totalCount)
+        public PagedList(IEnumerable<T> source, int currentPage, int pageSize, int totalCount)
         {
             if (pageSize == 0)
                 throw new ArgumentOutOfRangeException("pageSize", "pageSize must be greater than zero");

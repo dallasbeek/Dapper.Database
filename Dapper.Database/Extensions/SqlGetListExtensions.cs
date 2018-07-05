@@ -242,7 +242,7 @@ namespace Dapper.Database.Extensions
         {
             var type = typeof(T);
             var tinfo = TableInfoCache(type);
-            var selectSql = adapter.GetManyQuery(tinfo, sql);
+            var selectSql = adapter.GetListQuery(tinfo, sql);
             return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout);
 
             //T obj;

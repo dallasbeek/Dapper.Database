@@ -297,6 +297,7 @@ namespace Dapper.Tests.Database
         static SQLiteTestSuite()
         {
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
+            SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
             //if (File.Exists(FileName))
             //{

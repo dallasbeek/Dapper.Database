@@ -35,9 +35,9 @@ namespace Dapper.Tests.Database
     public class ProviderFactAttribute : FactAttribute
     {
 
-        public ProviderFactAttribute(params Provider[] args)
+        public ProviderFactAttribute(params Provider[] ignoreProviders)
         {
-            IgnoredProviders = args;
+            IgnoredProviders = ignoreProviders;
         }
 
         public Provider[] IgnoredProviders { get; set; }
