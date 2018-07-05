@@ -10,6 +10,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="TestManagerSuites.cs" />
     <Compile Remove="TestSuite.Async.cs" />
     <Compile Remove="TestSuiteCountAsync.cs" />
     <Compile Remove="TestSuiteDelete.cs" />
