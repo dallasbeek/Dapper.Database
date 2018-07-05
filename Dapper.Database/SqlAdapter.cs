@@ -375,7 +375,7 @@ public abstract class SqlAdapter
         var m = rxColumns.Match(selectQuery);
         var g = m.Groups[1];
         var sqlSelectRemoved = selectQuery.Substring(g.Index);
-        var sqlOrderBy = "order by (select null)";
+        var sqlOrderBy = string.Empty;
 
         var pageSkip = (page - 1) * pageSize;
 
@@ -386,6 +386,11 @@ public abstract class SqlAdapter
             g = m.Groups[0];
             sqlOrderBy = g.ToString();
         }
+        else if (tableInfo.KeyColumns.Any())
+        {
+            sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)})";
+        }
+
 
         return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
 
@@ -579,6 +584,11 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
             g = m.Groups[0];
             sqlOrderBy = g.ToString();
         }
+        else if (tableInfo.KeyColumns.Any())
+        {
+            sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+        }
+
 
         var columnsOnly = $"page_inner.* FROM (select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)}) page_inner";
 
@@ -702,7 +712,7 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
     /// <param name="pageSize"></param>
     /// <param name="sql"></param>
     /// <returns></returns>
-    public virtual string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+    public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
     {
         var selectQuery = GetListQuery(tableInfo, sql);
 

@@ -93,7 +93,6 @@ namespace Dapper.Database.Extensions
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
             var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
-
             return new PagedList<T1>(
                 connection.Query<T1, T2>(selectSql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })),
                 page,
