@@ -75,46 +75,46 @@ namespace Dapper.Tests.Database
         }
     }
 
-    [Trait("Provider", "MySql")]
-    [Provider(Provider.SQLite)]
-    public class MySqlServerTestSuite : TestSuite
-    {
-        private const string DbName = "DapperContribTests";
+    //[Trait("Provider", "MySql")]
+    //[Provider(Provider.SQLite)]
+    //public class MySqlServerTestSuite : TestSuite
+    //{
+    //    private const string DbName = "DapperContribTests";
 
-        public static string ConnectionString { get; } =
-            IsAppVeyor
-                ? "Server=localhost;Uid=root;Pwd=Password12!;SslMode=none"
-                : "Server=localhost;Uid=test;Pwd=pass;";
+    //    public static string ConnectionString { get; } =
+    //        IsAppVeyor
+    //            ? "Server=localhost;Uid=root;Pwd=Password12!;SslMode=none"
+    //            : "Server=localhost;Uid=test;Pwd=pass;";
 
-        public override IDbConnection GetConnection()
-        {
-            if (_skip) throw new SkipTestException("Skipping MySQL Tests - no server.");
-            return new MySqlConnection(ConnectionString);
-        }
+    //    public override IDbConnection GetConnection()
+    //    {
+    //        if (_skip) throw new SkipTestException("Skipping MySQL Tests - no server.");
+    //        return new MySqlConnection(ConnectionString);
+    //    }
 
-        private static readonly bool _skip;
+    //    private static readonly bool _skip;
 
-        static MySqlServerTestSuite()
-        {
-            try
-            {
-                using (var connection = new MySqlConnection(ConnectionString))
-                {
-                    connection.Open();
-                    var awfile = File.ReadAllText("mysqlawlite.sql");
-                    connection.Execute(awfile);
-                    connection.Execute("delete from [Person]");
-                }
-            }
-            catch (MySqlException e)
-            {
-                if (e.Message.Contains("Unable to connect"))
-                    _skip = true;
-                else
-                    throw;
-            }
-        }
-    }
+    //    static MySqlServerTestSuite()
+    //    {
+    //        try
+    //        {
+    //            using (var connection = new MySqlConnection(ConnectionString))
+    //            {
+    //                connection.Open();
+    //                var awfile = File.ReadAllText("mysqlawlite.sql");
+    //                connection.Execute(awfile);
+    //                connection.Execute("delete from [Person]");
+    //            }
+    //        }
+    //        catch (MySqlException e)
+    //        {
+    //            if (e.Message.Contains("Unable to connect"))
+    //                _skip = true;
+    //            else
+    //                throw;
+    //        }
+    //    }
+    //}
 
     [Trait("Provider", "SQLite")]
     [Provider(Provider.SQLite)]

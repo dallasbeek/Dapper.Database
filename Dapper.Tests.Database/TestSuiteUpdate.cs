@@ -2,7 +2,6 @@
 using Dapper.Database.Extensions;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite

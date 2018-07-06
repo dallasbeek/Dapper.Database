@@ -1,27 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection;
 using Dapper.Mapper;
-using System.Collections.Concurrent;
-using System.Reflection.Emit;
 
 using Dapper;
-using System.ComponentModel.DataAnnotations;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
-using System.Threading;
-#endif
-
-
 
 namespace Dapper.Database.Extensions
 {
     /// <summary>
-    /// The Dapper.Contrib extensions for Dapper
+    /// The Dapper.Database extensions for Dapper
     /// </summary>
     public static partial class SqlMapperExtensions
     {
@@ -190,13 +176,14 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="page">The page to request</param>
         /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Data mapping function</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
         {
-            return GetPageList<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return  GetPageList<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -205,12 +192,13 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="page">The page to request</param>
         /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Data mapping function</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -220,69 +208,97 @@ namespace Dapper.Database.Extensions
             return new PagedList<TRet>(
                 connection.Query(selectSql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })),
                 page,
-                    pageSize,
-                    connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
-                );
+                pageSize,
+                connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
+            );
         }
 
-        ///// <summary>
-        ///// Returns a list entities of type TRet.  
-        ///// </summary>
-        ///// <param name="connection">Open SqlConnection</param>
-        ///// <param name="mapper">Open SqlConnection</param>
-        ///// <param name="sql">The where clause to delete</param>
-        ///// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        ///// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        ///// <returns>true if deleted, false if not found</returns>
-        //public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
-        //{
-        //    return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) }));
-        //}
+        /// <summary>
+        /// Returns a paged list entities of type T.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return  GetPageList<T1, T2, T3, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+        }
 
-        ///// <summary>
-        ///// Returns a list entities of type TRet.  
-        ///// </summary>
-        ///// <param name="connection">Open SqlConnection</param>
-        ///// <param name="mapper">Open SqlConnection</param>
-        ///// <param name="sql">The where clause to delete</param>
-        ///// <param name="parameters">Parameters of the clause</param>
-        ///// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        ///// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        ///// <returns>true if deleted, false if not found</returns>
-        //public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
-        //{
-        //    return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) }));
-        //}
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            var type = typeof(T1);
+            var tinfo = TableInfoCache(type);
+            var adapter = GetFormatter(connection);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+
+            return new PagedList<TRet>(
+                connection.Query(selectSql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
+                page,
+                pageSize,
+                connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
+            );
+        }
 
 
-        ///// <summary>
-        ///// Returns a list entities of type TRet.  
-        ///// </summary>
-        ///// <param name="connection">Open SqlConnection</param>
-        ///// <param name="mapper">Open SqlConnection</param>
-        ///// <param name="sql">The where clause to delete</param>
-        ///// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        ///// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        ///// <returns>true if deleted, false if not found</returns>
-        //public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
-        //{
-        //    return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
-        //}
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            return  GetPageList<T1, T2, T3, T4, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+        }
 
-        ///// <summary>
-        ///// Returns a list entities of type TRet.  
-        ///// </summary>
-        ///// <param name="connection">Open SqlConnection</param>
-        ///// <param name="mapper">Open SqlConnection</param>
-        ///// <param name="sql">The where clause to delete</param>
-        ///// <param name="parameters">Parameters of the clause</param>
-        ///// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        ///// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        ///// <returns>true if deleted, false if not found</returns>
-        //public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
-        //{
-        //    return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
-        //}
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        {
+            var type = typeof(T1);
+            var tinfo = TableInfoCache(type);
+            var adapter = GetFormatter(connection);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+
+            return new PagedList<TRet>(
+                connection.Query(selectSql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
+                page,
+                pageSize,
+                connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
+            );
+        }
 
         /// <summary>
         /// Returns a list entities of type T.  

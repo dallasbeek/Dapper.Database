@@ -1,61 +1,90 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 using Dapper.Database.Extensions;
 using Xunit;
 using System.Threading.Tasks;
 
-#if NET452
-using System.Transactions;
-using System.ComponentModel.DataAnnotations;
-using System.Data.SqlServerCe;
-#endif
-
-
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-        [Fact]
+        [ProviderFact]
         [Trait("Category", "ExistsAsync")]
-        public async Task ExistsAsync()
+        public async Task ExistsNoArgsAsync()
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerProxy {FirstName= "Exists" };
-                Assert.True(await connection.InsertAsync(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<CustomerProxy>(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<CustomerProxy>(u1.Id).ConfigureAwait(false));
-                Assert.False(await connection.ExistsAsync<CustomerProxy>(-100).ConfigureAwait(false));
-
+                Assert.True(await connection.ExistsAsync<Product>());
             }
         }
 
-        [Fact]
+
+        [ProviderFact]
         [Trait("Category", "ExistsAsync")]
-        public async Task ExistsClauseQueryAsync()
+        public async Task ExistsByEntityAsync()
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerProxy { FirstName = "FetchMe" };
-                Assert.True(await connection.InsertAsync(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<CustomerProxy>("[FirstName] = @FirstName", new { FirstName = "FetchMe" }).ConfigureAwait(false));
-                Assert.False(await connection.ExistsAsync<CustomerProxy>("[FIrstName] = @FirstName", new { FirstName = "junk" }).ConfigureAwait(false));
+                var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
+                Assert.True(await connection.ExistsAsync(p));
 
+                p.ProductID = -1;
+                Assert.False(await connection.ExistsAsync(p));
             }
         }
 
-        [Fact]
+        [ProviderFact]
         [Trait("Category", "ExistsAsync")]
-        public async Task ExistsCompositeAsync()
+        public async Task ExistsByIntegerIdAsync()
         {
             using (var connection = GetOpenConnection())
             {
-                var u1 = new CustomerComposite { IId = 8, GId = Guid.NewGuid() };
-                Assert.True(await connection.InsertAsync(u1).ConfigureAwait(false));
-                Assert.True(await connection.ExistsAsync<CustomerComposite>(u1).ConfigureAwait(false));
+                Assert.True(await connection.ExistsAsync<Product>(806));
+                Assert.False(await connection.ExistsAsync<Product>(-1));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "ExistsAsync")]
+        public async Task ExistsByGuidIdWhereClauseAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "ExistsAsync")]
+        public async Task ExistsPartialBySelectAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(await connection.ExistsAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 }));
+                Assert.False(await connection.ExistsAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = -1 }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "ExistsAsync")]
+        public async Task ExistsBySelectAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(await connection.ExistsAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
+                Assert.False(await connection.ExistsAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = -1 }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "ExistsAsync")]
+        public async Task ExistsShortCircuitSemiColonAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.True(await connection.ExistsAsync<Product>("; select 1 AS ProductId"));
+                Assert.False(await connection.ExistsAsync<Product>("; select 0 AS ProductId"));
             }
         }
 

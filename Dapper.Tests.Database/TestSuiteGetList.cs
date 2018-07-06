@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dapper.Database.Extensions;
 using Xunit;
 using System.Linq;

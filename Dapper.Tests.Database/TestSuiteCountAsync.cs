@@ -1,8 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Linq;
 
 using Dapper.Database.Extensions;
 using Xunit;
@@ -19,27 +15,67 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-
-        [Fact]
-        [Trait( "Category", "CountAsync" )]
-        public async Task CountEnumerableAsync()
+        [ProviderFact]
+        [Trait("Category", "CountAsync")]
+        public async Task CountAllAsync()
         {
-            const int numberOfEntities = 10;
-
-            var users = new List<CustomerProxy>();
-            for (var i = 0; i < numberOfEntities; i++)
-                users.Add(new CustomerProxy { FirstName = "User " + i, Age = i });
-
             using (var connection = GetOpenConnection())
             {
-                await connection.DeleteAllAsync<CustomerProxy>().ConfigureAwait(false);
-                var total = await connection.InsertAsync(users).ConfigureAwait(false);
-
-                Assert.Equal(numberOfEntities, connection.Count<CustomerProxy>("1 = 1", null));
-                Assert.Equal(5, await connection.CountAsync<CustomerProxy>("Age > @age", new { age = 4 }).ConfigureAwait(false));
+                Assert.Equal(295, await connection.CountAsync<Product>());
             }
-
         }
+
+        [ProviderFact]
+        [Trait("Category", "CountAsync")]
+        public async Task CountWithWhereClauseAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, await connection.CountAsync<Product>("where Color = 'Black'" ));
+            }
+        }
+
+
+        [ProviderFact]
+        [Trait("Category", "CountAsync")]
+        public async Task CountWithWhereClauseParameterAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, await connection.CountAsync<Product>("where Color = @Color", new { Color = "Black" }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "CountAsync")]
+        public async Task CountWithSelectClauseAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, await connection.CountAsync<Product>("select * from Product where Color = 'Black'"));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "CountAsync")]
+        public async Task CountWithSelectClauseParameterAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, await connection.CountAsync<Product>("select * from Product where Color = @Color", new { Color = "Black" }));
+            }
+        }
+
+        [ProviderFact]
+        [Trait("Category", "CountAsync")]
+        public async Task CountShortCircuitAsync()
+        {
+            using (var connection = GetOpenConnection())
+            {
+                Assert.Equal(89, await connection.CountAsync<Product>(";select count(*) from Product where Color = @Color", new { Color = "Black" }));
+            }
+        }
+
+
     }
 }

@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
 using Dapper.Database.Extensions;
 using Xunit;
-
-#if NET452
-using System.Transactions;
-using System.ComponentModel.DataAnnotations;
-using System.Data.SqlServerCe;
-#endif
-
 
 namespace Dapper.Tests.Database
 {

@@ -1,27 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using Dapper.Mapper;
-using System.Collections.Concurrent;
-using System.Reflection.Emit;
-
-using Dapper;
-using System.ComponentModel.DataAnnotations;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
-using System.Threading;
-#endif
-
-
+﻿using System.Data;
 
 namespace Dapper.Database.Extensions
 {
     /// <summary>
-    /// The Dapper.Contrib extensions for Dapper
+    /// The Dapper.Database extensions for Dapper
     /// </summary>
     public static partial class SqlMapperExtensions
     {
@@ -34,7 +16,7 @@ namespace Dapper.Database.Extensions
         /// <param name="sql">The sql clause to count</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>total count</returns>
+        /// <returns>Return Total Count of matching records</returns>
         public static int Count<T>(this IDbConnection connection, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
@@ -51,7 +33,7 @@ namespace Dapper.Database.Extensions
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>total count</returns>
+        /// <returns>Return Total Count of matching records</returns>
         public static int Count<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);

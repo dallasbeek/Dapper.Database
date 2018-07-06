@@ -1,27 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection;
 using Dapper.Mapper;
-using System.Collections.Concurrent;
-using System.Reflection.Emit;
-
 using Dapper;
-using System.ComponentModel.DataAnnotations;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
-using System.Threading;
-#endif
-
-
 
 namespace Dapper.Database.Extensions
 {
     /// <summary>
-    /// The Dapper.Contrib extensions for Dapper
+    /// The Dapper.Database extensions for Dapper
     /// </summary>
     public static partial class SqlMapperExtensions
     {

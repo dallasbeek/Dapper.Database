@@ -12,11 +12,9 @@
   <ItemGroup>
     <Compile Remove="TestManagerSuites.cs" />
     <Compile Remove="TestSuite.Async.cs" />
-    <Compile Remove="TestSuiteCountAsync.cs" />
-    <Compile Remove="TestSuiteDelete.cs" />
-    <Compile Remove="TestSuiteDeleteAsync.cs" />
-    <Compile Remove="TestSuiteExistsAsync.cs" />
-    <Compile Remove="TestSuiteGetAsync.cs" />
+    <Compile Remove="TestSuiteCountAssync.cs" />
+    <Compile Remove="TestSuiteExists Async.cs" />
+    <Compile Remove="TestSuiteGetAsysnc.cs" />
     <Compile Remove="TestSuiteGetMany.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
   </ItemGroup>
@@ -69,6 +67,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="mysqlawlite.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="sqlceawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -85,9 +86,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test.DB.sdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test.DB.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

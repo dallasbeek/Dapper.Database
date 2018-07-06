@@ -1,21 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection;
-using Dapper.Mapper;
-using System.Collections.Concurrent;
-using System.Reflection.Emit;
-
-using Dapper;
-using System.ComponentModel.DataAnnotations;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
-using System.Threading;
-#endif
-
 
 
 namespace Dapper.Database.Extensions

@@ -55,7 +55,7 @@ namespace Dapper.Database
         /// <param name="totalCount"></param>
         public PagedList(IEnumerable<T> source, int currentPage, int pageSize, int totalCount)
         {
-            if (pageSize == 0)
+            if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException("pageSize", "pageSize must be greater than zero");
 
             CurrentPage = currentPage;

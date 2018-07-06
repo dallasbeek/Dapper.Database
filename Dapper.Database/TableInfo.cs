@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using System.Linq;
 using Dapper.Database.Extensions;
 using System.Data;
-
-using Dapper;
-using Dapper.Database;
 using Dapper.Database.Attributes;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
-using System.Threading;
-#endif
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static Dapper.Database.Extensions.SqlMapperExtensions;
+
+#if NETSTANDARD1_3
+using DataException = System.InvalidOperationException;
+#endif
 
 namespace Dapper.Database
 {

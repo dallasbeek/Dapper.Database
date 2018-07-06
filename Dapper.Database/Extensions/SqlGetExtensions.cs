@@ -1,27 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using Dapper.Mapper;
-using System.Collections.Concurrent;
-using System.Reflection.Emit;
 
 using Dapper;
-using System.ComponentModel.DataAnnotations;
-
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
-using System.Threading;
-#endif
-
-
 
 namespace Dapper.Database.Extensions
 {
     /// <summary>
-    /// The Dapper.Contrib extensions for Dapper
+    /// The Dapper.Database extensions for Dapper
     /// </summary>
     public static partial class SqlMapperExtensions
     {
@@ -259,40 +246,6 @@ namespace Dapper.Database.Extensions
             var selectSql = adapter.GetQuery(tinfo, sql, fromCache);
 
             return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
-
-            //T obj;
-
-            //if (type.IsInterface())
-            //{
-            //    var res = connection.Query(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault() as IDictionary<string, object>;
-
-            //    if (res == null)
-            //        return null;
-
-            //    obj = ProxyGenerator.GetInterfaceProxy<T>();
-
-            //    foreach (var property in tinfo.PropertyList)
-            //    {
-            //        var val = res[property.Name];
-            //        if (val == null) continue;
-            //        if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-            //        {
-            //            var genericType = Nullable.GetUnderlyingType(property.PropertyType);
-            //            if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
-            //        }
-            //        else
-            //        {
-            //            property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
-            //        }
-            //    }
-
-            //    ((IProxy)obj).IsDirty = false;   //reset change tracking and return
-            //}
-            //else
-            //{
-            //    obj = connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
-            //}
-            //return obj;
         }
         #endregion
 

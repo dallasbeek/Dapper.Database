@@ -109,7 +109,7 @@ namespace Dapper.Tests.Database
 
 
         [Fact]
-        [Trait("Category", "Update")]
+        [Trait("Category", "Upsert")]
         public void UpsertPartial()
         {
             using (var connection = GetOpenConnection())

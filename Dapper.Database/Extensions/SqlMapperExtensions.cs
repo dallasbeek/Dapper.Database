@@ -68,10 +68,10 @@ namespace Dapper.Database.Extensions
             {
                 ["sqlconnection"] = new SqlServerAdapter(),
                 ["sqlceconnection"] = new SqlCeServerAdapter(),
-                ["npgsqlconnection"] = new PostgresAdapter(),
                 ["sqliteconnection"] = new SQLiteAdapter(),
-                ["mysqlconnection"] = new MySqlAdapter(),
-                ["fbconnection"] = new FbAdapter()
+                //["npgsqlconnection"] = new PostgresAdapter(),
+                //["mysqlconnection"] = new MySqlAdapter(),
+                //["fbconnection"] = new FbAdapter()
             };
 
 
