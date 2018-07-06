@@ -15,14 +15,18 @@ namespace Dapper.Tests.Database
             {
                 return new Guid(value as string);
             }
+            if (value is byte[])
+            {
+                var inVal = (byte[])value;
+                byte[] outVal = new byte[] { inVal[3], inVal[2], inVal[1], inVal[0], inVal[5], inVal[4], inVal[7], inVal[6], inVal[8], inVal[9], inVal[10], inVal[11], inVal[12], inVal[13], inVal[14], inVal[15] };
+                return new Guid(outVal);
+            }
             return (Guid)value;
         }
 
         public override void SetValue(IDbDataParameter parameter, Guid value)
         {
-            var inVal = value.ToByteArray();
-            byte[] outVal = new byte[] { inVal[3], inVal[2], inVal[1], inVal[0], inVal[5], inVal[4], inVal[7], inVal[6], inVal[8], inVal[9], inVal[10], inVal[11], inVal[12], inVal[13], inVal[14], inVal[15] };
-            parameter.Value = outVal;
+            parameter.Value = value;
         }
     }
 

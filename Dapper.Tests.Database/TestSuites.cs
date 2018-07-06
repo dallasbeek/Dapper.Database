@@ -76,6 +76,7 @@ namespace Dapper.Tests.Database
 
                     var awfile = File.ReadAllText("sqlserverawlite.sql");
                     connection.Execute(awfile);
+                    connection.Execute("delete from [Person]");
 
                 }
             }
@@ -149,102 +150,89 @@ namespace Dapper.Tests.Database
     //    }
     //}
 
-    //    [Trait("Provider", "SQLite")]
-    //    [Provider(Provider.SQLite)]
-    //    public class SQLiteTestSuite : TestSuite
-    //    {
-    //        private const string FileName = "Test.DB.sqlite";
-    //        public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
-    //        public override IDbConnection GetConnection() => new SqliteConnection(ConnectionString);
+    [Trait("Provider", "SQLite")]
+    [Provider(Provider.SQLite)]
+    public class SQLiteTestSuite : TestSuite
+    {
+        private const string FileName = "Test.DB.sqlite";
+        public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
+        public override IDbConnection GetConnection() => new SqliteConnection(ConnectionString);
 
-    //        public Provider GetProvider() => Provider.SqlCE;
+        public Provider GetProvider() => Provider.SqlCE;
 
-    //        static SQLiteTestSuite()
-    //        {
-    //            SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
-    //            SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
+        static SQLiteTestSuite()
+        {
+            SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
+            SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
-    //            //if (File.Exists(FileName))
-    //            //{
-    //            //    File.Delete(FileName);
-    //            //}
+            //if (File.Exists(FileName))
+            //{
+            //    File.Delete(FileName);
+            //}
 
-    //            using (var connection = new SqliteConnection(ConnectionString))
-    //            {
-    //                if (!File.Exists(FileName))
-    //                {
-    //                    connection.Open();
+            using (var connection = new SqliteConnection(ConnectionString))
+            {
+                if (!File.Exists(FileName))
+                {
+                    connection.Open();
 
-    //                    var awfile = File.ReadAllText("sqliteawlite.sql");
-    //                    connection.Execute(awfile);
+                    var awfile = File.ReadAllText("sqliteawlite.sql");
+                    connection.Execute(awfile);
 
-    //                }
-    //                connection.Execute("delete from [Customers]");
-    //            }
-
-
-    //        }
-    //    }
-
-    //#if NET452
-    //    [Trait("Provider", "SqlCE")]
-    //    [Provider(Provider.SqlCE)]
-    //    public class SqlCETestSuite : TestSuite
-    //    {
-    //        const string FileName = "Test.DB.sdf";
-    //        public static string ConnectionString => $"Data Source={FileName};";
-    //        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
+                }
+                connection.Execute("delete from [Person]");
+            }
 
 
-    //        static SqlCETestSuite()
-    //        {
-    //            if (!File.Exists(FileName))
-    //            {
-    //                var engine = new SqlCeEngine(ConnectionString);
-    //                engine.CreateDatabase();
-    //                using (var connection = new SqlCeConnection(ConnectionString))
-    //                {
-    //                    connection.Open();
-    //                    connection.Execute(@"CREATE TABLE Customers(
-    //	                Id int IDENTITY(1,1) not null,
-    //	                IId int null,
-    //	                GId nvarchar(100) null,
-    //	                SId nvarchar(100) null,
-    //	                FirstName nvarchar(100) null,
-    //	                LastName nvarchar(100) null,
-    //	                FullName nvarchar(100) null,
-    //	                Age int null,
-    //	                UpdatedOn datetime null,
-    //	                CreatedOn datetime null
-    //                );");
+        }
+    }
 
-    //                    var line = string.Empty;
-    //                    var commandText = string.Empty;
-    //                    var file = new StreamReader("sqlceawlite.sql");
+#if NET452
+    [Trait("Provider", "SqlCE")]
+    [Provider(Provider.SqlCE)]
+    public class SqlCETestSuite : TestSuite
+    {
+        const string FileName = "Test.DB.sdf";
+        public static string ConnectionString => $"Data Source={FileName};";
+        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
 
-    //                    while ((line = file.ReadLine()) != null)
-    //                    {
-    //                        if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
-    //                        {
-    //                            connection.Execute(commandText);
-    //                            commandText = string.Empty;
-    //                        }
-    //                        else
-    //                        {
-    //                            commandText += "\r\n" + line;
-    //                        }
-    //                    }
-    //                }
-    //                Console.WriteLine("Created database");
-    //            }
-    //            else
-    //            {
-    //                using (var connection = new SqlCeConnection(ConnectionString))
-    //                {
-    //                    connection.Execute("delete from [Customers]");
-    //                }
-    //            }
-    //        }
-    //    }
-    //#endif
+
+        static SqlCETestSuite()
+        {
+            if (!File.Exists(FileName))
+            {
+                var engine = new SqlCeEngine(ConnectionString);
+                engine.CreateDatabase();
+                using (var connection = new SqlCeConnection(ConnectionString))
+                {
+                    connection.Open();
+                    var line = string.Empty;
+                    var commandText = string.Empty;
+                    var file = new StreamReader("sqlceawlite.sql");
+
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
+                        {
+                            connection.Execute(commandText);
+                            commandText = string.Empty;
+                        }
+                        else
+                        {
+                            commandText += "\r\n" + line;
+                        }
+                    }
+                }
+                Console.WriteLine("Created database");
+            }
+            else
+            {
+                using (var connection = new SqlCeConnection(ConnectionString))
+                {
+                    connection.Execute("delete from [Person]");
+                }
+            }
+        }
+    }
+#endif
 }

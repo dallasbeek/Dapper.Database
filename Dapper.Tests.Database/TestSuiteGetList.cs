@@ -105,14 +105,17 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SQLite)]
+        [ProviderFact]
         [Trait("Category", "GetList")]
         public void GetListOneJoinUnmapped()
         {
             using (var connection = GetConnection())
             {
                 var lst = connection.GetList<Product, ProductCategory>(
-                    @"select P.*, P.rowguid AS GuidId,PC.* 
+                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
+                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
+                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
+                    PC.ParentProductCategoryID
                     from Product P
                     join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
                     where Color = @Color", new { Color = "Black" });
@@ -123,7 +126,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SQLite)]
+        [ProviderFact]
         [Trait("Category", "GetList")]
         public void GetListOneJoinMapped()
         {
@@ -135,7 +138,10 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    @"select P.*, P.rowguid AS GuidId, PC.* 
+                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
+                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
+                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
+                    PC.ParentProductCategoryID
                     from Product P
                     join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
                     where Color = @Color", new { Color = "Black" });
@@ -146,14 +152,17 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SQLite)]
+        [ProviderFact]
         [Trait("Category", "GetList")]
         public void GetListTwoJoinsUnmapped()
         {
             using (var connection = GetConnection())
             {
                 var lst = connection.GetList<Product, ProductCategory, ProductModel>(
-                    @"select P.*, P.rowguid AS GuidId, PC.*, PM.*
+                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
+                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
+                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
+                    PC.ParentProductCategoryID, PM.ProductModelID, PM.CatalogDescription
                     from Product P
                     join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
                     join ProductModel PM on PM.ProductModelID = P.ProductModelID
@@ -166,7 +175,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SQLite)]
+        [ProviderFact]
         [Trait("Category", "GetList")]
         public void GetListTwoJoinsMapped()
         {
@@ -179,7 +188,10 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    @"select P.*, P.rowguid AS GuidId, PC.*, PM.*
+                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
+                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
+                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
+                    PC.ParentProductCategoryID, PM.ProductModelID, PM.CatalogDescription
                     from Product P
                     join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
                     join ProductModel PM on PM.ProductModelID = P.ProductModelID

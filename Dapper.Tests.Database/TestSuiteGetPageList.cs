@@ -9,7 +9,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListNoOrder()
         {
@@ -23,7 +23,7 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereClause()
         {
@@ -37,7 +37,7 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereClauseParameter()
         {
@@ -92,7 +92,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithSelectClause()
         {
@@ -117,7 +117,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithSelectClauseParameter()
         {
@@ -143,7 +143,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListPartialBySelect()
         {
@@ -159,7 +159,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListOneJoinUnmapped()
         {
@@ -184,7 +184,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact(Provider.SqlCE)]
+        [ProviderFact]
         [Trait("Category", "GetPageList")]
         public void GetPageListOneJoinMapped()
         {

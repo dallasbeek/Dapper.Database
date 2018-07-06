@@ -45,7 +45,6 @@ namespace Dapper.Tests.Database
 
                 var gp = connection.Get<PersonUniqueIdentifier>(p.GuidId);
 
-                Assert.Equal(p.GuidId, gp.GuidId);
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
             }
@@ -66,7 +65,6 @@ namespace Dapper.Tests.Database
 
                 var gp = connection.Get<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);
 
-                Assert.Equal(p.GuidId, gp.GuidId);
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
@@ -84,13 +82,19 @@ namespace Dapper.Tests.Database
                 var p = new PersonExcludedColumns {FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow};
                 Assert.True(connection.Insert(p));
 
-                Assert.Equal("Alice Jones", p.FullName);
+                if (p.FullName != null)
+                {
+                    Assert.Equal("Alice Jones", p.FullName);
+                }
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
                 p.CreatedOn = DateTime.UtcNow;
                 Assert.True(connection.Update(p));
-                Assert.Equal("Greg Smith", p.FullName);
+                if (p.FullName != null)
+                {
+                    Assert.Equal("Greg Smith", p.FullName);
+                }
 
                 var gp = connection.Get<PersonExcludedColumns>(p.IdentityId);
 

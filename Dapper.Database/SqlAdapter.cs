@@ -118,11 +118,31 @@ public partial interface ISqlAdapter
 /// </summary>
 public abstract class SqlAdapter
 {
+    /// <summary>
+    /// 
+    /// </summary>
     protected static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    protected static readonly Regex rxDelete = new Regex(@"\A\s*DELETE\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+    /// <summary>
+    /// 
+    /// </summary>
     protected static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+    /// <summary>
+    /// 
+    /// </summary>
     protected static readonly Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+
+    /// <summary>
+    /// 
+    /// </summary>
     protected static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-    protected static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+    //protected static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
 
     /// <summary>
     /// 
@@ -239,12 +259,31 @@ public abstract class SqlAdapter
     /// 
     /// </summary>
     /// <param name="tableInfo"></param>
-    /// <param name="whereClause"></param>
+    /// <param name="sql"></param>
     /// <returns></returns>
-    public virtual string DeleteQuery(TableInfo tableInfo, string whereClause)
+    public virtual string DeleteQuery(TableInfo tableInfo, string sql)
     {
-        var wc = string.IsNullOrWhiteSpace(whereClause) ? EscapeWhereList(tableInfo.KeyColumns) : whereClause;
-        return $"delete from {EscapeTableNamee(tableInfo)} where {wc}; ";
+        var q = sql ?? "";
+
+        if (q.StartsWith(";"))
+            return q.Substring(1);
+
+        var m = rxOrderBy.Match(q);
+
+        if (m.Success)
+        {
+            q = q.Replace(m.Groups[0].ToString(), "");
+        }
+
+        if (!rxDelete.IsMatch(q))
+        {
+            if (!rxFrom.IsMatch(q))
+                return $"delete from { EscapeTableNamee(tableInfo)} {q}";
+            else
+                return $"delete {q}";
+
+        }
+        return $"delete from ({q}) calc_inner";
     }
 
     /// <summary>
@@ -388,7 +427,7 @@ public abstract class SqlAdapter
         }
         else if (tableInfo.KeyColumns.Any())
         {
-            sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)})";
+            sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
         }
 
 
@@ -729,6 +768,10 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
         {
             g = m.Groups[0];
             sqlOrderBy = g.ToString();
+        }
+        else if (tableInfo.KeyColumns.Any())
+        {
+            sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
         }
 
         return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} offset {pageSkip} rows fetch next {pageSize} rows only";
