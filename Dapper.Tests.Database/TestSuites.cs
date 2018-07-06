@@ -57,22 +57,7 @@ namespace Dapper.Tests.Database
             {
                 using (var connection = new SqlConnection(ConnectionString))
                 {
-                    // ReSharper disable once AccessToDisposedClosure
-                    //Action<string> dropTable = name => connection.Execute($"IF OBJECT_ID('{name}', 'U') IS NOT NULL DROP TABLE [{name}]; ");
                     connection.Open();
-                    //    dropTable("Customers");
-                    //    connection.Execute(@"CREATE TABLE [dbo].[Customers](
-                    // [Id] [int] IDENTITY(1,1) NOT NULL,
-                    // [IId] [int] NULL,
-                    // [GId] [uniqueidentifier] NULL,
-                    // [SId] [varchar](100) NULL,
-                    // [FirstName] [nvarchar](100) NULL,
-                    // [LastName] [nvarchar](100) NULL,
-                    // [FullName]  AS ((isnull([FirstName],'')+' ')+isnull([LastName],'')),
-                    // [Age] [int] NULL,
-                    // [UpdatedOn] [datetime] NULL,
-                    // [CreatedOn] [datetime] NULL
-                    //);");
 
                     var awfile = File.ReadAllText("sqlserverawlite.sql");
                     connection.Execute(awfile);
@@ -90,65 +75,46 @@ namespace Dapper.Tests.Database
         }
     }
 
-    //[Provider(Provider.SqlServer)]
-    //public class MySqlServerTestSuite : TestSuite
-    //{
-    //    private const string DbName = "DapperContribTests";
+    [Trait("Provider", "MySql")]
+    [Provider(Provider.SQLite)]
+    public class MySqlServerTestSuite : TestSuite
+    {
+        private const string DbName = "DapperContribTests";
 
-    //    public static string ConnectionString { get; } =
-    //        IsAppVeyor
-    //            ? "Server=localhost;Uid=root;Pwd=Password12!;SslMode=none"
-    //            : "Server=localhost;Uid=test;Pwd=pass;";
+        public static string ConnectionString { get; } =
+            IsAppVeyor
+                ? "Server=localhost;Uid=root;Pwd=Password12!;SslMode=none"
+                : "Server=localhost;Uid=test;Pwd=pass;";
 
-    //    public override IDbConnection GetConnection()
-    //    {
-    //        if (_skip) throw new SkipTestException("Skipping MySQL Tests - no server.");
-    //        return new MySqlConnection(ConnectionString);
-    //    }
+        public override IDbConnection GetConnection()
+        {
+            if (_skip) throw new SkipTestException("Skipping MySQL Tests - no server.");
+            return new MySqlConnection(ConnectionString);
+        }
 
-    //    private static readonly bool _skip;
+        private static readonly bool _skip;
 
-    //    static MySqlServerTestSuite()
-    //    {
-    //        try
-    //        {
-    //            using (var connection = new MySqlConnection(ConnectionString))
-    //            {
-    //                // ReSharper disable once AccessToDisposedClosure
-    //                Action<string> dropTable = name => connection.Execute($"DROP TABLE IF EXISTS `{name}`;");
-    //                connection.Open();
-    //                connection.Execute($"DROP DATABASE IF EXISTS {DbName}; CREATE DATABASE {DbName}; USE {DbName};");
-    //                dropTable("Stuff");
-    //                connection.Execute("CREATE TABLE Stuff (TheId int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null, Created DateTime null);");
-    //                dropTable("People");
-    //                connection.Execute("CREATE TABLE People (Id int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null);");
-    //                dropTable("Users");
-    //                connection.Execute("CREATE TABLE Users (Id int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null, Age int not null);");
-    //                dropTable("Automobiles");
-    //                connection.Execute("CREATE TABLE Automobiles (Id int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null);");
-    //                dropTable("Results");
-    //                connection.Execute("CREATE TABLE Results (Id int not null AUTO_INCREMENT PRIMARY KEY, Name nvarchar(100) not null, `Order` int not null);");
-    //                dropTable("ObjectX");
-    //                connection.Execute("CREATE TABLE ObjectX (ObjectXId nvarchar(100) not null, Name nvarchar(100) not null);");
-    //                dropTable("ObjectY");
-    //                connection.Execute("CREATE TABLE ObjectY (ObjectYId int not null, Name nvarchar(100) not null);");
-    //                dropTable("ObjectZ");
-    //                connection.Execute("CREATE TABLE ObjectZ (Id int not null, Name nvarchar(100) not null);");
-    //                dropTable("GenericType");
-    //                connection.Execute("CREATE TABLE GenericType (Id nvarchar(100) not null, Name nvarchar(100) not null);");
-    //                dropTable("NullableDates");
-    //                connection.Execute("CREATE TABLE NullableDates (Id int not null AUTO_INCREMENT PRIMARY KEY, DateValue DateTime);");
-    //            }
-    //        }
-    //        catch (MySqlException e)
-    //        {
-    //            if (e.Message.Contains("Unable to connect"))
-    //                _skip = true;
-    //            else
-    //                throw;
-    //        }
-    //    }
-    //}
+        static MySqlServerTestSuite()
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(ConnectionString))
+                {
+                    connection.Open();
+                    var awfile = File.ReadAllText("mysqlawlite.sql");
+                    connection.Execute(awfile);
+                    connection.Execute("delete from [Person]");
+                }
+            }
+            catch (MySqlException e)
+            {
+                if (e.Message.Contains("Unable to connect"))
+                    _skip = true;
+                else
+                    throw;
+            }
+        }
+    }
 
     [Trait("Provider", "SQLite")]
     [Provider(Provider.SQLite)]

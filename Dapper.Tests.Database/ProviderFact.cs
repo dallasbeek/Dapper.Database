@@ -11,7 +11,9 @@ namespace Dapper.Tests.Database
     {
         SqlServer,
         SqlCE,
-        SQLite
+        SQLite,
+        MySql
+
     }
 
     public class SkipTestException : Exception
