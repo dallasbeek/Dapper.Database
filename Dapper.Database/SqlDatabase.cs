@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Dapper.Database.Extensions;
 
@@ -11,7 +8,7 @@ namespace Dapper.Database
     /// <summary>
     /// 
     /// </summary>
-    public class EntityManager : IDisposable
+    public partial class SqlDatabase : IDisposable
     {
         /// <summary>
         /// 
@@ -48,61 +45,11 @@ namespace Dapper.Database
         /// 
         /// </summary>
         /// <param name="connectionService"></param>
-        public EntityManager(IConnectionService connectionService)
+        public SqlDatabase(IConnectionService connectionService)
         {
             _connectionService = connectionService;
 
             TransactionCount = 0;
-        }
-
-        /// <summary>
-        /// Performs a SQL Insert
-        /// </summary>
-        /// <param name="entityToInsert">The object that specifies the column values to be inserted</param>
-        /// <returns>true if successful, computed columns are assigned to the passed in object</returns>
-        /// <remarks>The name of the table, it's primary key and whether it's an auto-allocated primary key are retrieved
-        /// from the entities attributes</remarks>
-        public bool Insert<T>(T entityToInsert) where T : class
-        {
-            try
-            {
-                OpenSharedConnectionInternal();
-                var success = _sharedConnection.Insert(entityToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout);
-                if (OneTimeCommandTimeout != null)
-                {
-                    OneTimeCommandTimeout = null;
-                }
-                return success;
-            }
-            finally
-            {
-                CloseSharedConnectionInternal();
-            }
-        }
-
-        /// <summary>
-        /// Performs a SQL Insert
-        /// </summary>
-        /// <param name="entityToInsert">The object that specifies the column values to be inserted</param>
-        /// <returns>true if successful, computed columns are assigned to the passed in object</returns>
-        /// <remarks>The name of the table, it's primary key and whether it's an auto-allocated primary key are retrieved
-        /// from the entities attributes</remarks>
-        public T Get<T>(T entityToInsert) where T : class
-        {
-            try
-            {
-                OpenSharedConnectionInternal();
-                var success = _sharedConnection.Get(entityToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout);
-                if (OneTimeCommandTimeout != null)
-                {
-                    OneTimeCommandTimeout = null;
-                }
-                return success;
-            }
-            finally
-            {
-                CloseSharedConnectionInternal();
-            }
         }
 
         /// <summary>
@@ -163,6 +110,58 @@ namespace Dapper.Database
             if (_transaction == null)
             {
                 CloseSharedConnection();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        protected T ExecuteInternal<T>(Func<T> command)
+        {
+            try
+            {
+                OpenSharedConnectionInternal();
+
+                var data = command();
+
+                if (OneTimeCommandTimeout != null)
+                {
+                    OneTimeCommandTimeout = null;
+                }
+                return data;
+            }
+            finally
+            {
+                CloseSharedConnectionInternal();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        protected async Task<T> ExecuteInternalAsync<T>(Func<Task<T>> command)
+        {
+            try
+            {
+                OpenSharedConnectionInternal();
+
+                var data = await command();
+
+                if (OneTimeCommandTimeout != null)
+                {
+                    OneTimeCommandTimeout = null;
+                }
+                return data;
+            }
+            finally
+            {
+                CloseSharedConnectionInternal();
             }
         }
 
@@ -347,7 +346,7 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="db"></param>
         /// <param name="isolationLevel"></param>
-        public Transaction(EntityManager db, IsolationLevel isolationLevel)
+        public Transaction(SqlDatabase db, IsolationLevel isolationLevel)
         {
             _db = db;
             _db.BeginTransaction(isolationLevel);
@@ -373,7 +372,7 @@ namespace Dapper.Database
             }
         }
 
-        EntityManager _db;
+        SqlDatabase _db;
     }
 
 }

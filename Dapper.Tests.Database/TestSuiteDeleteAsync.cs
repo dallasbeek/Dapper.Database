@@ -12,7 +12,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeleteIdentityEntityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -30,7 +30,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeleteUniqueIdentifierEntityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -45,7 +45,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeleteIdentityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -62,7 +62,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeleteUniqueIdentifierAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -77,7 +77,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeletePersonCompositeKeyAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -94,7 +94,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeleteAllAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -109,7 +109,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Delete")]
         public async Task DeleteWhereClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Delete", LastName = "Me" };
 

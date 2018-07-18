@@ -12,7 +12,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsNoArgsAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 Assert.True(await connection.ExistsAsync<Product>());
             }
@@ -23,7 +23,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsByEntityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
                 Assert.True(await connection.ExistsAsync(p));
@@ -37,7 +37,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsByIntegerIdAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 Assert.True(await connection.ExistsAsync<Product>(806));
                 Assert.False(await connection.ExistsAsync<Product>(-1));
@@ -48,7 +48,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsByGuidIdWhereClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
@@ -59,7 +59,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsPartialBySelectAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 Assert.True(await connection.ExistsAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 }));
                 Assert.False(await connection.ExistsAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = -1 }));
@@ -70,7 +70,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsBySelectAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 Assert.True(await connection.ExistsAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
                 Assert.False(await connection.ExistsAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = -1 }));
@@ -81,7 +81,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsShortCircuitSemiColonAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 Assert.True(await connection.ExistsAsync<Product>("; select 1 AS ProductId"));
                 Assert.False(await connection.ExistsAsync<Product>("; select 0 AS ProductId"));

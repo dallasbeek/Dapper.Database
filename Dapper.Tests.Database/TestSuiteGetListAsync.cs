@@ -13,7 +13,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListAllAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>();
                 Assert.Equal(295, lst.Count());
@@ -27,7 +27,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithWhereClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>("where Color = 'Black'");
                 Assert.Equal(89, lst.Count());
@@ -41,7 +41,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithWhereClauseParameterAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>("where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -54,7 +54,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithSelectClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>("select *, rowguid as GuidId from Product where Color = 'Black'");
                 Assert.Equal(89, lst.Count());
@@ -67,7 +67,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithSelectClauseParameterAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>("select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -80,7 +80,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListShortCircuitAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>(";select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -93,7 +93,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListPartialBySelectAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetListAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());

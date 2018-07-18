@@ -6,7 +6,7 @@ namespace Dapper.Database
     /// <summary>
     /// 
     /// </summary>
-    public static class ConcurrentDictionaryEx
+    internal static class ConcurrentDictionaryEx
     {
         /// <summary>
         /// 

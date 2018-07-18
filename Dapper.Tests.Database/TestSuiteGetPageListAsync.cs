@@ -14,7 +14,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListNoOrderAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst =await connection.GetPageListAsync<Product>(12, 10);
                 Assert.Equal(10, lst.Count());
@@ -28,7 +28,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithWhereClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(4, 10, "where Color = 'Black'");
                 Assert.Equal(10, lst.Count());
@@ -42,7 +42,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithWhereClauseParameterAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(4, 10, "where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
@@ -55,7 +55,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListOrderAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(15, 10, "order by lower(Name)");
                 Assert.Equal(10, lst.Count());
@@ -69,7 +69,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithWhereOrderClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(5, 10, "where Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
@@ -84,7 +84,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithWhereOrderClauseParameterAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(5, 10, "where Color = @Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
@@ -97,7 +97,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithSelectClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(4,10, "select *, rowguid as GuidId from Product where Color = 'Black'");
                 Assert.Equal(10, lst.Count());
@@ -109,7 +109,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithSelectOrderClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
@@ -122,7 +122,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithSelectClauseParameterAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(4, 10, "select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
@@ -135,7 +135,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithSelectClauseOrderParameterAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = @Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
@@ -148,7 +148,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListPartialBySelectAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var lst = await connection.GetPageListAsync<Product>(4,10,"select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());

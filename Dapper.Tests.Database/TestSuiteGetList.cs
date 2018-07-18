@@ -8,13 +8,13 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListAll()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>();
+                var lst = db.GetList<Product>();
                 Assert.Equal(295, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -22,13 +22,13 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListWithWhereClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>("where Color = 'Black'");
+                var lst = db.GetList<Product>("where Color = 'Black'");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -36,65 +36,65 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListWithWhereClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>("where Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>("where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListWithSelectClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>("select *, rowguid as GuidId from Product where Color = 'Black'");
+                var lst = db.GetList<Product>("select *, rowguid as GuidId from Product where Color = 'Black'");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListWithSelectClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>("select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>("select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListShortCircuit()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>(";select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>(";select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListPartialBySelect()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product>("select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>("select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -104,13 +104,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListOneJoinUnmapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product, ProductCategory>(
+                var lst = db.GetList<Product, ProductCategory>(
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
@@ -125,13 +125,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListOneJoinMapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product, ProductCategory, Product>(
+                var lst = db.GetList<Product, ProductCategory, Product>(
                     (pr, pc) =>
                     {
                         pr.ProductCategory = pc;
@@ -151,13 +151,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListTwoJoinsUnmapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product, ProductCategory, ProductModel>(
+                var lst = db.GetList<Product, ProductCategory, ProductModel>(
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
@@ -174,13 +174,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetList")]
         public void GetListTwoJoinsMapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetList<Product, ProductCategory, ProductModel, Product>(
+                var lst = db.GetList<Product, ProductCategory, ProductModel, Product>(
                     (pr, pc, pm) =>
                     {
                         pr.ProductCategory = pc;

@@ -17,64 +17,64 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Count")]
         public void CountAll()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                Assert.Equal(295, connection.Count<Product>());
+                Assert.Equal(295, db.Count<Product>());
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Count")]
         public void CountWithWhereClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89, connection.Count<Product>("where Color = 'Black'" ));
+                Assert.Equal(89, db.Count<Product>("where Color = 'Black'" ));
             }
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Count")]
         public void CountWithWhereClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89, connection.Count<Product>("where Color = @Color", new { Color = "Black" }));
+                Assert.Equal(89, db.Count<Product>("where Color = @Color", new { Color = "Black" }));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Count")]
         public void CountWithSelectClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89, connection.Count<Product>("select * from Product where Color = 'Black'"));
+                Assert.Equal(89, db.Count<Product>("select * from Product where Color = 'Black'"));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Count")]
         public void CountWithSelectClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89, connection.Count<Product>("select * from Product where Color = @Color", new { Color = "Black" }));
+                Assert.Equal(89, db.Count<Product>("select * from Product where Color = @Color", new { Color = "Black" }));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Count")]
         public void CountShortCircuit()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89, connection.Count<Product>(";select count(*) from Product where Color = @Color", new { Color = "Black" }));
+                Assert.Equal(89, db.Count<Product>(";select count(*) from Product where Color = @Color", new { Color = "Black" }));
             }
         }
 

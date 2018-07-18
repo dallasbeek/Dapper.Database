@@ -11,6 +11,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Dapper;
+using Dapper.Database;
 
 #if NET452
 using System.Data.SqlServerCe;
@@ -32,7 +33,6 @@ namespace Dapper.Tests.Database
 #endif
 
     [Trait("Provider", "SqlServer")]
-    [Provider(Provider.SqlServer)]
     public partial class SqlServerTestSuite : TestSuite
     {
         private const string DbName = "tempdb";
@@ -41,11 +41,11 @@ namespace Dapper.Tests.Database
                 ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
                 : $"Data Source=(local)\\Dallas;Initial Catalog={DbName};Integrated Security=True";
 
-        public override IDbConnection GetConnection()
+        public override ISqlDatabase GetSqlDatabase()
         {
-            if (_skip) throw new SkipTestException("Skipping Sql Server Tests - no server.");
-            return new SqlConnection(ConnectionString);
+            return new SqlDatabase(new StringConnectionService<SqlConnection>(ConnectionString));
         }
+
 
         public Provider GetProvider() => Provider.SqlServer;
 
@@ -53,6 +53,7 @@ namespace Dapper.Tests.Database
 
         static SqlServerTestSuite()
         {
+            Provider = Provider.SqlServer;
             try
             {
                 using (var connection = new SqlConnection(ConnectionString))
@@ -117,17 +118,21 @@ namespace Dapper.Tests.Database
     //}
 
     [Trait("Provider", "SQLite")]
-    [Provider(Provider.SQLite)]
     public class SQLiteTestSuite : TestSuite
     {
         private const string FileName = "Test.DB.sqlite";
         public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
-        public override IDbConnection GetConnection() => new SqliteConnection(ConnectionString);
+
+        public override ISqlDatabase GetSqlDatabase()
+        {
+            return new SqlDatabase(new StringConnectionService<SqliteConnection>(ConnectionString));
+        }
 
         public Provider GetProvider() => Provider.SqlCE;
 
         static SQLiteTestSuite()
         {
+            Provider = Provider.SQLite;
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
@@ -155,16 +160,19 @@ namespace Dapper.Tests.Database
 
 #if NET452
     [Trait("Provider", "SqlCE")]
-    [Provider(Provider.SqlCE)]
     public class SqlCETestSuite : TestSuite
     {
         const string FileName = "Test.DB.sdf";
         public static string ConnectionString => $"Data Source={FileName};";
-        public override IDbConnection GetConnection() => new SqlCeConnection(ConnectionString);
 
+        public override ISqlDatabase GetSqlDatabase()
+        {
+            return new SqlDatabase(new StringConnectionService<SqlCeConnection>(ConnectionString));
+        }
 
         static SqlCETestSuite()
         {
+            Provider = Provider.SqlCE;
             if (!File.Exists(FileName))
             {
                 var engine = new SqlCeEngine(ConnectionString);

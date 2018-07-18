@@ -84,6 +84,5 @@ namespace Dapper.Database.Extensions
         }
         #endregion
 
-
     }
 }

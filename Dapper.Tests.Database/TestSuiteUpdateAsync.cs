@@ -12,7 +12,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateIdentityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -34,7 +34,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateUniqueIdentifierAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -54,7 +54,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdatePersonCompositeKeyAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -77,7 +77,7 @@ namespace Dapper.Tests.Database
         {
 
             var dnow = DateTime.UtcNow;
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonExcludedColumns {FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow};
                 Assert.True(await connection.InsertAsync(p));
@@ -111,7 +111,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdatePartialAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));

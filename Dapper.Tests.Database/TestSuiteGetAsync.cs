@@ -12,7 +12,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByEntityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
                 ValidateProduct806(await connection.GetAsync(p));
@@ -23,7 +23,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByIntegerIdAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 ValidateProduct806(await connection.GetAsync<Product>(806));
             }
@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByGuidIdWhereClauseAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 ValidateProduct806(await connection.GetAsync<Product>("WHERE rowguid = @GuidId", new { GuidId ="23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
             }
@@ -43,7 +43,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetPartialBySelectAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = await connection.GetAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 });
                 Assert.NotNull(p);
@@ -58,7 +58,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetStarBySelectAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 ValidateProduct806(await connection.GetAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
             }
@@ -68,7 +68,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetShortCircuitSemiColonAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = await connection.GetAsync<Product>("; select 23 AS ProductId", new { });
                 Assert.Equal(23, p.ProductID);
@@ -79,7 +79,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetOneJoinUnmappedAsync()
         {
-            using (var connection = GetConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = await connection.GetAsync<Product, ProductCategory>(
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 

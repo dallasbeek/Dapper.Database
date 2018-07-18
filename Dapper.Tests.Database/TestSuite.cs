@@ -5,6 +5,7 @@ using System.Linq;
 
 using Dapper.Database.Extensions;
 using Xunit;
+using Dapper.Database;
 
 #if NET452
 using System.Transactions;
@@ -19,19 +20,20 @@ namespace Dapper.Tests.Database
     {
         protected static readonly bool IsAppVeyor = Environment.GetEnvironmentVariable("Appveyor")?.ToUpperInvariant() == "TRUE";
 
-        public abstract IDbConnection GetConnection();
+        protected static Provider Provider;
 
-        private IDbConnection GetOpenConnection()
-        {
-            var connection = GetConnection();
-            connection.Open();
-            return connection;
-        }
+        //public override IDbConnection GetConnection()
+        //{
+        //    if (_skip) throw new SkipTestException("Skipping Sql Server Tests - no server.");
+        //    return new SqlConnection(ConnectionString);
+        //}
+
+        public abstract ISqlDatabase GetSqlDatabase();
 
         //[Fact]
         //public void TypeWithGenericParameterCanBeInserted()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.DeleteAll<GenericType<string>>();
         //        var objectToInsert = new GenericType<string>
@@ -66,7 +68,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void TypeWithGenericParameterCanBeUpdated()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var objectToInsert = new GenericType<string>
         //        {
@@ -86,7 +88,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void TypeWithGenericParameterCanBeDeleted()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var objectToInsert = new GenericType<string>
         //        {
@@ -103,7 +105,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void Issue418()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        //update first (will fail) then insert
         //        //added for bug #418
@@ -131,7 +133,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void ShortIdentity()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        const string name = "First item";
 
@@ -148,7 +150,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void NullDateTime()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.Insert(new CustomerShortId { FirstName = "First item" });
         //        connection.Insert(new CustomerShortId { FirstName = "Second item", CreatedOn = DateTime.Now });
@@ -161,7 +163,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void TableName()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        // tests against "Automobiles" table (Table attribute)
 
@@ -217,7 +219,7 @@ namespace Dapper.Tests.Database
         //    for (var i = 0; i < numberOfEntities; i++)
         //        users.Add(new CustomerProxy { FirstName = "User " + i, Age = i });
 
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.DeleteAll<CustomerProxy>();
 
@@ -254,7 +256,7 @@ namespace Dapper.Tests.Database
         //    for (var i = 0; i < numberOfEntities; i++)
         //        users.Add(new CustomerProxy { FirstName = "User " + i, Age = i });
 
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.DeleteAll<CustomerProxy>();
 
@@ -276,7 +278,7 @@ namespace Dapper.Tests.Database
         //[Fact(Skip = "Proxy Test")]
         //public void InsertGetUpdate()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.DeleteAll<CustomerProxy>();
         //        Assert.Null(connection.Get<CustomerProxy>(3));
@@ -314,7 +316,7 @@ namespace Dapper.Tests.Database
         //    }
         //}
 
- 
+
 
         ////[Fact]
         ////public void GetAll ()
@@ -325,7 +327,7 @@ namespace Dapper.Tests.Database
         ////    for ( var i = 0; i < numberOfEntities; i++ )
         ////        users.Add( new CustomerProxy { FirstName = "User " + i, Age = i } );
 
-        ////    using ( var connection = GetOpenConnection() )
+        ////    using ( var connection = GetSqlDatabase() )
         ////    {
         ////        connection.DeleteAll<CustomerProxy>();
 
@@ -346,7 +348,7 @@ namespace Dapper.Tests.Database
         //[Fact(Skip = "Proxy Test")]
         //public void GetAndGetManyWithNullableValues()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var nd1 = new CustomerProxy { UpdatedOn = new DateTime(2011, 07, 14) };
         //        var nd2 = new CustomerProxy { UpdatedOn = null };
@@ -367,7 +369,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void Transactions()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var c1 = new Car { FirstName = "one car" };
         //        Assert.True(connection.Insert(c1));   //insert outside transaction
@@ -387,7 +389,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void InsertCheckKey()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        CustomerProxy user = new CustomerProxy { FirstName = "Adamb", Age = 10 };
         //        Assert.True(connection.Insert(user));
@@ -405,7 +407,7 @@ namespace Dapper.Tests.Database
         //    if (template.RawSql == null) throw new Exception("RawSql null");
         //    if (template.Parameters == null) throw new Exception("Parameters null");
 
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.DeleteAll<CustomerProxy>();
         //        connection.Insert(new CustomerProxy { Age = 5, FirstName = "Testy McTestington" });
@@ -418,7 +420,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void InsertFieldWithReservedName()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        connection.DeleteAll<CustomerProxy>();
         //        var r1 = new Result() { FirstName = "Adam", Age = 1 };
@@ -432,7 +434,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void IgnoreInsertAttribute()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var u1 = new CustomerAttribute { FirstName = "This should be ignored" };
         //        Assert.True(connection.Insert(u1));
@@ -452,7 +454,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void IgnoreUpdateAttribute()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var u1 = new CustomerAttribute { LastName = "Set On Insert" };
         //        Assert.True(connection.Insert(u1));
@@ -472,7 +474,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void IgnoreSelectAttribute()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var u1 = new CustomerAttribute { Age = 100 };
         //        Assert.True(connection.Insert(u1));
@@ -485,7 +487,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void ReadOnlyAttribute()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var u1 = new CustomerAttribute { GId = Guid.NewGuid() };
         //        Assert.True(connection.Insert(u1));
@@ -504,7 +506,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void UpdateColumnsSpecified()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var u1 = new CustomerProxy { FirstName = "ValueA", Age = 33 };
         //        Assert.True(connection.Insert(u1));
@@ -525,7 +527,7 @@ namespace Dapper.Tests.Database
         //[Fact]
         //public void Upsert()
         //{
-        //    using (var connection = GetOpenConnection())
+        //    using (var connection = GetSqlDatabase())
         //    {
         //        var u1 = new CustomerProxy { FirstName = "ValueA", Age = 33 };
         //        Assert.True(connection.Upsert(u1, new string[] { "FirstName" }, i => i.FirstName = "InsertName", u => u.FirstName = "UpdateName"));

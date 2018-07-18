@@ -16,77 +16,77 @@ namespace Dapper.Tests.Database
 
     }
 
-    public class SkipTestException : Exception
-    {
-        public SkipTestException(string reason) : base(reason)
-        {
-        }
-    }
+    //public class SkipTestException : Exception
+    //{
+    //    public SkipTestException(string reason) : base(reason)
+    //    {
+    //    }
+    //}
 
-    public class ProviderAttribute : Attribute
-    {
-        public ProviderAttribute(Provider provider)
-        {
-            Provider = provider;
-        }
+    //public class ProviderAttribute : Attribute
+    //{
+    //    public ProviderAttribute(Provider provider)
+    //    {
+    //        Provider = provider;
+    //    }
 
-        public Provider Provider { get; set; }
-    }
+    //    public Provider Provider { get; set; }
+    //}
 
-    [XunitTestCaseDiscoverer("Dapper.Tests.Database.ProviderFactDiscoverer", "Dapper.Tests.Database")]
-    [AttributeUsage(AttributeTargets.Method)]
-    public class ProviderFactAttribute : FactAttribute
-    {
+    //[XunitTestCaseDiscoverer("Dapper.Tests.Database.ProviderFactDiscoverer", "Dapper.Tests.Database")]
+    //[AttributeUsage(AttributeTargets.Method)]
+    //public class FactAttributeAttribute : FactAttribute
+    //{
 
-        public ProviderFactAttribute(params Provider[] ignoreProviders)
-        {
-            IgnoredProviders = ignoreProviders;
-        }
+    //    public FactAttributeAttribute(params Provider[] ignoreProviders)
+    //    {
+    //        IgnoredProviders = ignoreProviders;
+    //    }
 
-        public Provider[] IgnoredProviders { get; set; }
-    }
+    //    public Provider[] IgnoredProviders { get; set; }
+    //}
 
 
-    public class ProviderFactDiscoverer : IXunitTestCaseDiscoverer
-    {
-        readonly IMessageSink diagnosticMessageSink;
+    //public class ProviderFactDiscoverer : IXunitTestCaseDiscoverer
+    //{
+    //    readonly IMessageSink diagnosticMessageSink;
 
-        public ProviderFactDiscoverer(IMessageSink diagnosticMessageSink)
-        {
-            this.diagnosticMessageSink = diagnosticMessageSink;
-        }
+    //    public ProviderFactDiscoverer(IMessageSink diagnosticMessageSink)
+    //    {
+    //        this.diagnosticMessageSink = diagnosticMessageSink;
+    //    }
 
-        public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
-        {
-            var ignoredProviders = factAttribute.GetNamedArgument<Provider[]>("IgnoredProviders");
+    //    public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
+    //    {
+    //        var ignoredProviders = factAttribute.GetNamedArgument<Provider[]>("IgnoredProviders");
 
-            if (ignoredProviders.Any())
-            {
-                var traits = testMethod.TestClass.Class.GetCustomAttributes(typeof(TraitAttribute));
+    //        if (ignoredProviders.Any())
+    //        {
+    //            var traits = testMethod.TestClass.Class.GetCustomAttributes(typeof(TraitAttribute));
 
-                var providerAtt = testMethod.TestClass.Class.GetCustomAttributes(typeof(ProviderAttribute)).SingleOrDefault();
+    //            var providerAtt = testMethod.TestClass.Class.GetCustomAttributes(typeof(ProviderAttribute)).SingleOrDefault();
 
-                if (providerAtt != null)
-                {
-                    if (ignoredProviders.Contains(providerAtt.GetNamedArgument<Provider>("Provider")))
-                    {
-                        yield return new SkipTestCase(diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod);
-                    }
-                }
-            }
+    //            if (providerAtt != null)
+    //            {
+    //                if (ignoredProviders.Contains(providerAtt.GetNamedArgument<Provider>("Provider")))
+    //                {
+    //                    yield return new SkipTestCase(diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod);
+    //                }
+    //            }
+    //        }
 
-            yield return new XunitTestCase(diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod);
-        }
-    }
+    //        yield return new XunitTestCase(diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod);
+    //    }
+    //}
 
-    [Serializable]
-    public class SkipTestCase : XunitTestCase
-    {
-        public SkipTestCase(IMessageSink diagnosticMessageSink, TestMethodDisplay testMethodDisplay, ITestMethod testMethod)
-            : base(diagnosticMessageSink, testMethodDisplay, testMethod)
-        {
-            SkipReason = "Provider Skipped";
-        }
+    //[Serializable]
+    //public class SkipTestCase : XunitTestCase
+    //{
+    //    public SkipTestCase(IMessageSink diagnosticMessageSink, TestMethodDisplay testMethodDisplay, ITestMethod testMethod)
+    //        : base(diagnosticMessageSink, testMethodDisplay, testMethod)
+    //    {
+    //        SkipReason = "Provider Skipped";
+    //    }
        
-    }
+    //}
 }

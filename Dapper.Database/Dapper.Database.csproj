@@ -33,6 +33,7 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="ISqlDatabaseAsync.cs" />
     <Compile Remove="SqlAdapterAsync.cs" />
     <Compile Remove="SqlMapperExtensions.Async.cs" />
   </ItemGroup>

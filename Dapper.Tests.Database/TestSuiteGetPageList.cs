@@ -9,13 +9,13 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListNoOrder()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(12, 10);
+                var lst = db.GetPageList<Product>(12, 10);
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -23,13 +23,13 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(4, 10, "where Color = 'Black'");
+                var lst = db.GetPageList<Product>(4, 10, "where Color = 'Black'");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -37,26 +37,26 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(4, 10, "where Color = @Color", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(4, 10, "where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact()]
+        [Fact()]
         [Trait("Category", "GetPageList")]
         public void GetPageListOrder()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(15, 10, "order by lower(Name)");
+                var lst = db.GetPageList<Product>(15, 10, "order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -64,13 +64,13 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereOrderClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(5, 10, "where Color = 'Black' order by lower(Name)");
+                var lst = db.GetPageList<Product>(5, 10, "where Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 Assert.Equal(6, lst.ToList().IndexOf(item));
@@ -79,77 +79,77 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereOrderClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(5, 10, "where Color = @Color order by lower(Name)", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(5, 10, "where Color = @Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithSelectClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(4,10, "select *, rowguid as GuidId from Product where Color = 'Black'");
+                var lst = db.GetPageList<Product>(4,10, "select *, rowguid as GuidId from Product where Color = 'Black'");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithSelectOrderClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = 'Black' order by lower(Name)");
+                var lst = db.GetPageList<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithSelectClauseParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(4, 10, "select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(4, 10, "select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithSelectClauseOrderParameter()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = @Color order by lower(Name)", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = @Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListPartialBySelect()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product>(4,10,"select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(4,10,"select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -159,13 +159,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListOneJoinUnmapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product, ProductCategory>(4,10,
+                var lst = db.GetPageList<Product, ProductCategory>(4,10,
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid, P.ModifiedDate, PC.ProductCategoryID, 
@@ -184,13 +184,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListOneJoinMapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var lst = connection.GetPageList<Product, ProductCategory, Product>(4, 10,
+                var lst = db.GetPageList<Product, ProductCategory, Product>(4, 10,
                     (pr, pc) =>
                     {
                         pr.ProductCategory = pc;

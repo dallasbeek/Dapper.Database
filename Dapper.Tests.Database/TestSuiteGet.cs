@@ -7,44 +7,44 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetByEntity()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
                 var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
-                ValidateProduct806(connection.Get(p));
+                ValidateProduct806(db.Get(p));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetByIntegerId()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                ValidateProduct806(connection.Get<Product>(806));
+                ValidateProduct806(db.Get<Product>(806));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetByGuidIdWhereClause()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                ValidateProduct806(connection.Get<Product>("WHERE rowguid = @GuidId", new { GuidId ="23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                ValidateProduct806(db.Get<Product>("WHERE rowguid = @GuidId", new { GuidId ="23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetPartialBySelect()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = connection.Get<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 });
+                var p = db.Get<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -53,34 +53,34 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetStarBySelect()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                ValidateProduct806(connection.Get<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
+                ValidateProduct806(db.Get<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetShortCircuitSemiColon()
         {
-            using (var connection = GetOpenConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = connection.Get<Product>("; select 23 AS ProductId", new { });
+                var p = db.Get<Product>("; select 23 AS ProductId", new { });
                 Assert.Equal(23, p.ProductID);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetOneJoinUnmapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = connection.Get<Product, ProductCategory>(
+                var p = db.Get<Product, ProductCategory>(
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
@@ -93,13 +93,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetOneJoinMapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = connection.Get<Product, ProductCategory, Product>(
+                var p = db.Get<Product, ProductCategory, Product>(
                     (pr, pc) =>
                     {
                         pr.ProductCategory = pc;
@@ -117,13 +117,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetTwoJoinsUnmapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = connection.Get<Product, ProductCategory, ProductModel>(
+                var p = db.Get<Product, ProductCategory, ProductModel>(
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
@@ -138,13 +138,13 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "Get")]
         public void GetTwoJoinsMapped()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = connection.Get<Product, ProductCategory, ProductModel, Product>(
+                var p = db.Get<Product, ProductCategory, ProductModel, Product>(
                     (pr, pc, pm) =>
                     {
                         pr.ProductCategory = pc;

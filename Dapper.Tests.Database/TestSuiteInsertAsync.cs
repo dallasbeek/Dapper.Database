@@ -13,7 +13,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "InsertAsync")]
         public async Task InsertIdentityAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -30,7 +30,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "InsertAsync")]
         public async Task InsertUniqueIdentifierAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
@@ -45,7 +45,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "InsertAsync")]
         public async Task InsertPersonCompositeKeyAsync()
         {
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var gid = new Guid("45441d7b-867d-2c4a-9cb0-1d82b5ef11f2");
                 var p = new PersonCompositeKey { GuidId = gid, StringId = "test", FirstName = "Alice", LastName = "Jones" };
@@ -64,7 +64,7 @@ namespace Dapper.Tests.Database
         {
 
             var dnow = DateTime.UtcNow;
-            using (var connection = GetOpenConnection())
+            using (var connection = GetSqlDatabase())
             {
                 var p = new PersonExcludedColumns {FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow};
                 Assert.True(await connection.InsertAsync(p));
