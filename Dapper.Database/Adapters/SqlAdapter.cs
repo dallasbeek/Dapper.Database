@@ -135,6 +135,11 @@ public abstract partial class SqlAdapter
     /// Regex to retrieve order by
     /// </summary>
     protected static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+
+    /// <summary>
+    /// Regex to retrieve order by
+    /// </summary>
+    protected static readonly Regex rxWhere = new Regex(@"\bWHERE\s", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
     //protected static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
 
     /// <summary>
@@ -588,6 +593,21 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
             sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
         }
 
+        // to prevent duplicate columns in subquery
+        //if (sqlSelectRemoved.Contains("*") && tableInfo.KeyColumns.Any())
+        //{
+        //    var keyColumns = EscapeColumnList(tableInfo.KeyColumns);
+
+        //    var joinQuery = $"select {keyColumns}, row_number() over ({sqlOrderBy}) page_rn {sqlSelectRemoved.Substring(g.Length)}";
+        //    var sqlOrderWhereRemoved = rxOrderBy.Replace(sqlSelectRemoved, "", 1);
+        //    var w = rxWhere.Match(sqlOrderWhereRemoved);
+        //    if (w.Success)
+        //    {
+        //        sqlOrderWhereRemoved = sqlOrderWhereRemoved.Substring(0,  w.Index);
+        //    }
+        //    var qq = $"select {sqlOrderWhereRemoved} join ({joinQuery}) page_join on xxxx where page_rn > {pageSkip} and page_rn <= {pageTake}";
+
+        //}
 
         var columnsOnly = $"page_inner.* FROM (select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)}) page_inner";
 

@@ -77,12 +77,13 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">The parameters of the sql</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static T1 Get<T1, T2>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static T1 Get<T1, T2>(this IDbConnection connection, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
         {
-            return connection.Query<T1, T2>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
+            return connection.Query<T1, T2>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
         }
 
         /// <summary>
@@ -90,39 +91,13 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static T1 Get<T1, T2, T3>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
+        public static T1 Get<T1, T2, T3>(this IDbConnection connection, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
-            return connection.Query<T1, T2, T3>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'T1'.  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static T1 Get<T1, T2, T3>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3: class
-        {
-            return connection.Query<T1, T2, T3>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'T1'.  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static T1 Get<T1, T2, T3, T4>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
-        {
-            return connection.Query<T1, T2, T3, T4>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+            return connection.Query<T1, T2, T3>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
         }
 
         /// <summary>
@@ -132,11 +107,41 @@ namespace Dapper.Database.Extensions
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  T1 Get<T1, T2, T3, T4>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        public static T1 Get<T1, T2, T3>(this IDbConnection connection, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3: class
         {
-            return connection.Query<T1, T2, T3, T4>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+            return connection.Query<T1, T2, T3>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static T1 Get<T1, T2, T3, T4>(this IDbConnection connection, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return connection.Query<T1, T2, T3, T4>(sql, new { }, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static  T1 Get<T1, T2, T3, T4>(this IDbConnection connection, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return connection.Query<T1, T2, T3, T4>(sql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
         }
 
         /// <summary>
@@ -145,71 +150,13 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
+        public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            return connection.Query<T1, T2, TRet>(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
-        {
-            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static TRet Get<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
-        {
-            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static TRet Get<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
-        {
-            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
-        }
-
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public static TRet Get<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
-        {
-            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+            return connection.Query<T1, T2, TRet>(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
         }
 
         /// <summary>
@@ -219,12 +166,76 @@ namespace Dapper.Database.Extensions
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static TRet Get<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, TRet>(this IDbConnection connection, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })).SingleOrDefault();
+        }
+
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
+        {
+            return connection.Query(sql, mapper, new { }, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static TRet Get<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
         }
 
         /// <summary>

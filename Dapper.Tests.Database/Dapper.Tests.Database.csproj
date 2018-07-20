@@ -14,19 +14,10 @@
     <Compile Remove="TestManagerSuites.cs" />
     <Compile Remove="TestSuite.Async.cs" />
     <Compile Remove="TestSuiteCountAssync.cs" />
-    <Compile Remove="TestSuiteCountAsync.cs" />
-    <Compile Remove="TestSuiteDeleteAsync.cs" />
     <Compile Remove="TestSuiteExists Async.cs" />
-    <Compile Remove="TestSuiteExistsAsync.cs" />
-    <Compile Remove="TestSuiteGetAsync.cs" />
     <Compile Remove="TestSuiteGetAsysnc.cs" />
-    <Compile Remove="TestSuiteGetListAsync.cs" />
     <Compile Remove="TestSuiteGetMany.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
-    <Compile Remove="TestSuiteGetPageListAsync.cs" />
-    <Compile Remove="TestSuiteInsertAsync.cs" />
-    <Compile Remove="TestSuiteUpdateAsync.cs" />
-    <Compile Remove="TestSuiteUpsertAsync.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Dapper.Database\TypeExtensions.cs" />

@@ -8,7 +8,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetByEntityAsync()
         {
@@ -19,7 +19,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetByIntegerIdAsync()
         {
@@ -29,7 +29,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetByGuidIdWhereClauseAsync()
         {
@@ -39,7 +39,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetPartialBySelectAsync()
         {
@@ -54,7 +54,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetStarBySelectAsync()
         {
@@ -64,7 +64,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetShortCircuitSemiColonAsync()
         {
@@ -75,91 +75,65 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetOneJoinUnmappedAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product, ProductCategory>(
-                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
-                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
-                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
-                    PC.ParentProductCategoryID
-                    from Product P
-                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    where P.ProductID = @ProductId", new { ProductId = 806 });
+                var p = await db.GetAsync<Product, ProductCategory>(
+                    getMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetOneJoinMappedAsync()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product, ProductCategory, Product>(
+                var p = await db.GetAsync<Product, ProductCategory, Product>(
                     (pr, pc) =>
                     {
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
-                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
-                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
-                    PC.ParentProductCategoryID
-                    from Product P
-                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    where P.ProductID = @ProductId", new {ProductId = 806 });
+                    getMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetTwoJoinsUnmappedAsync()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product, ProductCategory, ProductModel>(
-                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
-                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
-                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
-                    PC.ParentProductCategoryID, PM.ProductModelID, PM.CatalogDescription
-                    from Product P
-                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    join ProductModel PM on PM.ProductModelID = P.ProductModelID
-                    where P.ProductID = @ProductId", new { ProductId = 806 });
+                var p = await db.GetAsync<Product, ProductCategory, ProductModel>(
+                    getMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
                 ValidateProductModel60(p.ProductModel);
             }
         }
 
-        [ProviderFact]
-        [Trait("Category", "GetAsync")]
+        [Fact]
+        [Trait("Category", "Get")]
         public async Task GetTwoJoinsMappedAsync()
         {
-            using (var connection = GetConnection())
+            using (var db = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product, ProductCategory, ProductModel, Product>(
+                var p =await db.GetAsync<Product, ProductCategory, ProductModel, Product>(
                     (pr, pc, pm) =>
                     {
                         pr.ProductCategory = pc;
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
-                    P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
-                    P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid as GuidId, P.ModifiedDate, PC.ProductCategoryID, 
-                    PC.ParentProductCategoryID, PM.ProductModelID, PM.CatalogDescription
-                    from Product P
-                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    join ProductModel PM on PM.ProductModelID = P.ProductModelID
-                    where P.ProductID = @ProductId", new { ProductId = 806 });
+                    getMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
                 ValidateProductModel60(p.ProductModel);

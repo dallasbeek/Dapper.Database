@@ -214,7 +214,7 @@ namespace Dapper.Tests.Database
             }
         }
         
-        //[ProviderFact(Provider.SQLite)]
+        //[Fact(Provider.SQLite)]
         //[Trait("Category", "GetPageList")]
         //public void GetPageListOneJoinMapped()
         //{
@@ -237,7 +237,7 @@ namespace Dapper.Tests.Database
         //    }
         //}
 
-        //[ProviderFact(Provider.SQLite)]
+        //[Fact(Provider.SQLite)]
         //[Trait("Category", "GetPageList")]
         //public void GetPageListTwoJoinsUnmapped()
         //{
@@ -257,7 +257,7 @@ namespace Dapper.Tests.Database
         //    }
         //}
 
-        //[ProviderFact(Provider.SQLite)]
+        //[Fact(Provider.SQLite)]
         //[Trait("Category", "GetPageList")]
         //public void GetPageListTwoJoinsMapped()
         //{

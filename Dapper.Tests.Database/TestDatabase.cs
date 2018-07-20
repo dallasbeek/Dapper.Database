@@ -22,7 +22,7 @@
 //    {
 
 
-//        [ProviderFact]
+//        [Fact]
 //        [Trait("Category", "SqlDb")]
 //        public void SqlDbCountSql()
 //        {
@@ -32,7 +32,7 @@
 //            }
 //        }
 
-//        [ProviderFact]
+//        [Fact]
 //        [Trait("Category", "SqlDb")]
 //        public void SqlDbCount()
 //        {
@@ -42,7 +42,7 @@
 //            }
 //        }
 
-//        [ProviderFact]
+//        [Fact]
 //        [Trait("Category", "SqlDb")]
 //        public void SqlDbExistsByEntity()
 //        {
@@ -56,7 +56,7 @@
 //            }
 //        }
 
-//        [ProviderFact]
+//        [Fact]
 //        [Trait("Category", "SqlDb")]
 //        public void SqlDbExistsBySelect()
 //        {

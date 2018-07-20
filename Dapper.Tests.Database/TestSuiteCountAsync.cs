@@ -15,7 +15,7 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountAllAsync()
         {
@@ -25,7 +25,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountWithWhereClauseAsync()
         {
@@ -36,7 +36,7 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountWithWhereClauseParameterAsync()
         {
@@ -46,7 +46,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountWithSelectClauseAsync()
         {
@@ -56,7 +56,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountWithSelectClauseParameterAsync()
         {
@@ -66,7 +66,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountShortCircuitAsync()
         {

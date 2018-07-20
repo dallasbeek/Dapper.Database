@@ -8,7 +8,7 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsNoArgsAsync()
         {
@@ -19,7 +19,7 @@ namespace Dapper.Tests.Database
         }
 
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsByEntityAsync()
         {
@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsByIntegerIdAsync()
         {
@@ -44,7 +44,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsByGuidIdWhereClauseAsync()
         {
@@ -55,7 +55,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsPartialBySelectAsync()
         {
@@ -66,7 +66,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsBySelectAsync()
         {
@@ -77,7 +77,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        [ProviderFact]
+        [Fact]
         [Trait("Category", "ExistsAsync")]
         public async Task ExistsShortCircuitSemiColonAsync()
         {

@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
     //    public Provider Provider { get; set; }
     //}
 
-    //[XunitTestCaseDiscoverer("Dapper.Tests.Database.ProviderFactDiscoverer", "Dapper.Tests.Database")]
+    //[XunitTestCaseDiscoverer("Dapper.Tests.Database.FactDiscoverer", "Dapper.Tests.Database")]
     //[AttributeUsage(AttributeTargets.Method)]
     //public class FactAttributeAttribute : FactAttribute
     //{
@@ -47,11 +47,11 @@ namespace Dapper.Tests.Database
     //}
 
 
-    //public class ProviderFactDiscoverer : IXunitTestCaseDiscoverer
+    //public class FactDiscoverer : IXunitTestCaseDiscoverer
     //{
     //    readonly IMessageSink diagnosticMessageSink;
 
-    //    public ProviderFactDiscoverer(IMessageSink diagnosticMessageSink)
+    //    public FactDiscoverer(IMessageSink diagnosticMessageSink)
     //    {
     //        this.diagnosticMessageSink = diagnosticMessageSink;
     //    }

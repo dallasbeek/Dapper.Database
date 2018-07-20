@@ -267,41 +267,22 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">The parameters of the sql</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public T1 Get<T1, T2>(string sql, object parameters) where T1 : class where T2 : class
+        public T1 Get<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public T1 Get<T1, T2, T3>(string sql) where T1 : class where T2 : class where T3 : class
+        public T1 Get<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'T1'.  
-        /// </summary>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public T1 Get<T1, T2, T3>(string sql, object parameters) where T1 : class where T2 : class where T3 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'T1'.  
-        /// </summary>
-        /// <param name="sql">The sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public T1 Get<T1, T2, T3, T4>(string sql) where T1 : class where T2 : class where T3 : class where T4 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -309,10 +290,34 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public T1 Get<T1, T2, T3, T4>(string sql, object parameters) where T1 : class where T2 : class where T3 : class where T4 : class
+        public T1 Get<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 Get<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 Get<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -320,57 +325,11 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql) where T1 : class where T2 : class where TRet : class
+        public TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, TRet>(mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class where TRet : class
-        {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, TRet>(mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql) where T1 : class where T2 : class where T3 : class where TRet : class
-        {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, TRet>(mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class where T3 : class where TRet : class
-        {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, TRet>(mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
-        {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4, TRet>(mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -379,12 +338,234 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class where T3 : class where T4 : class
+        public TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4, TRet>(mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        {
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        {
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
+        {
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        #endregion
+
+        #region GetFirst Methods
+        /// <summary>
+        /// Returns a list entities of type T.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <returns>enumerable list of entities</returns>
+        public T GetFirst<T>(string sql = null) where T : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type T.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T GetFirst<T>(string sql, object parameters) where T : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a list entities of type T.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 GetFirst<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 GetFirst<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 GetFirst<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 GetFirst<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 GetFirst<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public T1 GetFirst<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet GetFirst<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet GetFirst<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
         #endregion
 
         #region GetList Methods
@@ -414,10 +595,11 @@ namespace Dapper.Database
         /// Returns a list entities of type T.  
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<T1> GetList<T1, T2>(string sql) where T1 : class where T2 : class
+        public IEnumerable<T1> GetList<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2>(sql,splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -425,42 +607,22 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<T1> GetList<T1, T2>(string sql, object parameters) where T1 : class where T2 : class
+        public IEnumerable<T1> GetList<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Returns a list entities of type T1.  
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<T1> GetList<T1, T2, T3>(string sql) where T1 : class where T2 : class
+        public IEnumerable<T1> GetList<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a list entities of type T1.  
-        /// </summary>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<T1> GetList<T1, T2, T3>(string sql, object parameters) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-
-        /// <summary>
-        /// Returns a list entities of type T1.  
-        /// </summary>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -468,10 +630,35 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, object parameters) where T1 : class where T2 : class
+        public IEnumerable<T1> GetList<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -479,10 +666,11 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql) where T1 : class where T2 : class
+        public IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, TRet>(mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -491,10 +679,11 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class
+        public IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, TRet>(mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -502,34 +691,11 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql) where T1 : class where T2 : class
+        public IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, TRet>(mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, TRet>(mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4, TRet>(mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -538,10 +704,37 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class
+        public IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4, TRet>(mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters,string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
         #endregion
 
@@ -578,10 +771,11 @@ namespace Dapper.Database
         /// <param name="page">The page to request</param>
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql) where T1 : class where T2 : class
+        public IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2>(page, pageSize, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -591,10 +785,11 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, object parameters) where T1 : class where T2 : class
+        public IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2>(page, pageSize, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -603,36 +798,11 @@ namespace Dapper.Database
         /// <param name="page">The page to request</param>
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql) where T1 : class where T2 : class
+        public IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a paged list entities of type T.  
-        /// </summary>
-        /// <param name="page">The page to request</param>
-        /// <param name="pageSize">Number of records per page</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, object parameters) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-
-        /// <summary>
-        /// Returns a paged list entities of type T.  
-        /// </summary>
-        /// <param name="page">The page to request</param>
-        /// <param name="pageSize">Number of records per page</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -642,10 +812,39 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters) where T1 : class where T2 : class
+        public IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+
+        /// <summary>
+        /// Returns a paged list entities of type T.  
+        /// </summary>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a paged list entities of type T.  
+        /// </summary>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -655,10 +854,11 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="mapper">Data mapping function</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql) where T1 : class where T2 : class
+        public IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, TRet>(page, pageSize, mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, TRet>(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -669,10 +869,11 @@ namespace Dapper.Database
         /// <param name="mapper">Data mapping function</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class
+        public IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, TRet>(page, pageSize, mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, TRet>(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -682,10 +883,41 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql) where T1 : class where T2 : class
+        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, TRet>(page, pageSize, mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, TRet>(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, TRet>(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+
+        }
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class
+        {
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4, TRet>(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -696,39 +928,11 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class
+        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, TRet>(page, pageSize, mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-
-        }
-
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="page">The page to request</param>
-        /// <param name="pageSize">Number of records per page</param>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4, TRet>(page, pageSize, mapper, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
-        }
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="page">The page to request</param>
-        /// <param name="pageSize">Number of records per page</param>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class
-        {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4, TRet>(page, pageSize, mapper, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4, TRet>(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion

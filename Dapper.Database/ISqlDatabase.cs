@@ -118,7 +118,6 @@ namespace Dapper.Database
 
         #endregion
 
-
         #region Exists Methods
         /// <summary>
         /// Check if a record exists
@@ -167,7 +166,6 @@ namespace Dapper.Database
 
         #endregion
 
-
         #region Get Methods
         /// <summary>
         /// Returns a single entity of type 'T'.  
@@ -199,80 +197,52 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">The parameters of the sql</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        T1 Get<T1, T2>(string sql, object parameters) where T1 : class where T2 : class;
+        T1 Get<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        T1 Get<T1, T2, T3>(string sql) where T1 : class where T2 : class where T3 : class;
-
-        /// <summary>
-        /// Returns a single entity of type 'T1'.  
-        /// </summary>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        T1 Get<T1, T2, T3>(string sql, object parameters) where T1 : class where T2 : class where T3 : class;
-
-        /// <summary>
-        /// Returns a single entity of type 'T1'.  
-        /// </summary>
-        /// <param name="sql">The sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        T1 Get<T1, T2, T3, T4>(string sql) where T1 : class where T2 : class where T3 : class where T4 : class;
+        T1 Get<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
         /// <summary>
         /// Returns a single entity of type 'T1'.  
         /// </summary>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        T1 Get<T1, T2, T3, T4>(string sql, object parameters) where T1 : class where T2 : class where T3 : class where T4 : class;
+        T1 Get<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class;
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 Get<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
+
+        /// <summary>
+        /// Returns a single entity of type 'T1'.  
+        /// </summary>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 Get<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a single entity of type 'TRet'.  
         /// </summary>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql) where T1 : class where T2 : class where TRet : class;
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class where TRet : class;
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql) where T1 : class where T2 : class where T3 : class where TRet : class;
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class where T3 : class where TRet : class;
-
-
-        /// <summary>
-        /// Returns a single entity of type 'TRet'.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The sql clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
+        TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a single entity of type 'TRet'.  
@@ -280,11 +250,176 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The sql clause</param>
         /// <param name="parameters">Parameters of the sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class where T3 : class where T4 : class;
+        TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class;
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
+
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
+
+        /// <summary>
+        /// Returns a single entity of type 'TRet'.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The sql clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <param name="parameters">Parameters of the sql clause</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         #endregion
 
+        #region GetFirst Methods
+        /// <summary>
+        /// Returns a list entities of type T.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <returns>enumerable list of entities</returns>
+        T GetFirst<T>(string sql = null) where T : class;
+
+        /// <summary>
+        /// Returns a list entities of type T.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T GetFirst<T>(string sql, object parameters) where T : class;
+
+
+        /// <summary>
+        /// Returns a list entities of type T.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 GetFirst<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 GetFirst<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 GetFirst<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 GetFirst<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 GetFirst<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        T1 GetFirst<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet GetFirst<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet GetFirst<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+             /// <param name="splitOn">The field we should split the result on to return the next object</param>
+   /// <returns>true if deleted, false if not found</returns>
+        TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        #endregion
 
         #region GetList Methods
         /// <summary>
@@ -307,55 +442,62 @@ namespace Dapper.Database
         /// Returns a list entities of type T.  
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<T1> GetList<T1, T2>(string sql) where T1 : class where T2 : class;
+        IEnumerable<T1> GetList<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<T1> GetList<T1, T2>(string sql, object parameters) where T1 : class where T2 : class;
+        IEnumerable<T1> GetList<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<T1> GetList<T1, T2, T3>(string sql) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type T1.  
-        /// </summary>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<T1> GetList<T1, T2, T3>(string sql, object parameters) where T1 : class where T2 : class;
-
-
-        /// <summary>
-        /// Returns a list entities of type T1.  
-        /// </summary>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql) where T1 : class where T2 : class;
+        IEnumerable<T1> GetList<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, object parameters) where T1 : class where T2 : class;
+        IEnumerable<T1> GetList<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type T1.  
+        /// </summary>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
         /// </summary>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql) where T1 : class where T2 : class;
+        IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -363,33 +505,18 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class;
+        IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
         /// </summary>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql) where T1 : class where T2 : class;
+        IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -397,10 +524,29 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class;
+        IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
         #endregion
-
 
         #region Get Paged List Methods
         /// <summary>
@@ -429,8 +575,9 @@ namespace Dapper.Database
         /// <param name="page">The page to request</param>
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql) where T1 : class where T2 : class;
+        IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -439,8 +586,9 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, object parameters) where T1 : class where T2 : class;
+        IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -448,28 +596,9 @@ namespace Dapper.Database
         /// <param name="page">The page to request</param>
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a paged list entities of type T.  
-        /// </summary>
-        /// <param name="page">The page to request</param>
-        /// <param name="pageSize">Number of records per page</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, object parameters) where T1 : class where T2 : class;
-
-
-        /// <summary>
-        /// Returns a paged list entities of type T.  
-        /// </summary>
-        /// <param name="page">The page to request</param>
-        /// <param name="pageSize">Number of records per page</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql) where T1 : class where T2 : class;
+        IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -478,8 +607,31 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters) where T1 : class where T2 : class;
+        IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+
+
+        /// <summary>
+        /// Returns a paged list entities of type T.  
+        /// </summary>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class;
+
+        /// <summary>
+        /// Returns a paged list entities of type T.  
+        /// </summary>
+        /// <param name="page">The page to request</param>
+        /// <param name="pageSize">Number of records per page</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -488,8 +640,9 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="mapper">Data mapping function</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql) where T1 : class where T2 : class;
+        IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -499,8 +652,9 @@ namespace Dapper.Database
         /// <param name="mapper">Data mapping function</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class;
+        IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -509,8 +663,9 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql) where T1 : class where T2 : class;
+        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -520,8 +675,9 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class;
+        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
 
         /// <summary>
@@ -531,8 +687,9 @@ namespace Dapper.Database
         /// <param name="pageSize">Number of records per page</param>
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql) where T1 : class where T2 : class;
+        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -542,8 +699,9 @@ namespace Dapper.Database
         /// <param name="mapper">Open SqlConnection</param>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters) where T1 : class where T2 : class;
+        IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
         #endregion
 
@@ -579,7 +737,6 @@ namespace Dapper.Database
         bool Update<T>(T entityToUpdate, IEnumerable<string> columnsToUpdate) where T : class;
 
         #endregion
-
 
         #region Upsert Queries
 
@@ -621,7 +778,6 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction) where T : class;
         #endregion
-
 
         #region Delete Methods
         /// <summary>
