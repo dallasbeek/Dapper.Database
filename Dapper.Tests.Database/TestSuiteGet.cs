@@ -204,7 +204,7 @@ namespace Dapper.Tests.Database
         {
             Assert.NotNull(p);
             Assert.Equal(21, p.ProductCategoryID);
-            Assert.Equal(2, p.ParentProductCategoryID);
+            //Assert.Equal(2, p.ParentProductCategoryID);
             Assert.Equal("Wheels", p.Name);
             //Assert.Equal(new Guid("7C782BBE-5A16-495A-AA50-10AFE5A84AF2"), p.GuidId);
         }

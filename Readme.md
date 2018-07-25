@@ -145,8 +145,8 @@ public string Notes { get; set; }
 [ReadOnly] // Column is excluded from insert/update
 public string Notes { get; set; }
 
-[Ignore]
-public string NoDbColumn { get; set; }  // Excluded (use this when adding custom properties that are not db backed)
+[Ignore] // Excluded (use this when adding custom properties that are not db backed)
+public string NoDbColumn { get; set; } 
 ```
 
 There is also a T4 code generation template.  
@@ -163,10 +163,12 @@ var product = connection.Get<Product>(806);
 or with a where clause
 
 ```csharp
-var product = connection.Get<Product>("WHERE rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" });
+var product = connection.Get<Product>("WHERE ProductId = @PId", new { PId = 2323 });
 ```
 
 `GetList` methods
+-------
+
 ```csharp
 var products = connection.GetList<Product>("where Color = 'Black'");
 ```
@@ -212,8 +214,9 @@ or by where clause
 connection.Delete<Car>("where Name = 'Audi'")
 ```
 
-`Upsert` methods insert if it doesn't exist or updates the record, callbacks can be used to update properties
-
+`Upsert` methods
+-------
+Insert if it doesn't exist or updates the record, callbacks can be used to update properties
 ```
 connection.Upsert(
 	new Car()
