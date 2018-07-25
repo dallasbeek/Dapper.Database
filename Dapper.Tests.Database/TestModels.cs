@@ -52,7 +52,6 @@ namespace Dapper.Tests.Database
         public DateTime? UpdatedOn { get; set; }
         [IgnoreUpdate]
         public DateTime? CreatedOn { get; set; }
-
         [Ignore]
         public string NoDbColumn { get; set; }
 

@@ -811,5 +811,14 @@ namespace Dapper.Database
         bool Delete<T>(string sql, object parameters) where T : class;
 
         #endregion
+
+        #region Transaction
+        /// <summary>
+        /// Get a transaction
+        /// </summary>
+        /// <param name="isolationlevel"></param>
+        /// <returns></returns>
+        ITransaction GetTransaction(IsolationLevel isolationlevel = IsolationLevel.ReadCommitted);
+        #endregion
     }
 }

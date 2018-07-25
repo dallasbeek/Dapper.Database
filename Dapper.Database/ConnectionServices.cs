@@ -7,6 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+using System.Configuration;
+#endif
+
 namespace Dapper.Database
 {
     /// <summary>
@@ -47,4 +51,32 @@ namespace Dapper.Database
            return (T)Activator.CreateInstance(typeof(T), _connectionString);
         }
     }
+
+#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ConfigConnectionService<T> : IConnectionService where T : IDbConnection
+    {
+        private readonly string _key;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key">the key in app.config or web.config</param>
+        public ConfigConnectionService(string key)
+        {
+            _key = key;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IDbConnection GetConnection()
+        {
+            return (T)Activator.CreateInstance(typeof(T), ConfigurationManager.ConnectionStrings[_key].ConnectionString);
+        }
+    }
+#endif
 }
