@@ -51,5 +51,5 @@ deploy:
   on:
     branch: master  
   api_key:
-    secure: xaS8OVhYnLzlCr7n166yWxzAMs9A+mS+i+1j+wM0aCKDyj/O3ycA7P91SL00dB/O
+    secure: omw4IBzq0RAzx+QBqt880QN9gJUB3aB+GpX8bizQxirNDk+Ocw66b+8wtf8Eu2SK
   symbol_server: https://www.myget.org/F/dapper-database/symbols/api/v2/package
