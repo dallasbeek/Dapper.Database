@@ -44,3 +44,12 @@ build_script:
 test: off
 artifacts:
   - path: .\.nupkgs\*.nupkg
+
+deploy:
+- provider: NuGet
+  server: https://www.myget.org/F/dapper-database/api/v2
+  on:
+    branch: master  
+  api_key:
+    secure: xaS8OVhYnLzlCr7n166yWxzAMs9A+mS+i+1j+wM0aCKDyj/O3ycA7P91SL00dB/O
+  symbol_server: https://www.myget.org/F/dapper-database/symbols/api/v2/package
