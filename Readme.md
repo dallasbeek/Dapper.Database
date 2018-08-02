@@ -113,43 +113,127 @@ using (var db = new SqlDatabase(new StringConnectionService<SqlConnection>("conn
 
 There are a number of attributes you can use to decorate your classes. 
 
-(System.ComponentModel.DataAnnotations)
-``` csharp
-[Table("Person", Schema = "Sales")] //Schema will be used for databases that support
-public class Persona
+From `System.ComponentModel.DataAnnotations`
 
-[Key] // non autoincrement
-public string StringId { get; set; }
-
-[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Auto Increment key column
-public int IdentityId { get; set; }
-
-[DatabaseGenerated(DatabaseGeneratedOption.Computed)] // These columns are refreshed during insert/update actions
-public string FullName { get; set; }
-
-[Column("rowguid")] // Database column is different than property
-public virtual Guid GuidId { get; set; }
+`TableAttribute` Specifies the SQL table to use.  For databases that support schema generated queries will include a schema if specified.
+```csharp
+[Table("User", Schema = "Security")]
+public class User
+{
+}
 ```
 
-(Dapper.Database.Attributes)
-``` csharp
-[IgnoreInsert] // Column is not set on insert
-public DateTime? UpdatedOn { get; set; }
-
-[IgnoreUpdate] // Column is not modified on update
-public DateTime? CreatedOn { get; set; }
-
-[IgnoreSelect] // Column is not retrieved on Get/GetList etc.
-public string Notes { get; set; }
-
-[ReadOnly] // Column is excluded from insert/update
-public string Notes { get; set; }
-
-[Ignore] // Excluded (use this when adding custom properties that are not db backed)
-public string NoDbColumn { get; set; } 
+`ColumnAttribute` Optional attribute that allows mapping a property to an alternately named column.
+```csharp
+public class User
+{
+    [Column("UserName")]
+    public string Name { get; set; }
+}
 ```
 
-There is also a T4 code generation template.  
+`DatabaseGeneratedAttribute` Attribute for computed columns and identity columns.  Logic will refresh generated properties after insert and update.
+```csharp
+public class User
+{
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Identity { get; set; }
+
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+    public string FullName { get; set; }
+}
+```
+
+`KeyAttribute` Attribute for to be used for primary keys.  
+```csharp
+public class User
+{
+    [Key]
+    public int Id { get; set; }
+}
+```
+
+From `Dapper.Database.Attributes`
+
+`IgnoreInsertAttribute` Ignores the property on an insert statement.
+```csharp
+public class User
+{
+    [IgnoreInsert]
+    public DateTime? ModifiedOn { get; set; }
+}
+```
+
+`IgnoreUpdateAttribute` Ignores the property on update statements.
+```csharp
+public class User
+{
+    [IgnoreUpdate]
+    public DateTime CreatedOn { get; set; }
+}
+```
+
+`IgnoreSelectAttribute` Ignores the property on select statements.
+```csharp
+public class User
+{
+    [IgnoreSelect]
+    public string Password { get; set; }
+}
+```
+
+`ReadOnlyAttribute` Ignores the property on insert and update.
+```csharp
+public class User
+{
+    [ReadOnly]
+    public string SpecialInfo { get; set; }
+}
+```
+
+`IgnoreAttribute` Indicates that there isn't a database backing column.
+```csharp
+public class User
+{
+    [Ignore]
+    public string NoDbColumn { get; set; }
+}
+```
+
+An example implementation with attribute markup.
+
+```csharp
+[Table("Location", Schema = "dbo")]
+public class Location
+{
+    [Column, Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public virtual int Id { get; set; }
+
+    [Column]
+    public virtual string Code { get; set; }
+    
+    [Column]
+    public virtual string Name { get; set; }
+    
+    [Column("Database")]
+    public virtual string DatabaseName { get; set; }
+    
+    [Column, IgnoreUpdate]
+    public virtual DateTime CreatedOn { get; set; }
+    
+    [Column, IgnoreInsert]
+    public virtual DateTime? UpdatedOn { get; set; }
+
+    [Ignore]
+    public virtual int NoDbColumn { get; set; }
+
+}
+```
+
+Code Generation
+-------
+
+There is also a T4 code generation template. [Code Generator](https://github.com/dallasbeek/Dapper.Database/tree/master/T4Templates)
 
 `Get` methods
 -------
@@ -163,7 +247,7 @@ var product = connection.Get<Product>(806);
 or with a where clause
 
 ```csharp
-var product = connection.Get<Product>("WHERE ProductId = @PId", new { PId = 2323 });
+var product = connection.Get<Product>("where productId = @PId", new { PId = 2323 });
 ```
 
 `GetList` methods
@@ -174,6 +258,8 @@ var products = connection.GetList<Product>("where Color = 'Black'");
 ```
 
 `GetPagedList` methods (get page 5, 10 records)
+-------
+
 ```csharp
 var products = connection.GetPageList<Product>(5, 10, "where Color = 'Black' order by Name")
 ```

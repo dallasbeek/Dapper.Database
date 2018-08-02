@@ -10,11 +10,10 @@
 
     <PackageId>$(AssemblyName)</PackageId>
     <RepositoryType>git</RepositoryType>
-    <!-- <PackageReleaseNotes>https://stackexchange.github.io/Dapper/</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/StackExchange/Dapper</PackageProjectUrl>
+    <!--<PackageReleaseNotes></PackageReleaseNotes>-->
+    <PackageProjectUrl>https://github.com/dallasbeek/Dapper.Database</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/StackExchange/Dapper</RepositoryUrl>
-    -->
+    <RepositoryUrl>https://github.com/dallasbeek/Dapper.Database</RepositoryUrl>
     
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
