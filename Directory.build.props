@@ -6,7 +6,7 @@
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyOriginatorKeyFile>../Dapper.snk</AssemblyOriginatorKeyFile>
+    <!--<AssemblyOriginatorKeyFile>../Dapper.Database.snk</AssemblyOriginatorKeyFile>-->
 
     <PackageId>$(AssemblyName)</PackageId>
     <RepositoryType>git</RepositoryType>
