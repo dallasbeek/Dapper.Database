@@ -101,7 +101,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
             return await GetPageListAsync<T1, T2, T3>(connection, page, pageSize, sql, null, transaction, commandTimeout);
         }
@@ -118,7 +118,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -145,7 +145,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
             return await GetPageListAsync<T1, T2, T3, T4>(connection, page, pageSize, sql, null, transaction, commandTimeout);
         }
@@ -162,7 +162,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -189,7 +189,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
             return await GetPageListAsync<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
@@ -207,7 +207,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -234,7 +234,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
             return await GetPageListAsync<T1, T2, T3, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
@@ -252,7 +252,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -280,7 +280,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
             return await GetPageListAsync<T1, T2, T3, T4, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
@@ -298,7 +298,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -326,7 +326,7 @@ namespace Dapper.Database.Extensions
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <param name="fromCache">Cache the query.</param>
         /// <returns>True if records are deleted</returns>
-        private static async Task< IPagedEnumerable<T>> GetPageListAsync<T>(this IDbConnection connection, int page, int pageSize, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
+        private static async Task<IPagedEnumerable<T>> GetPageListAsync<T>(this IDbConnection connection, int page, int pageSize, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
         {
             var type = typeof(T);
             var tinfo = TableInfoCache(type);

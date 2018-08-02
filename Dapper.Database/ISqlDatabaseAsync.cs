@@ -52,24 +52,24 @@ namespace Dapper.Database
 
         #endregion
 
-//        #region GetDataTable Methods
-//#if !NETSTANDARD1_3 && !NETCOREAPP1_0
-//        /// <summary>
-//        /// Execute a query
-//        /// </summary>
-//        /// <param name="sql">The sql clause to count</param>
-//        /// <returns>Return Total Count of matching records</returns>
-//        Task<DataTable> GetDataTableAsync(string sql);
+        //        #region GetDataTable Methods
+        //#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+        //        /// <summary>
+        //        /// Execute a query
+        //        /// </summary>
+        //        /// <param name="sql">The sql clause to count</param>
+        //        /// <returns>Return Total Count of matching records</returns>
+        //        Task<DataTable> GetDataTableAsync(string sql);
 
-//        /// <summary>
-//        /// Execute a query
-//        /// </summary>
-//        /// <param name="sql">The sql clause to count</param>
-//        /// <param name="parameters">The parameters of the clause</param>
-//        /// <returns>Return Total Count of matching records</returns>
-//        Task<DataTable> GetDataTableAsync(string sql, object parameters);
-//#endif
-//        #endregion
+        //        /// <summary>
+        //        /// Execute a query
+        //        /// </summary>
+        //        /// <param name="sql">The sql clause to count</param>
+        //        /// <param name="parameters">The parameters of the clause</param>
+        //        /// <returns>Return Total Count of matching records</returns>
+        //        Task<DataTable> GetDataTableAsync(string sql, object parameters);
+        //#endif
+        //        #endregion
 
         #region GetMultiple Methods
         /// <summary>
@@ -293,7 +293,7 @@ namespace Dapper.Database
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <param name="parameters">Parameters of the sql clause</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
+        Task<TRet> GetAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
 
         #endregion
 
@@ -337,7 +337,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<T1> GetFirstAsync<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<T1> GetFirstAsync<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
@@ -346,7 +346,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<T1> GetFirstAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<T1> GetFirstAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<T1> GetFirstAsync<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<T1> GetFirstAsync<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
@@ -364,7 +364,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<T1> GetFirstAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<T1> GetFirstAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -373,26 +373,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetFirstAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <param name="splitOn">The field we should split the result on to return the next object</param>
-        /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetFirstAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="splitOn">The field we should split the result on to return the next object</param>
-        /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetFirstAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<TRet> GetFirstAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -402,7 +383,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetFirstAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<TRet> GetFirstAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -411,7 +392,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetFirstAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<TRet> GetFirstAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -421,7 +402,26 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<TRet> GetFirstAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<TRet> GetFirstAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        Task<TRet> GetFirstAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        Task<TRet> GetFirstAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
         #endregion
 
         #region GetList Methods
@@ -464,7 +464,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
@@ -473,7 +473,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
 
         /// <summary>
@@ -482,7 +482,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a list entities of type T1.  
@@ -491,7 +491,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<T1>> GetListAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -500,26 +500,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">Parameters of the clause</param>
-        /// <param name="splitOn">The field we should split the result on to return the next object</param>
-        /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
-
-        /// <summary>
-        /// Returns a list entities of type TRet.  
-        /// </summary>
-        /// <param name="mapper">Open SqlConnection</param>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="splitOn">The field we should split the result on to return the next object</param>
-        /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -529,7 +510,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -538,7 +519,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -548,7 +529,26 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
+
+        /// <summary>
+        /// Returns a list entities of type TRet.  
+        /// </summary>
+        /// <param name="mapper">Open SqlConnection</param>
+        /// <param name="sql">The where clause to delete</param>
+        /// <param name="parameters">Parameters of the clause</param>
+        /// <param name="splitOn">The field we should split the result on to return the next object</param>
+        /// <returns>true if deleted, false if not found</returns>
+        Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
         #endregion
 
         #region Get Paged List Methods
@@ -601,7 +601,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -612,7 +612,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
 
         /// <summary>
@@ -623,7 +623,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -634,7 +634,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -645,7 +645,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -657,7 +657,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class;
 
         /// <summary>
         /// Returns a paged list entities of type T.  
@@ -668,7 +668,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -680,7 +680,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class;
 
 
         /// <summary>
@@ -692,7 +692,7 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
 
         /// <summary>
         /// Returns a list entities of type TRet.  
@@ -704,7 +704,7 @@ namespace Dapper.Database
         /// <param name="parameters">Parameters of the clause</param>
         /// <param name="splitOn">The field we should split the result on to return the next object</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<IPagedEnumerable<TRet>>  GetPageListAsync<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
+        Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
 
         #endregion
 
