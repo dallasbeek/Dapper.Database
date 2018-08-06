@@ -6,7 +6,7 @@
     <Title>Dapper.Database</Title>
     <Description>get, insert, update, upsert, getlist, getpagedlist, and delete helpers for Dapper.net.</Description>
     <Authors>Dallas Beek</Authors>
-    <TargetFrameworks>net451;netstandard2.0;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net451;netstandard1.3</TargetFrameworks>
     <!-- TODO: Docs -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Company />
@@ -41,7 +41,6 @@
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="Dapper.Mapper" Version="2.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Configuration.ConfigurationManager">

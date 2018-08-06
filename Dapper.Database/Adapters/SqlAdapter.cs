@@ -4,10 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
 using Dapper;
 using Dapper.Database;
-
+using Dapper.Database.Adapters;
 
 /// <summary>
 /// The interface for all Dapper.Database database operations
@@ -111,38 +110,7 @@ public partial interface ISqlAdapter
 /// </summary>
 public abstract partial class SqlAdapter
 {
-    /// <summary>
-    /// Regex to determine if sql has select/execute/call
-    /// </summary>
-    protected static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
-    /// <summary>
-    /// Regex to determine if sql has delete
-    /// </summary>
-    protected static readonly Regex rxDelete = new Regex(@"\A\s*DELETE\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
-    /// <summary>
-    /// Regex to determine if sql has from
-    /// </summary>
-    protected static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
-    /// <summary>
-    /// Regex to select columns from sql
-    /// </summary>
-    protected static readonly Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-
-    /// <summary>
-    /// Regex to retrieve order by
-    /// </summary>
-    protected static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\[\]\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-
-    /// <summary>
-    /// Regex to retrieve order by
-    /// </summary>
-    protected static readonly Regex rxWhere = new Regex(@"\bWHERE\s", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-    //protected static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-
-    /// <summary>
+     /// <summary>
     /// Cache for Get Queries
     /// </summary>
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> GetQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
@@ -151,7 +119,7 @@ public abstract partial class SqlAdapter
     /// Cache for Insert Queries
     /// </summary>
     private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> InsertQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
- 
+
     /// <summary>
     /// Cache for Update Queries
     /// </summary>
@@ -229,28 +197,30 @@ public abstract partial class SqlAdapter
     /// <returns>A sql statement that selects the count of matching records</returns>
     public virtual string CountQuery(TableInfo tableInfo, string sql)
     {
-        var q = sql ?? "";
+        var q = new SqlParser(sql ?? "");
 
-        if (q.StartsWith(";"))
-            return q.Substring(1);
+        if (q.Sql.StartsWith(";"))
+            return q.Sql.Substring(1);
 
-        var m = rxOrderBy.Match(q);
-
-        if (m.Success)
+        if (!string.IsNullOrEmpty(q.OrderByClause))
         {
-            q = q.Replace(m.Groups[0].ToString(), "");
+            q.Sql = q.Sql.Replace(q.OrderByClause, "");
         }
 
-        if (!rxSelect.IsMatch(q))
+        if (!q.IsSelect)
         {
-            if (!rxFrom.IsMatch(q))
-                return $"select count(*) from { EscapeTableName(tableInfo)} {q}";
+            if (string.IsNullOrEmpty(q.FromClause))
+            {
+                return $"select count(*) from { EscapeTableName(tableInfo)} {q.Sql}";
+            }
             else
-                return $"select count(*) {q}";
+            {
+                return $"select count(*) {q.Sql}";
 
+            }
         }
 
-        return $"select count(*) from ({q}) calc_inner";
+        return $"select count(*) from ({q.Sql}) calc_inner";
     }
 
     /// <summary>
@@ -261,27 +231,30 @@ public abstract partial class SqlAdapter
     /// <returns>A sql statement that deletes</returns>
     public virtual string DeleteQuery(TableInfo tableInfo, string sql)
     {
-        var q = sql ?? "";
+        var q = new SqlParser(sql ?? "");
 
-        if (q.StartsWith(";"))
-            return q.Substring(1);
+        if (q.Sql.StartsWith(";"))
+            return q.Sql.Substring(1);
 
-        var m = rxOrderBy.Match(q);
-
-        if (m.Success)
+        if (!string.IsNullOrEmpty(q.OrderByClause))
         {
-            q = q.Replace(m.Groups[0].ToString(), "");
+            q.Sql = q.Sql.Replace(q.OrderByClause, "");
         }
 
-        if (!rxDelete.IsMatch(q))
+        if (!q.IsDelete)
         {
-            if (!rxFrom.IsMatch(q))
-                return $"delete from { EscapeTableName(tableInfo)} {q}";
+            if (string.IsNullOrEmpty(q.FromClause))
+            {
+                return $"delete from { EscapeTableName(tableInfo)} {q.Sql}";
+            }
             else
-                return $"delete {q}";
+            {
+                return $"delete {q.Sql}";
 
+            }
         }
-        return $"delete from ({q}) calc_inner";
+
+        return $"delete from ({q.Sql}) calc_inner";
     }
 
     /// <summary>
@@ -292,22 +265,36 @@ public abstract partial class SqlAdapter
     /// <returns>A sql statement that selects true if a record matches</returns>
     public virtual string ExistsQuery(TableInfo tableInfo, string sql)
     {
-        var q = sql ?? "";
+        var q = new SqlParser(sql ?? "");
 
-        if (q.StartsWith(";"))
-            return q.Substring(1);
+        if (q.Sql.StartsWith(";"))
+            return q.Sql.Substring(1);
 
-        if (!rxSelect.IsMatch(q))
+        if (!q.IsSelect)
         {
-            var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+            var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
-            if (!rxFrom.IsMatch(q))
+            if (string.IsNullOrEmpty(q.FromClause))
                 return $"select 1 where exists (select 1 from { EscapeTableName(tableInfo)} {wc})";
             else
                 return $"select 1 where exists (select 1 {wc})";
 
         }
-        return $"select 1 where exists ({sql})";
+
+        //if (!rxSelect.IsMatch(q))
+        //{
+        //    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+
+        //    if (!rxFrom.IsMatch(q))
+        //        return $"select 1 where exists (select 1 from { EscapeTableName(tableInfo)} {wc})";
+        //    else
+        //        return $"select 1 where exists (select 1 {wc})";
+
+        //}
+
+        return $"select 1 where exists ({q.Sql})";
+
+
     }
 
     /// <summary>
@@ -319,21 +306,21 @@ public abstract partial class SqlAdapter
     /// <returns>A sql statement that selects a single item</returns>
     public virtual string GetQuery(TableInfo tableInfo, string sql, bool cache = false)
     {
-        var q = sql ?? "";
+        var q = new SqlParser(sql ?? "");
 
-        if (q.StartsWith(";"))
-            return q.Substring(1);
+        if (q.Sql.StartsWith(";"))
+            return q.Sql.Substring(1);
 
-        if (!rxSelect.IsMatch(q))
+        if (!q.IsSelect)
         {
             return GetQueries.Acquire(
                 tableInfo.ClassType.TypeHandle,
-                () => cache && string.IsNullOrEmpty(q),
+                () => cache && string.IsNullOrEmpty(q.Sql),
                 () =>
                 {
-                    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+                    var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
-                    if (!rxFrom.IsMatch(q))
+                    if (string.IsNullOrEmpty(q.FromClause))
                         return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
                     else
                         return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
@@ -341,7 +328,7 @@ public abstract partial class SqlAdapter
             );
 
         }
-        return sql;
+        return q.Sql;
 
     }
 
@@ -354,21 +341,38 @@ public abstract partial class SqlAdapter
     /// <returns>A sql statement</returns>
     public virtual string GetListQuery(TableInfo tableInfo, string sql)
     {
-        var q = sql ?? "";
+        var q = new SqlParser(sql ?? "");
 
-        if (q.StartsWith(";"))
-            return q.Substring(1);
+        if (q.Sql.StartsWith(";"))
+            return q.Sql.Substring(1);
 
-        if (!rxSelect.IsMatch(q))
+        if (!q.IsSelect)
         {
-            var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+            var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
-            if (!rxFrom.IsMatch(q))
+            if (string.IsNullOrEmpty(q.FromClause))
                 return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
             else
                 return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
         }
-        return sql;
+
+        return q.Sql;
+
+        //var q = sql ?? "";
+
+        //if (q.StartsWith(";"))
+        //    return q.Substring(1);
+
+        //if (!rxSelect.IsMatch(q))
+        //{
+        //    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
+
+        //    if (!rxFrom.IsMatch(q))
+        //        return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+        //    else
+        //        return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+        //}
+        //return sql;
 
     }
 
@@ -382,29 +386,41 @@ public abstract partial class SqlAdapter
     /// <returns>A paginated sql statement</returns>
     public virtual string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
     {
-        var selectQuery = GetListQuery(tableInfo, sql);
-
-        var m = rxColumns.Match(selectQuery);
-        var g = m.Groups[1];
-        var sqlSelectRemoved = selectQuery.Substring(g.Index);
-        var sqlOrderBy = string.Empty;
-
+        var q = new SqlParser(GetListQuery(tableInfo, sql));
         var pageSkip = (page - 1) * pageSize;
 
-        m = rxOrderBy.Match(selectQuery);
+        var sqlOrderBy = string.Empty;
 
-        if (m.Success)
-        {
-            g = m.Groups[0];
-            sqlOrderBy = g.ToString();
-        }
-        else if (tableInfo.KeyColumns.Any())
+        if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
         {
             sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
         }
 
+        return $"{q.Sql} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
 
-        return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
+        //var selectQuery = GetListQuery(tableInfo, sql);
+
+        //var m = rxColumns.Match(selectQuery);
+        //var g = m.Groups[1];
+        //var sqlSelectRemoved = selectQuery.Substring(g.Index);
+        //var sqlOrderBy = string.Empty;
+
+        //var pageSkip = (page - 1) * pageSize;
+
+        //m = rxOrderBy.Match(selectQuery);
+
+        //if (m.Success)
+        //{
+        //    g = m.Groups[0];
+        //    sqlOrderBy = g.ToString();
+        //}
+        //else if (tableInfo.KeyColumns.Any())
+        //{
+        //    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+        //}
+
+
+        //return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
 
     }
 
@@ -571,47 +587,28 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
     /// <returns>A paginated sql statement</returns>
     public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
     {
-        var selectQuery = GetListQuery(tableInfo, sql);
-
-        var m = rxColumns.Match(selectQuery);
-        var g = m.Groups[1];
-        var sqlSelectRemoved = selectQuery.Substring(g.Index);
-        var sqlOrderBy = "order by (select null)";
-
+        var q = new SqlParser(GetListQuery(tableInfo, sql));
         var pageSkip = (page - 1) * pageSize;
         var pageTake = pageSkip + pageSize;
+        var sqlOrderBy = "order by (select null)";
+        var sqlOrderByRemoved = q.Sql;
 
-        m = rxOrderBy.Match(selectQuery);
-
-        if (m.Success)
+        if (string.IsNullOrEmpty(q.OrderByClause) )
         {
-            g = m.Groups[0];
-            sqlOrderBy = g.ToString();
+            if (tableInfo.KeyColumns.Any())
+            {
+                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+            }
         }
-        else if (tableInfo.KeyColumns.Any())
+        else
         {
-            sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+            sqlOrderBy = q.OrderByClause;
+            sqlOrderByRemoved = sqlOrderByRemoved.Replace(q.OrderByClause, "");
         }
 
-        // to prevent duplicate columns in subquery
-        //if (sqlSelectRemoved.Contains("*") && tableInfo.KeyColumns.Any())
-        //{
-        //    var keyColumns = EscapeColumnList(tableInfo.KeyColumns);
+        var columnsOnly = $"page_inner.* FROM ({sqlOrderByRemoved}) page_inner";
 
-        //    var joinQuery = $"select {keyColumns}, row_number() over ({sqlOrderBy}) page_rn {sqlSelectRemoved.Substring(g.Length)}";
-        //    var sqlOrderWhereRemoved = rxOrderBy.Replace(sqlSelectRemoved, "", 1);
-        //    var w = rxWhere.Match(sqlOrderWhereRemoved);
-        //    if (w.Success)
-        //    {
-        //        sqlOrderWhereRemoved = sqlOrderWhereRemoved.Substring(0,  w.Index);
-        //    }
-        //    var qq = $"select {sqlOrderWhereRemoved} join ({joinQuery}) page_join on xxxx where page_rn > {pageSkip} and page_rn <= {pageTake}";
-
-        //}
-
-        var columnsOnly = $"page_inner.* FROM (select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)}) page_inner";
-
-        return $"select * from (select  row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {pageSkip} and page_rn <= {pageTake}";
+        return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {pageSkip} and page_rn <= {pageTake}";
 
     }
 
@@ -740,28 +737,41 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
     /// <returns>A paginated sql statement</returns>
     public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
     {
-        var selectQuery = GetListQuery(tableInfo, sql);
-
-        var m = rxColumns.Match(selectQuery);
-        var g = m.Groups[1];
-        var sqlSelectRemoved = selectQuery.Substring(g.Index);
-        var sqlOrderBy = string.Empty;
-
+        var q = new SqlParser(GetListQuery(tableInfo, sql));
         var pageSkip = (page - 1) * pageSize;
 
-        m = rxOrderBy.Match(selectQuery);
+        var sqlOrderBy = string.Empty;
 
-        if (m.Success)
-        {
-            g = m.Groups[0];
-            sqlOrderBy = g.ToString();
-        }
-        else if (tableInfo.KeyColumns.Any())
+        if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
         {
             sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
         }
 
-        return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} offset {pageSkip} rows fetch next {pageSize} rows only";
+        //return $"{q.Sql} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
+        return $"{q.Sql} {sqlOrderBy} offset {pageSkip} rows fetch next {pageSize} rows only";
+
+        //var selectQuery = GetListQuery(tableInfo, sql);
+
+        //var m = rxColumns.Match(selectQuery);
+        //var g = m.Groups[1];
+        //var sqlSelectRemoved = selectQuery.Substring(g.Index);
+        //var sqlOrderBy = string.Empty;
+
+        //var pageSkip = (page - 1) * pageSize;
+
+        //m = rxOrderBy.Match(selectQuery);
+
+        //if (m.Success)
+        //{
+        //    g = m.Groups[0];
+        //    sqlOrderBy = g.ToString();
+        //}
+        //else if (tableInfo.KeyColumns.Any())
+        //{
+        //    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+        //}
+
+        //return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} offset {pageSkip} rows fetch next {pageSize} rows only";
 
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dapper.Database.Extensions;
 using Xunit;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Dapper.Tests.Database
 {
@@ -21,7 +22,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetPageList")]
