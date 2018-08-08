@@ -217,7 +217,7 @@ namespace Dapper.Tests.Database
         private const string DbName = "test";
         public static string ConnectionString =>
             IsAppVeyor
-                ? @"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}"
+                ? $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}"
                 : $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
 
         public override ISqlDatabase GetSqlDatabase()
