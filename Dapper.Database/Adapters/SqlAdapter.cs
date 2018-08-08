@@ -164,7 +164,7 @@ public abstract partial class SqlAdapter
         return InsertQueries.Acquire(
             tableInfo.ClassType.TypeHandle,
             () => true,
-            () => $"insert into { EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}); "
+            () => $"insert into { EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) "
         );
     }
 
@@ -183,7 +183,7 @@ public abstract partial class SqlAdapter
             () =>
             {
                 var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
-                return $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}; ";
+                return $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}";
             }
         );
 
@@ -500,7 +500,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -551,7 +551,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
             cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi = connection.QueryMultiple(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -643,7 +643,7 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
 
-            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            var selectcmd = new StringBuilder($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -796,7 +796,7 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -847,7 +847,7 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
             cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi = connection.QueryMultiple(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -974,73 +974,106 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
 //}
 
-///// <summary>
-///// The Postgres database adapter.
-///// </summary>
-//public partial class PostgresAdapter : SqlAdapter, ISqlAdapter
-//{
-//    /// <summary>
-//    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
-//    /// </summary>
-//    /// <param name="connection">The connection to use.</param>
-//    /// <param name="transaction">The transaction to use.</param>
-//    /// <param name="commandTimeout">The command timeout to use.</param>
-//    /// <param name="tableName">The table to insert into.</param>
-//    /// <param name="columnList">The columns to set with this insert.</param>
-//    /// <param name="parameterList">The parameters to set for this insert.</param>
-//    /// <param name="keyProperties">The key columns in this table.</param>
-//    /// <param name="entityToInsert">The entity to insert.</param>
-//    /// <returns>true if inserted</returns>
-//    public bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<ColumnInfo> keyProperties, object entityToInsert)
-//    {
-//        var sb = new StringBuilder();
-//        sb.AppendFormat("insert into {0} ({1}) values ({2})", tableName, columnList, parameterList);
+/// <summary>
+/// The Postgres database adapter.
+/// </summary>
+public partial class PostgresAdapter : SqlAdapter, ISqlAdapter
+{
 
-//        // If no primary key then safe to assume a join table with not too much data to return
-//        var propertyInfos = keyProperties.Select(p => p.Property).ToArray();
-//        if (propertyInfos.Length == 0)
-//        {
-//            sb.Append(" RETURNING *");
-//        }
-//        else
-//        {
-//            sb.Append(" RETURNING ");
-//            var first = true;
-//            foreach (var property in propertyInfos)
-//            {
-//                if (!first)
-//                    sb.Append(", ");
-//                first = false;
-//                sb.Append(property.Name);
-//            }
-//        }
+    /// <summary>
+    /// Inserts an entity into table "Ts"
+    /// </summary>
+    /// <param name="connection">Open SqlConnection</param>
+    /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+    /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+    /// <param name="tableInfo">table information about the entity</param>
+    /// <param name="entityToInsert">Entity to insert</param>
+    /// <returns>true if the entity was inserted</returns>
+    public override bool Insert( IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert )
+    {
+        var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-//        var results = connection.Query(sb.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
+        if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
+        {
+            cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 
-//        // Return the key by assinging the corresponding property in the object - by product is that it supports compound primary keys
-//        var id = 0;
-//        foreach (var p in propertyInfos)
-//        {
-//            var value = ((IDictionary<string, object>)results[0])[p.Name.ToLower()];
-//            p.SetValue(entityToInsert, value, null);
-//            if (id == 0)
-//                id = Convert.ToInt32(value);
-//        }
-//        return id > 0;
-//    }
+            var vals = connection.Query(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
 
+            if ( !vals.Any() ) return false;
 
-//    /// <summary>
-//    /// Applies a schema name is one is specified
-//    /// </summary>
-//    /// <param name="tableInfo"></param>
-//    /// <returns></returns>
-//    public override string EscapeTableName(TableInfo tableInfo) =>
-//        (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) + EscapeTableName(tableInfo.TableName);
+            var rvals = ((IDictionary<string, object>) vals[0]);
 
-//    /// <summary>
-//    /// Returns the format for column
-//    /// </summary>
-//    public override string EscapeColumnn(string value) => $"\"{value}\"";
+            foreach ( var key in rvals.Keys )
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+            }
 
-//}
+            return true;
+        }
+        else
+        {
+            return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+        }
+
+    }
+
+    /// <summary>
+    /// updates an entity into table "Ts"
+    /// </summary>
+    /// <param name="connection">Open SqlConnection</param>
+    /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+    /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+    /// <param name="tableInfo">table information about the entity</param>
+    /// <param name="entityToUpdate">Entity to update</param>
+    /// <param name="columnsToUpdate">A list of columns to update</param>
+    /// <returns>true if the entity was updated</returns>
+    public override bool Update( IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate )
+    {
+        var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+
+        if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
+        {
+            cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+
+            var vals = connection.Query(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
+
+            if ( !vals.Any() ) return false;
+
+            var rvals = ((IDictionary<string, object>) vals[0]);
+
+            foreach ( var key in rvals.Keys )
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
+            }
+
+            return true;
+        }
+        else
+        {
+            return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
+        }
+    }
+
+    /// <summary>
+    /// Applies a schema name is one is specified
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <returns></returns>
+    public override string EscapeTableName( TableInfo tableInfo ) =>
+        (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) + EscapeTableName(tableInfo.TableName);
+
+    /// <summary>
+    /// Returns the format for table name
+    /// </summary>
+    public override string EscapeTableName( string value ) => $"{value}";
+
+    /// <summary>
+    /// Returns the format for column
+    /// </summary>
+    public override string EscapeColumnn( string value ) => $"{value}";
+
+}

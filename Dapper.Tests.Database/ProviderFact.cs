@@ -12,7 +12,8 @@ namespace Dapper.Tests.Database
         SqlServer,
         SqlCE,
         SQLite,
-        MySql
+        MySql,
+        Postgres
 
     }
 
@@ -87,6 +88,6 @@ namespace Dapper.Tests.Database
     //    {
     //        SkipReason = "Provider Skipped";
     //    }
-       
+
     //}
 }

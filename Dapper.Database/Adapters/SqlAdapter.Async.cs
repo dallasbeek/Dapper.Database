@@ -99,7 +99,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -150,7 +150,7 @@ public partial class SqlServerAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
             cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi =await connection.QueryMultipleAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -199,7 +199,7 @@ public partial class SqlCeServerAdapter : SqlAdapter, ISqlAdapter
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
 
-            var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            var selectcmd = new StringBuilder($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -305,7 +305,7 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
             {
@@ -356,7 +356,7 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
 
         if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
         {
-            cmd.Append($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
             cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var multi = await connection.QueryMultipleAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -381,4 +381,94 @@ public partial class SQLiteAdapter : SqlAdapter, ISqlAdapter
             return await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
     }
+}
+
+/// <summary>
+/// The Postgres database adapter.
+/// </summary>
+public partial class PostgresAdapter : SqlAdapter, ISqlAdapter
+{
+
+    /// <summary>
+    /// Inserts an entity into table "Ts"
+    /// </summary>
+    /// <param name="connection">Open SqlConnection</param>
+    /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+    /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+    /// <param name="tableInfo">table information about the entity</param>
+    /// <param name="entityToInsert">Entity to insert</param>
+    /// <returns>true if the entity was inserted</returns>
+    public override async Task<bool> InsertAsync( IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert )
+    {
+        var cmd = new StringBuilder(InsertQuery(tableInfo));
+
+        if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
+        {
+            cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+
+            var rslt = await connection.QueryAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
+
+            var vals = rslt.ToList();
+
+            if ( !vals.Any() ) return false;
+
+            var rvals = ((IDictionary<string, object>) vals[0]);
+
+            foreach ( var key in rvals.Keys )
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+            }
+
+            return true;
+        }
+        else
+        {
+            return await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+        }
+
+    }
+
+    /// <summary>
+    /// updates an entity into table "Ts"
+    /// </summary>
+    /// <param name="connection">Open SqlConnection</param>
+    /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+    /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+    /// <param name="tableInfo">table information about the entity</param>
+    /// <param name="entityToUpdate">Entity to update</param>
+    /// <param name="columnsToUpdate">A list of columns to update</param>
+    /// <returns>true if the entity was updated</returns>
+    public override async Task<bool> UpdateAsync( IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate )
+    {
+        var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+
+        if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
+        {
+            cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+
+            var rslt  =await connection.QueryAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
+
+            var vals  = rslt.ToList();
+            
+            if ( !vals.Any() ) return false;
+
+            var rvals = ((IDictionary<string, object>) vals[0]);
+
+            foreach ( var key in rvals.Keys )
+            {
+                var rval = rvals[key];
+                var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
+            }
+
+            return true;
+        }
+        else
+        {
+            return await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
+        }
+    }
+    
 }
