@@ -9,7 +9,7 @@ skip_commits:
 environment:
   Appveyor: true
   # Postgres
-  POSTGRES_PATH: C:\Program Files\PostgreSQL\9.6
+  POSTGRES_PATH: C:\Program Files\PostgreSQL\10
   PGUSER: postgres
   PGPASSWORD: Password12!
   POSTGRES_ENV_POSTGRES_USER: postgres
@@ -24,7 +24,7 @@ environment:
 services:
   - mssql2017
   - mysql
-  - postgresql
+  - postgresql101
 
 init:
   - git config --global core.autocrlf input
