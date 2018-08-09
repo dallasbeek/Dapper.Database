@@ -50,8 +50,17 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                if (Provider == Provider.SQLite)
+                {
+                    Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                }
+                else
+                {
+                    Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                    Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = new Guid("1115D52B-8C29-4059-B899-75C53B5EE2E6") }));
+
+                }
             }
         }
 

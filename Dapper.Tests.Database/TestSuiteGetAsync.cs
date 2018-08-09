@@ -35,7 +35,14 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                ValidateProduct806(await connection.GetAsync<Product>("WHERE rowguid = @GuidId", new { GuidId ="23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                if (Provider == Provider.SQLite)
+                {
+                    ValidateProduct806(await connection.GetAsync<Product>("WHERE rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                }
+                else
+                {
+                    ValidateProduct806(await connection.GetAsync<Product>("WHERE rowguid = @GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                }
             }
         }
 
