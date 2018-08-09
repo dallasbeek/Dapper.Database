@@ -4,6 +4,7 @@ using System.Linq;
 using Dapper.Mapper;
 
 using Dapper;
+using Dapper.Database.Adapters;
 
 namespace Dapper.Database.Extensions
 {

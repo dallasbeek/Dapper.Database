@@ -6,7 +6,7 @@
     <Title>Dapper.Database</Title>
     <Description>get, insert, update, upsert, getlist, getpagedlist, and delete helpers for Dapper.net.</Description>
     <Authors>Dallas Beek</Authors>
-    <TargetFrameworks>netstandard2.0;net451;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net451;netstandard2.0;netstandard1.3</TargetFrameworks>
     <!-- TODO: Docs -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Company />
@@ -34,6 +34,8 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Adapters\MySqlAdapter.cs" />
+    <Compile Remove="Adapters\SqlAdapter.cs" />
     <Compile Remove="SqlAdapterAsync.cs" />
     <Compile Remove="SqlMapperExtensions.Async.cs" />
   </ItemGroup>

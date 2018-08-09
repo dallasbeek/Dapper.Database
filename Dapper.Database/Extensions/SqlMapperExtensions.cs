@@ -9,6 +9,7 @@ using System.Reflection.Emit;
 
 using Dapper;
 using System.ComponentModel.DataAnnotations;
+using Dapper.Database.Adapters;
 
 #if NETSTANDARD1_3
 using DataException = System.InvalidOperationException;
