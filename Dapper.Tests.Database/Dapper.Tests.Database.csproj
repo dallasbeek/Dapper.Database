@@ -21,6 +21,11 @@
     <Compile Remove="TestSuiteGetMultiple.cs" />
     <Compile Remove="TestSuiteGetMultipleAsync.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
+    <Compile Remove="TestSuites.cs" />
+    <Compile Remove="TestSuitesMySql.cs" />
+    <Compile Remove="TestSuitesSqlCE.cs" />
+    <Compile Remove="TestSuitesSqlLite.cs" />
+    <Compile Remove="TestSuitesSqlServer.cs" />
     <Compile Remove="TestSuiteTransactions.cs" />
   </ItemGroup>
   <ItemGroup>

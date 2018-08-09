@@ -40,7 +40,7 @@ namespace Dapper.Tests.Database
         public static string ConnectionString =>
             IsAppVeyor
                 ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
-                : $"Data Source=(local)\\Dallas;Initial Catalog={DbName};Integrated Security=True";
+                : $"Data Source=(local);Initial Catalog={DbName};Integrated Security=True";
 
         public override ISqlDatabase GetSqlDatabase()
         {
