@@ -32,7 +32,7 @@ namespace Dapper.Database.Adapters
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
 
-                var selectcmd = new StringBuilder($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
                 if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
                 {
