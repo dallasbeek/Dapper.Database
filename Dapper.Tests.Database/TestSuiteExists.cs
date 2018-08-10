@@ -48,10 +48,10 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                if ( Provider == Provider.SQLite )
+                if (Provider == Provider.SQLite)
                 {
-                    Assert.True(db.Exists<Product>("where rowguid = @GuidId", new { GuidId ="23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                    Assert.False(db.Exists<Product>("where rowguid = @GuidId", new { GuidId ="1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    Assert.True(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    Assert.False(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                Assert.True( db.Exists<Product>("; select 1 AS ProductId"));
+                Assert.True(db.Exists<Product>("; select 1 AS ProductId"));
                 Assert.False(db.Exists<Product>("; select 0 AS ProductId"));
             }
         }

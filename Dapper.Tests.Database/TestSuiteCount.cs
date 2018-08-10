@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89, db.Count<Product>("where Color = 'Black'" ));
+                Assert.Equal(89, db.Count<Product>("where Color = 'Black'"));
             }
         }
 

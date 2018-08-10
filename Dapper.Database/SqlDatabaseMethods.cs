@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using Dapper.Database.Extensions;
-using Dapper;
 using static Dapper.SqlMapper;
 
 namespace Dapper.Database

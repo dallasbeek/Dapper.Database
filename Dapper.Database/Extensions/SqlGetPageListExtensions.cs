@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Data;
-using Dapper.Mapper;
-
 using Dapper;
 using Dapper.Database.Adapters;
+using Dapper.Mapper;
 
 namespace Dapper.Database.Extensions
 {
@@ -76,14 +75,14 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static IPagedEnumerable<T1> GetPageList<T1, T2>(this IDbConnection connection, int page, int pageSize, string sql, object parameters,string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
+        public static IPagedEnumerable<T1> GetPageList<T1, T2>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
             var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
             return new PagedList<T1>(
-                connection.Query<T1, T2>(selectSql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn?? SplitOnArgument(new[] { typeof(T2) })),
+                connection.Query<T1, T2>(selectSql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
                 page,
                     pageSize,
                     connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -118,7 +117,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static IPagedEnumerable<T1> GetPageList<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where  T3 : class
+        public static IPagedEnumerable<T1> GetPageList<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -189,9 +188,9 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
+        public static IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            return  GetPageList<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return GetPageList<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -207,7 +206,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
+        public static IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -234,9 +233,9 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return  GetPageList<T1, T2, T3, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return GetPageList<T1, T2, T3, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -252,7 +251,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
+        public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
@@ -280,9 +279,9 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
+        public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return  GetPageList<T1, T2, T3, T4, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return GetPageList<T1, T2, T3, T4, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -298,7 +297,7 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static  IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
+        public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);

@@ -1,6 +1,5 @@
 ﻿using System.Data;
 
-
 namespace Dapper.Database.Extensions
 {
     /// <summary>

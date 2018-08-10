@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 
-
 namespace Dapper.Database.Extensions
 {
     /// <summary>

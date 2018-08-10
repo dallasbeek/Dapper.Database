@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-using Dapper.Database.Extensions;
-using System.Data;
-using Dapper.Database.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using Dapper.Database.Attributes;
+using Dapper.Database.Extensions;
 using static Dapper.Database.Extensions.SqlMapperExtensions;
 
 #if NETSTANDARD1_3

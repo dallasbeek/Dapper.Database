@@ -112,7 +112,7 @@ namespace Dapper.Tests.Database
             {
                 var p = new PersonIdentity { FirstName = "Delete", LastName = "Me" };
 
-                for(var i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     Assert.True(db.Insert(p));
                 }

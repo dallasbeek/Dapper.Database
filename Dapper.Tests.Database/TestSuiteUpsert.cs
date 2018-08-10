@@ -79,7 +79,7 @@ namespace Dapper.Tests.Database
             var dnow = DateTime.UtcNow;
             using (var db = GetSqlDatabase())
             {
-                var p = new PersonExcludedColumns {FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow};
+                var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
                 Assert.True(db.Upsert(p));
 
                 if (p.FullName != null)
@@ -138,12 +138,12 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(db.Upsert(p,(i)=> i.CreatedOn = dnow, (u) => u.UpdatedOn = dnow));
+                Assert.True(db.Upsert(p, (i) => i.CreatedOn = dnow, (u) => u.UpdatedOn = dnow));
                 Assert.True(p.IdentityId > 0);
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                p.CreatedOn = DateTime.UtcNow ;
+                p.CreatedOn = DateTime.UtcNow;
                 Assert.True(db.Upsert(p, new[] { "LastName", "CreatedOn", "UpdatedOn" }, (i) => i.CreatedOn = dnow, (u) => u.UpdatedOn = dnow));
 
                 var gp = db.Get<PersonExcludedColumns>(p.IdentityId);

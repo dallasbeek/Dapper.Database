@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Data;
-using System.Threading.Tasks;
-using Dapper.Database.Extensions;
 
 namespace Dapper.Database
 {

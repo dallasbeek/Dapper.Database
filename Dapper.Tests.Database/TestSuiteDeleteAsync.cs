@@ -53,7 +53,7 @@ namespace Dapper.Tests.Database
 
                 Assert.True(await connection.DeleteAsync<PersonIdentity>(p.IdentityId));
 
-                var gp = await  connection.GetAsync(p);
+                var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
             }
         }
@@ -113,7 +113,7 @@ namespace Dapper.Tests.Database
             {
                 var p = new PersonIdentity { FirstName = "Delete", LastName = "Me" };
 
-                for(var i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     Assert.True(await connection.InsertAsync(p));
                 }

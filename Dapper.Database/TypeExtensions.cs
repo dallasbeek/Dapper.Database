@@ -1,41 +1,41 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Dapper
 {
     internal static class TypeExtensions
     {
-        public static string Name ( this Type type ) =>
+        public static string Name(this Type type) =>
 #if NETSTANDARD1_3 || NETCOREAPP1_0
             type.GetTypeInfo().Name;
 #else
             type.Name;
 #endif
 
-        public static bool IsValueType ( this Type type ) =>
+        public static bool IsValueType(this Type type) =>
 #if NETSTANDARD1_3 || NETCOREAPP1_0
             type.GetTypeInfo().IsValueType;
 #else
             type.IsValueType;
 #endif
 
-        public static bool IsEnum ( this Type type ) =>
+        public static bool IsEnum(this Type type) =>
 #if NETSTANDARD1_3 || NETCOREAPP1_0
             type.GetTypeInfo().IsEnum;
 #else
             type.IsEnum;
 #endif
 
-        public static bool IsGenericType ( this Type type ) =>
+        public static bool IsGenericType(this Type type) =>
 #if NETSTANDARD1_3 || NETCOREAPP1_0
             type.GetTypeInfo().IsGenericType;
 #else
             type.IsGenericType;
 #endif
 
-        public static bool IsInterface ( this Type type ) =>
+        public static bool IsInterface(this Type type) =>
 #if NETSTANDARD1_3 || NETCOREAPP1_0
             type.GetTypeInfo().IsInterface;
 #else
@@ -84,7 +84,7 @@ namespace Dapper
         public static TypeCode GetTypeCode(Type type) => Type.GetTypeCode(type);
 #endif
 
-        public static MethodInfo GetPublicInstanceMethod ( this Type type, string name, Type[] types )
+        public static MethodInfo GetPublicInstanceMethod(this Type type, string name, Type[] types)
         {
 #if NETSTANDARD1_3 || NETCOREAPP1_0
             var method = type.GetMethod( name, types );

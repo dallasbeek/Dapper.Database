@@ -25,7 +25,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                Assert.Equal(89,await db.ExecuteAsync("update product set color = 'Black' where Color = 'Black'"));
+                Assert.Equal(89, await db.ExecuteAsync("update product set color = 'Black' where Color = 'Black'"));
             }
         }
 

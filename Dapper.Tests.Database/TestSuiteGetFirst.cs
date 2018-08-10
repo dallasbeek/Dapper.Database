@@ -128,7 +128,7 @@ namespace Dapper.Tests.Database
                 if (Provider != Provider.SQLite)
                 {
                     ValidateProductCategory21(item.ProductCategory);
-                ValidateProductModel45(item.ProductModel);
+                    ValidateProductModel45(item.ProductModel);
                 }
             }
         }

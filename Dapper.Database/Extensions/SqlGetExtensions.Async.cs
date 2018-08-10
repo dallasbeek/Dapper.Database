@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using Dapper.Mapper;
-
-using Dapper;
 using System.Threading.Tasks;
+using Dapper;
 using Dapper.Database.Adapters;
+using Dapper.Mapper;
 
 namespace Dapper.Database.Extensions
 {

@@ -79,7 +79,7 @@ namespace Dapper.Tests.Database
             var dnow = DateTime.UtcNow;
             using (var connection = GetSqlDatabase())
             {
-                var p = new PersonExcludedColumns {FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow};
+                var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
                 Assert.True(await connection.InsertAsync(p));
 
                 if (p.FullName != null)

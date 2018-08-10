@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using Dapper.Mapper;
 using Dapper;
 using Dapper.Database.Adapters;
+using Dapper.Mapper;
 
 namespace Dapper.Database.Extensions
 {

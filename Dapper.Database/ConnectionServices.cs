@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #if !NETSTANDARD1_3 && !NETCOREAPP1_0
 using System.Configuration;
@@ -48,7 +42,7 @@ namespace Dapper.Database
         /// <returns></returns>
         public IDbConnection GetConnection()
         {
-           return (T)Activator.CreateInstance(typeof(T), _connectionString);
+            return (T)Activator.CreateInstance(typeof(T), _connectionString);
         }
     }
 

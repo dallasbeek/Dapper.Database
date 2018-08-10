@@ -98,7 +98,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product>(4,10, "select *, rowguid as GuidId from Product where Color = 'Black'");
+                var lst = db.GetPageList<Product>(4, 10, "select *, rowguid as GuidId from Product where Color = 'Black'");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -149,7 +149,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product>(4,10,"select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(4, 10, "select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -165,7 +165,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product, ProductCategory>(4,10,
+                var lst = db.GetPageList<Product, ProductCategory>(4, 10,
                     @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid, P.ModifiedDate, PC.ProductCategoryID, 
@@ -213,7 +213,7 @@ namespace Dapper.Tests.Database
                 Assert.NotNull(item.ProductCategory);
             }
         }
-        
+
         //[Fact(Provider.SQLite)]
         //[Trait("Category", "GetPageList")]
         //public void GetPageListOneJoinMapped()

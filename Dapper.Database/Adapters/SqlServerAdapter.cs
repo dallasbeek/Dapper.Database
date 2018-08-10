@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Collections.Concurrent;
-using Dapper;
-using Dapper.Database;
-using Dapper.Database.Adapters;
 using System.Threading.Tasks;
 
 namespace Dapper.Database.Adapters

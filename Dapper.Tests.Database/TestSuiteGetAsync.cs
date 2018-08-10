@@ -133,7 +133,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var p =await db.GetAsync<Product, ProductCategory, ProductModel, Product>(
+                var p = await db.GetAsync<Product, ProductCategory, ProductModel, Product>(
                     (pr, pc, pm) =>
                     {
                         pr.ProductCategory = pc;

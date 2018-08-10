@@ -55,7 +55,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static async Task<bool> UpsertAsync<T>(this IDbConnection connection, T entityToUpsert, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return await connection.UpsertAsync<T>(entityToUpsert, null, insertAction,updateAction, transaction, commandTimeout);
+            return await connection.UpsertAsync<T>(entityToUpsert, null, insertAction, updateAction, transaction, commandTimeout);
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(p.IdentityId > 0);
-                var gp =await connection.GetAsync<PersonIdentity>(p.IdentityId);
+                var gp = await connection.GetAsync<PersonIdentity>(p.IdentityId);
 
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Equal(p.FirstName, gp.FirstName);
@@ -66,7 +66,7 @@ namespace Dapper.Tests.Database
             var dnow = DateTime.UtcNow;
             using (var connection = GetSqlDatabase())
             {
-                var p = new PersonExcludedColumns {FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow};
+                var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
                 Assert.True(await connection.InsertAsync(p));
 
                 if (p.FullName != null)
