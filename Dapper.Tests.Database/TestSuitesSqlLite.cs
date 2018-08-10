@@ -37,7 +37,9 @@ namespace Dapper.Tests.Database
 
         static SQLiteTestSuite()
         {
+            Environment.SetEnvironmentVariable("NoCache", "True");
             Provider = Provider.SQLite;
+
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 

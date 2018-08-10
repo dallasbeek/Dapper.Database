@@ -54,6 +54,7 @@ namespace Dapper.Tests.Database
 
         static SqlServerTestSuite()
         {
+            Environment.SetEnvironmentVariable("NoCache", "True");
             Provider = Provider.SqlServer;
             try
             {

@@ -42,11 +42,13 @@ namespace Dapper.Tests.Database
 
         static PostgresTestSuite()
         {
+            Environment.SetEnvironmentVariable("NoCache", "True");
+
             Provider = Provider.Postgres;
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using (var connection = new NpgsqlConnection(ConnectionString))
+                using ( var connection = new NpgsqlConnection(ConnectionString) )
                 {
                     connection.Open();
 
@@ -56,9 +58,9 @@ namespace Dapper.Tests.Database
 
                 }
             }
-            catch (SqlException e)
+            catch ( SqlException e )
             {
-                if (e.Message.Contains("The server was not found "))
+                if ( e.Message.Contains("The server was not found ") )
                     _skip = true;
                 else
                     throw;
