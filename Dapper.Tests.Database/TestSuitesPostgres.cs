@@ -29,10 +29,13 @@ namespace Dapper.Tests.Database
 
         static PostgresTestSuite()
         {
+
+            Environment.SetEnvironmentVariable("NoCache", "True");
+
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using (var connection = new NpgsqlConnection(ConnectionString))
+                using ( var connection = new NpgsqlConnection(ConnectionString) )
                 {
                     connection.Open();
 
@@ -42,6 +45,7 @@ namespace Dapper.Tests.Database
 
                 }
             }
+
             catch (SocketException e)
             {
                 if (e.Message.Contains("No connection could be made because the target machine actively refused it"))

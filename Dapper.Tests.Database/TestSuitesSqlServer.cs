@@ -2,6 +2,7 @@
 using System.IO;
 using Xunit;
 using Dapper.Database;
+using System;
 
 namespace Dapper.Tests.Database
 {
@@ -28,6 +29,8 @@ namespace Dapper.Tests.Database
 
         static SqlServerTestSuite()
         {
+            Environment.SetEnvironmentVariable("NoCache", "True");
+
             try
             {
                 using (var connection = new SqlConnection(ConnectionString))

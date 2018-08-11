@@ -40,6 +40,8 @@ namespace Dapper.Tests.Database
 
         static SqlCETestSuite()
         {
+            Environment.SetEnvironmentVariable("NoCache", "True");
+
             if (!File.Exists(FileName))
             {
                 try

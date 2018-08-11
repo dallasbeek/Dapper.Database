@@ -22,6 +22,7 @@
     <Compile Remove="TestSuiteGetMultipleAsync.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
     <Compile Remove="TestSuites.cs" />
+    <Compile Remove="TestSuitesMySql.cs" />
     <Compile Remove="TestSuiteTransactions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +114,10 @@
       echo F|xcopy /y /q /f ".\sqlite3_64.dll" "$(TargetDir)x64\sqlite3.dll"
       del ".\sqlite3_64.dll"
     </PostBuildEvent>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NET452;Testing</DefineConstants>
   </PropertyGroup>
 
 </Project>
