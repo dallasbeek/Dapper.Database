@@ -1,67 +1,54 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System;
 using System.IO;
 using Xunit;
-using Xunit.Sdk;
-using Dapper.Database.Extensions;
-using MySql.Data.MySqlClient;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Dapper;
 using Dapper.Database;
 using Npgsql;
-
-#if NET452
-using System.Data.SqlServerCe;
-using System.Transactions;
-#endif
+using System.Net.Sockets;
 
 namespace Dapper.Tests.Database
 {
+    [Trait("Provider", "MySql")]
+    public partial class MySqlTestSuite : TestSuite
+    {
+        private const string DbName = "test";
+        public static string ConnectionString =>
+            IsAppVeyor
+                ? $"Server=localhost;Port=5432;User Id=MySql;Password=Password12!;Database={DbName}"
+                : $"Server=localhost;Port=5432;User Id=MySql;Password=Password12!;Database={DbName}";
 
-    //[Trait("Provider", "MySql")]
-    //[Provider(Provider.SQLite)]
-    //public class MySqlServerTestSuite : TestSuite
-    //{
-    //    private const string DbName = "DapperContribTests";
+        public override ISqlDatabase GetSqlDatabase()
+        {
+            if (_skip) throw new SkipTestException("Skipping MySql Tests - no server.");
+            return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(ConnectionString));
+        }
 
-    //    public static string ConnectionString { get; } =
-    //        IsAppVeyor
-    //            ? "Server=localhost;Uid=root;Pwd=Password12!;SslMode=none"
-    //            : "Server=localhost;Uid=test;Pwd=pass;";
 
-    //    public override IDbConnection GetConnection()
-    //    {
-    //        if (_skip) throw new SkipTestException("Skipping MySQL Tests - no server.");
-    //        return new MySqlConnection(ConnectionString);
-    //    }
+        public override Provider GetProvider() => Provider.MySql;
 
-    //    private static readonly bool _skip;
+        private static readonly bool _skip;
 
-    //    static MySqlServerTestSuite()
-    //    {
-    //        try
-    //        {
-    //            using (var connection = new MySqlConnection(ConnectionString))
-    //            {
-    //                connection.Open();
-    //                var awfile = File.ReadAllText("mysqlawlite.sql");
-    //                connection.Execute(awfile);
-    //                connection.Execute("delete from [Person]");
-    //            }
-    //        }
-    //        catch (MySqlException e)
-    //        {
-    //            if (e.Message.Contains("Unable to connect"))
-    //                _skip = true;
-    //            else
-    //                throw;
-    //        }
-    //    }
-    //}
-    
+        static MySqlTestSuite()
+        {
+            SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
+            try
+            {
+                using (var connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
 
+                    var awfile = File.ReadAllText(".\\Scripts\\mysqlawlite.sql");
+                    connection.Execute(awfile);
+                    connection.Execute("delete from Person;");
+
+                }
+            }
+            catch (SocketException e)
+            {
+                if (e.Message.Contains("No connection could be made because the target machine actively refused it"))
+                    _skip = true;
+                else
+                    throw;
+            }
+        }
+    }
 }

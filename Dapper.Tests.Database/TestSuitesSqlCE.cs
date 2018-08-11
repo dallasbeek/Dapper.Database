@@ -31,37 +31,48 @@ namespace Dapper.Tests.Database
 
         public override ISqlDatabase GetSqlDatabase()
         {
+            if (_skip) throw new SkipTestException("Skipping MySql Tests - no server.");
             return new SqlDatabase(new StringConnectionService<SqlCeConnection>(ConnectionString));
         }
+        public override Provider GetProvider() => Provider.SqlCE;
+
+        private static readonly bool _skip;
 
         static SqlCETestSuite()
         {
-            Provider = Provider.SqlCE;
             if (!File.Exists(FileName))
             {
-                var engine = new SqlCeEngine(ConnectionString);
-                engine.CreateDatabase();
-                using (var connection = new SqlCeConnection(ConnectionString))
+                try
                 {
-                    connection.Open();
-                    var line = string.Empty;
-                    var commandText = string.Empty;
-                    var file = new StreamReader("sqlceawlite.sql");
 
-                    while ((line = file.ReadLine()) != null)
+                    var engine = new SqlCeEngine(ConnectionString);
+                    engine.CreateDatabase();
+                    using (var connection = new SqlCeConnection(ConnectionString))
                     {
-                        if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
+                        connection.Open();
+                        var line = string.Empty;
+                        var commandText = string.Empty;
+                        var file = new StreamReader(".\\Scripts\\sqlceawlite.sql");
+
+                        while ((line = file.ReadLine()) != null)
                         {
-                            connection.Execute(commandText);
-                            commandText = string.Empty;
-                        }
-                        else
-                        {
-                            commandText += "\r\n" + line;
+                            if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
+                            {
+                                connection.Execute(commandText);
+                                commandText = string.Empty;
+                            }
+                            else
+                            {
+                                commandText += "\r\n" + line;
+                            }
                         }
                     }
                 }
-                Console.WriteLine("Created database");
+                catch (Exception)
+                {
+
+                    throw;
+                }
             }
             else
             {

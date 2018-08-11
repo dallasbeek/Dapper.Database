@@ -10,7 +10,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="TestDatabaseAsync.cs" />
+    <Compile Remove="SqlBuilder.cs" />
     <Compile Remove="TestManagerSuites.cs" />
     <Compile Remove="TestSuite.Async.cs" />
     <Compile Remove="TestSuiteCountAssync.cs" />
@@ -22,10 +22,6 @@
     <Compile Remove="TestSuiteGetMultipleAsync.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
     <Compile Remove="TestSuites.cs" />
-    <Compile Remove="TestSuitesMySql.cs" />
-    <Compile Remove="TestSuitesSqlCE.cs" />
-    <Compile Remove="TestSuitesSqlLite.cs" />
-    <Compile Remove="TestSuitesSqlServer.cs" />
     <Compile Remove="TestSuiteTransactions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,13 +73,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="mysqlawlite.sql">
+    <None Update="Scripts\mysqlawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="postgresawlite.sql">
+    <None Update="Scripts\postgresawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="sqlceawlite.sql">
+    <None Update="Scripts\sqlceawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="sqlite3_64.dll">
@@ -92,10 +88,10 @@
     <None Update="sqlite3_86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="sqliteawlite.sql">
+    <None Update="Scripts\sqliteawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="sqlserverawlite.sql">
+    <None Update="Scripts\sqlserverawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test.DB.sdf">

@@ -1,23 +1,9 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System;
 using System.IO;
 using Xunit;
-using Xunit.Sdk;
-using Dapper.Database.Extensions;
-using MySql.Data.MySqlClient;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Dapper;
 using Dapper.Database;
 using Npgsql;
-
-#if NET452
-using System.Data.SqlServerCe;
-using System.Transactions;
-#endif
+using System.Net.Sockets;
 
 namespace Dapper.Tests.Database
 {
@@ -32,17 +18,17 @@ namespace Dapper.Tests.Database
 
         public override ISqlDatabase GetSqlDatabase()
         {
+            if(_skip) throw new SkipTestException("Skipping Postgres Tests - no server.");
             return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(ConnectionString));
         }
 
 
-        public Provider GetProvider() => Provider.Postgres;
+        public override Provider GetProvider() => Provider.Postgres;
 
         private static readonly bool _skip;
 
         static PostgresTestSuite()
         {
-            Provider = Provider.Postgres;
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
@@ -50,15 +36,15 @@ namespace Dapper.Tests.Database
                 {
                     connection.Open();
 
-                    var awfile = File.ReadAllText("postgresawlite.sql");
+                    var awfile = File.ReadAllText(".\\Scripts\\postgresawlite.sql");
                     connection.Execute(awfile);
                     connection.Execute("delete from Person;");
 
                 }
             }
-            catch (SqlException e)
+            catch (SocketException e)
             {
-                if (e.Message.Contains("The server was not found "))
+                if (e.Message.Contains("No connection could be made because the target machine actively refused it"))
                     _skip = true;
                 else
                     throw;
