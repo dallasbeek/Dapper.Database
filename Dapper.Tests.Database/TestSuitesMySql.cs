@@ -4,6 +4,7 @@ using Xunit;
 using Dapper.Database;
 using Npgsql;
 using System.Net.Sockets;
+using MySql.Data.MySqlClient;
 
 namespace Dapper.Tests.Database
 {
@@ -13,13 +14,13 @@ namespace Dapper.Tests.Database
         private const string DbName = "test";
         public static string ConnectionString =>
             IsAppVeyor
-                ? $"Server=localhost;Port=5432;User Id=MySql;Password=Password12!;Database={DbName}"
-                : $"Server=localhost;Port=5432;User Id=MySql;Password=Password12!;Database={DbName}";
+                ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};"
+                : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 
         public override ISqlDatabase GetSqlDatabase()
         {
-            if (_skip) throw new SkipTestException("Skipping MySql Tests - no server.");
-            return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(ConnectionString));
+            if ( _skip ) throw new SkipTestException("Skipping MySql Tests - no server.");
+            return new SqlDatabase(new StringConnectionService<MySqlConnection>(ConnectionString));
         }
 
 
@@ -32,19 +33,19 @@ namespace Dapper.Tests.Database
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using (var connection = new NpgsqlConnection(ConnectionString))
+                using ( var connection = new MySqlConnection($"Server=localhost;Port=3306;User Id=root;Password=Password12!;") )
                 {
                     connection.Open();
 
                     var awfile = File.ReadAllText(".\\Scripts\\mysqlawlite.sql");
-                    connection.Execute(awfile);
+                    connection.Execute(awfile, commandTimeout: 600);
                     connection.Execute("delete from Person;");
 
                 }
             }
-            catch (SocketException e)
+            catch ( SocketException e )
             {
-                if (e.Message.Contains("No connection could be made because the target machine actively refused it"))
+                if ( e.Message.Contains("No connection could be made because the target machine actively refused it") )
                     _skip = true;
                 else
                     throw;

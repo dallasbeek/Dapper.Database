@@ -22,7 +22,10 @@
     <Compile Remove="TestSuiteGetMultipleAsync.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
     <Compile Remove="TestSuites.cs" />
-    <Compile Remove="TestSuitesMySql.cs" />
+    <Compile Remove="TestSuitesPostgres.cs" />
+    <Compile Remove="TestSuitesSqlCE.cs" />
+    <Compile Remove="TestSuitesSqlLite.cs" />
+    <Compile Remove="TestSuitesSqlServer.cs" />
     <Compile Remove="TestSuiteTransactions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -34,7 +37,7 @@
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="1.1.1" />
-    <PackageReference Include="MySql.Data" Version="8.0.8-dmr" />
+    <PackageReference Include="MySql.Data" Version="6.10.7" />
     <PackageReference Include="Npgsql" Version="3.2.5" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
