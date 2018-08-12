@@ -39,7 +39,7 @@ namespace Dapper.Tests.Database
                 if (GetProvider() == Provider.SQLite)
                 {
                     return;
-                    ValidateProduct806(db.Get<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //ValidateProduct806(db.Get<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
                 {
