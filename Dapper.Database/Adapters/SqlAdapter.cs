@@ -183,19 +183,7 @@ namespace Dapper.Database.Adapters
 
             }
 
-            //if (!rxSelect.IsMatch(q))
-            //{
-            //    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
-
-            //    if (!rxFrom.IsMatch(q))
-            //        return $"select 1 where exists (select 1 from { EscapeTableName(tableInfo)} {wc})";
-            //    else
-            //        return $"select 1 where exists (select 1 {wc})";
-
-            //}
-
             return $"select 1 where exists ({q.Sql})";
-
 
         }
 

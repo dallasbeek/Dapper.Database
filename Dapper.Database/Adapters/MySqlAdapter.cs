@@ -214,6 +214,34 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
+        /// Default implementation of an Exists query
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="sql">a sql statement or partial statement</param>
+        /// <returns>A sql statement that selects true if a record matches</returns>
+        public override string ExistsQuery( TableInfo tableInfo, string sql )
+        {
+            var q = new SqlParser(sql ?? "");
+
+            if ( q.Sql.StartsWith(";") )
+                return q.Sql.Substring(1);
+
+            if ( !q.IsSelect )
+            {
+                var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
+
+                if ( string.IsNullOrEmpty(q.FromClause) )
+                    return $"select 1 where exists (select * from { EscapeTableName(tableInfo)} {wc})";
+                else
+                    return $"select 1 where exists (select * {wc})";
+
+            }
+
+            return $"select 1 where exists ({q.Sql})";
+
+        }
+
+        /// <summary>
         /// Applies a schema name is one is specified
         /// </summary>
         /// <param name="tableInfo"></param>
