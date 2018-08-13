@@ -22,10 +22,6 @@
     <Compile Remove="TestSuiteGetMultipleAsync.cs" />
     <Compile Remove="TestSuiteGetPaged.cs" />
     <Compile Remove="TestSuites.cs" />
-    <Compile Remove="TestSuitesPostgres.cs" />
-    <Compile Remove="TestSuitesSqlCE.cs" />
-    <Compile Remove="TestSuitesSqlLite.cs" />
-    <Compile Remove="TestSuitesSqlServer.cs" />
     <Compile Remove="TestSuiteTransactions.cs" />
   </ItemGroup>
   <ItemGroup>

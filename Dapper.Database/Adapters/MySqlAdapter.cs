@@ -231,13 +231,13 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if ( string.IsNullOrEmpty(q.FromClause) )
-                    return $"select 1 where exists (select * from { EscapeTableName(tableInfo)} {wc})";
+                    return $"select exists (select * from { EscapeTableName(tableInfo)} {wc})";
                 else
-                    return $"select 1 where exists (select * {wc})";
+                    return $"select exists (select * {wc})";
 
             }
 
-            return $"select 1 where exists ({q.Sql})";
+            return $"select exists ({q.Sql})";
 
         }
 
