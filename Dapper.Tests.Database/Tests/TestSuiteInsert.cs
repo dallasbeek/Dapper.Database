@@ -47,7 +47,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var gid = new Guid("45441d7b-867d-2c4a-9cb0-1d82b5ef11f2");
+                var gid = Guid.NewGuid();
                 var p = new PersonCompositeKey { GuidId = gid, StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
                 var gp = db.Get<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);

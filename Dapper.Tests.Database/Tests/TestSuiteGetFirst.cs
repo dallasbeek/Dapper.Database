@@ -39,7 +39,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>("select *, rowguid as GuidId from Product where Color = 'Black' and ProductId >= 816 order by ProductId");
+                var item = db.GetFirst<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black' and p.ProductId >= 816 order by p.ProductId");
                 ValidateProduct816(item);
             }
         }
@@ -50,7 +50,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>("select *, rowguid as GuidId from Product where Color = @Color and ProductId >= @ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -61,7 +61,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>(";select *, rowguid as GuidId from Product where Color = @Color and ProductId >= @ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>(";select p.*, p.rowguid as GuidId from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -72,7 +72,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>("select ProductId, rowguid AS GuidId, Name from Product where Color = @Color and ProductId >= @ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>("select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 Assert.Equal(816, item.ProductID);
                 Assert.Equal("ML Mountain Front Wheel", item.Name);
                 Assert.Null(item.ProductNumber);

@@ -57,6 +57,11 @@ namespace Dapper.Tests.Database
                     //Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                     //Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
+                else if ( GetProvider() == Provider.Firebird )
+                {
+                    Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                }
                 else
                 {
                     Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
@@ -72,8 +77,8 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                Assert.True(await connection.ExistsAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 }));
-                Assert.False(await connection.ExistsAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = -1 }));
+                Assert.True(await connection.ExistsAsync<Product>("select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = @Id", new { Id = 806 }));
+                Assert.False(await connection.ExistsAsync<Product>("select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = @Id", new { Id = -1 }));
             }
         }
 
@@ -83,8 +88,8 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                Assert.True(await connection.ExistsAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = 806 }));
-                Assert.False(await connection.ExistsAsync<Product>("select *, rowguid AS GuidId  from Product where ProductId = @Id", new { Id = -1 }));
+                Assert.True(await connection.ExistsAsync<Product>("select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = @Id", new { Id = 806 }));
+                Assert.False(await connection.ExistsAsync<Product>("select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = @Id", new { Id = -1 }));
             }
         }
 
@@ -94,8 +99,16 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                Assert.True(await connection.ExistsAsync<Product>("; select 1 AS ProductId"));
-                Assert.False(await connection.ExistsAsync<Product>("; select 0 AS ProductId"));
+                var tsql = "; select 1 AS ProductId";
+                var fsql = "; select 0 AS ProductId";
+                if ( GetProvider() == Provider.Firebird )
+                {
+                    tsql += " from RDB$Database";
+                    fsql += " from RDB$Database";
+                }
+
+                Assert.True(await connection.ExistsAsync<Product>(tsql));
+                Assert.False(await connection.ExistsAsync<Product>(fsql));
             }
         }
 

@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Database\Dapper.Database.csproj" />
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="6.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="1.1.1" />
     <PackageReference Include="MySql.Data" Version="6.10.7" />
@@ -73,6 +74,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Scripts\firebirdawlite.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Scripts\mysqlawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -92,6 +96,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Scripts\sqlserverawlite.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test.DB.fdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test.DB.sdf">

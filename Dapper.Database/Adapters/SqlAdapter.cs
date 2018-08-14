@@ -287,31 +287,6 @@ namespace Dapper.Database.Adapters
             }
 
             return $"{q.Sql} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
-
-            //var selectQuery = GetListQuery(tableInfo, sql);
-
-            //var m = rxColumns.Match(selectQuery);
-            //var g = m.Groups[1];
-            //var sqlSelectRemoved = selectQuery.Substring(g.Index);
-            //var sqlOrderBy = string.Empty;
-
-            //var pageSkip = (page - 1) * pageSize;
-
-            //m = rxOrderBy.Match(selectQuery);
-
-            //if (m.Success)
-            //{
-            //    g = m.Groups[0];
-            //    sqlOrderBy = g.ToString();
-            //}
-            //else if (tableInfo.KeyColumns.Any())
-            //{
-            //    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
-            //}
-
-
-            //return $"select {rxOrderBy.Replace(sqlSelectRemoved, "", 1)} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
-
         }
 
         /// <summary>

@@ -13,7 +13,8 @@ namespace Dapper.Tests.Database
         SqlCE,
         SQLite,
         MySql,
-        Postgres
+        Postgres,
+        Firebird
 
     }
 }

@@ -45,4 +45,10 @@
     <PackageReference Include="Dapper.Mapper" Version="2.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="FirebirdSql.Data.FirebirdClient">
+      <Version>6.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
 </Project>

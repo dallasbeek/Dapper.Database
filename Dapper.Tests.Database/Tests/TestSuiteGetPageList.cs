@@ -99,7 +99,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product>(4, 10, "select *, rowguid as GuidId from Product where Color = 'Black'");
+                var lst = db.GetPageList<Product>(4, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -111,7 +111,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = 'Black' order by lower(Name)");
+                var lst = db.GetPageList<Product>(5, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -124,7 +124,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product>(4, 10, "select *, rowguid as GuidId from Product where Color = @Color", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(4, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = @Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -137,7 +137,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetPageList<Product>(5, 10, "select *, rowguid as GuidId from Product where Color = @Color order by lower(Name)", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(5, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = @Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);

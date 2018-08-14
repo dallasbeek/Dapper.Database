@@ -64,7 +64,7 @@ namespace Dapper.Database.Extensions
                 ["sqliteconnection"] = new SQLiteAdapter(),
                 ["npgsqlconnection"] = new PostgresAdapter(),
                 ["mysqlconnection"] = new MySqlAdapter(),
-                //["fbconnection"] = new FbAdapter()
+                ["fbconnection"] = new FirebirdAdapter()
             };
 
 
