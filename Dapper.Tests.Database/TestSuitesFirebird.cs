@@ -72,8 +72,7 @@ namespace Dapper.Tests.Database
             }
             catch ( FbException ex )
             {
-                _skip = true;
-                if ( ex.Message.Contains("I/O error") )
+                if ( ex.Message.Contains("Unable to complete network request") )
                 {
                     _skip = true;
                 }
