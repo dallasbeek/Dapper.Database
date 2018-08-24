@@ -817,5 +817,19 @@ namespace Dapper.Database
         /// <returns></returns>
         ITransaction GetTransaction(IsolationLevel isolationlevel = IsolationLevel.ReadCommitted);
         #endregion
+
+        #region Timeout Settings
+
+        /// <summary>
+        /// Sets the Database timeout for all transactions
+        /// </summary>
+        int? CommandTimeout { get; set; }
+
+        /// <summary>
+        /// Sets the timeout value for the next (and only next) SQL statement
+        /// </summary>
+        int? OneTimeCommandTimeout { get; set; }
+
+        #endregion
     }
 }
