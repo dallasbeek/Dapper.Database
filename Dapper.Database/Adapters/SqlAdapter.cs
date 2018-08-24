@@ -211,9 +211,9 @@ namespace Dapper.Database.Adapters
                         var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                         if (string.IsNullOrEmpty(q.FromClause))
-                            return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
                         else
-                            return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
                     }
                 );
 
@@ -241,9 +241,9 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
                 else
-                    return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
             }
 
             return q.Sql;
@@ -258,9 +258,9 @@ namespace Dapper.Database.Adapters
             //    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
 
             //    if (!rxFrom.IsMatch(q))
-            //        return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+            //        return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
             //    else
-            //        return $"select {EscapeColumnList(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+            //        return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
             //}
             //return sql;
 
@@ -317,7 +317,15 @@ namespace Dapper.Database.Adapters
         /// <param name="columns"></param>
         /// <param name="tableName"></param> 
         /// <returns></returns>
-        public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumnn(ci.ColumnName) + (ci.ColumnName != ci.PropertyName ? " AS " + EscapeColumnn(ci.PropertyName) : "")));
+        public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumnn(ci.ColumnName)));
+
+        /// <summary>
+        /// Returns the format for columns
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="tableName"></param> 
+        /// <returns></returns>
+        public virtual string EscapeColumnListWithAliases(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumnn(ci.ColumnName) + (ci.ColumnName != ci.PropertyName ? " AS " + EscapeColumnn(ci.PropertyName) : "")));
 
         /// <summary>
         /// Returns the format for where clause

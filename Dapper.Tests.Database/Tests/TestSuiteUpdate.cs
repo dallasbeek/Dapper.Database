@@ -52,6 +52,26 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Update")]
+        public void UpdateUniqueIdentifierWithAliases()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
+                Assert.True(db.Insert(p));
+
+                p.First = "Greg";
+                p.Last = "Smith";
+                Assert.True(db.Update(p));
+
+                var gp = db.Get<PersonUniqueIdentifierWithAliases>(p.GuidId);
+
+                Assert.Equal(p.First, gp.First);
+                Assert.Equal(p.Last, gp.Last);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Update")]
         public void UpdatePersonCompositeKey()
         {
             using (var db = GetSqlDatabase())
@@ -100,8 +120,8 @@ namespace Dapper.Tests.Database
 
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Null(gp.Notes);
-                Assert.Equal(dnow.ToString("yyyy-MM-dd HH:mm"), gp.UpdatedOn.Value.ToString("yyyy-MM-dd HH:mm"));
-                Assert.Equal(dnow.ToString("yyyy-MM-dd HH:mm"), gp.CreatedOn.Value.ToString("yyyy-MM-dd HH:mm"));
+                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+                Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
             }

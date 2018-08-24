@@ -28,7 +28,7 @@ namespace Dapper.Database.Adapters
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
                 if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
                 {
@@ -85,7 +85,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -176,7 +176,7 @@ namespace Dapper.Database.Adapters
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
                 if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
                 {
@@ -233,7 +233,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);

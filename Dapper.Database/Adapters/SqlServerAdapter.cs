@@ -28,7 +28,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
                 if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
                 {
@@ -79,7 +79,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 var multi = connection.QueryMultiple(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -121,7 +121,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
                 if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
                 {
@@ -172,7 +172,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 var multi = await connection.QueryMultipleAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);

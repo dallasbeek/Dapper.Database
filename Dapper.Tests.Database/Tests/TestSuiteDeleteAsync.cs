@@ -43,6 +43,21 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Delete")]
+        public async Task DeleteUniqueIdentifierWithAliasesAsync()
+        {
+            using (var connection = GetSqlDatabase())
+            {
+                var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
+                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await connection.DeleteAsync(p));
+
+                var gp = await connection.GetAsync(p);
+                Assert.Null(gp);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Delete")]
         public async Task DeleteIdentityAsync()
         {
             using (var connection = GetSqlDatabase())
