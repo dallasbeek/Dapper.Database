@@ -29,7 +29,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = await db.GetFirstAsync<Product>("where Color = @Color and ProductId >= @ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
+                var item = await db.GetFirstAsync<Product>($"where Color = {P}Color and ProductId >= {P}ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -51,7 +51,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = await db.GetFirstAsync<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var item = await db.GetFirstAsync<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -62,7 +62,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = await db.GetFirstAsync<Product>(";select p.*, p.rowguid as GuidId from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var item = await db.GetFirstAsync<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -73,7 +73,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = await db.GetFirstAsync<Product>("select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var item = await db.GetFirstAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 Assert.Equal(816, item.ProductID);
                 Assert.Equal("ML Mountain Front Wheel", item.Name);
                 Assert.Null(item.ProductNumber);

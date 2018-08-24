@@ -12,5 +12,7 @@ namespace Dapper.Tests.Database
 
         public abstract ISqlDatabase GetSqlDatabase();
 
+        protected virtual string P { get{ return "@"; } }
+
     }
 }

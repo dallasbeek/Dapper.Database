@@ -37,7 +37,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                Assert.Equal(102.29m, await db.ExecuteScalerAsync<decimal>("select listprice from product where productid = @ProductId", new { ProductId = 806 }));
+                Assert.Equal(102.29m, await db.ExecuteScalerAsync<decimal>($"select listprice from product where productid = {P}ProductId", new { ProductId = 806 }));
             }
         }
 

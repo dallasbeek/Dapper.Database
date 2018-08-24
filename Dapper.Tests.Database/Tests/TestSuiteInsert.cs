@@ -10,7 +10,7 @@ namespace Dapper.Tests.Database
     {
 
         [Fact]
-        [Trait("Category", "Insert")]
+        [Trait("Category", "aaInsert")]
         public void InsertIdentity()
         {
             using (var db = GetSqlDatabase())
@@ -50,7 +50,7 @@ namespace Dapper.Tests.Database
                 var gid = Guid.NewGuid();
                 var p = new PersonCompositeKey { GuidId = gid, StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
-                var gp = db.Get<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);
+                var gp = db.Get<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);

@@ -43,7 +43,7 @@ namespace Dapper.Tests.Database
             {
                 using (var db = GetSqlDatabase())
                 {
-                    var dt = db.GetDataTable("select * from product where Color = @Color", new { @Color = "Black" });
+                    var dt = db.GetDataTable($"select * from product where Color = {P}Color", new { @Color = "Black" });
                     Assert.Equal(89, dt.Rows.Count);
                 }
             }

@@ -44,12 +44,12 @@ namespace Dapper.Tests.Database
                 }
                 else if ( GetProvider() == Provider.Firebird )
                 {
-                    ValidateProduct806(await connection.GetAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    ValidateProduct806(await connection.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
 
                 {
-                    ValidateProduct806(await connection.GetAsync<Product>("WHERE rowguid = @GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                    ValidateProduct806(await connection.GetAsync<Product>($"WHERE rowguid = {P}GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product>("select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = @Id", new { Id = 806 });
+                var p = await connection.GetAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -75,7 +75,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                ValidateProduct806(await connection.GetAsync<Product>("select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = @Id", new { Id = 806 }));
+                ValidateProduct806(await connection.GetAsync<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
             }
         }
 

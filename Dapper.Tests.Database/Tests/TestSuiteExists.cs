@@ -58,13 +58,13 @@ namespace Dapper.Tests.Database
                 }
                 else if ( GetProvider() == Provider.Firebird )
                 {
-                    Assert.True(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                    Assert.False(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
                 {
-                    Assert.True(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
-                    Assert.False(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = new Guid("1115D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                    Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                    Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = new Guid("1115D52B-8C29-4059-B899-75C53B5EE2E6") }));
                 }
             }
         }
@@ -75,8 +75,8 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                Assert.True(db.Exists<Product>("select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = @Id", new { Id = 806 }));
-                Assert.False(db.Exists<Product>("select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = @Id", new { Id = -1 }));
+                Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
         }
 
@@ -86,8 +86,8 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                Assert.True(db.Exists<Product>("select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = @Id", new { Id = 806 }));
-                Assert.False(db.Exists<Product>("select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = @Id", new { Id = -1 }));
+                Assert.True(db.Exists<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                Assert.False(db.Exists<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
         }
 

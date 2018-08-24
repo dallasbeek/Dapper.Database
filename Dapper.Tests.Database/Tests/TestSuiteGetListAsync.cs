@@ -44,7 +44,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>("where Color = @Color", new { Color = "Black" });
+                var lst = await connection.GetListAsync<Product>($"where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -70,7 +70,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = @Color", new { Color = "Black" });
+                var lst = await connection.GetListAsync<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -83,7 +83,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>(";select p.*, p.rowguid as GuidId from Product p where p.Color = @Color", new { Color = "Black" });
+                var lst = await connection.GetListAsync<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -96,7 +96,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>("select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
+                var lst = await connection.GetListAsync<Product>($"select ProductId, rowguid AS GuidId, Name from Product where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);

@@ -54,9 +54,9 @@ namespace Dapper.Tests.Database
                 {
                     using (var trans = db.GetTransaction())
                     {
-                        var dt = db.GetMultiple(@"
-                        select * from product where Color = @Color;
-                        select * from productcategory where productcategoryid = @ProductCategoryId;",
+                        var dt = db.GetMultiple($@"
+                        select * from product where Color = {P}Color;
+                        select * from productcategory where productcategoryid = {P}ProductCategoryId;",
                             new { Color = "Black", ProductCategoryId = 21 });
                         Assert.Equal(89, dt.Read(typeof(Product)).Count());
 

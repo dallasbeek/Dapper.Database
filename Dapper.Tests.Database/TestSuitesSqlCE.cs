@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿#if NET452
+using Microsoft.Data.Sqlite;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,15 +15,12 @@ using Dapper;
 using Dapper.Database;
 using Npgsql;
 
-#if NET452
 using System.Data.SqlServerCe;
 using System.Transactions;
-#endif
 
 namespace Dapper.Tests.Database
 {
 
-#if NET452
     [Trait("Provider", "SqlCE")]
     public class SqlCETestSuite : TestSuite
     {
@@ -85,6 +83,6 @@ namespace Dapper.Tests.Database
             }
         }
     }
-#endif
 
 }
+#endif
