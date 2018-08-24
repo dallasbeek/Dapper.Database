@@ -20,12 +20,20 @@ namespace Dapper.Tests.Database
         {
             if (GetProvider() == Provider.SQLite) return;
 
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 //can't force it to timeout since it's in seconds so verify it's set invalid
                 db.CommandTimeout = -1;
-                var ex = Assert.Throws<ArgumentException>(() => db.Count<Product>());
-                AssertTimeoutExceptionMessage(ex);
+                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                {
+                    var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
+                else
+                {
+                    var ex = Assert.Throws<ArgumentException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
             }
         }
 
@@ -39,8 +47,16 @@ namespace Dapper.Tests.Database
             {
                 //can't force it to timeout since it's in seconds so verify it's set invalid
                 db.OneTimeCommandTimeout = -1;
-                var ex = Assert.Throws<ArgumentException>(() => db.Count<Product>());
-                AssertTimeoutExceptionMessage(ex);
+                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                {
+                    var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
+                else
+                {
+                    var ex = Assert.Throws<ArgumentException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
             }
         }
 
@@ -55,24 +71,48 @@ namespace Dapper.Tests.Database
             {
                 //can't force it to timeout since it's in seconds so verify it's set invalid
                 db.CommandTimeout = -1;
-                var e1 = Assert.Throws<ArgumentException>(() => db.Count<Product>());
-                AssertTimeoutExceptionMessage(e1);
+                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                {
+                    var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
+                else
+                {
+                    var ex = Assert.Throws<ArgumentException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
 
                 db.OneTimeCommandTimeout = 0;
                 Assert.Equal(295, db.Count<Product>());
 
-                var e2 = Assert.Throws<ArgumentException>(() => db.Count<Product>());
-                AssertTimeoutExceptionMessage(e2);
+                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                {
+                    var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
+                else
+                {
+                    var ex = Assert.Throws<ArgumentException>(() => db.Count<Product>());
+                    AssertTimeoutExceptionMessage(ex);
+                }
 
 
             }
         }
 
-        private void AssertTimeoutExceptionMessage (Exception ex)
+        private void AssertTimeoutExceptionMessage(Exception ex)
         {
             if (GetProvider() == Provider.SqlCE)
             {
                 Assert.StartsWith("SqlCeCommand.CommandTimeout does not support non-zero values.", ex.Message);
+            }
+            else if (GetProvider() == Provider.MySql)
+            {
+                Assert.StartsWith("Timeout can be only be set to 'System.Threading.Timeout.Infinite'", ex.Message);
+            }
+            else if (GetProvider() == Provider.Postgres)
+            {
+                Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
             }
             else
             {
