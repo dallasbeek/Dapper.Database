@@ -43,6 +43,21 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
+        [Trait("Category", "Insert")]
+        public async Task InsertUniqueIdentifierWithAliasesAsync()
+        {
+            using (var connection = GetSqlDatabase())
+            {
+                var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
+                Assert.True(await connection.InsertAsync(p));
+                var gp = await connection.GetAsync<PersonUniqueIdentifierWithAliases>(p.GuidId);
+
+                Assert.Equal(p.First, gp.First);
+                Assert.Equal(p.Last, gp.Last);
+            }
+        }
+
+        [Fact]
         [Trait("Category", "InsertAsync")]
         public async Task InsertPersonCompositeKeyAsync()
         {
@@ -80,7 +95,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Null(gp.Notes);
                 Assert.Null(gp.UpdatedOn);
-                Assert.Equal(dnow.ToString("yyyy-MM-dd HH:mm"), gp.CreatedOn.Value.ToString("yyyy-MM-dd HH:mm"));
+                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
             }

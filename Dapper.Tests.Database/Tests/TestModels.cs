@@ -24,6 +24,17 @@ namespace Dapper.Tests.Database
         public string LastName { get; set; }
     }
 
+    [Table("Person")]
+    public class PersonUniqueIdentifierWithAliases
+    {
+        [Key]
+        public Guid GuidId { get; set; }
+        [Column("FirstName")]
+        public string First { get; set; }
+        [Column("LastName")]
+        public string Last { get; set; }
+    }
+
 
     [Table("Person")]
     public class PersonCompositeKey
