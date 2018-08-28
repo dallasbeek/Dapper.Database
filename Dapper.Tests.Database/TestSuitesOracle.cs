@@ -1,4 +1,4 @@
-﻿#if NET451
+﻿#if NET452
 using System;
 using System.IO;
 using Xunit;

@@ -10,7 +10,7 @@ namespace Dapper.Tests.Database
     {
 
         [Fact]
-        [Trait("Category", "aaInsert")]
+        [Trait("Category", "Insert")]
         public void InsertIdentity()
         {
             using (var db = GetSqlDatabase())
