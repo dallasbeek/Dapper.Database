@@ -36,7 +36,6 @@ namespace Dapper.Database
             }
             else
             {
-                //NOTE: This as dynamic trick should be able to handle both our own Table-attribute as well as the one in EntityFramework 
                 var tableAttr = type
 #if NETSTANDARD1_3
                 .GetTypeInfo()
@@ -70,21 +69,22 @@ namespace Dapper.Database
                         Property = t,
                         ColumnName = columnAtt?.Name ?? t.Name,
                         PropertyName = t.Name,
-                        IsKey = t.GetCustomAttributes(true).Any(a => a is KeyAttribute),
-                        IsIdentity = t.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
+                        IsKey = t.GetCustomAttributes(false).Any(a => a is KeyAttribute),
+                        IsIdentity = t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute
                           && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity),
-                        IsGenerated = t.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
+                        IsGenerated = t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute
                             && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption != DatabaseGeneratedOption.None),
-                        ExcludeOnSelect = t.GetCustomAttributes(true).Any(a => a is IgnoreSelectAttribute)
+                        ExcludeOnSelect = t.GetCustomAttributes(false).Any(a => a is IgnoreSelectAttribute),
+                        SequenceName = ((t.GetCustomAttributes(false).SingleOrDefault(a => a is SequenceAttribute)) as dynamic)?.Name
                     };
 
                     ci.ExcludeOnInsert = ci.IsGenerated
-                        || t.GetCustomAttributes(true).Any(a => a is IgnoreInsertAttribute)
-                        || t.GetCustomAttributes(true).Any(a => a is ReadOnlyAttribute);
+                        || t.GetCustomAttributes(false).Any(a => a is IgnoreInsertAttribute)
+                        || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
 
                     ci.ExcludeOnUpdate = ci.IsGenerated
-                        || t.GetCustomAttributes(true).Any(a => a is IgnoreUpdateAttribute)
-                        || t.GetCustomAttributes(true).Any(a => a is ReadOnlyAttribute);
+                        || t.GetCustomAttributes(false).Any(a => a is IgnoreUpdateAttribute)
+                        || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
 
                     return ci;
                 })
@@ -225,6 +225,11 @@ namespace Dapper.Database
         /// 
         /// </summary>
         public PropertyInfo Property { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string SequenceName { get; set; }
     }
 
 }

@@ -73,4 +73,24 @@ namespace Dapper.Database.Attributes
         }
     }
 
+    /// <summary>
+    /// Oracle sequence
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
+    public class SequenceAttribute : Attribute
+    {
+        /// <summary>
+        /// Used to select identities from Oracle
+        /// </summary>
+        public SequenceAttribute( string name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
+        /// Name of the Oracle sequence
+        /// </summary>
+        public string Name { get; private set; }
+    }
+
 }

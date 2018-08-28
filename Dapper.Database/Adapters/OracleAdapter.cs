@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dapper.Database.Adapters
@@ -12,6 +14,8 @@ namespace Dapper.Database.Adapters
     /// </summary>
     public partial class OracleAdapter : SqlAdapter, ISqlAdapter
     {
+
+        private Regex _reservedWords = new Regex("^name|size$");
 
         /// <summary>
         /// Inserts an entity into table "Ts"
@@ -28,37 +32,40 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
+                //cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} into {EscapeParameter("ora" + ci.Property.Name)}"))}");
+                cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)}"))} into {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeParameter("ora" + ci.Property.Name)}"))}");
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                //cmd = new StringBuilder("insert into Person (IdentityId, FirstName, LastName) values (Person_Seq.NEXTVAL, :FirstName, :LastName)  RETURNING IdentityId into :oraIdentityId");
 
-                if ( tableInfo.KeyColumns.Any(k => k.IsIdentity) )
+                List<KeyValuePair<PropertyInfo, IDbDataParameter>> parameterMapping = null;
+
+                var cb = new Action<IDbCommand>(dbcmd =>
                 {
-                    selectcmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = LAST_INSERT_ID();");
-                }
-                else
+
+                    parameterMapping = tableInfo.GeneratedColumns.Select(t => new KeyValuePair<PropertyInfo, IDbDataParameter>(t.Property, dbcmd.CreateParameter())).ToList();
+
+                    parameterMapping.ForEach(map =>
+                    {
+                        SqlMapper.ITypeHandler handler = null;
+                        map.Value.ParameterName = $"{EscapeParameter("ora" + map.Key.Name)}";
+                        map.Value.Direction = ParameterDirection.Output;
+                        map.Value.Value = DBNull.Value;
+#pragma warning disable 618
+                        map.Value.DbType = SqlMapper.LookupDbType(map.Key.PropertyType, "n/a", false, out handler);
+#pragma warning restore 618
+                        dbcmd.Parameters.Add(map.Value);
+                    });
+                });
+
+                var cmdDef = new CommandDefinition(cmd.ToString(), entityToInsert, transaction, commandTimeout, beforeExecute: cb);
+
+                connection.Execute(cmdDef);
+
+
+                foreach ( var param in parameterMapping )
                 {
-                    selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-                }
-
-                var wasClosed = connection.State == ConnectionState.Closed;
-                if ( wasClosed ) connection.Open();
-
-                connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout);
-                var r = connection.Query(selectcmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
-
-                if ( wasClosed ) connection.Close();
-
-                var vals = r.ToList();
-
-                if ( !vals.Any() ) return false;
-
-                var rvals = ((IDictionary<string, object>) vals[0]);
-
-                foreach ( var key in rvals.Keys )
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
-                    p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+                    var rval = param.Value.Value;
+                    param.Key.SetValue(entityToInsert, Convert.ChangeType(rval, param.Key.PropertyType), null);
                 }
 
                 return true;
@@ -86,7 +93,7 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -129,7 +136,7 @@ namespace Dapper.Database.Adapters
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
                 if ( tableInfo.KeyColumns.Any(k => k.IsIdentity) )
                 {
@@ -186,7 +193,7 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnList(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -231,13 +238,13 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if ( string.IsNullOrEmpty(q.FromClause) )
-                    return $"select exists (select * from { EscapeTableName(tableInfo)} {wc})";
+                    return $"select case when exists (select * from { EscapeTableName(tableInfo)} {wc}) then 1 else 0 end as rec_exists from dual";
                 else
-                    return $"select exists (select * {wc})";
+                    return $"select case when exists (select * {wc}) then 1 else 0 end as rec_exists from dual";
 
             }
 
-            return $"select exists ({q.Sql})";
+            return $"select case when exists ({q.Sql}) then 1 else 0 end as rec_exists from dual";
 
         }
 
@@ -257,11 +264,11 @@ namespace Dapper.Database.Adapters
         /// <summary>
         /// Returns the format for column
         /// </summary>
-        public override string EscapeColumnn( string value ) => $"{value}";
-     
-        ///// <summary>
-        ///// Returns the format for parameter
-        ///// </summary>
-        //public override string EscapeParameter( string value ) => $":{value}";
+        public override string EscapeColumnn( string value ) => _reservedWords.IsMatch(value.ToLower()) ? $"\"{value}\"" : $"{value}";
+
+        /// <summary>
+        /// Returns the format for parameter
+        /// </summary>
+        public override string EscapeParameter( string value ) => $":{value}";
     }
 }

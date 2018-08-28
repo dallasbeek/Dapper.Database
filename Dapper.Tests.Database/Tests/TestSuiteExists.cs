@@ -75,8 +75,9 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = 806 }));
-                Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = -1 }));
+                var nameColumn = GetProvider() == Provider.Oracle ? "\"name\"" : "name";
+                Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
         }
 

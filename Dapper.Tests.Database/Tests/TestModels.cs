@@ -9,7 +9,7 @@ namespace Dapper.Tests.Database
     [Table("Person")]
     public class PersonIdentity
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Sequence("Person_Seq")]
         public int IdentityId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

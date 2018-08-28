@@ -1,4 +1,4 @@
-﻿#if NET452
+﻿#if NET451
 using System;
 using System.IO;
 using Xunit;
@@ -15,22 +15,6 @@ namespace Dapper.Tests.Database
 
         protected override string P => ":";
 
-        //Data Source = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = MyHost)(PORT = MyPort))(CONNECT_DATA = (SERVICE_NAME = MyOracleSID)));
-        //User Id = myUsername; Password=myPassword;
-
-        //public static string ConnectionString => "Data Source=MyOracleDB;User Id=testuser;Password=Password12!;Integrated Security = no;";
-
-
-
-        //SERVER=(DESCRIPTION =
-        //    (ADDRESS = (PROTOCOL = TCP)(HOST = Denver)(PORT = 1521))
-        //    (CONNECT_DATA =
-        //      (SERVER = DEDICATED)
-        //      (SERVICE_NAME = XE)
-        //    )
-        //  )
-
-
         public override ISqlDatabase GetSqlDatabase()
         {
             if ( _skip ) throw new SkipTestException("Skipping Oracle Tests - no server.");
@@ -44,15 +28,35 @@ namespace Dapper.Tests.Database
 
         static OracleTestSuite()
         {
-            SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.AddTypeHandler<Guid>(new OracleGuidTypeHandler());
+
+            var commandText = string.Empty;
             try
             {
                 using ( var connection = new OracleConnection(ConnectionString) )
                 {
                     connection.Open();
 
-                    var awfile = File.ReadAllText(".\\Scripts\\oracleawlite.sql");
-                    //connection.Execute(awfile, commandTimeout: 600);
+                    var file = File.OpenText(".\\Scripts\\oracleawlite.sql");
+                    var line = string.Empty;
+                    var prevline = string.Empty;
+
+                    while ( (line = file.ReadLine()) != null )
+                    {
+                        if ( line.Equals(string.Empty, StringComparison.OrdinalIgnoreCase) && prevline.EndsWith(";") )
+                        {
+                            //if ( !string.IsNullOrEmpty(commandText) )
+                            //    connection.Execute(commandText.Remove(commandText.Length -1));
+                            //commandText = string.Empty;
+                        }
+                        else
+                        {
+                            commandText += "\r\n" + line;
+                            prevline = line;
+                        }
+                    }
                     connection.Execute("delete from Person");
 
                 }

@@ -41,8 +41,6 @@ namespace Dapper.Tests.Database
 
             try
             {
-                var filename = Directory.GetCurrentDirectory() + "\\Test.Db.sfdb";
-
                 using ( var connection = new FbConnection($"Database={filename};{ConnectionString}") )
                 {
                     connection.Open();
