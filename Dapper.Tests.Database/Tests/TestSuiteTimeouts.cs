@@ -114,6 +114,10 @@ namespace Dapper.Tests.Database
             {
                 Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
             }
+            else if (GetProvider() == Provider.Firebird)
+            {
+                Assert.StartsWith("The property value assigned is less than 0.", ex.Message);
+            }
             else
             {
                 Assert.StartsWith("Invalid CommandTimeout value -1;", ex.Message);

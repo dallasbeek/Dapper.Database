@@ -28,21 +28,20 @@ namespace Dapper.Tests.Database
         {
             Environment.SetEnvironmentVariable("NoCache", "True");
 
-            var init = false;
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
-            //SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
+          
+            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
 
-            //if (File.Exists(FileName))
+            var init = false;
+            //if (File.Exists(filename))
             //{
-            //    File.Delete(FileName);
+            //    File.Delete(filename);
             //}
 
             var commandText = string.Empty;
 
             try
             {
-                var filename = Directory.GetCurrentDirectory() + "\\Test.Db.sfdb";
-
                 using ( var connection = new FbConnection($"Database={filename};{ConnectionString}") )
                 {
                     connection.Open();

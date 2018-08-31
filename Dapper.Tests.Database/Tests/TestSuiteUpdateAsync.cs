@@ -139,18 +139,18 @@ namespace Dapper.Tests.Database
                 var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
                 Assert.True(await db.InsertAsync(p));
 
-                if (p.Full != null)
+                if (p.Name != null)
                 {
-                    Assert.Equal("Alice Jones", p.Full);
+                    Assert.Equal("Alice Jones", p.Name);
                 }
 
                 p.First = "Greg";
                 p.Last = "Smith";
 
                 Assert.True(await db.UpdateAsync(p));
-                if (p.Full != null)
+                if (p.Name != null)
                 {
-                    Assert.Equal("Greg Smith", p.Full);
+                    Assert.Equal("Greg Smith", p.Name);
                 }
 
                 var gp = await db.GetAsync<PersonIdentityAlias>(p.Id);
@@ -158,7 +158,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.Id, gp.Id);
                 Assert.Equal(p.First, gp.First);
                 Assert.Equal(p.Last, gp.Last);
-                Assert.Equal(p.Full, gp.Full);
+                Assert.Equal(p.Name, gp.Name);
 
                 Assert.True(await db.DeleteAsync<PersonIdentityAlias>(p.Id));
 
