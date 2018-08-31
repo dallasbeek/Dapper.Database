@@ -22,7 +22,7 @@ namespace Dapper.Tests.Database
 #if !NETSTANDARD1_3 && !NETCOREAPP1_0 && !NETCOREAPP2_0
             if ( parameter is OracleParameter )
             {
-                OracleParameter oracleParameter = (OracleParameter) parameter;
+                var oracleParameter = (OracleParameter) parameter;
                 oracleParameter.OracleDbType = OracleDbType.Raw;
                 parameter.Value = ((Guid) value);
             }

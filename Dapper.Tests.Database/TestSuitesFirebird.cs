@@ -32,9 +32,11 @@ namespace Dapper.Tests.Database
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             //SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
-            //if (File.Exists(FileName))
+            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
+
+            //if (File.Exists(filename))
             //{
-            //    File.Delete(FileName);
+            //    File.Delete(filename);
             //}
 
             var commandText = string.Empty;

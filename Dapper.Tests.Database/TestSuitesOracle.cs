@@ -28,8 +28,8 @@ namespace Dapper.Tests.Database
 
         static OracleTestSuite()
         {
-            SqlMapper.RemoveTypeMap(typeof(Guid));
-            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            //SqlMapper.RemoveTypeMap(typeof(Guid));
+            //SqlMapper.RemoveTypeMap(typeof(Guid?));
             SqlMapper.AddTypeHandler<Guid>(new OracleGuidTypeHandler());
 
             var commandText = string.Empty;
@@ -61,9 +61,11 @@ namespace Dapper.Tests.Database
 
                 }
             }
-            catch ( Exception e )
+            catch ( OracleException e )
             {
                 if ( e.Message.Contains("No connection could be made because the target machine actively refused it") )
+                    _skip = true;
+                else if (e.Message.Contains("Unable to resolve connect hostname"))
                     _skip = true;
                 else
                     throw;
