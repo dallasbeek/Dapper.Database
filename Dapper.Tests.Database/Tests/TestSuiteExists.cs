@@ -75,7 +75,7 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"name\"" : "name";
+                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
                 Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.ProductId = {P}Id", new { Id = 806 }));
                 Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
@@ -100,9 +100,15 @@ namespace Dapper.Tests.Database
             {
                 var tsql = "; select 1 AS ProductId";
                 var fsql = "; select 0 AS ProductId";
-                if ( GetProvider() == Provider.Firebird){
+                if ( GetProvider() == Provider.Firebird )
+                {
                     tsql += " from RDB$Database";
                     fsql += " from RDB$Database";
+                }
+                else if ( GetProvider() == Provider.Oracle )
+                {
+                    tsql += " from dual";
+                    fsql += " from dual";
                 }
                 Assert.True(db.Exists<Product>(tsql));
                 Assert.False(db.Exists<Product>(fsql));

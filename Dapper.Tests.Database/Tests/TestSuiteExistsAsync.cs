@@ -77,8 +77,9 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                Assert.True(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = 806 }));
-                Assert.False(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = -1 }));
+                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
+                Assert.True(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.{nameColumn} from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                Assert.False(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.{nameColumn} from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
         }
 
@@ -105,6 +106,9 @@ namespace Dapper.Tests.Database
                 {
                     tsql += " from RDB$Database";
                     fsql += " from RDB$Database";
+                }else if (GetProvider() == Provider.Oracle){
+                    tsql += " from dual";
+                    fsql += " from dual";
                 }
 
                 Assert.True(await connection.ExistsAsync<Product>(tsql));

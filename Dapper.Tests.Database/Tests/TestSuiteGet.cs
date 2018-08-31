@@ -58,7 +58,8 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                var p = db.Get<Product>($"select ProductId, rowguid AS GuidId, Name from Product where ProductId = {P}Id", new { Id = 806 });
+                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "name";
+                var p = db.Get<Product>($"select ProductId, rowguid AS GuidId, {nameColumn} from Product where ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -87,6 +88,10 @@ namespace Dapper.Tests.Database
                 if ( GetProvider() == Provider.Firebird )
                 {
                     tsql += " from RDB$Database";
+                }
+                else if ( GetProvider() == Provider.Oracle )
+                {
+                    tsql += " from dual";
                 }
                 var p = db.Get<Product>(tsql, new { });
                 Assert.Equal(23, p.ProductID);

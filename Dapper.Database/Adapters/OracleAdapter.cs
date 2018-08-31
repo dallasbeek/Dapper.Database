@@ -32,43 +32,38 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
-                //cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} into {EscapeParameter("ora" + ci.Property.Name)}"))}");
-                cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)}"))} into {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeParameter("ora" + ci.Property.Name)}"))}");
+                cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)}"))} into {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeParameter(ci.Property.Name)}"))}");
 
-                //cmd = new StringBuilder("insert into Person (IdentityId, FirstName, LastName) values (Person_Seq.NEXTVAL, :FirstName, :LastName)  RETURNING IdentityId into :oraIdentityId");
-
-                List<KeyValuePair<PropertyInfo, IDbDataParameter>> parameterMapping = null;
-
+                List<IDbDataParameter> outParams = new List<IDbDataParameter>();
                 var cb = new Action<IDbCommand>(dbcmd =>
                 {
-
-                    parameterMapping = tableInfo.GeneratedColumns.Select(t => new KeyValuePair<PropertyInfo, IDbDataParameter>(t.Property, dbcmd.CreateParameter())).ToList();
-
-                    parameterMapping.ForEach(map =>
+                    tableInfo.GeneratedColumns.ToList().ForEach(gc =>
                     {
-                        SqlMapper.ITypeHandler handler = null;
-                        map.Value.ParameterName = $"{EscapeParameter("ora" + map.Key.Name)}";
-                        map.Value.Direction = ParameterDirection.Output;
-                        map.Value.Value = DBNull.Value;
-#pragma warning disable 618
-                        map.Value.DbType = SqlMapper.LookupDbType(map.Key.PropertyType, "n/a", false, out handler);
-#pragma warning restore 618
-                        dbcmd.Parameters.Add(map.Value);
+                        var p = dbcmd.Parameters[gc.PropertyName] as IDbDataParameter;
+                        if ( p != null )
+                        {
+                            p.Direction = ParameterDirection.InputOutput;
+                            p.Size = DbString.DefaultLength;
+                            //probably need to do something with precision and scale
+                            outParams.Add(p);
+                        }
                     });
                 });
 
                 var cmdDef = new CommandDefinition(cmd.ToString(), entityToInsert, transaction, commandTimeout, beforeExecute: cb);
 
-                connection.Execute(cmdDef);
+                var ct = connection.Execute(cmdDef);
 
-
-                foreach ( var param in parameterMapping )
+                foreach ( var param in outParams )
                 {
-                    var rval = param.Value.Value;
-                    param.Key.SetValue(entityToInsert, Convert.ChangeType(rval, param.Key.PropertyType), null);
+                    var rval = param.Value;
+                    var t = tableInfo.GeneratedColumns.Where(gc => gc.PropertyName == param.ParameterName).SingleOrDefault();
+                    if (t != null){
+                        t.Property.SetValue(entityToInsert, Convert.ChangeType(rval, t.Property.PropertyType));
+                    }
                 }
 
-                return true;
+                return ct > 0;
             }
             else
             {
@@ -93,26 +88,38 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-                selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+                cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)}"))} into {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeParameter(ci.Property.Name)}"))}");
 
-                connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
-                var r = connection.Query(selectcmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
-
-                var vals = r.ToList();
-
-                if ( !vals.Any() ) return false;
-
-                var rvals = ((IDictionary<string, object>) vals[0]);
-
-                foreach ( var key in rvals.Keys )
+                List<IDbDataParameter> outParams = new List<IDbDataParameter>();
+                var cb = new Action<IDbCommand>(dbcmd =>
                 {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
-                    p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
+                    tableInfo.GeneratedColumns.ToList().ForEach(gc =>
+                    {
+                        var p = dbcmd.Parameters[gc.PropertyName] as IDbDataParameter;
+                        if ( p != null )
+                        {
+                            p.Direction = ParameterDirection.InputOutput;
+                            p.Size = DbString.DefaultLength;
+                            outParams.Add(p);
+                        }
+                    });
+                });
+
+                var cmdDef = new CommandDefinition(cmd.ToString(), entityToUpdate, transaction, commandTimeout, beforeExecute: cb);
+
+                var ct = connection.Execute(cmdDef);
+
+                foreach ( var param in outParams )
+                {
+                    var rval = param.Value;
+                    var t = tableInfo.GeneratedColumns.Where(gc => gc.PropertyName == param.ParameterName).SingleOrDefault();
+                    if ( t != null )
+                    {
+                        t.Property.SetValue(entityToUpdate, Convert.ChangeType(rval, t.Property.PropertyType));
+                    }
                 }
 
-                return true;
+                return ct > 0;
             }
             else
             {
@@ -135,40 +142,38 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
+                cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)}"))} into {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeParameter(ci.Property.Name)}"))}");
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-
-                if ( tableInfo.KeyColumns.Any(k => k.IsIdentity) )
+                List<IDbDataParameter> outParams = new List<IDbDataParameter>();
+                var cb = new Action<IDbCommand>(dbcmd =>
                 {
-                    selectcmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = LAST_INSERT_ID();");
-                }
-                else
+                    tableInfo.GeneratedColumns.ToList().ForEach(gc =>
+                    {
+                        var p = dbcmd.Parameters[gc.PropertyName] as IDbDataParameter;
+                        if ( p != null )
+                        {
+                            p.Direction = ParameterDirection.InputOutput;
+                            p.Size = DbString.DefaultLength;
+                            outParams.Add(p);
+                        }
+                    });
+                });
+
+                var cmdDef = new CommandDefinition(cmd.ToString(), entityToInsert, transaction, commandTimeout, beforeExecute: cb);
+
+               var ct = await connection.ExecuteAsync(cmdDef);
+
+                foreach ( var param in outParams )
                 {
-                    selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-                }
-
-                var wasClosed = connection.State == ConnectionState.Closed;
-                if ( wasClosed ) connection.Open();
-
-                await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout);
-                var r = await connection.QueryAsync(selectcmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
-
-                if ( wasClosed ) connection.Close();
-
-                var vals = r.ToList();
-
-                if ( !vals.Any() ) return false;
-
-                var rvals = ((IDictionary<string, object>) vals[0]);
-
-                foreach ( var key in rvals.Keys )
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
-                    p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
+                    var rval = param.Value;
+                    var t = tableInfo.GeneratedColumns.Where(gc => gc.PropertyName == param.ParameterName).SingleOrDefault();
+                    if ( t != null )
+                    {
+                        t.Property.SetValue(entityToInsert, Convert.ChangeType(rval, t.Property.PropertyType));
+                    }
                 }
 
-                return true;
+                return ct > 0;
             }
             else
             {
@@ -193,26 +198,38 @@ namespace Dapper.Database.Adapters
 
             if ( tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any() )
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-                selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+                cmd.Append($" RETURNING {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeColumnn(ci.ColumnName)}"))} into {string.Join(", ", tableInfo.GeneratedColumns.Select(ci => $"{EscapeParameter(ci.Property.Name)}"))}");
 
-                await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
-                var r = await connection.QueryAsync(selectcmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
-
-                var vals = r.ToList();
-
-                if ( !vals.Any() ) return false;
-
-                var rvals = ((IDictionary<string, object>) vals[0]);
-
-                foreach ( var key in rvals.Keys )
+                List<IDbDataParameter> outParams = new List<IDbDataParameter>();
+                var cb = new Action<IDbCommand>(dbcmd =>
                 {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
-                    p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
+                    tableInfo.GeneratedColumns.ToList().ForEach(gc =>
+                    {
+                        var p = dbcmd.Parameters[gc.PropertyName] as IDbDataParameter;
+                        if ( p != null )
+                        {
+                            p.Direction = ParameterDirection.InputOutput;
+                            p.Size = DbString.DefaultLength;
+                            outParams.Add(p);
+                        }
+                    });
+                });
+
+                var cmdDef = new CommandDefinition(cmd.ToString(), entityToUpdate, transaction, commandTimeout, beforeExecute: cb);
+
+                var ct = await connection.ExecuteAsync(cmdDef);
+
+                foreach ( var param in outParams )
+                {
+                    var rval = param.Value;
+                    var t = tableInfo.GeneratedColumns.Where(gc => gc.PropertyName == param.ParameterName).SingleOrDefault();
+                    if ( t != null )
+                    {
+                        t.Property.SetValue(entityToUpdate, Convert.ChangeType(rval, t.Property.PropertyType));
+                    }
                 }
 
-                return true;
+                return ct > 0;
             }
             else
             {
@@ -241,12 +258,53 @@ namespace Dapper.Database.Adapters
                     return $"select case when exists (select * from { EscapeTableName(tableInfo)} {wc}) then 1 else 0 end as rec_exists from dual";
                 else
                     return $"select case when exists (select * {wc}) then 1 else 0 end as rec_exists from dual";
-
             }
 
             return $"select case when exists ({q.Sql}) then 1 else 0 end as rec_exists from dual";
 
         }
+
+        /// <summary>
+        /// Constructs a paged sql statement
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="page">the page to request</param>
+        /// <param name="pageSize">the size of the page to request</param>
+        /// <param name="sql">a sql statement or partial statement</param>
+        /// <returns>A paginated sql statement</returns>
+        public override string GetPageListQuery( TableInfo tableInfo, long page, long pageSize, string sql )
+        {
+            var q = new SqlParser(GetListQuery(tableInfo, sql));
+            var pageSkip = (page - 1) * pageSize;
+            var pageTake = pageSkip + pageSize;
+            var sqlOrderBy = "order by (select null)";
+            var sqlOrderByRemoved = q.Sql;
+
+            if ( string.IsNullOrEmpty(q.OrderByClause) )
+            {
+                if ( tableInfo.KeyColumns.Any() )
+                {
+                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+                }
+            }
+            else
+            {
+                sqlOrderBy = q.OrderByClause;
+                sqlOrderByRemoved = sqlOrderByRemoved.Replace(q.OrderByClause, "");
+            }
+
+            var columnsOnly = $"page_inner.* FROM ({sqlOrderByRemoved}) page_inner";
+
+            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {pageSkip} and page_rn <= {pageTake}";
+
+        }
+
+        /// <summary>
+        /// Returns the format for parameters
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public override string EscapeParameters( IEnumerable<ColumnInfo> columns ) => string.Join(", ", columns.Select(ci => string.IsNullOrWhiteSpace(ci.SequenceName) ? EscapeParameter(ci.PropertyName) : ci.SequenceName + ".nextval"));
 
         /// <summary>
         /// Applies a schema name is one is specified

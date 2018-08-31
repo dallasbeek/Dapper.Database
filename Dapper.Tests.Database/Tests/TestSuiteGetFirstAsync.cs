@@ -73,7 +73,8 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = await db.GetFirstAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
+                var item = await db.GetFirstAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 Assert.Equal(816, item.ProductID);
                 Assert.Equal("ML Mountain Front Wheel", item.Name);
                 Assert.Null(item.ProductNumber);

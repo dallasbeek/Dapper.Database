@@ -15,17 +15,17 @@ namespace Dapper.Database.Adapters
         /// <summary>
         /// Cache for Get Queries
         /// </summary>
-        private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> GetQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
+        protected static readonly ConcurrentDictionary<RuntimeTypeHandle, string> GetQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 
         /// <summary>
         /// Cache for Insert Queries
         /// </summary>
-        private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> InsertQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
+        protected static readonly ConcurrentDictionary<RuntimeTypeHandle, string> InsertQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 
         /// <summary>
         /// Cache for Update Queries
         /// </summary>
-        private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> UpdateQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
+        protected static readonly ConcurrentDictionary<RuntimeTypeHandle, string> UpdateQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 
         /// <summary>
         /// Inserts an entity into table "Ts"
@@ -247,23 +247,6 @@ namespace Dapper.Database.Adapters
             }
 
             return q.Sql;
-
-            //var q = sql ?? "";
-
-            //if (q.StartsWith(";"))
-            //    return q.Substring(1);
-
-            //if (!rxSelect.IsMatch(q))
-            //{
-            //    var wc = string.IsNullOrWhiteSpace(q) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q;
-
-            //    if (!rxFrom.IsMatch(q))
-            //        return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
-            //    else
-            //        return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
-            //}
-            //return sql;
-
         }
 
         /// <summary>
