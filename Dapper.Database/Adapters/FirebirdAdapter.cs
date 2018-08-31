@@ -104,7 +104,7 @@ namespace Dapper.Database.Adapters
         {
             var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 
@@ -146,7 +146,7 @@ namespace Dapper.Database.Adapters
         {
             var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 

@@ -25,7 +25,7 @@ namespace Dapper.Database.Adapters
         {
             var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
 
                 var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
@@ -83,7 +83,7 @@ namespace Dapper.Database.Adapters
         {
             var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
@@ -173,7 +173,7 @@ namespace Dapper.Database.Adapters
         {
             var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
 
                 var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
@@ -231,7 +231,7 @@ namespace Dapper.Database.Adapters
         {
             var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
                 selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
