@@ -15,7 +15,8 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "Oracle")]
     public partial class OracleTestSuite : TestSuite
     {
-        public static string ConnectionString => $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=Denver)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
+        //public static string ConnectionString => $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=Denver)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
+﻿        public static string ConnectionString => "User Id=testuser;Password=Password12!;Data Source=localhost:1521/XE.localdomain";
 
         protected override string P => ":";
 
@@ -35,34 +36,45 @@ namespace Dapper.Tests.Database
 
         private static readonly bool _skip;
 
+        private static readonly Regex CommandSeparator = new Regex("^/\r?\n", RegexOptions.Multiline);
+
         static OracleTestSuite()
         {
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new OracleGuidTypeHandler());
-
-            var commandText = string.Empty;
             try
             {
                 using ( var connection = new OracleConnection(ConnectionString) )
                 {
                     connection.Open();
 
-                    var file = File.OpenText(".\\Scripts\\oracleawlite.sql");
-                    var line = string.Empty;
-                    var prevline = string.Empty;
+                    var awfile = File.ReadAllText(".\\Scripts\\oracleawlite.sql");
 
-                    while ( (line = file.ReadLine()) != null )
+                    // Because the Oracle driver does not support multiple statements in a single IDbCommand, we have to manually split the file.
+                    // The file is marked with lines with just forward slashes ("/"), which is the way SQL*Plus and other tools recognize the end of a command in such situations, so just use that.
+                    // (It also helps the ability to debug the script in SQL*Plus or another tool.)
+                    foreach (var command in CommandSeparator.Split(awfile))
                     {
-                        if ( line.Equals(string.Empty, StringComparison.OrdinalIgnoreCase) && prevline.EndsWith(";") )
+                        // don't execute blank commands (e.g. last line)
+                        if (string.IsNullOrWhiteSpace(command))
+                            continue;
+                        // don't execute anything starting with a comment indicating use of SQL*Plus
+                        if (command.StartsWith("/*SQLPLUS*/", StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        try
                         {
-                            //if ( !string.IsNullOrEmpty(commandText) )
-                            //    connection.Execute(commandText.Remove(commandText.Length -1));
-                            //commandText = string.Empty;
+                            connection.Execute(command);
                         }
-                        else
+                        catch (OracleException e)
                         {
-                            commandText += "\r\n" + line;
-                            prevline = line;
+                            var sb = new StringBuilder();
+                            sb.AppendLine(e.Message);
+                            sb.AppendLine("For command:");
+                            sb.Append(command);
+
+                            // can't throw new OracleException or DbException...
+                            throw new InvalidOperationException(sb.ToString(), e);
                         }
                     }
                     connection.Execute("delete from Person");
