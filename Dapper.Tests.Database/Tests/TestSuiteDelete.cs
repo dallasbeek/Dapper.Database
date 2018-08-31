@@ -58,6 +58,26 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Delete")]
+        public void DeletePersonCompositeKeyWithAliases_DoesNotDeleteOtherPersons()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var sharedGuidId = Guid.NewGuid();
+                var pOther = new PersonCompositeKeyWithAliases { GuidId = sharedGuidId, StringId = "Other P", First = "Other Alice", Last = "Other Jones" };
+                var p = new PersonCompositeKeyWithAliases { GuidId = sharedGuidId, StringId = "P", First = "Alice", Last = "Jones" };
+                Assert.True(db.Insert(pOther));
+                Assert.True(db.Insert(p));
+                Assert.True(db.Delete(p));
+
+                var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
+                Assert.Null(gp);
+                Assert.NotNull(gpOther);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Delete")]
         public void DeleteIdentity()
         {
             using (var db = GetSqlDatabase())
