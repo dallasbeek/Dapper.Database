@@ -139,6 +139,53 @@ namespace Dapper.Tests.Database
     }
 
     /// <summary>
+    /// A class which represents the Product table.
+    /// </summary>
+    [Table("Product")]
+    public partial class ProductAlias
+    {
+        [Key, Column("ProductID"), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual int Id { get; set; }
+        [Column, Required, StringLength(50)]
+        public virtual string Name { get; set; }
+        [Column, Required, StringLength(25)]
+        public virtual string ProductNumber { get; set; }
+        [Column, StringLength(15)]
+        public virtual string Color { get; set; }
+        [Column]
+        public virtual decimal StandardCost { get; set; }
+        [Column]
+        public virtual decimal ListPrice { get; set; }
+        [Column, StringLength(5)]
+        public virtual string Size { get; set; }
+        [Column]
+        public virtual decimal? Weight { get; set; }
+        [Column]
+        public virtual int? ProductCategoryID { get; set; }
+        [Column]
+        public virtual int? ProductModelID { get; set; }
+        [Column]
+        public virtual DateTime SellStartDate { get; set; }
+        [Column]
+        public virtual DateTime? SellEndDate { get; set; }
+        [Column]
+        public virtual DateTime? DiscontinuedDate { get; set; }
+        [Column]
+        public virtual byte[] ThumbNailPhoto { get; set; }
+        [Column, StringLength(50)]
+        public virtual string ThumbnailPhotoFileName { get; set; }
+        [Column("rowguid")]
+        public virtual Guid GuidId { get; set; }
+        [Column]
+        public virtual DateTime ModifiedDate { get; set; }
+
+        [Ignore]
+        public ProductCategory ProductCategory { get; set; }
+        [Ignore]
+        public ProductModel ProductModel { get; set; }
+    }
+
+    /// <summary>
     /// A class which represents the ProductCategory table.
     /// </summary>
 	[Table("ProductCategory")]

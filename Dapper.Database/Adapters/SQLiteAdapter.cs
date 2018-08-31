@@ -49,7 +49,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
                     p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -92,7 +92,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
                     p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -141,7 +141,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
                     p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -184,7 +184,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
                     p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 

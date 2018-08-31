@@ -126,6 +126,45 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.LastName, gp.LastName);
             }
         }
+        [Fact]
+        [Trait("Category", "Update")]
+        public void UpdateComputedAlias()
+        {
+
+            var dnow = DateTime.UtcNow;
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
+                Assert.True(db.Insert(p));
+
+                if (p.Full != null)
+                {
+                    Assert.Equal("Alice Jones", p.Full);
+                }
+
+                p.First = "Greg";
+                p.Last = "Smith";
+
+                Assert.True(db.Update(p));
+                if (p.Full != null)
+                {
+                    Assert.Equal("Greg Smith", p.Full);
+                }
+
+                var gp = db.Get<PersonIdentityAlias>(p.Id);
+
+                Assert.Equal(p.Id, gp.Id);
+                Assert.Equal(p.First, gp.First);
+                Assert.Equal(p.Last, gp.Last);
+                Assert.Equal(p.Full, gp.Full);
+
+                Assert.True(db.Delete<PersonIdentityAlias>(p.Id));
+
+                var dp = db.Get(p);
+                Assert.Null(dp);
+
+            }
+        }
 
         [Fact]
         [Trait("Category", "Update")]
