@@ -19,7 +19,7 @@ namespace Dapper.Tests.Database
 
         public override ISqlDatabase GetSqlDatabase()
         {
-            if ( _skip ) throw new SkipTestException("Skipping MySql Tests - no server.");
+            if (_skip) throw new SkipTestException("Skipping MySql Tests - no server.");
             return new SqlDatabase(new StringConnectionService<MySqlConnection>(ConnectionString));
         }
 
@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using ( var connection = new MySqlConnection($"Server=localhost;Port=3306;User Id=root;Password=Password12!;") )
+                using (var connection = new MySqlConnection($"Server=localhost;Port=3306;User Id=root;Password=Password12!;"))
                 {
                     connection.Open();
 
@@ -43,9 +43,16 @@ namespace Dapper.Tests.Database
 
                 }
             }
-            catch ( SocketException e )
+            catch (SocketException e)
             {
-                if ( e.Message.Contains("No connection could be made because the target machine actively refused it") )
+                if (e.Message.Contains("No connection could be made because the target machine actively refused it"))
+                    _skip = true;
+                else
+                    throw;
+            }
+            catch (MySqlException e)
+            {
+                if (e.Message == "Unable to connect to any of the specified MySQL hosts.")
                     _skip = true;
                 else
                     throw;
