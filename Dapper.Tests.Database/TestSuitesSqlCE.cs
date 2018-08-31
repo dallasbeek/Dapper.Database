@@ -1,22 +1,10 @@
-﻿#if NET452
-using Microsoft.Data.Sqlite;
+﻿#if SQLCE
 using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using Xunit;
-using Xunit.Sdk;
-using Dapper.Database.Extensions;
-using MySql.Data.MySqlClient;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Dapper;
-using Dapper.Database;
-using Npgsql;
-
 using System.Data.SqlServerCe;
-using System.Transactions;
+using System.IO;
+using Dapper.Database;
+using Xunit;
+
 
 namespace Dapper.Tests.Database
 {
@@ -27,11 +15,17 @@ namespace Dapper.Tests.Database
         const string FileName = "Test.DB.sdf";
         public static string ConnectionString => $"Data Source={FileName};";
 
+        protected override void CheckSkip()
+        {
+            if (_skip) throw new SkipTestException("Skipping SqlCE Tests - no server.");
+        }
+
         public override ISqlDatabase GetSqlDatabase()
         {
-            if (_skip) throw new SkipTestException("Skipping MySql Tests - no server.");
+            CheckSkip();
             return new SqlDatabase(new StringConnectionService<SqlCeConnection>(ConnectionString));
         }
+
         public override Provider GetProvider() => Provider.SqlCE;
 
         private static readonly bool _skip;
@@ -40,6 +34,7 @@ namespace Dapper.Tests.Database
         {
             Environment.SetEnvironmentVariable("NoCache", "True");
 
+            ResetDapperTypes();
             if (!File.Exists(FileName))
             {
                 try

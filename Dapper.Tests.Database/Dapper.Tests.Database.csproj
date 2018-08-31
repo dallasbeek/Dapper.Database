@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Dapper\Dapper\Dapper.csproj" />
     <ProjectReference Include="..\Dapper.Database\Dapper.Database.csproj" />
+    <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="6.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="1.1.1" />
@@ -48,9 +48,7 @@
     <PackageReference Include="Microsoft.SqlServer.Compact" Version="4.0.8876.1" />
     <PackageReference Include="Microsoft.SqlServer.Types" Version="14.0.314.76" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="1.1.1" />
-    <PackageReference Include="Oracle.ManagedDataAccess">
-      <Version>12.2.1100</Version>
-    </PackageReference>
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="12.2.1100" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Transactions" />
@@ -69,6 +67,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.0.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.12.0-beta3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -128,8 +127,12 @@
     </PostBuildEvent>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NET452;Testing</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net452'">
+    <DefineConstants>$(DefineConstants);SQLCE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'netcoreapp1.0'">
+    <DefineConstants>$(DefineConstants);ORACLE</DefineConstants>
   </PropertyGroup>
 
 </Project>

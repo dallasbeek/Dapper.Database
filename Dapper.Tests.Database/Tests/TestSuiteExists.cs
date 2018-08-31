@@ -53,8 +53,8 @@ namespace Dapper.Tests.Database
                 if ( GetProvider() == Provider.SQLite )
                 {
                     return;
-                    //Assert.True(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                    //Assert.False(db.Exists<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else if ( GetProvider() == Provider.Firebird )
                 {
@@ -75,9 +75,8 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.ProductId = {P}Id", new { Id = 806 }));
-                Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.ProductId = {P}Id", new { Id = -1 }));
+                Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
         }
 
@@ -100,15 +99,16 @@ namespace Dapper.Tests.Database
             {
                 var tsql = "; select 1 AS ProductId";
                 var fsql = "; select 0 AS ProductId";
-                if ( GetProvider() == Provider.Firebird )
+                switch ( GetProvider() )
                 {
-                    tsql += " from RDB$Database";
-                    fsql += " from RDB$Database";
-                }
-                else if ( GetProvider() == Provider.Oracle )
-                {
-                    tsql += " from dual";
-                    fsql += " from dual";
+                    case Provider.Firebird:
+                        tsql += " from RDB$Database";
+                        fsql += " from RDB$Database";
+                        break;
+                    case Provider.Oracle:
+                        tsql += " from dual";
+                        fsql += " from dual";
+                        break;
                 }
                 Assert.True(db.Exists<Product>(tsql));
                 Assert.False(db.Exists<Product>(fsql));

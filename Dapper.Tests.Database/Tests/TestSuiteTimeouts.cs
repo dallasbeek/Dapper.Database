@@ -1,11 +1,5 @@
-﻿using Xunit;
-using System;
-
-#if NET452
-using System.Transactions;
-using System.ComponentModel.DataAnnotations;
-using System.Data.SqlServerCe;
-#endif
+﻿using System;
+using Xunit;
 
 using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
 
@@ -102,21 +96,24 @@ namespace Dapper.Tests.Database
 
         private void AssertTimeoutExceptionMessage(Exception ex)
         {
-            if (GetProvider() == Provider.SqlCE)
+            switch (GetProvider())
             {
-                Assert.StartsWith("SqlCeCommand.CommandTimeout does not support non-zero values.", ex.Message);
-            }
-            else if (GetProvider() == Provider.MySql)
-            {
-                Assert.StartsWith("Timeout can be only be set to 'System.Threading.Timeout.Infinite'", ex.Message);
-            }
-            else if (GetProvider() == Provider.Postgres)
-            {
-                Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
-            }
-            else
-            {
-                Assert.StartsWith("Invalid CommandTimeout value -1;", ex.Message);
+                case Provider.SqlCE:
+                    Assert.StartsWith("SqlCeCommand.CommandTimeout does not support non-zero values.", ex.Message);
+                    break;
+                case Provider.MySql:
+                    Assert.StartsWith("Timeout can be only be set to 'System.Threading.Timeout.Infinite'", ex.Message);
+                    break;
+                case Provider.Postgres:
+                    Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
+                    break;
+                case Provider.Oracle:
+                    // Verified this is correct for ODP.NET 12.2.1100 and ODP.NET Core 2.12.0-beta3.
+                    Assert.StartsWith("Value does not fall within the expected range.", ex.Message);
+                    break;
+                default:
+                    Assert.StartsWith("Invalid CommandTimeout value -1;", ex.Message);
+                    break;
             }
 
         }

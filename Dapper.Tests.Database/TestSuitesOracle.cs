@@ -1,10 +1,14 @@
-﻿#if NET452
+﻿#if ORACLE
 using System;
+using System.Data.Common;
 using System.IO;
-using Xunit;
-using Dapper.Database;
 using System.Net.Sockets;
+using System.Text;
+using System.Text.RegularExpressions;
+using Dapper.Database;
 using Oracle.ManagedDataAccess.Client;
+using Xunit;
+
 
 namespace Dapper.Tests.Database
 {
@@ -15,9 +19,14 @@ namespace Dapper.Tests.Database
 
         protected override string P => ":";
 
+        protected override void CheckSkip()
+        {
+            if (_skip) throw new SkipTestException("Skipping Oracle Tests - no server.");
+        }
+
         public override ISqlDatabase GetSqlDatabase()
         {
-            if ( _skip ) throw new SkipTestException("Skipping Oracle Tests - no server.");
+            CheckSkip();
             return new SqlDatabase(new StringConnectionService<OracleConnection>(ConnectionString));
         }
 
@@ -28,8 +37,7 @@ namespace Dapper.Tests.Database
 
         static OracleTestSuite()
         {
-            //SqlMapper.RemoveTypeMap(typeof(Guid));
-            //SqlMapper.RemoveTypeMap(typeof(Guid?));
+            ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new OracleGuidTypeHandler());
 
             var commandText = string.Empty;
@@ -61,14 +69,17 @@ namespace Dapper.Tests.Database
 
                 }
             }
-            catch ( OracleException e )
+            catch (OracleException e)
             {
-                if ( e.Message.Contains("No connection could be made because the target machine actively refused it") )
-                    _skip = true;
-                else if (e.Message.Contains("Unable to resolve connect hostname"))
-                    _skip = true;
-                else
-                    throw;
+                // All ORA- errors (12500-12599) are TNS errors indicating connectivity.
+                _skip = e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
+                    || e.Message.Contains("No connection could be made because the target machine actively refused it")
+                    || e.Message.Contains("Unable to resolve connect hostname")
+                    ;
+            }
+            catch (SocketException e) when ( e.Message.Contains("No connection could be made because the target machine actively refused it") )
+            {
+                _skip = true;
             }
         }
     }

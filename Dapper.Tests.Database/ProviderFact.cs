@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
-using Xunit.Abstractions;
-using Xunit.Sdk;
-
-namespace Dapper.Tests.Database
+﻿namespace Dapper.Tests.Database
 {
     public enum Provider
     {
@@ -15,6 +8,6 @@ namespace Dapper.Tests.Database
         MySql,
         Postgres,
         Firebird,
-        Oracle
+        Oracle,
     }
 }

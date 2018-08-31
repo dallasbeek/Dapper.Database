@@ -39,7 +39,7 @@ namespace Dapper.Tests.Database
                 if ( GetProvider() == Provider.SQLite )
                 {
                     return;
-                    //ValidateProduct806(db.Get<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //ValidateProduct806(db.Get<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else if ( GetProvider() == Provider.Firebird )
                 {
@@ -58,8 +58,7 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "name";
-                var p = db.Get<Product>($"select ProductId, rowguid AS GuidId, {nameColumn} from Product where ProductId = {P}Id", new { Id = 806 });
+                var p = db.Get<Product>($"select ProductId, rowguid AS GuidId, Name from Product where ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -85,13 +84,14 @@ namespace Dapper.Tests.Database
             using ( var db = GetSqlDatabase() )
             {
                 var tsql = "; select 23 AS ProductId";
-                if ( GetProvider() == Provider.Firebird )
+                switch ( GetProvider() )
                 {
-                    tsql += " from RDB$Database";
-                }
-                else if ( GetProvider() == Provider.Oracle )
-                {
-                    tsql += " from dual";
+                    case Provider.Firebird:
+                        tsql += " from RDB$Database";
+                        break;
+                    case Provider.Oracle:
+                        tsql += " from dual";
+                        break;
                 }
                 var p = db.Get<Product>(tsql, new { });
                 Assert.Equal(23, p.ProductID);

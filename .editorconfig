@@ -26,6 +26,11 @@ indent_size = 2
 [*.json]
 indent_size = 2
 
+# SQL files
+[*.sql]
+indent_style = tabs
+indent_size = 4
+
 # Dotnet code style settings:
 [*.{cs,vb}]
 # Sort using and Import directives with System.* appearing first
