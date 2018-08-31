@@ -75,6 +75,23 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Delete")]
+        public void DeleteAliasIdentity()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
+                Assert.True(db.Insert(p));
+                Assert.True(p.Id > 0);
+
+                Assert.True(db.Delete<PersonIdentityAlias>(p.Id));
+
+                var gp = db.Get(p);
+                Assert.Null(gp);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Delete")]
         public void DeleteUniqueIdentifier()
         {
             using (var db = GetSqlDatabase())

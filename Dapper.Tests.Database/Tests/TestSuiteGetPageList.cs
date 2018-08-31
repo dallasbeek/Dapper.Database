@@ -40,6 +40,24 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetPageList")]
+        public void GetPageListAliasWithWhereClause()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var lst = db.GetPageList<ProductAlias>(4, 10, "where Color = 'Black'");
+                Assert.Equal(10, lst.Count());
+                var item = lst.Single(p => p.Id == 816);
+                Assert.Equal(816, item.Id);
+                Assert.Equal("ML Mountain Front Wheel", item.Name);
+                Assert.Equal("FW-M762", item.ProductNumber);
+                Assert.Equal("Black", item.Color);
+                Assert.Equal(92.8071m, item.StandardCost);
+
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereClauseParameter()
         {
             using (var db = GetSqlDatabase())

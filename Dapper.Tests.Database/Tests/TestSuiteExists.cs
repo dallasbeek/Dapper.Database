@@ -34,9 +34,20 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Exists")]
+        public void ExistsByAliasIntegerId()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.True(db.Exists<ProductAlias>(806));
+                Assert.False(db.Exists<ProductAlias>(-1));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Exists")]
         public void ExistsByIntegerId()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 Assert.True(db.Exists<Product>(806));
                 Assert.False(db.Exists<Product>(-1));

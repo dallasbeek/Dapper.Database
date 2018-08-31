@@ -33,6 +33,21 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetAsync")]
+        public async Task GetByAliasIntegerIdAsync()
+        {
+            using (var connection = GetSqlDatabase())
+            {
+                var item = await connection.GetAsync<ProductAlias>(806);
+                Assert.Equal(806, item.Id);
+                Assert.Equal("ML Headset", item.Name);
+                Assert.Equal("HS-2451", item.ProductNumber);
+                Assert.Null(item.Color);
+
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "GetAsync")]
         public async Task GetByGuidIdWhereClauseAsync()
         {
             using (var connection = GetSqlDatabase())

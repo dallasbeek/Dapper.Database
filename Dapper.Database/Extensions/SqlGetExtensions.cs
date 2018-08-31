@@ -49,7 +49,7 @@ namespace Dapper.Database.Extensions
             var tinfo = TableInfoCache(type);
             var key = tinfo.GetSingleKey("Get");
             var dynParms = new DynamicParameters();
-            dynParms.Add(key.ColumnName, primaryKey);
+            dynParms.Add(key.PropertyName, primaryKey);
 
             return connection.Get<T>(adapter, null, dynParms, transaction, commandTimeout, true);
         }

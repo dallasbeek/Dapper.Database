@@ -32,6 +32,20 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Get")]
+        public void GetByAliasIntegerId()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var item =db.Get<ProductAlias>(806);
+                Assert.Equal(806, item.Id);
+                Assert.Equal("ML Headset", item.Name);
+                Assert.Equal("HS-2451", item.ProductNumber);
+                Assert.Null(item.Color);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Get")]
         public void GetByGuidIdWhereClause()
         {
             using ( var db = GetSqlDatabase() )
