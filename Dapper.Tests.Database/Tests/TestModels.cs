@@ -16,6 +16,20 @@ namespace Dapper.Tests.Database
     }
 
     [Table("Person")]
+    public class PersonIdentityAlias
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("IdentityId")]
+        public int Id { get; set; }
+        [Column("FirstName")]
+        public string First { get; set; }
+        [Column("LastName")]
+        public string Last { get; set; }
+        [Column("FullName"), DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string Name { get; set; }
+
+    }
+
+    [Table("Person")]
     public class PersonUniqueIdentifier
     {
         [Key]

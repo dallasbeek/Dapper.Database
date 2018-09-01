@@ -33,12 +33,12 @@ namespace Dapper.Tests.Database
         {
             Environment.SetEnvironmentVariable("NoCache", "True");
 
-            var init = false;
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
-            //SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
-
+          
             var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
+
+            var init = false;
 
             //if (File.Exists(filename))
             //{

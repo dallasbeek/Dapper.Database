@@ -46,7 +46,7 @@ namespace Dapper.Database.Extensions
             var tinfo = TableInfoCache(type);
             var key = tinfo.GetSingleKey("Exists");
             var dynParms = new DynamicParameters();
-            dynParms.Add(key.ColumnName, primaryKey);
+            dynParms.Add(key.PropertyName, primaryKey);
             return await connection.ExecuteScalarAsync<bool>(adapter.ExistsQuery(tinfo, null), dynParms, transaction, commandTimeout);
         }
 

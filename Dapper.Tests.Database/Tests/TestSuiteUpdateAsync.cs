@@ -98,10 +98,10 @@ namespace Dapper.Tests.Database
         {
 
             var dnow = DateTime.UtcNow;
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
-                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await db.InsertAsync(p));
 
                 if (p.FullName != null)
                 {
@@ -111,13 +111,13 @@ namespace Dapper.Tests.Database
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
                 p.CreatedOn = DateTime.UtcNow;
-                Assert.True(await connection.UpdateAsync(p));
+                Assert.True(await db.UpdateAsync(p));
                 if (p.FullName != null)
                 {
                     Assert.Equal("Greg Smith", p.FullName);
                 }
 
-                var gp = await connection.GetAsync<PersonExcludedColumns>(p.IdentityId);
+                var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
 
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Null(gp.Notes);
@@ -125,6 +125,46 @@ namespace Dapper.Tests.Database
                 Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Update")]
+        public async Task  UpdateComputedAliasAsync()
+        {
+
+            var dnow = DateTime.UtcNow;
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
+                Assert.True(await db.InsertAsync(p));
+
+                if (p.Name != null)
+                {
+                    Assert.Equal("Alice Jones", p.Name);
+                }
+
+                p.First = "Greg";
+                p.Last = "Smith";
+
+                Assert.True(await db.UpdateAsync(p));
+                if (p.Name != null)
+                {
+                    Assert.Equal("Greg Smith", p.Name);
+                }
+
+                var gp = await db.GetAsync<PersonIdentityAlias>(p.Id);
+
+                Assert.Equal(p.Id, gp.Id);
+                Assert.Equal(p.First, gp.First);
+                Assert.Equal(p.Last, gp.Last);
+                Assert.Equal(p.Name, gp.Name);
+
+                Assert.True(await db.DeleteAsync<PersonIdentityAlias>(p.Id));
+
+                var dp = await db.GetAsync(p);
+                Assert.Null(dp);
+
             }
         }
 

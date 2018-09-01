@@ -46,7 +46,7 @@ namespace Dapper.Database.Extensions
 
             var key = tinfo.GetSingleKey("Delete");
             var dynParms = new DynamicParameters();
-            dynParms.Add(key.ColumnName, primaryKey);
+            dynParms.Add(key.PropertyName, primaryKey);
 
             return await connection.ExecuteAsync(adapter.DeleteQuery(tinfo, null), dynParms, transaction, commandTimeout) > 0;
         }

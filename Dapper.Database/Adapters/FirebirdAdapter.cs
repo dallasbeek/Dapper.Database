@@ -217,7 +217,7 @@ namespace Dapper.Database.Adapters
 
             if ( string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any() )
             {
-                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
             return $"select first {pageSize} skip {pageSkip} * from ({q.Sql}) page_inner {sqlOrderBy}";

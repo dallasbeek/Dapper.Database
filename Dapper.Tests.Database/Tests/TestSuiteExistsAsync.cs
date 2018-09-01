@@ -47,6 +47,17 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "ExistsAsync")]
+        public async Task ExistsByAliasIntegerIdAsync()
+        {
+            using (var connection = GetSqlDatabase())
+            {
+                Assert.True(await connection.ExistsAsync<ProductAlias>(806));
+                Assert.False(await connection.ExistsAsync<ProductAlias>(-1));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "ExistsAsync")]
         public async Task ExistsByGuidIdWhereClauseAsync()
         {
             using (var connection = GetSqlDatabase())
