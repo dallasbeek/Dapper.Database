@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Text;
+using System.Linq;
+#if !NETSTANDARD1_3 && !NETCOREAPP2_0 && !NETCOREAPP1_0
+using Oracle.ManagedDataAccess.Client;
+#endif
 
 namespace Dapper.Tests.Database
 {
@@ -8,32 +12,48 @@ namespace Dapper.Tests.Database
     {
         public override Guid Parse(object value)
         {
-            switch (value)
+            if (value is string)
             {
-                case string s:
-                    return new Guid(s);
-                case byte[] b:
-                    switch (b.Length)
-                    {
-                        case 16:
-                            return new Guid(b);
-                        case 36:
-                            // It's probably a string stored as binary.
-                            // Because UTF-8, Latin1, etc. all use ASCII as a base, and only ASCII characters are involved,
-                            // convert it from ASCII.
-                            return new Guid(Encoding.ASCII.GetString(b));
-                        default:
-                            // ??
-                            throw new ArgumentException($"Cannot parse byte array of length {b.Length} as a Guid.", nameof(value));
-                    }
-                default:
-                    return (Guid)value;
+                return new Guid(value as string);
             }
+            var b = value as byte[];
+
+            if (b != null)
+            {
+                // Hack for Oracle to distinguish how to parse Guids
+                // by setting the db type to raw(17)
+                if (b.Length == 17)
+                {
+                    return new Guid(b.Skip(1).ToArray());
+                }
+
+                byte[] outVal = new byte[] { b[3], b[2], b[1], b[0], b[5], b[4], b[7], b[6], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15] };
+                return new Guid(outVal);
+            }
+            return (Guid)value;
+
         }
 
         public override void SetValue(IDbDataParameter parameter, Guid value)
         {
-            parameter.Value = value;
+#if !NETSTANDARD1_3 && !NETCOREAPP1_0 && !NETCOREAPP2_0
+            if (parameter is OracleParameter)
+            {
+                var oracleParameter = (OracleParameter)parameter;
+                oracleParameter.OracleDbType = OracleDbType.Raw;
+                // Hack for Oracle to distinguish how to parse Guids
+                // by setting the db type to raw(17)
+                var b = new byte[17];
+                Array.Copy(value.ToByteArray(), 0, b, 1, 16);
+                parameter.Value = b;
+            }
+            else
+            {
+                parameter.Value = value;
+            }
+#else
+                parameter.Value = value;
+#endif
         }
     }
 

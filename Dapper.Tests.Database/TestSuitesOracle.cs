@@ -41,7 +41,7 @@ namespace Dapper.Tests.Database
         static OracleTestSuite()
         {
             ResetDapperTypes();
-            SqlMapper.AddTypeHandler<Guid>(new OracleGuidTypeHandler());
+            SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
                 using ( var connection = new OracleConnection(ConnectionString) )
