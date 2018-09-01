@@ -191,13 +191,13 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if ( string.IsNullOrEmpty(q.FromClause) )
-                    return $"select first 1 1 from { EscapeTableName(tableInfo)} where exists (select 1 from { EscapeTableName(tableInfo)} {wc});";
+                    return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {wc});";
                 else
-                    return $"select first 1 1 from { EscapeTableName(tableInfo)} where exists (select 1 {wc});";
+                    return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {wc});";
 
             }
 
-            return $"select first 1 1 from { EscapeTableName(tableInfo)} where exists ({q.Sql});";
+            return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists ({q.Sql});";
         }
 
         /// <summary>

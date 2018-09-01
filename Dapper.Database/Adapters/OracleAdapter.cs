@@ -29,7 +29,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)} INTO {EscapeParameters(tableInfo.GeneratedColumns)}");
+                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
 
                 // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
                 // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
@@ -47,7 +47,7 @@ namespace Dapper.Database.Adapters
                 foreach (var column in tableInfo.GeneratedColumns)
                 {
                     var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.ColumnName.Equals(p, StringComparison.OrdinalIgnoreCase));
+                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
 
                     property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
                 }
@@ -77,7 +77,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)} INTO {EscapeParameters(tableInfo.GeneratedColumns)}");
+                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
 
                 // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
                 // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
@@ -94,7 +94,7 @@ namespace Dapper.Database.Adapters
                 foreach (var column in tableInfo.GeneratedColumns)
                 {
                     var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.ColumnName.Equals(p, StringComparison.OrdinalIgnoreCase));
+                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
 
                     property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
                 }
@@ -122,10 +122,8 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)} INTO {EscapeParameters(tableInfo.GeneratedColumns)}");
+                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
 
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
                 // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
                 // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
                 // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
@@ -141,7 +139,7 @@ namespace Dapper.Database.Adapters
                 foreach (var column in tableInfo.GeneratedColumns)
                 {
                     var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.ColumnName.Equals(p, StringComparison.OrdinalIgnoreCase));
+                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
 
                     property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
                 }
@@ -171,7 +169,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)} INTO {EscapeParameters(tableInfo.GeneratedColumns)}");
+                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
 
                 // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
                 // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
@@ -188,7 +186,7 @@ namespace Dapper.Database.Adapters
                 foreach (var column in tableInfo.GeneratedColumns)
                 {
                     var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.ColumnName.Equals(p, StringComparison.OrdinalIgnoreCase));
+                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
 
                     property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
                 }
@@ -219,7 +217,7 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select case when exists (select * from { EscapeTableName(tableInfo)} {wc}) then 1 else 0 end as rec_exists from dual";
+                    return $"select case when exists (select * from {EscapeTableName(tableInfo)} {wc}) then 1 else 0 end as rec_exists from dual";
                 else
                     return $"select case when exists (select * {wc}) then 1 else 0 end as rec_exists from dual";
             }
@@ -248,7 +246,7 @@ namespace Dapper.Database.Adapters
             {
                 if (tableInfo.KeyColumns.Any())
                 {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
                 }
             }
             else
@@ -269,6 +267,13 @@ namespace Dapper.Database.Adapters
         /// <param name="columns"></param>
         /// <returns></returns>
         public override string EscapeParameters(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => string.IsNullOrWhiteSpace(ci.SequenceName) ? EscapeParameter(ci.PropertyName) : ci.SequenceName + ".nextval"));
+
+        /// <summary>
+        /// Returns the format for parameters
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public string EscapeReturnParameters(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => EscapeParameter(ci.PropertyName)));
 
         /// <summary>
         /// Applies a schema name is one is specified

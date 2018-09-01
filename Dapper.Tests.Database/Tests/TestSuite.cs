@@ -26,8 +26,8 @@ namespace Dapper.Tests.Database
         {
             // Because each database requires a slightly different type map, we have to reset it back to "normal" each time.
             // As the only DbType we modify is DbType.Guid, we only need to re-add it to fix it.
-            SqlMapper.AddTypeMap(typeof(Guid), DbType.Guid);
-            SqlMapper.AddTypeMap(typeof(Guid?), DbType.Guid);
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
 
             SqlMapper.ResetTypeHandlers();
         }

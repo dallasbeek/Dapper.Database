@@ -66,7 +66,7 @@ namespace Dapper.Database.Adapters
             return InsertQueries.Acquire(
                 tableInfo.ClassType.TypeHandle,
                 () => true,
-                () => $"insert into { EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) "
+                () => $"insert into {EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) "
             );
         }
 
@@ -113,7 +113,7 @@ namespace Dapper.Database.Adapters
             {
                 if (string.IsNullOrEmpty(q.FromClause))
                 {
-                    return $"select count(*) from { EscapeTableName(tableInfo)} {q.Sql}";
+                    return $"select count(*) from {EscapeTableName(tableInfo)} {q.Sql}";
                 }
                 else
                 {
@@ -147,7 +147,7 @@ namespace Dapper.Database.Adapters
             {
                 if (string.IsNullOrEmpty(q.FromClause))
                 {
-                    return $"delete from { EscapeTableName(tableInfo)} {q.Sql}";
+                    return $"delete from {EscapeTableName(tableInfo)} {q.Sql}";
                 }
                 else
                 {
@@ -177,7 +177,7 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select 1 where exists (select 1 from { EscapeTableName(tableInfo)} {wc})";
+                    return $"select 1 where exists (select 1 from {EscapeTableName(tableInfo)} {wc})";
                 else
                     return $"select 1 where exists (select 1 {wc})";
 
@@ -211,7 +211,7 @@ namespace Dapper.Database.Adapters
                         var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                         if (string.IsNullOrEmpty(q.FromClause))
-                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
                         else
                             return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
                     }
@@ -241,7 +241,7 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
                 else
                     return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
             }
