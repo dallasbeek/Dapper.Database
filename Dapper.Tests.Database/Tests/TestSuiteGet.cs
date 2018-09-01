@@ -13,7 +13,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetByEntity()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
                 ValidateProduct806(db.Get(p));
@@ -24,7 +24,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetByIntegerId()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 ValidateProduct806(db.Get<Product>(806));
             }
@@ -36,7 +36,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item =db.Get<ProductAlias>(806);
+                var item = db.Get<ProductAlias>(806);
                 Assert.Equal(806, item.Id);
                 Assert.Equal("ML Headset", item.Name);
                 Assert.Equal("HS-2451", item.ProductNumber);
@@ -48,14 +48,14 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetByGuidIdWhereClause()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
-                if ( GetProvider() == Provider.SQLite )
+                if (GetProvider() == Provider.SQLite)
                 {
                     return;
                     //ValidateProduct806(db.Get<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
-                else if ( GetProvider() == Provider.Firebird )
+                else if (GetProvider() == Provider.Firebird)
                 {
                     ValidateProduct806(db.Get<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
@@ -70,7 +70,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetPartialBySelect()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = db.Get<Product>($"select ProductId, rowguid AS GuidId, Name from Product where ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
@@ -85,7 +85,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetStarBySelect()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 ValidateProduct806(db.Get<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
             }
@@ -95,10 +95,10 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetShortCircuitSemiColon()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var tsql = "; select 23 AS ProductId";
-                switch ( GetProvider() )
+                switch (GetProvider())
                 {
                     case Provider.Firebird:
                         tsql += " from RDB$Database";
@@ -116,7 +116,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetOneJoinUnmapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = db.Get<Product, ProductCategory>(
                     getMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
@@ -129,10 +129,10 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetOneJoinMapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = db.Get<Product, ProductCategory, Product>(
-                    ( pr, pc ) =>
+                    (pr, pc) =>
                     {
                         pr.ProductCategory = pc;
                         return pr;
@@ -147,7 +147,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetTwoJoinsUnmapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = db.Get<Product, ProductCategory, ProductModel>(
                     getMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
@@ -161,10 +161,10 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Get")]
         public void GetTwoJoinsMapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = db.Get<Product, ProductCategory, ProductModel, Product>(
-                    ( pr, pc, pm ) =>
+                    (pr, pc, pm) =>
                     {
                         pr.ProductCategory = pc;
                         pr.ProductModel = pm;
@@ -177,7 +177,7 @@ namespace Dapper.Tests.Database
             }
         }
 
-        private void ValidateProduct806( Product p )
+        private void ValidateProduct806(Product p)
         {
             Assert.NotNull(p);
             Assert.Equal(806, p.ProductID);
@@ -198,7 +198,7 @@ namespace Dapper.Tests.Database
             Assert.Equal(new DateTime(2004, 3, 11), p.ModifiedDate.Date);
         }
 
-        private void ValidateProductCategory15( ProductCategory p )
+        private void ValidateProductCategory15(ProductCategory p)
         {
             Assert.NotNull(p);
             Assert.Equal(15, p.ProductCategoryID);
@@ -207,7 +207,7 @@ namespace Dapper.Tests.Database
             //Assert.Equal(new Guid("7C782BBE-5A16-495A-AA50-10AFE5A84AF2"), p.GuidId);
         }
 
-        private void ValidateProductModel60( ProductModel p )
+        private void ValidateProductModel60(ProductModel p)
         {
             Assert.NotNull(p);
             Assert.Equal(60, p.ProductModelID);
@@ -217,7 +217,7 @@ namespace Dapper.Tests.Database
             //Assert.Equal(new Guid("6BA9F3B6-E08B-4AC2-A725-B41114C2A283"), p.GuidId);
         }
 
-        private void ValidateProduct816( Product p )
+        private void ValidateProduct816(Product p)
         {
             Assert.NotNull(p);
             Assert.Equal(816, p.ProductID);
@@ -237,7 +237,7 @@ namespace Dapper.Tests.Database
             Assert.Equal(new DateTime(2004, 3, 11), p.ModifiedDate.Date);
         }
 
-        private void ValidateProductCategory21( ProductCategory p )
+        private void ValidateProductCategory21(ProductCategory p)
         {
             Assert.NotNull(p);
             Assert.Equal(21, p.ProductCategoryID);
@@ -246,7 +246,7 @@ namespace Dapper.Tests.Database
             //Assert.Equal(new Guid("7C782BBE-5A16-495A-AA50-10AFE5A84AF2"), p.GuidId);
         }
 
-        private void ValidateProductModel45( ProductModel p )
+        private void ValidateProductModel45(ProductModel p)
         {
             Assert.NotNull(p);
             Assert.Equal(45, p.ProductModelID);

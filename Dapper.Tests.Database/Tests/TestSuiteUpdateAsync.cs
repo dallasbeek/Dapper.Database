@@ -130,7 +130,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Update")]
-        public async Task  UpdateComputedAliasAsync()
+        public async Task UpdateComputedAliasAsync()
         {
 
             var dnow = DateTime.UtcNow;

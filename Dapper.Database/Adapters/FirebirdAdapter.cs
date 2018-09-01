@@ -179,18 +179,18 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
         /// <returns>A sql statement that selects true if a record matches</returns>
-        public override string ExistsQuery( TableInfo tableInfo, string sql )
+        public override string ExistsQuery(TableInfo tableInfo, string sql)
         {
             var q = new SqlParser(sql ?? "");
 
-            if ( q.Sql.StartsWith(";") )
+            if (q.Sql.StartsWith(";"))
                 return q.Sql.Substring(1);
 
-            if ( !q.IsSelect )
+            if (!q.IsSelect)
             {
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
-                if ( string.IsNullOrEmpty(q.FromClause) )
+                if (string.IsNullOrEmpty(q.FromClause))
                     return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {wc});";
                 else
                     return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {wc});";
@@ -208,14 +208,14 @@ namespace Dapper.Database.Adapters
         /// <param name="pageSize">the size of the page to request</param>
         /// <param name="sql">a sql statement or partial statement</param>
         /// <returns>A paginated sql statement</returns>
-        public override string GetPageListQuery( TableInfo tableInfo, long page, long pageSize, string sql )
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
 
             var sqlOrderBy = string.Empty;
 
-            if ( string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any() )
+            if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
             {
                 sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }

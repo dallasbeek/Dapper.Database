@@ -57,7 +57,7 @@ namespace Dapper.Tests.Database
                     return;
                     //ValidateProduct806(await connection.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
-                else if ( GetProvider() == Provider.Firebird )
+                else if (GetProvider() == Provider.Firebird)
                 {
                     ValidateProduct806(await connection.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
@@ -101,7 +101,7 @@ namespace Dapper.Tests.Database
             using (var connection = GetSqlDatabase())
             {
                 var tsql = "; select 23 AS ProductId";
-                switch ( GetProvider() )
+                switch (GetProvider())
                 {
                     case Provider.Firebird:
                         tsql += " from RDB$Database";

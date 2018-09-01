@@ -44,7 +44,7 @@ namespace Dapper.Tests.Database
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using ( var connection = new OracleConnection(ConnectionString) )
+                using (var connection = new OracleConnection(ConnectionString))
                 {
                     connection.Open();
 
@@ -89,7 +89,7 @@ namespace Dapper.Tests.Database
                     || e.Message.Contains("Unable to resolve connect hostname")
                     ;
             }
-            catch (SocketException e) when ( e.Message.Contains("No connection could be made because the target machine actively refused it") )
+            catch (SocketException e) when (e.Message.Contains("No connection could be made because the target machine actively refused it"))
             {
                 _skip = true;
             }

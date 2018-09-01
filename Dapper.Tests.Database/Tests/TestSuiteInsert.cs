@@ -111,13 +111,13 @@ namespace Dapper.Tests.Database
             }
 
             var dnow = DateTime.UtcNow;
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonIdentitySequence { FirstName = "Person", LastName = "Identity" };
                 Assert.True(db.Insert(p));
 
                 Assert.True(p.IdentityId > 0);
-                if ( p.FullName != null )
+                if (p.FullName != null)
                 {
                     Assert.Equal("Person Identity", p.FullName);
                 }

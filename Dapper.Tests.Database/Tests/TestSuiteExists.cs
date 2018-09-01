@@ -11,7 +11,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Exists")]
         public void ExistsNoArgs()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 Assert.True(db.Exists<Product>());
             }
@@ -22,7 +22,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Exists")]
         public void ExistsByEntity()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
                 Assert.True(db.Exists(p));
@@ -58,16 +58,16 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Exists")]
         public void ExistsByGuidIdWhereClause()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
 
-                if ( GetProvider() == Provider.SQLite )
+                if (GetProvider() == Provider.SQLite)
                 {
                     return;
                     //Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                     //Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
-                else if ( GetProvider() == Provider.Firebird )
+                else if (GetProvider() == Provider.Firebird)
                 {
                     Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                     Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
@@ -84,7 +84,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Exists")]
         public void ExistsPartialBySelect()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 Assert.True(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = 806 }));
                 Assert.False(db.Exists<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.ProductId = {P}Id", new { Id = -1 }));
@@ -95,7 +95,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Exists")]
         public void ExistsBySelect()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 Assert.True(db.Exists<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
                 Assert.False(db.Exists<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = -1 }));
@@ -106,11 +106,11 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Exists")]
         public void ExistsShortCircuitSemiColon()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var tsql = "; select 1 AS ProductId";
                 var fsql = "; select 0 AS ProductId";
-                switch ( GetProvider() )
+                switch (GetProvider())
                 {
                     case Provider.Firebird:
                         tsql += " from RDB$Database";

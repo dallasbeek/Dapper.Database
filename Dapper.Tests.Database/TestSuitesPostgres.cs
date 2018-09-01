@@ -42,7 +42,7 @@ namespace Dapper.Tests.Database
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using ( var connection = new NpgsqlConnection(ConnectionString) )
+                using (var connection = new NpgsqlConnection(ConnectionString))
                 {
                     connection.Open();
 

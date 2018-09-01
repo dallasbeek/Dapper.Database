@@ -64,5 +64,5 @@ namespace Dapper.Tests.Database
 
         }
     }
-    
+
 }

@@ -82,7 +82,7 @@ namespace Dapper.Database.Attributes
         /// <summary>
         /// Used to select identities from Oracle
         /// </summary>
-        public SequenceAttribute( string name)
+        public SequenceAttribute(string name)
         {
             Name = name;
         }

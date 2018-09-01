@@ -22,7 +22,7 @@ namespace Dapper.Database.Extensions
         /// <param name="size">The size to set on the parameter. Defaults to 0, or DbString.DefaultLength in case of strings.</param>
         /// <returns>The DynamicParameters instance</returns>
         /// <seealso cref="DynamicParameters.Output{T}(T, Expression{Func{T, object}}, System.Data.DbType?, int?)"/>
-        public static DynamicParameters Output<T>(this DynamicParameters parameters, T target, ColumnInfo column, DbType? dbType = null, int? size = null) 
+        public static DynamicParameters Output<T>(this DynamicParameters parameters, T target, ColumnInfo column, DbType? dbType = null, int? size = null)
             => parameters.Output(target, (Expression<Func<T, object>>)column.Output, dbType, size);
     }
 }

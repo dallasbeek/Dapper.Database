@@ -13,7 +13,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListAll()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>();
                 Assert.Equal(295, lst.Count());
@@ -27,7 +27,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListWithWhereClause()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>("where Color = 'Black'");
                 Assert.Equal(89, lst.Count());
@@ -41,7 +41,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListWithWhereClauseParameter()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>($"where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -54,7 +54,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListWithSelectClause()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'");
                 Assert.Equal(89, lst.Count());
@@ -67,7 +67,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListWithSelectClauseParameter()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -80,7 +80,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListShortCircuit()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -93,7 +93,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListPartialBySelect()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
@@ -109,7 +109,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListOneJoinUnmapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product, ProductCategory>(
                     getListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
@@ -118,7 +118,7 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
 
                 //There must be a bug with mapping on SqlLite when fetching many records
-                if ( GetProvider() != Provider.SQLite )
+                if (GetProvider() != Provider.SQLite)
                 {
                     ValidateProductCategory21(item.ProductCategory);
                 }
@@ -129,10 +129,10 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListOneJoinMapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product, ProductCategory, Product>(
-                    ( pr, pc ) =>
+                    (pr, pc) =>
                     {
                         pr.ProductCategory = pc;
                         return pr;
@@ -143,7 +143,7 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
 
                 //There must be a bug with mapping on SqlLite when fetching many records
-                if ( GetProvider() != Provider.SQLite )
+                if (GetProvider() != Provider.SQLite)
                 {
                     ValidateProductCategory21(item.ProductCategory);
                 }
@@ -154,7 +154,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListTwoJoinsUnmapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product, ProductCategory, ProductModel>(
                     getListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
@@ -163,7 +163,7 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
 
                 //There must be a bug with mapping on SqlLite when fetching many records
-                if ( GetProvider() != Provider.SQLite )
+                if (GetProvider() != Provider.SQLite)
                 {
                     ValidateProductCategory21(item.ProductCategory);
                     ValidateProductModel45(item.ProductModel);
@@ -175,10 +175,10 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetList")]
         public void GetListTwoJoinsMapped()
         {
-            using ( var db = GetSqlDatabase() )
+            using (var db = GetSqlDatabase())
             {
                 var lst = db.GetList<Product, ProductCategory, ProductModel, Product>(
-                    ( pr, pc, pm ) =>
+                    (pr, pc, pm) =>
                     {
                         pr.ProductCategory = pc;
                         pr.ProductModel = pm;
@@ -190,7 +190,7 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
 
                 //There must be a bug with mapping on SqlLite when fetching many records
-                if ( GetProvider() != Provider.SQLite )
+                if (GetProvider() != Provider.SQLite)
                 {
                     ValidateProductCategory21(item.ProductCategory);
                     ValidateProductModel45(item.ProductModel);
