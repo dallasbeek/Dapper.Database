@@ -105,7 +105,10 @@ namespace Dapper.Tests.Database
         public void InsertSequenceComputed()
         {
             if (GetProvider() != Provider.Oracle)
+            {
+                CheckSkip();
                 return;
+            }
 
             var dnow = DateTime.UtcNow;
             using ( var db = GetSqlDatabase() )

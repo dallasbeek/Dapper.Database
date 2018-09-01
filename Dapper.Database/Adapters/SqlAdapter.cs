@@ -36,7 +36,7 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        public virtual bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
+        public virtual bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
             return false;
         }
@@ -51,7 +51,7 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        public virtual bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate)
+        public virtual bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             return false;
         }
@@ -66,7 +66,7 @@ namespace Dapper.Database.Adapters
             return InsertQueries.Acquire(
                 tableInfo.ClassType.TypeHandle,
                 () => true,
-                () => $"insert into { EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) "
+                () => $"insert into {EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) "
             );
         }
 
@@ -113,7 +113,7 @@ namespace Dapper.Database.Adapters
             {
                 if (string.IsNullOrEmpty(q.FromClause))
                 {
-                    return $"select count(*) from { EscapeTableName(tableInfo)} {q.Sql}";
+                    return $"select count(*) from {EscapeTableName(tableInfo)} {q.Sql}";
                 }
                 else
                 {
@@ -147,7 +147,7 @@ namespace Dapper.Database.Adapters
             {
                 if (string.IsNullOrEmpty(q.FromClause))
                 {
-                    return $"delete from { EscapeTableName(tableInfo)} {q.Sql}";
+                    return $"delete from {EscapeTableName(tableInfo)} {q.Sql}";
                 }
                 else
                 {
@@ -177,7 +177,7 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select 1 where exists (select 1 from { EscapeTableName(tableInfo)} {wc})";
+                    return $"select 1 where exists (select 1 from {EscapeTableName(tableInfo)} {wc})";
                 else
                     return $"select 1 where exists (select 1 {wc})";
 
@@ -211,7 +211,7 @@ namespace Dapper.Database.Adapters
                         var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                         if (string.IsNullOrEmpty(q.FromClause))
-                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
                         else
                             return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
                     }
@@ -241,7 +241,7 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from { EscapeTableName(tableInfo)} {wc}";
+                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
                 else
                     return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
             }
@@ -340,7 +340,7 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        public virtual async Task<bool> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
+        public virtual async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
             return await new Task<bool>(() => false); ;
         }
@@ -355,7 +355,7 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        public virtual async Task<bool> UpdateAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate)
+        public virtual async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             return await new Task<bool>(() => false); ;
         }

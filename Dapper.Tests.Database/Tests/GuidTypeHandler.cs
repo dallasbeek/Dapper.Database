@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dapper.Tests.Database
 {
@@ -11,17 +8,27 @@ namespace Dapper.Tests.Database
     {
         public override Guid Parse(object value)
         {
-            if (value is string)
+            switch (value)
             {
-                return new Guid(value as string);
+                case string s:
+                    return new Guid(s);
+                case byte[] b:
+                    switch (b.Length)
+                    {
+                        case 16:
+                            return new Guid(b);
+                        case 36:
+                            // It's probably a string stored as binary.
+                            // Because UTF-8, Latin1, etc. all use ASCII as a base, and only ASCII characters are involved,
+                            // convert it from ASCII.
+                            return new Guid(Encoding.ASCII.GetString(b));
+                        default:
+                            // ??
+                            throw new ArgumentException($"Cannot parse byte array of length {b.Length} as a Guid.", nameof(value));
+                    }
+                default:
+                    return (Guid)value;
             }
-            if (value is byte[])
-            {
-                var inVal = (byte[])value;
-                byte[] outVal = new byte[] { inVal[3], inVal[2], inVal[1], inVal[0], inVal[5], inVal[4], inVal[7], inVal[6], inVal[8], inVal[9], inVal[10], inVal[11], inVal[12], inVal[13], inVal[14], inVal[15] };
-                return new Guid(outVal);
-            }
-            return (Guid)value;
         }
 
         public override void SetValue(IDbDataParameter parameter, Guid value)

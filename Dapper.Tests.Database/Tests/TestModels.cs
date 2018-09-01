@@ -25,7 +25,7 @@ namespace Dapper.Tests.Database
         [Column("LastName")]
         public string Last { get; set; }
         [Column("FullName"), DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public string Full { get; set; }
+        public string Name { get; set; }
 
     }
 

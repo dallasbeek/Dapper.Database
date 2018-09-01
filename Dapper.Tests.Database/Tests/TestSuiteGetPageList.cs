@@ -75,8 +75,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetPageList<Product>(15, 10, $"order by lower({nameColumn})");
+                var lst = db.GetPageList<Product>(15, 10, "order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -90,8 +89,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetPageList<Product>(5, 10, $"where Color = 'Black' order by lower({nameColumn})");
+                var lst = db.GetPageList<Product>(5, 10, "where Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 Assert.Equal(6, lst.ToList().IndexOf(item));
@@ -106,8 +104,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetPageList<Product>(5, 10, $"where Color = {P}Color order by lower({nameColumn})", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(5, 10, $"where Color = {P}Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -132,8 +129,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetPageList<Product>(5, 10, $"select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black' order by lower({nameColumn})");
+                var lst = db.GetPageList<Product>(5, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black' order by lower(Name)");
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -159,8 +155,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetPageList<Product>(5, 10, $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color order by lower({nameColumn})", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(5, 10, $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -173,8 +168,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetPageList<Product>(4, 10, $"select ProductId, rowguid AS GuidId, {nameColumn} from Product where Color = {P}Color", new { Color = "Black" });
+                var lst = db.GetPageList<Product>(4, 10, $"select ProductId, rowguid AS GuidId, Name from Product where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -190,10 +184,9 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var sizeColumn = GetProvider() == Provider.Oracle ? "\"Size\"" : "Size";
+                var sizeColumn = GetProvider() == Provider.Oracle ? "\"SIZE\"" : "Size";
                 var lst = db.GetPageList<Product, ProductCategory>(4, 10,
-                    $@"select  P.ProductID, P.{nameColumn}, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.{sizeColumn}, 
+                    $@"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.{sizeColumn}, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid, P.ModifiedDate, PC.ProductCategoryID, 
                     PC.ParentProductCategoryID
@@ -217,8 +210,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var sizeColumn = GetProvider() == Provider.Oracle ? "\"Size\"" : "Size";
+                var sizeColumn = GetProvider() == Provider.Oracle ? "\"SIZE\"" : "Size";
                 var lst = db.GetPageList<Product, ProductCategory, Product>(4, 10,
                     (pr, pc) =>
                     {
@@ -226,7 +218,7 @@ namespace Dapper.Tests.Database
                         return pr;
                     },
 
-                    $@"select  P.ProductID, P.{nameColumn}, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.{sizeColumn}, 
+                    $@"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.{sizeColumn}, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid, P.ModifiedDate, PC.ProductCategoryID, 
                     PC.ParentProductCategoryID
@@ -259,7 +251,7 @@ namespace Dapper.Tests.Database
         //            @"select P.*, P.rowguid AS GuidId, PC.* 
         //            from Product P
         //            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-        //            where Color = @Color", new { Color = "Black" });
+        //            where Color = {P}Color", new { Color = "Black" });
         //        Assert.Equal(89, lst.Count());
         //        var item = lst.Single(p => p.ProductID == 816);
         //        ValidateProduct816(item);
@@ -278,7 +270,7 @@ namespace Dapper.Tests.Database
         //            from Product P
         //            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
         //            join ProductModel PM on PM.ProductModelID = P.ProductModelID
-        //            where Color = @Color", new { Color = "Black" });
+        //            where Color = {P}Color", new { Color = "Black" });
         //        Assert.Equal(89, lst.Count());
         //        var item = lst.Single(p => p.ProductID == 816);
         //        ValidateProduct816(item);
@@ -304,7 +296,7 @@ namespace Dapper.Tests.Database
         //            from Product P
         //            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
         //            join ProductModel PM on PM.ProductModelID = P.ProductModelID
-        //            where Color = @Color", new { Color = "Black" });
+        //            where Color = {P}Color", new { Color = "Black" });
         //        Assert.Equal(89, lst.Count());
         //        var item = lst.Single(p => p.ProductID == 816);
         //        ValidateProduct816(item);

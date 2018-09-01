@@ -1,8 +1,9 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.IO;
-using Xunit;
 using Dapper.Database;
-using System;
+using Xunit;
+
 
 namespace Dapper.Tests.Database
 {
@@ -16,9 +17,14 @@ namespace Dapper.Tests.Database
                 ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
                 : $"Data Source=(local)\\Dallas;Initial Catalog={DbName};Integrated Security=True";
 
-        public override ISqlDatabase GetSqlDatabase()
+        protected override void CheckSkip()
         {
             if (_skip) throw new SkipTestException("Skipping Sql Server Tests - no server.");
+        }
+
+        public override ISqlDatabase GetSqlDatabase()
+        {
+            CheckSkip();
             return new SqlDatabase(new StringConnectionService<SqlConnection>(ConnectionString));
         }
 
@@ -30,6 +36,7 @@ namespace Dapper.Tests.Database
         static SqlServerTestSuite()
         {
             Environment.SetEnvironmentVariable("NoCache", "True");
+            ResetDapperTypes();
 
             try
             {

@@ -95,8 +95,7 @@ namespace Dapper.Tests.Database
         {
             using ( var db = GetSqlDatabase() )
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                var lst = db.GetList<Product>($"select p.ProductId, p.rowguid AS GuidId, {nameColumn} from Product p where p.Color = {P}Color", new { Color = "Black" });
+                var lst = db.GetList<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);

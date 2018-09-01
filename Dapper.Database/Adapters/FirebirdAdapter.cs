@@ -22,11 +22,11 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        public override bool Insert(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
+        public override bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
             var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 
@@ -39,7 +39,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -62,11 +62,11 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        public override bool Update(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate)
+        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 
@@ -79,7 +79,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -100,11 +100,11 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        public override async Task<bool> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToInsert)
+        public override async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
             var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 
@@ -119,7 +119,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -142,11 +142,11 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        public override async Task<bool> UpdateAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate)
+        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
-            if (tableInfo.GeneratedColumns.Any() && tableInfo.KeyColumns.Any())
+            if (tableInfo.GeneratedColumns.Any())
             {
                 cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
 
@@ -161,7 +161,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -191,13 +191,13 @@ namespace Dapper.Database.Adapters
                 var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
 
                 if ( string.IsNullOrEmpty(q.FromClause) )
-                    return $"select first 1 1 from { EscapeTableName(tableInfo)} where exists (select 1 from { EscapeTableName(tableInfo)} {wc});";
+                    return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {wc});";
                 else
-                    return $"select first 1 1 from { EscapeTableName(tableInfo)} where exists (select 1 {wc});";
+                    return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {wc});";
 
             }
 
-            return $"select first 1 1 from { EscapeTableName(tableInfo)} where exists ({q.Sql});";
+            return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists ({q.Sql});";
         }
 
         /// <summary>

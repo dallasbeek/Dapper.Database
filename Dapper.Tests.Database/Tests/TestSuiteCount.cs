@@ -1,11 +1,5 @@
 ﻿using Xunit;
 
-#if NET452
-using System.Transactions;
-using System.ComponentModel.DataAnnotations;
-using System.Data.SqlServerCe;
-#endif
-
 using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
 
 

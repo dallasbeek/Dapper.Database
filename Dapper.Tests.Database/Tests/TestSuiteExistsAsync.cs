@@ -65,8 +65,8 @@ namespace Dapper.Tests.Database
                 if (GetProvider() == Provider.SQLite)
                 {
                     return;
-                    //Assert.True(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                    //Assert.False(await connection.ExistsAsync<Product>("where rowguid = @GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //Assert.True(await connection.ExistsAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //Assert.False(await connection.ExistsAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else if ( GetProvider() == Provider.Firebird )
                 {
@@ -88,9 +88,8 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var nameColumn = GetProvider() == Provider.Oracle ? "\"Name\"" : "Name";
-                Assert.True(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.{nameColumn} from Product p where p.ProductId = {P}Id", new { Id = 806 }));
-                Assert.False(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.{nameColumn} from Product p where p.ProductId = {P}Id", new { Id = -1 }));
+                Assert.True(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                Assert.False(await connection.ExistsAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = -1 }));
             }
         }
 
@@ -113,13 +112,16 @@ namespace Dapper.Tests.Database
             {
                 var tsql = "; select 1 AS ProductId";
                 var fsql = "; select 0 AS ProductId";
-                if ( GetProvider() == Provider.Firebird )
+                switch ( GetProvider() )
                 {
-                    tsql += " from RDB$Database";
-                    fsql += " from RDB$Database";
-                }else if (GetProvider() == Provider.Oracle){
-                    tsql += " from dual";
-                    fsql += " from dual";
+                    case Provider.Firebird:
+                        tsql += " from RDB$Database";
+                        fsql += " from RDB$Database";
+                        break;
+                    case Provider.Oracle:
+                        tsql += " from dual";
+                        fsql += " from dual";
+                        break;
                 }
 
                 Assert.True(await connection.ExistsAsync<Product>(tsql));

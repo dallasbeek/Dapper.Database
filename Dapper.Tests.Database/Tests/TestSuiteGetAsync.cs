@@ -55,7 +55,7 @@ namespace Dapper.Tests.Database
                 if (GetProvider() == Provider.SQLite)
                 {
                     return;
-                    //ValidateProduct806(await connection.GetAsync<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //ValidateProduct806(await connection.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else if ( GetProvider() == Provider.Firebird )
                 {
@@ -75,7 +75,7 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.\"Name\" from Product p where p.ProductId = {P}Id", new { Id = 806 });
+                var p = await connection.GetAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -101,11 +101,14 @@ namespace Dapper.Tests.Database
             using (var connection = GetSqlDatabase())
             {
                 var tsql = "; select 23 AS ProductId";
-                if ( GetProvider() == Provider.Firebird )
+                switch ( GetProvider() )
                 {
-                    tsql += " from RDB$Database";
-                }else if ( GetProvider() == Provider.Oracle) {
-                    tsql += " from dual";
+                    case Provider.Firebird:
+                        tsql += " from RDB$Database";
+                        break;
+                    case Provider.Oracle:
+                        tsql += " from dual";
+                        break;
                 }
                 var p = await connection.GetAsync<Product>(tsql, new { });
                 Assert.Equal(23, p.ProductID);

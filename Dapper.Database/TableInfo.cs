@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Dapper.Database.Attributes;
 using Dapper.Database.Extensions;
@@ -71,11 +72,11 @@ namespace Dapper.Database
                         ColumnName = columnAtt?.Name ?? t.Name,
                         PropertyName = t.Name,
                         IsKey = t.GetCustomAttributes(false).Any(a => a is KeyAttribute),
-                        IsIdentity = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute
-                          && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity))
+                        IsIdentity = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
+                          && g.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity))
                           || seqAtt != null,
-                        IsGenerated = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute
-                            && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption != DatabaseGeneratedOption.None))
+                        IsGenerated = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
+                            && g.DatabaseGeneratedOption != DatabaseGeneratedOption.None))
                             || seqAtt != null,
                         ExcludeOnSelect = t.GetCustomAttributes(false).Any(a => a is IgnoreSelectAttribute),
                         SequenceName = seqAtt?.Name
@@ -88,6 +89,15 @@ namespace Dapper.Database
                     ci.ExcludeOnUpdate = ci.IsGenerated
                         || t.GetCustomAttributes(false).Any(a => a is IgnoreUpdateAttribute)
                         || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
+
+                    if (ci.IsGenerated)
+                    {
+                        var parameter = Expression.Parameter(type);
+                        var property = Expression.Property(parameter, ci.Property);
+                        var conversion = Expression.Convert(property, typeof(object));
+                        var lambda = Expression.Lambda(conversion, parameter);
+                        ci.Output = lambda;
+                    }
 
                     return ci;
                 })
@@ -239,6 +249,11 @@ namespace Dapper.Database
         /// 
         /// </summary>
         public string SequenceName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public LambdaExpression Output { get; set; }
     }
 
 }
