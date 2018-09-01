@@ -158,7 +158,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.Last, gp.Last);
                 Assert.Equal(p.Full, gp.Full);
 
-                Assert.True(db.Delete<PersonIdentityAlias>(p.Id));
+                Assert.True(db.DeleteByPrimaryKey<PersonIdentityAlias>(p.Id));
 
                 var dp = db.Get(p);
                 Assert.Null(dp);

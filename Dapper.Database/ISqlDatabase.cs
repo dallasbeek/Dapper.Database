@@ -788,16 +788,16 @@ namespace Dapper.Database
         /// <summary>
         /// Delete entity in table "Ts".
         /// </summary>
-        /// <param name="primaryKey">a Single primary key to delete</param>
+        /// <param name="primaryKeyValue">a Single primary key to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        bool Delete<T>(object primaryKey) where T : class;
+        bool DeleteByPrimaryKey<T>(object primaryKeyValue) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entities in table "Ts".
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        bool Delete<T>(string sql = null) where T : class;
+        bool DeleteByWhereClause<T>(string sql = null) where T : class;
 
         /// <summary>
         /// Delete entity in table "Ts".
@@ -805,7 +805,14 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        bool Delete<T>(string sql, object parameters) where T : class;
+        bool DeleteByWhereClause<T>(string sql, object parameters) where T : class;
+
+        /// <summary>
+        /// Deletes all rows for entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type of entity to derrive table from</typeparam>
+        /// <returns>true if deleted, false if nothing found to delete</returns>
+        bool DeleteAll<T>() where T : class;
 
         #endregion
 

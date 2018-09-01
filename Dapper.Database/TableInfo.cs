@@ -149,6 +149,16 @@ namespace Dapper.Database
 
             return keys.SingleOrDefault();
         }
+        
+        /// <summary>
+        /// Gets a list of all key columns defined on the table
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public IEnumerable<ColumnInfo> GetCompositeKeys(string method)
+        {
+            return ColumnInfos.Where(p => p.IsKey).ToArray();
+        }
 
         /// <summary>
         /// 
@@ -237,6 +247,16 @@ namespace Dapper.Database
         /// 
         /// </summary>
         public PropertyInfo Property { get; set; }
-    }
 
+        /// <summary>
+        /// Gets the value of the specified column for a given instance of the object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public object GetValue<T>(T instance)
+        {
+            return Property.GetValue(instance);
+        }
+    }
 }

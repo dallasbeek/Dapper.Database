@@ -83,13 +83,17 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+                var pOther = new PersonIdentity { FirstName = "Other Alice", LastName = "Other Jones" };
                 Assert.True(db.Insert(p));
+                Assert.True(db.Insert(pOther));
                 Assert.True(p.IdentityId > 0);
 
-                Assert.True(db.Delete<PersonIdentity>(p.IdentityId));
+                Assert.True(db.DeleteByPrimaryKey<PersonIdentity>(p.IdentityId));
 
                 var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
                 Assert.Null(gp);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -103,7 +107,7 @@ namespace Dapper.Tests.Database
                 Assert.True(db.Insert(p));
                 Assert.True(p.Id > 0);
 
-                Assert.True(db.Delete<PersonIdentityAlias>(p.Id));
+                Assert.True(db.DeleteByPrimaryKey<PersonIdentityAlias>(p.Id));
 
                 var gp = db.Get(p);
                 Assert.Null(gp);
@@ -116,12 +120,16 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var pOther = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Other Alice", LastName = "Other Jones" };
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
-                Assert.True(db.Delete<PersonIdentity>(p.GuidId));
+                Assert.True(db.Insert(pOther));
+                Assert.True(db.DeleteByPrimaryKey<PersonUniqueIdentifier>(p.GuidId));
 
                 var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
                 Assert.Null(gp);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -134,7 +142,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
 
-                Assert.True(db.Delete<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
+                Assert.True(db.DeleteByWhereClause<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
 
                 var gp = db.Get(p);
                 Assert.Null(gp);
@@ -149,9 +157,11 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
+                var pOther = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test2", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
+                Assert.True(db.Insert(pOther));
 
-                Assert.True(db.Delete<PersonCompositeKey>());
+                Assert.True(db.DeleteAll<PersonCompositeKey>());
 
                 Assert.Equal(0, db.Count<PersonCompositeKey>());
             }
@@ -172,7 +182,7 @@ namespace Dapper.Tests.Database
 
                 Assert.Equal(10, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
 
-                Assert.True(db.Delete<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.True(db.DeleteByWhereClause<PersonIdentity>("where FirstName = 'Delete'"));
 
                 Assert.Equal(0, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
             }

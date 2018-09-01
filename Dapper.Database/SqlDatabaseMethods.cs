@@ -1035,7 +1035,7 @@ namespace Dapper.Database
         /// Delete entity in table "Ts".
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="entityToDelete">Entity to delete</param>
+        /// <param name="entityToDelete">Entity to delete. Must have Keys specified.</param>
         /// <returns>true if deleted, false if not found</returns>
         public bool Delete<T>(T entityToDelete) where T : class
         {
@@ -1045,32 +1045,46 @@ namespace Dapper.Database
         /// <summary>
         /// Delete entity in table "Ts".
         /// </summary>
-        /// <param name="primaryKey">a Single primary key to delete</param>
+        /// <param name="primaryKeyValue">a Single primary key to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        public bool Delete<T>(object primaryKey) where T : class
+        public bool DeleteByPrimaryKey<T>(object primaryKeyValue) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.DeleteByPrimaryKey<T>(primaryKeyValue, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts", bounded by a where clause.
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        public bool Delete<T>(string sql = null) where T : class
+        public bool DeleteByWhereClause<T>(string sql) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            if (string.IsNullOrEmpty(sql))
+            {
+                throw new ArgumentNullException(nameof(sql), "Must specify a where clause for deletion.");
+            }
+            return ExecuteInternal(() => _sharedConnection.DeleteByWhereClause<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts", bounded by a where clause.
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        public bool Delete<T>(string sql, object parameters) where T : class
+        public bool DeleteByWhereClause<T>(string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            if (string.IsNullOrEmpty(sql))
+            {
+                throw new ArgumentNullException(nameof(sql), "Must specify a where clause for deletion.");
+            }
+            return ExecuteInternal(() => _sharedConnection.DeleteByWhereClause<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <inheritdoc />
+        public bool DeleteAll<T>() where T : class
+        {
+            return ExecuteInternal(() => _sharedConnection.DeleteAll<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion

@@ -61,7 +61,8 @@ namespace Dapper.Database.Adapters
         /// Returns a delete query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="sql">a sql statement or partial statement</param>
+        /// <param name="sql">a sql statement or partial statement. 
+        /// If NULL is passed in, this will return a DELETE without a WHERE condition. This will typically delete all data from the database.</param>
         /// <returns>A delete sql statement</returns>
         string DeleteQuery(TableInfo tableInfo, string sql);
 
@@ -124,5 +125,7 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         Task<bool> UpdateAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, object entityToUpdate, IEnumerable<string> columnsToUpdate);
 
+
+        string EscapeWhereList(IEnumerable<ColumnInfo> columns);
     }
 }
