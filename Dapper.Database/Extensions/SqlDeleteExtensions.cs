@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Dapper.Database.Adapters;
 
 namespace Dapper.Database.Extensions
 {
@@ -8,6 +9,17 @@ namespace Dapper.Database.Extensions
     /// </summary>
     public static partial class SqlMapperExtensions
     {
+        private struct QueryWithParametersComponent
+        {
+            public QueryWithParametersComponent(DynamicParameters dynamicParameters, string sqlQuery) : this()
+            {
+                DynamicParameters = dynamicParameters;
+                SqlQuery = sqlQuery;
+            }
+
+            public DynamicParameters DynamicParameters { get; }
+            public string SqlQuery { get; }
+        }
 
         #region Delete Extensions
         /// <summary>
@@ -26,6 +38,13 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(entityToDelete), "Cannot Delete null Object");
             }
 
+            var queryWithParameters = BuildDeleteByEntityQueryWithParams(connection, entityToDelete);
+
+            return connection.Execute(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
+        }
+
+        private static QueryWithParametersComponent BuildDeleteByEntityQueryWithParams<T>(IDbConnection connection, T entityToDelete) where T : class
+        {
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
@@ -38,32 +57,7 @@ namespace Dapper.Database.Extensions
             }
 
             var qWhere = $" where {adapter.EscapeWhereList(tinfo.KeyColumns)}";
-
-            return connection.Execute(adapter.DeleteQuery(tinfo, qWhere), dynParms, transaction, commandTimeout) > 0;
-
-            //var type = typeof(T);
-
-            //if (type.IsArray)
-            //{
-            //    type = type.GetElementType();
-            //}
-            //else if (type.IsGenericType())
-            //{
-            //    var typeInfo = type.GetTypeInfo();
-            //    bool implementsGenericIEnumerableOrIsGenericIEnumerable =
-            //        typeInfo.ImplementedInterfaces.Any(ti => ti.IsGenericType() && ti.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
-            //        typeInfo.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-
-            //    if (implementsGenericIEnumerableOrIsGenericIEnumerable)
-            //    {
-            //        type = type.GetGenericArguments()[0];
-            //    }
-            //}
-
-            //var adapter = GetFormatter(connection);
-            //var tinfo = TableInfoCache(type);
-
-            //return connection.Execute(adapter.DeleteQuery(tinfo, null), entityToDelete, transaction, commandTimeout) > 0;
+            return new QueryWithParametersComponent(dynParms, adapter.DeleteQuery(tinfo, qWhere));
         }
 
         /// <summary>
@@ -76,6 +70,13 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool DeleteByPrimaryKey<T>(this IDbConnection connection, object primaryKeyValue, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
+            var queryWithParameters = BuildDeleteByPkQueryWithParams<T>(connection, primaryKeyValue);
+
+            return connection.Execute(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
+        }
+
+        private static QueryWithParametersComponent BuildDeleteByPkQueryWithParams<T>(IDbConnection connection, object primaryKeyValue) where T : class
+        {
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
@@ -85,7 +86,7 @@ namespace Dapper.Database.Extensions
             dynParms.Add(key.PropertyName, primaryKeyValue);
             var qWhere = $" where {adapter.EscapeWhereList(tinfo.KeyColumns)}";
 
-            return connection.Execute(adapter.DeleteQuery(tinfo, qWhere), dynParms, transaction, commandTimeout) > 0;
+            return new QueryWithParametersComponent(dynParms, adapter.DeleteQuery(tinfo, qWhere));
         }
 
         /// <summary>
@@ -103,10 +104,16 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(sql));
             }
 
+            return connection.Execute(BuildBasicDeleteQueryFromSql<T>(connection, sql), null, transaction, commandTimeout) > 0;
+        }
+
+        private static string BuildBasicDeleteQueryFromSql<T>(IDbConnection connection, string sql)
+        {
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
-            return connection.Execute(adapter.DeleteQuery(tinfo, sql), null, transaction, commandTimeout) > 0;
+
+            return adapter.DeleteQuery(tinfo, sql);
         }
 
         /// <summary>
@@ -125,10 +132,7 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(sql));
             }
 
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return connection.Execute(adapter.DeleteQuery(tinfo, sql), parameters, transaction, commandTimeout) > 0;
+            return connection.Execute(BuildBasicDeleteQueryFromSql<T>(connection, sql), parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -140,14 +144,9 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool DeleteAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return connection.Execute(adapter.DeleteQuery(tinfo, null), null, transaction, commandTimeout) > 0;
+            return connection.Execute(BuildBasicDeleteQueryFromSql<T>(connection, null), null, transaction, commandTimeout) > 0;
         }
 
         #endregion
-
-
     }
 }

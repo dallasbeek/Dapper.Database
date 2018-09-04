@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Dapper.Database.Extensions
@@ -15,40 +16,35 @@ namespace Dapper.Database.Extensions
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToDelete">Entity to delete</param>
+        /// <param name="entityToDelete">Entity to delete. If Keys are specified, they will be used as the WHERE condition to delete.</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, T entityToDelete, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
+            if (entityToDelete == null)
+            {
+                throw new ArgumentNullException(nameof(entityToDelete), "Cannot Delete null Object");
+            }
 
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
+            var queryWithParameters = BuildDeleteByEntityQueryWithParams(connection, entityToDelete);
 
-            return await connection.ExecuteAsync(adapter.DeleteQuery(tinfo, null), entityToDelete, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
         /// Delete entity in table "Ts".
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="primaryKey">a Single primary key to delete</param>
+        /// <param name="primaryKeyValue">a Single primary key to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static async Task<bool> DeleteByPrimaryKeyAsync<T>(this IDbConnection connection, object primaryKeyValue, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
+            var queryWithParameters = BuildDeleteByPkQueryWithParams<T>(connection, primaryKeyValue);
 
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            var key = tinfo.GetSingleKey("Delete");
-            var dynParms = new DynamicParameters();
-            dynParms.Add(key.PropertyName, primaryKey);
-
-            return await connection.ExecuteAsync(adapter.DeleteQuery(tinfo, null), dynParms, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -59,12 +55,14 @@ namespace Dapper.Database.Extensions
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
-        public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return await connection.ExecuteAsync(adapter.DeleteQuery(tinfo, sql), null, transaction, commandTimeout) > 0;
+            if (string.IsNullOrEmpty(sql))
+            {
+                throw new ArgumentNullException(nameof(sql));
+            }
+
+            return await connection.ExecuteAsync(BuildBasicDeleteQueryFromSql<T>(connection, sql), null, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -78,14 +76,26 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return await connection.ExecuteAsync(adapter.DeleteQuery(tinfo, sql), parameters, transaction, commandTimeout) > 0;
+            if (string.IsNullOrEmpty(sql))
+            {
+                throw new ArgumentNullException(nameof(sql));
+            }
+
+            return await connection.ExecuteAsync(BuildBasicDeleteQueryFromSql<T>(connection, sql), parameters, transaction, commandTimeout) > 0;
+        }
+
+        /// <summary>
+        /// Delete ALL entities in table "Ts".
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if deleted, false if not found</returns>
+        public static async Task<bool> DeleteAllAsync<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return await connection.ExecuteAsync(BuildBasicDeleteQueryFromSql<T>(connection, null), null, transaction, commandTimeout) > 0;
         }
 
         #endregion
-
-
     }
 }

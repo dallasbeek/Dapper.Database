@@ -122,7 +122,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(await connection.InsertAsync(pOther));
-                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonIdentity>(p.GuidId));
+                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonUniqueIdentifier>(p.GuidId));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
