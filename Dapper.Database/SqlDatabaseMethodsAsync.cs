@@ -1074,9 +1074,9 @@ namespace Dapper.Database
         }
 
         /// <inheritdoc />
-        public Task<bool> DeleteAllAsync<T>() where T : class
+        public async Task<bool> DeleteAllAsync<T>() where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.DeleteAllAsync<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternal(() => _sharedConnection.DeleteAllAsync<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
