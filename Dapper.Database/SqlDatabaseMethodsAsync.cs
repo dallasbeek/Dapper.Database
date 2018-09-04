@@ -1047,7 +1047,7 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="primaryKey">a Single primary key to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        public async Task<bool> DeleteAsync<T>(object primaryKey) where T : class
+        public async Task<bool> DeleteByPrimaryKeyAsync<T>(object primaryKey) where T : class
         {
             return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
@@ -1057,7 +1057,7 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        public async Task<bool> DeleteAsync<T>(string sql = null) where T : class
+        public async Task<bool> DeleteByWhereClauseAsync<T>(string sql = null) where T : class
         {
             return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
@@ -1068,9 +1068,16 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        public async Task<bool> DeleteAsync<T>(string sql, object parameters) where T : class
+        public async Task<bool> DeleteByWhereClauseAsync<T>(string sql, object parameters) where T : class
         {
             return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <inheritdoc />
+        public Task<bool> DeleteAllAsync<T>() where T : class
+        {
+            throw new NotImplementedException();
+            //return ExecuteInternal(() => _sharedConnection.DeleteAllAsync<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion

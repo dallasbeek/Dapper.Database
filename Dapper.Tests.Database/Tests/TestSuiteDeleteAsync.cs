@@ -14,15 +14,19 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonIdentity { FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(p.IdentityId > 0);
+                Assert.True(await connection.InsertAsync(pOther));
+                Assert.True(pOther.IdentityId > 0);
 
                 Assert.True(await connection.DeleteAsync(p));
 
                 var gp = await connection.GetAsync<PersonIdentity>(p.IdentityId);
-
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -32,12 +36,16 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
+                Assert.True(await connection.InsertAsync(pOther));
                 Assert.True(await connection.DeleteAsync(p));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -47,12 +55,16 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "OtherAlice", Last = "OtherJones" };
                 var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
+                Assert.True(await connection.InsertAsync(pOther));
                 Assert.True(await connection.DeleteAsync(p));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -62,14 +74,19 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonIdentity { FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(p.IdentityId > 0);
+                Assert.True(await connection.InsertAsync(pOther));
+                Assert.True(pOther.IdentityId > 0);
 
-                Assert.True(await connection.DeleteAsync<PersonIdentity>(p.IdentityId));
+                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonIdentity>(p.IdentityId));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -79,14 +96,19 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonIdentityAlias { First = "OtherAlice", Last = "OtherJones" };
                 var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(p.Id > 0);
+                Assert.True(await connection.InsertAsync(pOther));
+                Assert.True(pOther.Id > 0);
 
-                Assert.True(await connection.DeleteAsync<PersonIdentityAlias>(p.Id));
+                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonIdentityAlias>(p.Id));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -96,12 +118,16 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
-                Assert.True(await connection.DeleteAsync<PersonIdentity>(p.GuidId));
+                Assert.True(await connection.InsertAsync(pOther));
+                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonIdentity>(p.GuidId));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -111,13 +137,17 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "testOther", FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
+                Assert.True(await connection.InsertAsync(pOther));
 
-                Assert.True(await connection.DeleteAsync<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
+                Assert.True(await connection.DeleteByWhereClauseAsync<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
+                var gpOther = await connection.GetAsync(pOther);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -128,10 +158,12 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
+                var pOther = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "testOther", FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
+                Assert.True(await connection.InsertAsync(pOther));
 
-                Assert.True(await connection.DeleteAsync<PersonCompositeKey>());
+                Assert.True(await connection.DeleteAllAsync<PersonCompositeKey>());
 
                 Assert.Equal(0, await connection.CountAsync<PersonCompositeKey>());
             }
@@ -149,12 +181,18 @@ namespace Dapper.Tests.Database
                 {
                     Assert.True(await connection.InsertAsync(p));
                 }
+                var pOther = new PersonIdentity { FirstName = "DeleteOther", LastName = "MeOther" };
 
-                Assert.Equal(10, await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.True(await connection.InsertAsync(pOther));
 
-                Assert.True(await connection.DeleteAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.Equal(10,await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.Equal(1,await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOther'"));
+
+                Assert.True(await connection.DeleteByWhereClauseAsync<PersonIdentity>("where FirstName = 'Delete'"));
 
                 Assert.Equal(0, await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                //Ensure that this did not delete rows it shouldn't have from the database.
+                Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOther'"));
             }
         }
 

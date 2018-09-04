@@ -793,14 +793,14 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="primaryKey">a Single primary key to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<bool> DeleteAsync<T>(object primaryKey) where T : class;
+        Task<bool> DeleteByPrimaryKeyAsync<T>(object primaryKey) where T : class;
 
         /// <summary>
         /// Delete entity in table "Ts".
         /// </summary>
         /// <param name="sql">The where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<bool> DeleteAsync<T>(string sql = null) where T : class;
+        Task<bool> DeleteByWhereClauseAsync<T>(string sql = null) where T : class;
 
         /// <summary>
         /// Delete entity in table "Ts".
@@ -808,7 +808,14 @@ namespace Dapper.Database
         /// <param name="sql">The where clause to delete</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<bool> DeleteAsync<T>(string sql, object parameters) where T : class;
+        Task<bool> DeleteByWhereClauseAsync<T>(string sql, object parameters) where T : class;
+
+        /// <summary>
+        /// Deletes all rows for entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type of entity to derrive table from</typeparam>
+        /// <returns>true if deleted, false if nothing found to delete</returns>
+        Task<bool> DeleteAllAsync<T>() where T : class;
 
         #endregion
     }
