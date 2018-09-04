@@ -205,24 +205,24 @@ namespace Dapper.Tests.Database
         {
             using (var connection = GetSqlDatabase())
             {
-                var p = new PersonIdentity { FirstName = "Delete", LastName = "Me" };
+                var p = new PersonIdentity { FirstName = "DeleteAsync", LastName = "Me" };
 
                 for (var i = 0; i < 10; i++)
                 {
                     Assert.True(await connection.InsertAsync(p));
                 }
-                var pOther = new PersonIdentity { FirstName = "DeleteOther", LastName = "MeOther" };
+                var pOther = new PersonIdentity { FirstName = "DeleteOtherAsync", LastName = "MeOther" };
 
                 Assert.True(await connection.InsertAsync(pOther));
 
-                Assert.Equal(10, await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
-                Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOther'"));
+                Assert.Equal(10, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
+                Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOtherAsync'"));
 
-                Assert.True(await connection.DeleteByWhereClauseAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.True(await connection.DeleteByWhereClauseAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
 
-                Assert.Equal(0, await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.Equal(0, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
                 //Ensure that this did not delete rows it shouldn't have from the database.
-                Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOther'"));
+                Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOtherAsync'"));
             }
         }
 
