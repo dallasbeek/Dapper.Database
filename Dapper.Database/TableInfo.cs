@@ -21,6 +21,14 @@ namespace Dapper.Database
     /// </summary>
     public class TableInfo
     {
+
+        private readonly Lazy<IEnumerable<ColumnInfo>> _insertColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _updateColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _selectColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _keyColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _generatedColumns;
+        private readonly Lazy<IEnumerable<PropertyInfo>> _propertyList;
+
         /// <summary>
         /// 
         /// </summary>
@@ -100,8 +108,14 @@ namespace Dapper.Database
                 }
             }
 
+            _insertColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnInsert), true);
+            _updateColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnUpdate), true);
+            _selectColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnSelect), true);
+            _keyColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsKey), true);
+            _generatedColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsGenerated), true);
+            _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => ColumnInfos.Select(ci => ci.Property), true);
         }
-
+     
         /// <summary>
         /// 
         /// </summary>
@@ -129,50 +143,48 @@ namespace Dapper.Database
         /// <returns></returns>
         public ColumnInfo GetSingleKey(string method)
         {
-
-            var keys = ColumnInfos.Where(p => p.IsKey).ToList();
+            var keys = _keyColumns.Value;
             if (keys.Count() > 1)
                 throw new DataException($"{method}<T> only supports an entity with a single [Key] or [ExplicitKey] property");
 
-            return keys[0];
-
+            return keys.SingleOrDefault();
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> InsertColumns => ColumnInfos.Where(ci => !ci.ExcludeOnInsert);
+        public IEnumerable<ColumnInfo> InsertColumns => _insertColumns.Value;
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> UpdateColumns => ColumnInfos.Where(ci => !ci.ExcludeOnUpdate);
+        public IEnumerable<ColumnInfo> UpdateColumns => _updateColumns.Value;
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> SelectColumns => ColumnInfos.Where(ci => !ci.ExcludeOnSelect);
+        public IEnumerable<ColumnInfo> SelectColumns => _selectColumns.Value;
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> KeyColumns => ColumnInfos.Where(ci => ci.IsKey);
+        public IEnumerable<ColumnInfo> KeyColumns => _keyColumns.Value;
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> GeneratedColumns => ColumnInfos.Where(ci => ci.IsGenerated);
+        public IEnumerable<ColumnInfo> GeneratedColumns => _generatedColumns.Value;
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PropertyInfo> PropertyList => ColumnInfos.Select(ci => ci.Property);
+        public IEnumerable<PropertyInfo> PropertyList =>_propertyList.Value;
 
     }
 
