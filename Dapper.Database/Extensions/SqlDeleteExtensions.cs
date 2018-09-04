@@ -99,7 +99,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool DeleteByWhereClause<T>(this IDbConnection connection, string sql, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            if (string.IsNullOrEmpty(sql))
+            if (string.IsNullOrWhiteSpace(sql))
             {
                 throw new ArgumentNullException(nameof(sql));
             }
@@ -127,7 +127,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool DeleteByWhereClause<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            if (string.IsNullOrEmpty(sql))
+            if (string.IsNullOrWhiteSpace(sql))
             {
                 throw new ArgumentNullException(nameof(sql));
             }
