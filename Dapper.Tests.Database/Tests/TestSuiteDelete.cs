@@ -199,13 +199,13 @@ namespace Dapper.Tests.Database
                 Assert.True(db.Insert(pOther));
 
                 Assert.Equal(10, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
-                Assert.Equal(1, db.Count<PersonIdentity>("where FirstName <> 'Delete'"));
+                Assert.Equal(1, db.Count<PersonIdentity>("where FirstName = 'DeleteOther'"));
 
                 Assert.True(db.DeleteByWhereClause<PersonIdentity>("where FirstName = 'Delete'"));
 
                 Assert.Equal(0, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
                 //Ensure that this did not delete rows it shouldn't have from the database.
-                Assert.Equal(1, db.Count<PersonIdentity>());
+                Assert.Equal(1, db.Count<PersonIdentity>("where FirstName = 'DeleteOther'"));
             }
         }
     }
