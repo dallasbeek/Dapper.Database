@@ -14,15 +14,20 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var pOther = new PersonIdentity { FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
                 Assert.True(p.IdentityId > 0);
+                Assert.True(db.Insert(pOther));
+                Assert.True(pOther.IdentityId > 0);
 
                 Assert.True(db.Delete(p));
 
                 var gp = db.Get<PersonIdentity>(p.IdentityId);
+                var gpOther = db.Get<PersonIdentity>(pOther.IdentityId);
 
                 Assert.Null(gp);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -32,12 +37,16 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var pOther = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "OtherAlice", LastName = "OtherJones" };
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
+                Assert.True(db.Insert(pOther));
                 Assert.True(db.Delete(p));
 
                 var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
                 Assert.Null(gp);
+                Assert.NotNull(gpOther);
             }
         }
 
@@ -47,18 +56,22 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var pOther = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "OtherAlice", Last = "OtherJones" };
                 var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
                 Assert.True(db.Insert(p));
+                Assert.True(db.Insert(pOther));
                 Assert.True(db.Delete(p));
 
                 var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
                 Assert.Null(gp);
+                Assert.NotNull(gpOther);
             }
         }
 
         [Fact]
         [Trait("Category", "Delete")]
-        public void DeletePersonCompositeKeyWithAliases_DoesNotDeleteOtherPersons()
+        public void DeletePersonCompositeKeyWithAliases()
         {
             using (var db = GetSqlDatabase())
             {
@@ -139,16 +152,19 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var pOther = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "testOther", FirstName = "Alice", LastName = "Jones" };
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
+                Assert.True(db.Insert(pOther));
 
                 Assert.True(db.DeleteByWhereClause<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
 
                 var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
                 Assert.Null(gp);
+                Assert.NotNull(gpOther);
             }
         }
-
 
         [Fact]
         [Trait("Category", "Delete")]
@@ -179,14 +195,18 @@ namespace Dapper.Tests.Database
                 {
                     Assert.True(db.Insert(p));
                 }
+                var pOther = new PersonIdentity { FirstName = "DeleteOther", LastName = "Me" };
+                Assert.True(db.Insert(pOther));
 
                 Assert.Equal(10, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.Equal(1, db.Count<PersonIdentity>("where FirstName <> 'Delete'"));
 
                 Assert.True(db.DeleteByWhereClause<PersonIdentity>("where FirstName = 'Delete'"));
 
                 Assert.Equal(0, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
+                //Ensure that this did not delete rows it shouldn't have from the database.
+                Assert.Equal(1, db.Count<PersonIdentity>());
             }
         }
-
     }
 }
