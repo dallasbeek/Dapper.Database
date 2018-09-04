@@ -151,6 +151,36 @@ namespace Dapper.Tests.Database
             }
         }
 
+        [Fact]
+        [Trait("Category", "Delete")]
+        public async Task DeletePersonCompositeKeyWithAliasesAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var sharedGuidId = Guid.NewGuid();
+                var pOther = new PersonCompositeKeyWithAliases
+                {
+                    GuidId = sharedGuidId,
+                    StringId = "Other P",
+                    First = "Other Alice",
+                    Last = "Other Jones"
+                };
+                var p = new PersonCompositeKeyWithAliases
+                {
+                    GuidId = sharedGuidId,
+                    StringId = "P",
+                    First = "Alice",
+                    Last = "Jones"
+                };
+                Assert.True(await db.InsertAsync(pOther));
+                Assert.True(await db.InsertAsync(p));
+                Assert.True(await db.DeleteAsync(p));
+                var gp = db.Get(p);
+                var gpOther = db.Get(pOther);
+                Assert.Null(gp);
+                Assert.NotNull(gpOther);
+            }
+        }
 
         [Fact]
         [Trait("Category", "Delete")]
@@ -185,8 +215,8 @@ namespace Dapper.Tests.Database
 
                 Assert.True(await connection.InsertAsync(pOther));
 
-                Assert.Equal(10,await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
-                Assert.Equal(1,await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOther'"));
+                Assert.Equal(10, await connection.CountAsync<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOther'"));
 
                 Assert.True(await connection.DeleteByWhereClauseAsync<PersonIdentity>("where FirstName = 'Delete'"));
 
