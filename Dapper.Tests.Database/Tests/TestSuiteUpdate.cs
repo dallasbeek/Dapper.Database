@@ -126,6 +126,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.LastName, gp.LastName);
             }
         }
+
         [Fact]
         [Trait("Category", "Update")]
         public void UpdateComputedAlias()
