@@ -1049,7 +1049,7 @@ namespace Dapper.Database
         /// <returns>true if deleted, false if not found</returns>
         public bool DeleteByPrimaryKey<T>(object primaryKeyValue) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.DeleteByPrimaryKey<T>(primaryKeyValue, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Delete<T>(primaryKeyValue, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1063,7 +1063,7 @@ namespace Dapper.Database
             {
                 throw new ArgumentNullException(nameof(sql), "Must specify a where clause for deletion.");
             }
-            return ExecuteInternal(() => _sharedConnection.DeleteByWhereClause<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Delete<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1078,7 +1078,7 @@ namespace Dapper.Database
             {
                 throw new ArgumentNullException(nameof(sql), "Must specify a where clause for deletion.");
             }
-            return ExecuteInternal(() => _sharedConnection.DeleteByWhereClause<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Delete<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <inheritdoc />

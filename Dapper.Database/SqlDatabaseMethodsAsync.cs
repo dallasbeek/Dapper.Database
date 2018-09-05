@@ -1049,7 +1049,7 @@ namespace Dapper.Database
         /// <returns>true if deleted, false if not found</returns>
         public async Task<bool> DeleteByPrimaryKeyAsync<T>(object primaryKey) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.DeleteByPrimaryKeyAsync<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
