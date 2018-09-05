@@ -81,7 +81,7 @@ namespace Dapper.Tests.Database
                 Assert.True(await connection.InsertAsync(pOther));
                 Assert.True(pOther.IdentityId > 0);
 
-                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonIdentity>(p.IdentityId));
+                Assert.True(await connection.DeleteAsync<PersonIdentity>(p.IdentityId));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
@@ -103,7 +103,7 @@ namespace Dapper.Tests.Database
                 Assert.True(await connection.InsertAsync(pOther));
                 Assert.True(pOther.Id > 0);
 
-                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonIdentityAlias>(p.Id));
+                Assert.True(await connection.DeleteAsync<PersonIdentityAlias>(p.Id));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
@@ -122,7 +122,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(await connection.InsertAsync(pOther));
-                Assert.True(await connection.DeleteByPrimaryKeyAsync<PersonUniqueIdentifier>(p.GuidId));
+                Assert.True(await connection.DeleteAsync<PersonUniqueIdentifier>(p.GuidId));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
@@ -142,7 +142,7 @@ namespace Dapper.Tests.Database
                 Assert.True(await connection.InsertAsync(p));
                 Assert.True(await connection.InsertAsync(pOther));
 
-                Assert.True(await connection.DeleteByWhereClauseAsync<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
+                Assert.True(await connection.DeleteAsync<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
 
                 var gp = await connection.GetAsync(p);
                 Assert.Null(gp);
@@ -218,7 +218,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(10, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
                 Assert.Equal(1, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteOtherAsync'"));
 
-                Assert.True(await connection.DeleteByWhereClauseAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
+                Assert.True(await connection.DeleteAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
 
                 Assert.Equal(0, await connection.CountAsync<PersonIdentity>("where FirstName = 'DeleteAsync'"));
                 //Ensure that this did not delete rows it shouldn't have from the database.

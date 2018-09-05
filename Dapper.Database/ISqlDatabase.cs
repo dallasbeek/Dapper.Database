@@ -778,40 +778,41 @@ namespace Dapper.Database
 
         #region Delete Methods
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" that match the key values of the entity (T) passed in
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="entityToDelete">Entity to delete</param>
+        /// <param name="entityToDelete">Entity to delete. If Keys are specified, they will be used as the WHERE condition to delete.</param>
         /// <returns>true if deleted, false if not found</returns>
         bool Delete<T>(T entityToDelete) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" by a primary key value specified on (T)
         /// </summary>
         /// <param name="primaryKeyValue">a Single primary key to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        bool DeleteByPrimaryKey<T>(object primaryKeyValue) where T : class;
+        bool Delete<T>(object primaryKeyValue) where T : class;
 
         /// <summary>
-        /// Delete entities in table "Ts".
+        /// Delete entity in table "Ts" by an unparameterized WHERE clause.
+        /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
         /// <returns>true if deleted, false if not found</returns>
-        bool DeleteByWhereClause<T>(string sql = null) where T : class;
+        bool Delete<T>(string whereClause) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" by a parameterized WHERE clause, with Parameters passed in.
+        /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        bool DeleteByWhereClause<T>(string sql, object parameters) where T : class;
+        bool Delete<T>(string whereClause, object parameters) where T : class;
 
         /// <summary>
-        /// Deletes all rows for entity in table "Ts".
+        /// Delete ALL entities in table "Ts".
         /// </summary>
-        /// <typeparam name="T">Type of entity to derrive table from</typeparam>
-        /// <returns>true if deleted, false if nothing found to delete</returns>
+        /// <returns>true if deleted, false if not found</returns>
         bool DeleteAll<T>() where T : class;
 
         #endregion

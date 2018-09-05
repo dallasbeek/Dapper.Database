@@ -160,7 +160,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.Last, gp.Last);
                 Assert.Equal(p.Full, gp.Full);
 
-                Assert.True(await db.DeleteByPrimaryKeyAsync<PersonIdentityAlias>(p.Id));
+                Assert.True(await db.DeleteAsync<PersonIdentityAlias>(p.Id));
 
                 var dp = await db.GetAsync(p);
                 Assert.Null(dp);

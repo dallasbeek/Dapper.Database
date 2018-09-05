@@ -101,7 +101,7 @@ namespace Dapper.Tests.Database
                 Assert.True(db.Insert(pOther));
                 Assert.True(p.IdentityId > 0);
 
-                Assert.True(db.DeleteByPrimaryKey<PersonIdentity>(p.IdentityId));
+                Assert.True(db.Delete<PersonIdentity>(p.IdentityId));
 
                 var gp = db.Get(p);
                 var gpOther = db.Get(pOther);
@@ -120,7 +120,7 @@ namespace Dapper.Tests.Database
                 Assert.True(db.Insert(p));
                 Assert.True(p.Id > 0);
 
-                Assert.True(db.DeleteByPrimaryKey<PersonIdentityAlias>(p.Id));
+                Assert.True(db.Delete<PersonIdentityAlias>(p.Id));
 
                 var gp = db.Get(p);
                 Assert.Null(gp);
@@ -137,7 +137,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
                 Assert.True(db.Insert(pOther));
-                Assert.True(db.DeleteByPrimaryKey<PersonUniqueIdentifier>(p.GuidId));
+                Assert.True(db.Delete<PersonUniqueIdentifier>(p.GuidId));
 
                 var gp = db.Get(p);
                 var gpOther = db.Get(pOther);
@@ -157,7 +157,7 @@ namespace Dapper.Tests.Database
                 Assert.True(db.Insert(p));
                 Assert.True(db.Insert(pOther));
 
-                Assert.True(db.DeleteByWhereClause<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
+                Assert.True(db.Delete<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
 
                 var gp = db.Get(p);
                 var gpOther = db.Get(pOther);
@@ -201,7 +201,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(10, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
                 Assert.Equal(1, db.Count<PersonIdentity>("where FirstName = 'DeleteOther'"));
 
-                Assert.True(db.DeleteByWhereClause<PersonIdentity>("where FirstName = 'Delete'"));
+                Assert.True(db.Delete<PersonIdentity>("where FirstName = 'Delete'"));
 
                 Assert.Equal(0, db.Count<PersonIdentity>("where FirstName = 'Delete'"));
                 //Ensure that this did not delete rows it shouldn't have from the database.
