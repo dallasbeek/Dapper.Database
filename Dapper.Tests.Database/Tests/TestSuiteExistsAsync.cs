@@ -3,7 +3,7 @@
 using Dapper.Database.Extensions;
 using Xunit;
 using System.Threading.Tasks;
-using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
+using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database
 {

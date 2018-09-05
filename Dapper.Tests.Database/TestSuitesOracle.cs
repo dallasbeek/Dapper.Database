@@ -1,5 +1,6 @@
 ﻿#if ORACLE
 using System;
+using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Net.Sockets;
@@ -23,7 +24,7 @@ namespace Dapper.Tests.Database
 
         protected override void CheckSkip()
         {
-            if (_skip) throw new SkipTestException("Skipping Oracle Tests - no server.");
+            Skip.If(_skip, "Skipping Oracle Tests - no server.");
         }
 
         public override ISqlDatabase GetSqlDatabase()
