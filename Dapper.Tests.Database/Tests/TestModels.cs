@@ -25,7 +25,7 @@ namespace Dapper.Tests.Database
         [Column("LastName")]
         public string Last { get; set; }
         [Column("FullName"), DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public string Full { get; set; }
+        public string Name { get; set; }
 
     }
 
@@ -79,6 +79,17 @@ namespace Dapper.Tests.Database
         public DateTime? CreatedOn { get; set; }
         [Ignore]
         public string NoDbColumn { get; set; }
+
+    }
+    [Table("Person")]
+    public class PersonIdentitySequence
+    {
+        [Key, Sequence("Person_Seq")]
+        public int IdentityId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string FullName { get; set; }
 
     }
 

@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Linq;
+#if !NETSTANDARD1_3 && !NETCOREAPP2_0 && !NETCOREAPP1_0
+using Oracle.ManagedDataAccess.Client;
+#endif
 
 namespace Dapper.Tests.Database
 {
@@ -15,18 +16,44 @@ namespace Dapper.Tests.Database
             {
                 return new Guid(value as string);
             }
-            if (value is byte[])
+            var b = value as byte[];
+
+            if (b != null)
             {
-                var inVal = (byte[])value;
-                byte[] outVal = new byte[] { inVal[3], inVal[2], inVal[1], inVal[0], inVal[5], inVal[4], inVal[7], inVal[6], inVal[8], inVal[9], inVal[10], inVal[11], inVal[12], inVal[13], inVal[14], inVal[15] };
+                // Hack for Oracle to distinguish how to parse Guids
+                // by setting the db type to raw(17)
+                if (b.Length == 17)
+                {
+                    return new Guid(b.Skip(1).ToArray());
+                }
+
+                byte[] outVal = new byte[] { b[3], b[2], b[1], b[0], b[5], b[4], b[7], b[6], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15] };
                 return new Guid(outVal);
             }
             return (Guid)value;
+
         }
 
         public override void SetValue(IDbDataParameter parameter, Guid value)
         {
-            parameter.Value = value;
+#if !NETSTANDARD1_3 && !NETCOREAPP1_0 && !NETCOREAPP2_0
+            if (parameter is OracleParameter)
+            {
+                var oracleParameter = (OracleParameter)parameter;
+                oracleParameter.OracleDbType = OracleDbType.Raw;
+                // Hack for Oracle to distinguish how to parse Guids
+                // by setting the db type to raw(17)
+                var b = new byte[17];
+                Array.Copy(value.ToByteArray(), 0, b, 1, 16);
+                parameter.Value = b;
+            }
+            else
+            {
+                parameter.Value = value;
+            }
+#else
+                parameter.Value = value;
+#endif
         }
     }
 

@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
-using Dapper.Database.Extensions;
-using Xunit;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Xunit;
 
-#if NET452
-using System.Transactions;
-using System.ComponentModel.DataAnnotations;
-using System.Data.SqlServerCe;
-#endif
 using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
 
 
@@ -24,21 +14,24 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetMultipleAsync")]
         public async Task GetMultipleAsync()
         {
-            if (GetProvider() == Provider.SqlServer)
+            if (GetProvider() != Provider.SqlServer)
             {
-                using (var db = GetSqlDatabase())
-                {
-                    using (var trans = db.GetTransaction())
-                    {
-                        var dt = await db.GetMultipleAsync(@"
-                        select * from product where Color = 'Black';
-                        select * from productcategory where productcategoryid = '21';");
-                        Assert.Equal(89, dt.Read(typeof(Product)).Count());
+                CheckSkip();
+                return;
+            }
 
-                        var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
-                        ValidateProductCategory21(pc);
-                        trans.Complete();
-                    }
+            using (var db = GetSqlDatabase())
+            {
+                using (var trans = db.GetTransaction())
+                {
+                    var dt = await db.GetMultipleAsync(@"
+                    select * from Product where Color = 'Black';
+                    select * from ProductCategory where productcategoryid = '21';");
+                    Assert.Equal(89, dt.Read(typeof(Product)).Count());
+
+                    var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
+                    ValidateProductCategory21(pc);
+                    trans.Complete();
                 }
             }
         }
@@ -48,22 +41,25 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetMultipleAsync")]
         public async Task GetMultipleAsyncWithParameter()
         {
-            if (GetProvider() == Provider.SqlServer)
+            if (GetProvider() != Provider.SqlServer)
             {
-                using (var db = GetSqlDatabase())
-                {
-                    using (var trans = db.GetTransaction())
-                    {
-                        var dt = await db.GetMultipleAsync(@"
-                            select * from product where Color = @Color;
-                            select * from productcategory where productcategoryid = @ProductCategoryId;",
-                        new { Color = "Black", ProductCategoryId = 21 });
-                        Assert.Equal(89, dt.Read(typeof(Product)).Count());
+                CheckSkip();
+                return;
+            }
 
-                        var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
-                        ValidateProductCategory21(pc);
-                        trans.Complete();
-                    }
+            using (var db = GetSqlDatabase())
+            {
+                using (var trans = db.GetTransaction())
+                {
+                    var dt = await db.GetMultipleAsync($@"
+                    select * from Product where Color = {P}Color;
+                    select * from ProductCategory where productcategoryid = {P}ProductCategoryId;",
+                        new { Color = "Black", ProductCategoryId = 21 });
+                    Assert.Equal(89, dt.Read(typeof(Product)).Count());
+
+                    var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
+                    ValidateProductCategory21(pc);
+                    trans.Complete();
                 }
             }
         }

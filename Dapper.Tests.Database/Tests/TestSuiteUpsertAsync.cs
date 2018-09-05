@@ -85,7 +85,7 @@ namespace Dapper.Tests.Database
                 p.LastName = "Smith";
                 Assert.True(await connection.UpsertAsync(p));
 
-                var gp = await connection.GetAsync<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);
+                var gp = await connection.GetAsync<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);

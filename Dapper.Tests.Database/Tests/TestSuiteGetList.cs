@@ -43,7 +43,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetList<Product>("where Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>($"where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -69,7 +69,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -82,7 +82,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetList<Product>(";select p.*, p.rowguid as GuidId from Product p where p.Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -95,7 +95,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = db.GetList<Product>("select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = @Color", new { Color = "Black" });
+                var lst = db.GetList<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -198,17 +198,30 @@ namespace Dapper.Tests.Database
             }
         }
 
-        private static string getListMultiTwoParamQuery =
-            @"select  P.*, P.rowguid as GuidId, PC.*
-            from Product P
-            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-            where P.Color = @Color";
+        private string getListMultiTwoParamQuery
+        {
+            get
+            {
+                return
+                    $@"select  P.*, P.rowguid as GuidId, PC.*
+                    from Product P
+                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
+                    where P.Color = {P}Color";
+            }
+        }
 
-        private static string getListMultiThreeParamQuery =
-            @"select  P.*, P.rowguid as GuidId, PC.*, PM.*
-            from Product P
-            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-            join ProductModel PM on PM.ProductModelID = P.ProductModelID
-            where P.Color = @Color";
+        private string getListMultiThreeParamQuery
+        {
+            get
+            {
+                return
+                    $@"select  P.*, P.rowguid as GuidId, PC.*, PM.*
+                    from Product P
+                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
+                    join ProductModel PM on PM.ProductModelID = P.ProductModelID
+                    where P.Color = {P}Color";
+            }
+        }
+
     }
 }

@@ -816,6 +816,7 @@ namespace Dapper.Database
         /// <param name="isolationlevel"></param>
         /// <returns></returns>
         ITransaction GetTransaction(IsolationLevel isolationlevel = IsolationLevel.ReadCommitted);
+
         #endregion
 
         #region Timeout Settings

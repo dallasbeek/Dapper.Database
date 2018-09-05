@@ -66,7 +66,7 @@ namespace Dapper.Tests.Database
                 var gid = Guid.NewGuid();
                 var p = new PersonCompositeKey { GuidId = gid, StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(await connection.InsertAsync(p));
-                var gp = await connection.GetAsync<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);
+                var gp = await connection.GetAsync<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);

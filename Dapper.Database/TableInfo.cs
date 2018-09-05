@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Dapper.Database.Attributes;
 using Dapper.Database.Extensions;
@@ -44,7 +45,6 @@ namespace Dapper.Database
             }
             else
             {
-                //NOTE: This as dynamic trick should be able to handle both our own Table-attribute as well as the one in EntityFramework 
                 var tableAttr = type
 #if NETSTANDARD1_3
                 .GetTypeInfo()
@@ -72,27 +72,40 @@ namespace Dapper.Database
                 .Select(t =>
                 {
                     var columnAtt = t.GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "ColumnAttribute") as dynamic;
+                    var seqAtt = t.GetCustomAttributes(false).SingleOrDefault(a => a is SequenceAttribute) as dynamic;
 
                     var ci = new ColumnInfo
                     {
                         Property = t,
                         ColumnName = columnAtt?.Name ?? t.Name,
                         PropertyName = t.Name,
-                        IsKey = t.GetCustomAttributes(true).Any(a => a is KeyAttribute),
-                        IsIdentity = t.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
-                          && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption == DatabaseGeneratedOption.Identity),
-                        IsGenerated = t.GetCustomAttributes(true).Any(a => a is DatabaseGeneratedAttribute
-                            && (a as DatabaseGeneratedAttribute).DatabaseGeneratedOption != DatabaseGeneratedOption.None),
-                        ExcludeOnSelect = t.GetCustomAttributes(true).Any(a => a is IgnoreSelectAttribute)
+                        IsKey = t.GetCustomAttributes(false).Any(a => a is KeyAttribute),
+                        IsIdentity = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
+                          && g.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity))
+                          || seqAtt != null,
+                        IsGenerated = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
+                            && g.DatabaseGeneratedOption != DatabaseGeneratedOption.None))
+                            || seqAtt != null,
+                        ExcludeOnSelect = t.GetCustomAttributes(false).Any(a => a is IgnoreSelectAttribute),
+                        SequenceName = seqAtt?.Name
                     };
 
-                    ci.ExcludeOnInsert = ci.IsGenerated
-                        || t.GetCustomAttributes(true).Any(a => a is IgnoreInsertAttribute)
-                        || t.GetCustomAttributes(true).Any(a => a is ReadOnlyAttribute);
+                    ci.ExcludeOnInsert = (ci.IsGenerated && seqAtt == null)
+                        || t.GetCustomAttributes(false).Any(a => a is IgnoreInsertAttribute)
+                        || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
 
                     ci.ExcludeOnUpdate = ci.IsGenerated
-                        || t.GetCustomAttributes(true).Any(a => a is IgnoreUpdateAttribute)
-                        || t.GetCustomAttributes(true).Any(a => a is ReadOnlyAttribute);
+                        || t.GetCustomAttributes(false).Any(a => a is IgnoreUpdateAttribute)
+                        || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
+
+                    if (ci.IsGenerated)
+                    {
+                        var parameter = Expression.Parameter(type);
+                        var property = Expression.Property(parameter, ci.Property);
+                        var conversion = Expression.Convert(property, typeof(object));
+                        var lambda = Expression.Lambda(conversion, parameter);
+                        ci.Output = lambda;
+                    }
 
                     return ci;
                 })
@@ -186,6 +199,12 @@ namespace Dapper.Database
         /// <returns></returns>
         public IEnumerable<PropertyInfo> PropertyList =>_propertyList.Value;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool HasSequenceName => ColumnInfos.Any(ci => !string.IsNullOrWhiteSpace(ci.SequenceName));
+
     }
 
     /// <summary>
@@ -237,6 +256,16 @@ namespace Dapper.Database
         /// 
         /// </summary>
         public PropertyInfo Property { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string SequenceName { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public LambdaExpression Output { get; set; }
     }
 
 }

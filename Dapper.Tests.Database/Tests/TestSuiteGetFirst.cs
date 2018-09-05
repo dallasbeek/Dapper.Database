@@ -28,7 +28,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>("where Color = @Color and ProductId >= @ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>($"where Color = {P}Color and ProductId >= {P}ProductId order by ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -50,7 +50,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -61,7 +61,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>(";select p.*, p.rowguid as GuidId from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 ValidateProduct816(item);
             }
         }
@@ -72,7 +72,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item = db.GetFirst<Product>("select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = @Color and p.ProductId >= @ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
+                var item = db.GetFirst<Product>($"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color and p.ProductId >= {P}ProductId order by p.ProductId", new { Color = "Black", ProductId = 816 });
                 Assert.Equal(816, item.ProductID);
                 Assert.Equal("ML Mountain Front Wheel", item.Name);
                 Assert.Null(item.ProductNumber);
@@ -157,18 +157,32 @@ namespace Dapper.Tests.Database
             }
         }
 
-        private static string getFirstTwoParamQuery =
-            @"select  P.*, P.rowguid as GuidId, PC.*
-            from Product P
-            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-            where Color = @Color and ProductId >= @ProductId order by ProductId";
+        private string getFirstTwoParamQuery
+        {
+            get
+            {
+                return
 
-        private static string getFirstThreeParamQuery =
-            @"select  P.*, P.rowguid as GuidId, PC.*, PM.*
+            $@"select  P.*, P.rowguid as GuidId, PC.* 
             from Product P
             join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-            join ProductModel PM on PM.ProductModelID = P.ProductModelID
-            where Color = @Color and ProductId >= @ProductId order by ProductId";
+            where Color = {P}Color and ProductId >= {P}ProductId order by ProductId";
+
+            }
+        }
+
+        private string getFirstThreeParamQuery
+        {
+            get
+            {
+                return
+                    $@"select  P.*, P.rowguid as GuidId, PC.*, PM.*
+                    from Product P
+                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
+                    join ProductModel PM on PM.ProductModelID = P.ProductModelID
+                    where Color = {P}Color and ProductId >= {P}ProductId order by ProductId";
+            }
+        }
 
     }
 }

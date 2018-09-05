@@ -83,7 +83,7 @@ namespace Dapper.Tests.Database
                 p.LastName = "Smith";
                 Assert.True(db.Update(p));
 
-                var gp = db.Get<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);
+                var gp = db.Get<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);
@@ -137,18 +137,18 @@ namespace Dapper.Tests.Database
                 var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
                 Assert.True(db.Insert(p));
 
-                if (p.Full != null)
+                if (p.Name != null)
                 {
-                    Assert.Equal("Alice Jones", p.Full);
+                    Assert.Equal("Alice Jones", p.Name);
                 }
 
                 p.First = "Greg";
                 p.Last = "Smith";
 
                 Assert.True(db.Update(p));
-                if (p.Full != null)
+                if (p.Name != null)
                 {
-                    Assert.Equal("Greg Smith", p.Full);
+                    Assert.Equal("Greg Smith", p.Name);
                 }
 
                 var gp = db.Get<PersonIdentityAlias>(p.Id);
@@ -156,7 +156,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.Id, gp.Id);
                 Assert.Equal(p.First, gp.First);
                 Assert.Equal(p.Last, gp.Last);
-                Assert.Equal(p.Full, gp.Full);
+                Assert.Equal(p.Name, gp.Name);
 
                 Assert.True(db.Delete<PersonIdentityAlias>(p.Id));
 

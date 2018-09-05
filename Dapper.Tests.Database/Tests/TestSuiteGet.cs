@@ -36,7 +36,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var item =db.Get<ProductAlias>(806);
+                var item = db.Get<ProductAlias>(806);
                 Assert.Equal(806, item.Id);
                 Assert.Equal("ML Headset", item.Name);
                 Assert.Equal("HS-2451", item.ProductNumber);
@@ -53,15 +53,15 @@ namespace Dapper.Tests.Database
                 if (GetProvider() == Provider.SQLite)
                 {
                     return;
-                    //ValidateProduct806(db.Get<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    //ValidateProduct806(db.Get<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
-                else if ( GetProvider() == Provider.Firebird )
+                else if (GetProvider() == Provider.Firebird)
                 {
-                    ValidateProduct806(db.Get<Product>("where rowguid = @GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    ValidateProduct806(db.Get<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
                 {
-                    ValidateProduct806(db.Get<Product>("WHERE rowguid = @GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                    ValidateProduct806(db.Get<Product>($"WHERE rowguid = {P}GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var p = db.Get<Product>("select ProductId, rowguid AS GuidId, Name from Product where ProductId = @Id", new { Id = 806 });
+                var p = db.Get<Product>($"select ProductId, rowguid AS GuidId, Name from Product where ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -87,7 +87,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                ValidateProduct806(db.Get<Product>("select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = @Id", new { Id = 806 }));
+                ValidateProduct806(db.Get<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
             }
         }
 
@@ -98,9 +98,14 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var tsql = "; select 23 AS ProductId";
-                if ( GetProvider() == Provider.Firebird )
+                switch (GetProvider())
                 {
-                    tsql += " from RDB$Database";
+                    case Provider.Firebird:
+                        tsql += " from RDB$Database";
+                        break;
+                    case Provider.Oracle:
+                        tsql += " from dual";
+                        break;
                 }
                 var p = db.Get<Product>(tsql, new { });
                 Assert.Equal(23, p.ProductID);
@@ -251,18 +256,30 @@ namespace Dapper.Tests.Database
             //Assert.Equal(new Guid("6BA9F3B6-E08B-4AC2-A725-B41114C2A283"), p.GuidId);
         }
 
-        private static string getMultiTwoParamQuery =
-            @"select  P.*, P.rowguid as GuidId, PC.*
-            from Product P
-            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-            where P.ProductID = @ProductId";
+        private string getMultiTwoParamQuery
+        {
+            get
+            {
+                return
+                    $@"select  P.*, P.rowguid as GuidId, PC.*
+                    from Product P
+                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
+                    where P.ProductID = {P}ProductId";
+            }
+        }
 
-        private static string getMultiThreeParamQuery =
-            @"select  P.*, P.rowguid as GuidId, PC.*, PM.*
+        private string getMultiThreeParamQuery
+        {
+            get
+            {
+                return
+            $@"select  P.*, P.rowguid as GuidId, PC.*, PM.*
             from Product P
             join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
             join ProductModel PM on PM.ProductModelID = P.ProductModelID
-           where P.ProductID = @ProductId";
+           where P.ProductID = {P}ProductId";
+            }
+        }
 
     }
 }

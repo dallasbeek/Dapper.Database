@@ -114,7 +114,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
                 Assert.True(db.Insert(p));
 
-                Assert.True(db.Delete<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p));
+                Assert.True(db.Delete<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p));
 
                 var gp = db.Get(p);
                 Assert.Null(gp);

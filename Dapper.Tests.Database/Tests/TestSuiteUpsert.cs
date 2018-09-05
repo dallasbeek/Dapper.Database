@@ -84,7 +84,7 @@ namespace Dapper.Tests.Database
                 p.LastName = "Smith";
                 Assert.True(db.Upsert(p));
 
-                var gp = db.Get<PersonCompositeKey>("where GuidId = @GuidId and StringId = @StringId", p);
+                var gp = db.Get<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);

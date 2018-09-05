@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using Xunit;
-using Dapper.Database;
-using Npgsql;
 using System.Net.Sockets;
+using Dapper.Database;
 using MySql.Data.MySqlClient;
+using Xunit;
+
 
 namespace Dapper.Tests.Database
 {
@@ -17,9 +17,14 @@ namespace Dapper.Tests.Database
                 ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};"
                 : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 
-        public override ISqlDatabase GetSqlDatabase()
+        protected override void CheckSkip()
         {
             if (_skip) throw new SkipTestException("Skipping MySql Tests - no server.");
+        }
+
+        public override ISqlDatabase GetSqlDatabase()
+        {
+            CheckSkip();
             return new SqlDatabase(new StringConnectionService<MySqlConnection>(ConnectionString));
         }
 
@@ -30,6 +35,7 @@ namespace Dapper.Tests.Database
 
         static MySqlTestSuite()
         {
+            ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
@@ -43,19 +49,13 @@ namespace Dapper.Tests.Database
 
                 }
             }
-            catch (SocketException e)
+            catch (SocketException e) when (e.Message.Contains("No connection could be made because the target machine actively refused it"))
             {
-                if (e.Message.Contains("No connection could be made because the target machine actively refused it"))
-                    _skip = true;
-                else
-                    throw;
+                _skip = true;
             }
-            catch (MySqlException e)
+            catch (MySqlException e) when (e.Message == "Unable to connect to any of the specified MySQL hosts.")
             {
-                if (e.Message == "Unable to connect to any of the specified MySQL hosts.")
-                    _skip = true;
-                else
-                    throw;
+                _skip = true;
             }
         }
     }

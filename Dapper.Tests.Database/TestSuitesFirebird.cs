@@ -1,9 +1,9 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
+﻿using System;
 using System.IO;
-using Xunit;
 using Dapper.Database;
 using FirebirdSql.Data.FirebirdClient;
+using Xunit;
+
 
 namespace Dapper.Tests.Database
 {
@@ -13,9 +13,14 @@ namespace Dapper.Tests.Database
     {
         public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;";
 
+        protected override void CheckSkip()
+        {
+            if (_skip) throw new SkipTestException("Skipping Firebird Tests - no server.");
+        }
+
         public override ISqlDatabase GetSqlDatabase()
         {
-            if ( _skip ) throw new SkipTestException("Skipping Firebird Tests - no server.");
+            CheckSkip();
             var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
             return new SqlDatabase(new StringConnectionService<FbConnection>($"Database={filename};{ConnectionString}"));
         }
@@ -28,35 +33,36 @@ namespace Dapper.Tests.Database
         {
             Environment.SetEnvironmentVariable("NoCache", "True");
 
-            var init = false;
+            ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
-            //SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
-            //if (File.Exists(FileName))
+            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
+
+            var init = false;
+
+            //if (File.Exists(filename))
             //{
-            //    File.Delete(FileName);
+            //    File.Delete(filename);
             //}
 
             var commandText = string.Empty;
 
             try
             {
-                var filename = Directory.GetCurrentDirectory() + "\\Test.Db.sfdb";
-
-                using ( var connection = new FbConnection($"Database={filename};{ConnectionString}") )
+                using (var connection = new FbConnection($"Database={filename};{ConnectionString}"))
                 {
                     connection.Open();
 
-                    if ( init )
+                    if (init)
                     {
                         var file = File.OpenText(".\\Scripts\\firebirdawlite.sql");
                         var line = string.Empty;
 
-                        while ( (line = file.ReadLine()) != null )
+                        while ((line = file.ReadLine()) != null)
                         {
-                            if ( line.Equals("GO", StringComparison.OrdinalIgnoreCase) )
+                            if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
                             {
-                                if ( !string.IsNullOrEmpty(commandText) )
+                                if (!string.IsNullOrEmpty(commandText))
                                     connection.Execute(commandText);
                                 commandText = string.Empty;
                             }
@@ -70,16 +76,9 @@ namespace Dapper.Tests.Database
                 }
 
             }
-            catch ( FbException ex )
+            catch (FbException ex) when (ex.Message.Contains("Unable to complete network request"))
             {
-                if ( ex.Message.Contains("Unable to complete network request") )
-                {
-                    _skip = true;
-                }
-                else
-                {
-                    throw;
-                }
+                _skip = true;
             }
 
         }

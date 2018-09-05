@@ -1,8 +1,9 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
+﻿using System;
 using System.IO;
-using Xunit;
 using Dapper.Database;
+using Microsoft.Data.Sqlite;
+using Xunit;
+
 
 namespace Dapper.Tests.Database
 {
@@ -13,9 +14,14 @@ namespace Dapper.Tests.Database
         private const string FileName = "Test.DB.sqlite";
         public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
 
+        protected override void CheckSkip()
+        {
+            if (_skip) throw new SkipTestException("Skipping SQLite Tests - no server.");
+        }
+
         public override ISqlDatabase GetSqlDatabase()
         {
-            if (_skip) throw new SkipTestException("Skipping SqlLite Tests - no server.");
+            CheckSkip();
             return new SqlDatabase(new StringConnectionService<SqliteConnection>(ConnectionString));
         }
 
@@ -27,6 +33,7 @@ namespace Dapper.Tests.Database
         {
             Environment.SetEnvironmentVariable("NoCache", "True");
 
+            ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
@@ -50,19 +57,12 @@ namespace Dapper.Tests.Database
                 }
 
             }
-            catch (SqliteException ex)
+            catch (SqliteException ex) when (ex.Message.Contains("SQLite Error 1:"))
             {
-                if (ex.Message.Contains("SQLite Error 1:"))
-                {
-                    _skip = true;
-                }
-                else
-                {
-                    throw;
-                }
+                _skip = true;
             }
 
         }
     }
-    
+
 }

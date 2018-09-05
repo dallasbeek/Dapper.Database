@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dapper.Database.Extensions;
-using Xunit;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper.Database.Extensions;
+using Xunit;
+
 using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
+
 
 namespace Dapper.Tests.Database
 {
@@ -63,7 +64,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = await db.GetPageListAsync<Product>(4, 10, "where Color = @Color", new { Color = "Black" });
+                var lst = await db.GetPageListAsync<Product>(4, 10, $"where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -105,7 +106,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = await db.GetPageListAsync<Product>(5, 10, "where Color = @Color order by lower(Name)", new { Color = "Black" });
+                var lst = await db.GetPageListAsync<Product>(5, 10, $"where Color = {P}Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -143,7 +144,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = await db.GetPageListAsync<Product>(4, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = @Color", new { Color = "Black" });
+                var lst = await db.GetPageListAsync<Product>(4, 10, $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -156,7 +157,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = await db.GetPageListAsync<Product>(5, 10, "select p.*, p.rowguid as GuidId from Product p where p.Color = @Color order by lower(Name)", new { Color = "Black" });
+                var lst = await db.GetPageListAsync<Product>(5, 10, $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color order by lower(Name)", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -169,7 +170,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                var lst = await db.GetPageListAsync<Product>(4, 10, "select ProductId, rowguid AS GuidId, Name from Product where Color = @Color", new { Color = "Black" });
+                var lst = await db.GetPageListAsync<Product>(4, 10, $"select ProductId, rowguid AS GuidId, Name from Product where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -185,14 +186,15 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var sizeColumn = GetProvider() == Provider.Oracle ? "\"SIZE\"" : "Size";
                 var lst = await db.GetPageListAsync<Product, ProductCategory>(4, 10,
-                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
+                    $@"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.{sizeColumn}, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid, P.ModifiedDate, PC.ProductCategoryID, 
                     PC.ParentProductCategoryID
                     from Product P
                     join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    where Color = @Color", new { Color = "Black" });
+                    where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
 
@@ -210,19 +212,20 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
+                var sizeColumn = GetProvider() == Provider.Oracle ? "\"SIZE\"" : "Size";
                 var lst = await db.GetPageListAsync<Product, ProductCategory, Product>(4, 10,
                     (pr, pc) =>
                     {
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    @"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.Size, 
+                    $@"select  P.ProductID, P.Name, P.ProductNumber, P.Color, P.StandardCost, P.ListPrice, P.{sizeColumn}, 
                     P.Weight, P.ProductModelID, P.SellStartDate, P.SellEndDate, P.DiscontinuedDate, 
                     P.ThumbNailPhoto, P.ThumbnailPhotoFileName, P.rowguid, P.ModifiedDate, PC.ProductCategoryID, 
                     PC.ParentProductCategoryID
                     from Product P
                     join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    where Color = @Color", new { Color = "Black" });
+                    where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(10, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
 
