@@ -1031,46 +1031,42 @@ namespace Dapper.Database
         #endregion
 
         #region Delete Methods
-        /// <summary>
-        /// Delete entity in table "Ts".
-        /// </summary>
-        /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="entityToDelete">Entity to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
+        /// <inheritdoc />
         public async Task<bool> DeleteAsync<T>(T entityToDelete) where T : class
         {
             return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(entityToDelete, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
-        /// <summary>
-        /// Delete entity in table "Ts".
-        /// </summary>
-        /// <param name="primaryKey">a Single primary key to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public async Task<bool> DeleteAsync<T>(object primaryKey) where T : class
+        /// <inheritdoc />
+        public async Task<bool> DeleteAsync<T>(object primaryKeyValue) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(primaryKeyValue, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
-        /// <summary>
-        /// Delete entity in table "Ts".
-        /// </summary>
-        /// <param name="sql">The where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public async Task<bool> DeleteAsync<T>(string sql = null) where T : class
+        /// <inheritdoc />
+        public async Task<bool> DeleteAsync<T>(string whereClause) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            if (string.IsNullOrWhiteSpace(whereClause))
+            {
+                throw new ArgumentNullException(nameof(whereClause), "Must specify a where clause for deletion.");
+            }
+            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(whereClause, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
-        /// <summary>
-        /// Delete entity in table "Ts".
-        /// </summary>
-        /// <param name="sql">The where clause to delete</param>
-        /// <param name="parameters">The parameters of the where clause to delete</param>
-        /// <returns>true if deleted, false if not found</returns>
-        public async Task<bool> DeleteAsync<T>(string sql, object parameters) where T : class
+        /// <inheritdoc />
+        public async Task<bool> DeleteAsync<T>(string whereClause, object parameters) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            if (string.IsNullOrWhiteSpace(whereClause))
+            {
+                throw new ArgumentNullException(nameof(whereClause), "Must specify a where clause for deletion.");
+            }
+            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAsync<T>(whereClause, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <inheritdoc />
+        public async Task<bool> DeleteAllAsync<T>() where T : class
+        {
+            return await ExecuteInternalAsync(() => _sharedConnection.DeleteAllAsync<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion

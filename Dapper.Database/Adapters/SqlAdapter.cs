@@ -133,27 +133,24 @@ namespace Dapper.Database.Adapters
         /// <returns>A sql statement that deletes</returns>
         public virtual string DeleteQuery(TableInfo tableInfo, string sql)
         {
-            var q = new SqlParser(sql ?? "");
+            var q = new SqlParser(sql ?? string.Empty);
 
             if (q.Sql.StartsWith(";"))
                 return q.Sql.Substring(1);
 
+            //Remove any order by statements
             if (!string.IsNullOrEmpty(q.OrderByClause))
             {
-                q.Sql = q.Sql.Replace(q.OrderByClause, "");
+                q.Sql = q.Sql.Replace(q.OrderByClause, string.Empty);
+                q.OrderByClause = string.Empty;
             }
 
+            //Partial statement passed in
             if (!q.IsDelete)
             {
-                if (string.IsNullOrEmpty(q.FromClause))
-                {
-                    return $"delete from {EscapeTableName(tableInfo)} {q.Sql}";
-                }
-                else
-                {
-                    return $"delete {q.Sql}";
-
-                }
+                return string.IsNullOrEmpty(q.FromClause)
+                    ? $"delete from { EscapeTableName(tableInfo)} {q.Sql}"
+                    : $"delete {q.Sql}";
             }
 
             return $"delete from ({q.Sql}) calc_inner";

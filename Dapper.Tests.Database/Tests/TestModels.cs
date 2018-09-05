@@ -48,6 +48,19 @@ namespace Dapper.Tests.Database
         [Column("LastName")]
         public string Last { get; set; }
     }
+    
+    [Table("Person")]
+    public class PersonCompositeKeyWithAliases
+    {
+        [Key]
+        public Guid GuidId { get; set; }
+        [Key]
+        public string StringId { get; set; }
+        [Column("FirstName")]
+        public string First { get; set; }
+        [Column("LastName")]
+        public string Last { get; set; }
+    }
 
 
     [Table("Person")]

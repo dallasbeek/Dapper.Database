@@ -781,34 +781,42 @@ namespace Dapper.Database
 
         #region Delete Methods
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" that match the key values of the entity (T) passed in
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="entityToDelete">Entity to delete</param>
+        /// <param name="entityToDelete">Entity to delete. If Keys are specified, they will be used as the WHERE condition to delete.</param>
         /// <returns>true if deleted, false if not found</returns>
         Task<bool> DeleteAsync<T>(T entityToDelete) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" by a primary key value specified on (T)
         /// </summary>
-        /// <param name="primaryKey">a Single primary key to delete</param>
+        /// <param name="primaryKeyValue">a Single primary key to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<bool> DeleteAsync<T>(object primaryKey) where T : class;
+        Task<bool> DeleteAsync<T>(object primaryKeyValue) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" by an unparameterized WHERE clause.
+        /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<bool> DeleteAsync<T>(string sql = null) where T : class;
+        Task<bool> DeleteAsync<T>(string whereClause) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts".
+        /// Delete entity in table "Ts" by a parameterized WHERE clause, with Parameters passed in.
+        /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
-        /// <param name="sql">The where clause to delete</param>
+        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <returns>true if deleted, false if not found</returns>
-        Task<bool> DeleteAsync<T>(string sql, object parameters) where T : class;
+        Task<bool> DeleteAsync<T>(string whereClause, object parameters) where T : class;
+
+        /// <summary>
+        /// Delete ALL entities in table "Ts".
+        /// </summary>
+        /// <returns>true if deleted, false if not found</returns>
+        Task<bool> DeleteAllAsync<T>() where T : class;
 
         #endregion
     }
