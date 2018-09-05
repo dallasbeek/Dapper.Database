@@ -40,6 +40,7 @@ namespace Dapper.Tests.Database
 
         static OracleTestSuite()
         {
+            Environment.SetEnvironmentVariable("NoCache", "True");
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
