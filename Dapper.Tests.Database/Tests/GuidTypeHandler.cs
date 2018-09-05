@@ -16,9 +16,8 @@ namespace Dapper.Tests.Database
             {
                 return new Guid(value as string);
             }
-            var b = value as byte[];
 
-            if (b != null)
+            if (value is byte[] b)
             {
                 // Hack for Oracle to distinguish how to parse Guids
                 // by setting the db type to raw(17)

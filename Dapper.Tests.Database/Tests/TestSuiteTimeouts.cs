@@ -107,6 +107,9 @@ namespace Dapper.Tests.Database
                 case Provider.Postgres:
                     Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
                     break;
+                case Provider.Firebird:
+                    Assert.StartsWith("The property value assigned is less than 0", ex.Message);
+                    break;
                 case Provider.Oracle:
                     // Verified this is correct for ODP.NET 12.2.1100 and ODP.NET Core 2.12.0-beta3.
                     Assert.StartsWith("Value does not fall within the expected range.", ex.Message);
