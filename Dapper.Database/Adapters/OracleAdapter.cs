@@ -9,10 +9,17 @@ using Dapper.Database.Extensions;
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    /// The Oracle database adapter.
+    /// The Oracle database adapter for modern Oracle databases.
     /// </summary>
     public partial class OracleAdapter : SqlAdapter, ISqlAdapter
     {
+        /// <summary>
+        /// Default implementation of an Oracle insert statement with outputs.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An Oracle SQL statement like <c>INSERT..RETURNING</c> or equivalent.</returns>
+        protected virtual string InsertReturningQuery(TableInfo tableInfo)
+            => $"{InsertQuery(tableInfo)} RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
 
         /// <summary>
         /// Inserts an entity into table "Ts"
@@ -25,41 +32,44 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public override bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
-
-            if (tableInfo.GeneratedColumns.Any())
+            if (!tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
-                var parameters = new DynamicParameters(entityToInsert);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToInsert, column);
-                }
-
-                var count = connection.Execute(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
-            }
-            else
-            {
-                return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+                return connection.Execute(InsertQuery(tableInfo), entityToInsert, transaction, commandTimeout) > 0;
             }
 
+            // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
+            // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
+            // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
+            var parameters = new DynamicParameters(entityToInsert);
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                parameters.Output(entityToInsert, column);
+            }
+
+            var sql = InsertReturningQuery(tableInfo);
+            var count = connection.Execute(sql, parameters, transaction, commandTimeout: commandTimeout);
+
+            if (count == 0) return false;
+
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                var property = column.Property;
+                var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
+
+                property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
+            }
+
+            return true;
         }
+
+        /// <summary>
+        /// Default implementation of an Oracle update statement with outputs.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>An Oracle SQL statement like <c>UPDATE..RETURNING</c> or equivalent.</returns>
+        protected virtual string UpdateReturningQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+            => $"{UpdateQuery(tableInfo, columnsToUpdate)} RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
 
         /// <summary>
         /// updates an entity into table "Ts"
@@ -73,38 +83,36 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
-
-            if (tableInfo.GeneratedColumns.Any())
+            // Do a simple update if we have no outputs.
+            if (!tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
-                var parameters = new DynamicParameters(entityToUpdate);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToUpdate, column);
-                }
-                var count = connection.Execute(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
+                return connection.Execute(UpdateQuery(tableInfo, columnsToUpdate), entityToUpdate, transaction, commandTimeout) > 0;
             }
-            else
+
+            // We have outputs.
+            // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
+            // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
+            // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
+            var parameters = new DynamicParameters(entityToUpdate);
+            foreach (var column in tableInfo.GeneratedColumns)
             {
-                return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
+                parameters.Output(entityToUpdate, column);
             }
+
+            var sql = UpdateReturningQuery(tableInfo, columnsToUpdate);
+            var count = connection.Execute(sql, parameters, transaction, commandTimeout: commandTimeout);
+
+            if (count == 0) return false;
+
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                var property = column.Property;
+                var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
+
+                property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -165,38 +173,36 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
-
-            if (tableInfo.GeneratedColumns.Any())
+            // Do a simple update if we have no outputs.
+            if (!tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
-                var parameters = new DynamicParameters(entityToUpdate);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToUpdate, column);
-                }
-                var count = await connection.ExecuteAsync(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
+                return connection.Execute(UpdateQuery(tableInfo, columnsToUpdate), entityToUpdate, transaction, commandTimeout) > 0;
             }
-            else
+
+            // We have outputs.
+            // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
+            // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
+            // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
+            var parameters = new DynamicParameters(entityToUpdate);
+            foreach (var column in tableInfo.GeneratedColumns)
             {
-                return await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
+                parameters.Output(entityToUpdate, column);
             }
+
+            var sql = UpdateReturningQuery(tableInfo, columnsToUpdate);
+            var count = await connection.ExecuteAsync(sql, parameters, transaction, commandTimeout: commandTimeout);
+
+            if (count == 0) return false;
+
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                var property = column.Property;
+                var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
+
+                property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -209,7 +215,7 @@ namespace Dapper.Database.Adapters
         {
             var q = new SqlParser(sql ?? "");
 
-            if (q.Sql.StartsWith(";"))
+            if (q.Sql.StartsWith(";", StringComparison.Ordinal))
                 return q.Sql.Substring(1);
 
             if (!q.IsSelect)
@@ -242,21 +248,11 @@ namespace Dapper.Database.Adapters
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
-            var pageTake = pageSkip + pageSize;
             var sqlOrderBy = string.Empty;
-            var sqlOrderByRemoved = q.Sql;
 
-            if (string.IsNullOrEmpty(q.OrderByClause))
+            if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
             {
-                if (tableInfo.KeyColumns.Any())
-                {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
-                }
-            }
-            else
-            {
-                sqlOrderBy = q.OrderByClause;
-                sqlOrderByRemoved = sqlOrderByRemoved.Replace(q.OrderByClause, "");
+                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
             // Oracle supports binding the offset and page size.
@@ -264,12 +260,9 @@ namespace Dapper.Database.Adapters
             // NOTE: this explicitly won't work with Oracle.ManagedDataAccess 12.1.x, only 12.2 and later.
             // It works with all versions of Oracle.ManagedDataAccess.Core, however...
             parameters.Add("PAGE_SKIP$$", pageSkip, DbType.Int64);
-            parameters.Add("PAGE_TAKE$$", pageTake, DbType.Int64);
+            parameters.Add("PAGE_SIZE$$", pageSize, DbType.Int64);
 
-            var columnsOnly = $"page_inner.* FROM ({sqlOrderByRemoved}) page_inner";
-
-            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > :PAGE_SKIP$$ and page_rn <= :PAGE_TAKE$$";
-
+            return $"{q.Sql} {sqlOrderBy} offset :PAGE_SKIP$$ rows fetch next :PAGE_SIZE$$ rows only";
         }
 
         /// <summary>
