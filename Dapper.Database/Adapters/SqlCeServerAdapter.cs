@@ -119,8 +119,9 @@ namespace Dapper.Database.Adapters
         /// <param name="page">the page to request</param>
         /// <param name="pageSize">the size of the page to request</param>
         /// <param name="sql">a sql statement or partial statement</param>
+        /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated sql statement</returns>
-        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;

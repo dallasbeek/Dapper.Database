@@ -80,9 +80,10 @@ namespace Dapper.Database.Extensions
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
             return new PagedList<T1>(
-                connection.Query<T1, T2>(selectSql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
+                connection.Query<T1, T2>(selectSql, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
                 page,
                     pageSize,
                     connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -122,10 +123,11 @@ namespace Dapper.Database.Extensions
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             return new PagedList<T1>(
-                connection.Query<T1, T2, T3>(selectSql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
+                connection.Query<T1, T2, T3>(selectSql, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
                 page,
                     pageSize,
                     connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -166,10 +168,11 @@ namespace Dapper.Database.Extensions
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             return new PagedList<T1>(
-                connection.Query<T1, T2, T3, T4>(selectSql, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
+                connection.Query<T1, T2, T3, T4>(selectSql, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
                 page,
                     pageSize,
                     connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -211,10 +214,11 @@ namespace Dapper.Database.Extensions
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             return new PagedList<TRet>(
-                connection.Query(selectSql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
+                connection.Query(selectSql, mapper, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
                 page,
                 pageSize,
                 connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -256,10 +260,11 @@ namespace Dapper.Database.Extensions
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             return new PagedList<TRet>(
-                connection.Query(selectSql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
+                connection.Query(selectSql, mapper, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
                 page,
                 pageSize,
                 connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -302,10 +307,11 @@ namespace Dapper.Database.Extensions
             var type = typeof(T1);
             var tinfo = TableInfoCache(type);
             var adapter = GetFormatter(connection);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             return new PagedList<TRet>(
-                connection.Query(selectSql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
+                connection.Query(selectSql, mapper, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
                 page,
                 pageSize,
                 connection.Count<T1>(sql, parameters, transaction, commandTimeout: commandTimeout)
@@ -329,10 +335,11 @@ namespace Dapper.Database.Extensions
         {
             var type = typeof(T);
             var tinfo = TableInfoCache(type);
-            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql);
+            var selectParameters = new DynamicParameters(parameters);
+            var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             return new PagedList<T>(
-                connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout),
+                connection.Query<T>(selectSql, selectParameters, transaction, commandTimeout: commandTimeout),
                 page,
                 pageSize,
                 connection.Count<T>(sql, parameters, transaction, commandTimeout: commandTimeout)
