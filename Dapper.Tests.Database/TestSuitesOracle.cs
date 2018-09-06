@@ -9,6 +9,7 @@ using Dapper.Database;
 using Oracle.ManagedDataAccess.Client;
 using Xunit;
 
+using OracleConnection = Dapper.Tests.Database.OracleClient.OracleConnection;
 
 namespace Dapper.Tests.Database
 {
