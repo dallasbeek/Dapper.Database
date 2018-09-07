@@ -22,6 +22,15 @@ namespace Dapper.Database.Adapters
             => $"{InsertQuery(tableInfo)} RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
 
         /// <summary>
+        /// Default implementation of an Oracle update statement with outputs.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>An Oracle SQL statement like <c>UPDATE..RETURNING</c> or equivalent.</returns>
+        protected virtual string UpdateReturningQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+            => $"{UpdateQuery(tableInfo, columnsToUpdate)} RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
+
+        /// <summary>
         /// Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
@@ -61,15 +70,6 @@ namespace Dapper.Database.Adapters
 
             return true;
         }
-
-        /// <summary>
-        /// Default implementation of an Oracle update statement with outputs.
-        /// </summary>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>An Oracle SQL statement like <c>UPDATE..RETURNING</c> or equivalent.</returns>
-        protected virtual string UpdateReturningQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
-            => $"{UpdateQuery(tableInfo, columnsToUpdate)} RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
 
         /// <summary>
         /// updates an entity into table "Ts"
@@ -126,39 +126,34 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public override async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
-
-            if (tableInfo.GeneratedColumns.Any())
+            if (!tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
-                var parameters = new DynamicParameters(entityToInsert);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToInsert, column);
-                }
-                var count = await connection.ExecuteAsync(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
-            }
-            else
-            {
-                return await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+                return await connection.ExecuteAsync(InsertQuery(tableInfo), entityToInsert, transaction, commandTimeout) > 0;
             }
 
+            // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
+            // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
+            // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
+            var parameters = new DynamicParameters(entityToInsert);
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                parameters.Output(entityToInsert, column);
+            }
+
+            var sql = InsertReturningQuery(tableInfo);
+            var count = await connection.ExecuteAsync(sql, parameters, transaction, commandTimeout: commandTimeout);
+
+            if (count == 0) return false;
+
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                var property = column.Property;
+                var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
+
+                property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
+            }
+
+            return true;
         }
 
         /// <summary>
