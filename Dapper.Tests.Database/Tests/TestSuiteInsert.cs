@@ -104,13 +104,8 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Insert")]
         public void InsertSequenceComputed()
         {
-            if (GetProvider() != Provider.Oracle)
-            {
-                CheckSkip();
-                return;
-            }
+            Skip.IfNot(GetProvider() == Provider.Oracle, $"{GetProvider()} does not support InsertSequenceComputed.");
 
-            var dnow = DateTime.UtcNow;
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonIdentitySequence { FirstName = "Person", LastName = "Identity" };
