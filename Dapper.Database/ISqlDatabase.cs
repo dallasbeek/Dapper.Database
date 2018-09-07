@@ -28,21 +28,21 @@ namespace Dapper.Database
 
         #endregion
 
-        #region ExecuteScaler Methods
+        #region ExecuteScalar Methods
         /// <summary>
-        /// Execute a query
+        /// Execute SQL that selects a single value.
         /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <returns>Return Total Count of matching records</returns>
-        T ExecuteScaler<T>(string sql);
+        /// <param name="sql">The SQL to execute.</param>
+        /// <returns>The first cell selected as <typeparamref name="T"/>.</returns>
+        T ExecuteScalar<T>(string sql);
 
         /// <summary>
-        /// Execute a query
+        /// Execute parameterized SQL that selects a single value.
         /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the clause</param>
-        /// <returns>Return Total Count of matching records</returns>
-        T ExecuteScaler<T>(string sql, object parameters);
+        /// <param name="sql">The SQL to execute.</param>
+        /// <param name="parameters">The parameters to use for this command.</param>
+        /// <returns>The first cell selected as <typeparamref name="T"/>.</returns>
+        T ExecuteScalar<T>(string sql, object parameters);
 
         #endregion
 

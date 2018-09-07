@@ -31,21 +31,12 @@ namespace Dapper.Database
 
         #endregion
 
-        #region ExecuteScaler Methods
-        /// <summary>
-        /// Execute a query
-        /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <returns>Return Total Count of matching records</returns>
-        Task<T> ExecuteScalerAsync<T>(string sql);
+        #region ExecuteScalar Methods
+        /// <inheritdoc cref="ExecuteScalar{T}(string)" />
+        Task<T> ExecuteScalarAsync<T>(string sql);
 
-        /// <summary>
-        /// Execute a query
-        /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the clause</param>
-        /// <returns>Return Total Count of matching records</returns>
-        Task<T> ExecuteScalerAsync<T>(string sql, object parameters);
+        /// <inheritdoc cref="ExecuteScalar{T}(string, object)" />
+        Task<T> ExecuteScalarAsync<T>(string sql, object parameters);
 
         #endregion
 
