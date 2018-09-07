@@ -9,7 +9,6 @@ namespace Dapper.Database.Extensions
     /// </summary>
     public static partial class SqlMapperExtensions
     {
-
         #region DeleteAsync Extensions
         /// <summary>
         /// Delete entity in table "Ts" that match the key values of the entity (T) passed in
@@ -27,9 +26,9 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(entityToDelete), "Cannot Delete null Object");
             }
 
-            var queryWithParameters = BuildDeleteByEntityQueryWithParams(connection, entityToDelete);
+            var deleteQuery = GenerateDeleteQuery(connection, entityToDelete);
 
-            return await connection.ExecuteAsync(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(deleteQuery.SqlStatement, deleteQuery.Parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -42,9 +41,9 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, object primaryKeyValue, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var queryWithParameters = BuildDeleteByPkQueryWithParams<T>(connection, primaryKeyValue);
+            var deleteQuery = GenerateDeleteQuery<T>(connection, primaryKeyValue);
 
-            return await connection.ExecuteAsync(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(deleteQuery.SqlStatement, deleteQuery.Parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(whereClause));
             }
 
-            return await connection.ExecuteAsync(BuildBasicDeleteQueryFromSql<T>(connection, whereClause), null, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(GenerateDeleteQuery<T>(connection, whereClause), null, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -83,7 +82,7 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(whereClause));
             }
 
-            return await connection.ExecuteAsync(BuildBasicDeleteQueryFromSql<T>(connection, whereClause), parameters, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(GenerateDeleteQuery<T>(connection, whereClause), parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -95,9 +94,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<bool> DeleteAllAsync<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return await connection.ExecuteAsync(BuildBasicDeleteQueryFromSql<T>(connection, null), null, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(GenerateDeleteQuery<T>(connection, (string) null), null, transaction, commandTimeout) > 0;
         }
-
         #endregion
     }
 }

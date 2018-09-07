@@ -9,18 +9,6 @@ namespace Dapper.Database.Extensions
     /// </summary>
     public static partial class SqlMapperExtensions
     {
-        private struct QueryWithParametersComponent
-        {
-            public QueryWithParametersComponent(DynamicParameters dynamicParameters, string sqlQuery) : this()
-            {
-                DynamicParameters = dynamicParameters;
-                SqlQuery = sqlQuery;
-            }
-
-            public DynamicParameters DynamicParameters { get; }
-            public string SqlQuery { get; }
-        }
-
         #region Delete Extensions
         /// <summary>
         /// Delete entity in table "Ts" that match the key values of the entity (T) passed in
@@ -38,26 +26,9 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(entityToDelete), "Cannot Delete null Object");
             }
 
-            var queryWithParameters = BuildDeleteByEntityQueryWithParams(connection, entityToDelete);
+            var deleteQuery = GenerateDeleteQuery(connection, entityToDelete);
 
-            return connection.Execute(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
-        }
-
-        private static QueryWithParametersComponent BuildDeleteByEntityQueryWithParams<T>(IDbConnection connection, T entityToDelete) where T : class
-        {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            var keys = tinfo.GetCompositeKeys("Delete");
-            var dynParms = new DynamicParameters();
-            foreach (var key in keys)
-            {
-                var value = key.GetValue(entityToDelete);
-                dynParms.Add(key.ColumnName, value);
-            }
-
-            var qWhere = $" where {adapter.EscapeWhereList(tinfo.KeyColumns)}";
-            return new QueryWithParametersComponent(dynParms, adapter.DeleteQuery(tinfo, qWhere));
+            return connection.Execute(deleteQuery.SqlStatement, deleteQuery.Parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -70,23 +41,9 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool Delete<T>(this IDbConnection connection, object primaryKeyValue, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var queryWithParameters = BuildDeleteByPkQueryWithParams<T>(connection, primaryKeyValue);
+            var deleteQuery = GenerateDeleteQuery<T>(connection, primaryKeyValue);
 
-            return connection.Execute(queryWithParameters.SqlQuery, queryWithParameters.DynamicParameters, transaction, commandTimeout) > 0;
-        }
-
-        private static QueryWithParametersComponent BuildDeleteByPkQueryWithParams<T>(IDbConnection connection, object primaryKeyValue) where T : class
-        {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            var key = tinfo.GetSingleKey("Delete");
-            var dynParms = new DynamicParameters();
-            dynParms.Add(key.PropertyName, primaryKeyValue);
-            var qWhere = $" where {adapter.EscapeWhereList(tinfo.KeyColumns)}";
-
-            return new QueryWithParametersComponent(dynParms, adapter.DeleteQuery(tinfo, qWhere));
+            return connection.Execute(deleteQuery.SqlStatement, deleteQuery.Parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -105,16 +62,7 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(whereClause));
             }
 
-            return connection.Execute(BuildBasicDeleteQueryFromSql<T>(connection, whereClause), null, transaction, commandTimeout) > 0;
-        }
-
-        private static string BuildBasicDeleteQueryFromSql<T>(IDbConnection connection, string sql)
-        {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return adapter.DeleteQuery(tinfo, sql);
+            return connection.Execute(GenerateDeleteQuery<T>(connection, whereClause), null, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -134,7 +82,7 @@ namespace Dapper.Database.Extensions
                 throw new ArgumentNullException(nameof(whereClause));
             }
 
-            return connection.Execute(BuildBasicDeleteQueryFromSql<T>(connection, whereClause), parameters, transaction, commandTimeout) > 0;
+            return connection.Execute(GenerateDeleteQuery<T>(connection, whereClause), parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -146,7 +94,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool DeleteAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.Execute(BuildBasicDeleteQueryFromSql<T>(connection, null), null, transaction, commandTimeout) > 0;
+            return connection.Execute(GenerateDeleteQuery<T>(connection, (string) null), null, transaction, commandTimeout) > 0;
         }
 
         #endregion
