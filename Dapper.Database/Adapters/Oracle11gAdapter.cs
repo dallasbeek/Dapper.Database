@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Dapper.Database.Extensions;
 
 namespace Dapper.Database.Adapters
 {
     /// <summary>
     /// Oracle database adapter for Oracle 11g.
     /// </summary>
+    /// <seealso cref="OracleAdapter">For Oracle 12.1 and later.</seealso>
     public partial class Oracle11gAdapter : OracleAdapter
     {
         /// <summary>
@@ -29,9 +28,34 @@ namespace Dapper.Database.Adapters
         /// There should be no risk of a race condition as the row should be locked for the duration of the execution.
         /// </para>
         /// </remarks>
-        protected override string InsertReturningQuery(TableInfo tableInfo)
+        protected override string BuildInsertQuery(TableInfo tableInfo)
         {
-            return $"begin {base.InsertReturningQuery(tableInfo)}; end;";
+            // If we don't have any outputs, we don't need to do anything different from 12c.
+            if (!tableInfo.GeneratedColumns.Any())
+            {
+                return base.BuildInsertQuery(tableInfo);
+            }
+
+            // BEGIN
+            //  insert...returning...;
+            //  :ROW_COUNT$$ := sql%rowcount;
+            // END;
+            return $"begin {base.BuildInsertQuery(tableInfo)}; :{RowCountParamName} := sql%rowcount; end;";
+        }
+
+        /// <inheritdoc />
+        protected override DynamicParameters BuildInsertParameters<T>(TableInfo tableInfo, T entityToInsert)
+        {
+            var parameters = base.BuildInsertParameters(tableInfo, entityToInsert);
+
+            if (tableInfo.GeneratedColumns.Any())
+            {
+                // Because PL/SQL blocks do not return a row count when executed, we have to get the row count from PL/SQL.
+                // This is done via the builtin SQL%rowcount variable.
+                parameters.Add(RowCountParamName, null, DbType.Int32, ParameterDirection.Output);
+            }
+
+            return parameters;
         }
 
         /// <summary>
@@ -51,18 +75,44 @@ namespace Dapper.Database.Adapters
         /// There should be no risk of a race condition as the row should be locked for the duration of the execution.
         /// </para>
         /// </remarks>
-        protected override string UpdateReturningQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+        protected override string BuildUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
         {
-            // BEGIN update...; select...; END;
+            // If we don't have any outputs, we don't need to do anything different from 12c.
+            if (!tableInfo.GeneratedColumns.Any())
+            {
+                return base.BuildUpdateQuery(tableInfo, columnsToUpdate);
+            }
+
+            // BEGIN
+            //  update...;
+            //  select...;
+            //  :ROW_COUNT$$ := sql%rowcount;
+            // END;
             return new StringBuilder()
                 .Append("begin ")
-                .Append(UpdateQuery(tableInfo, columnsToUpdate))
+                .Append(BuildBaseUpdateQuery(tableInfo, columnsToUpdate))
                 .Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} ")
                 .Append($"into {EscapeReturnParameters(tableInfo.GeneratedColumns)} ")
                 .Append($"from {EscapeTableName(tableInfo)} ")
-                .Append($"where {EscapeWhereList(tableInfo.KeyColumns)};")
+                .Append($"where {EscapeWhereList(tableInfo.KeyColumns)}; ")
+                .Append($":{RowCountParamName} := SQL%rowcount; ")
                 .Append("end;")
                 .ToString();
+        }
+
+        /// <inheritdoc />
+        protected override DynamicParameters BuildUpdateParameters<T>(TableInfo tableInfo, T entityToUpdate)
+        {
+            var parameters = base.BuildUpdateParameters(tableInfo, entityToUpdate);
+
+            if (tableInfo.GeneratedColumns.Any())
+            {
+                // Because PL/SQL blocks do not return a row count when executed, we have to get the row count from PL/SQL.
+                // This is done via the builtin SQL%rowcount variable.
+                parameters.Add(RowCountParamName, null, DbType.Int32, ParameterDirection.Output);
+            }
+
+            return parameters;
         }
 
         /// <summary>
