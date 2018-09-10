@@ -2,6 +2,8 @@
 using System.Data.SqlClient;
 using System.IO;
 using Dapper.Database;
+using Dapper.Database.Adapters;
+using Dapper.Database.Extensions;
 using Xunit;
 
 
@@ -43,6 +45,17 @@ namespace Dapper.Tests.Database
                 using (var connection = new SqlConnection(ConnectionString))
                 {
                     connection.Open();
+
+                    // For paginated queries prior to 2012 sql server uses row_number over
+                    var sqlVersion = connection.ServerVersion;
+                    if (!string.IsNullOrEmpty(sqlVersion) && sqlVersion.Length > 2)
+                    {
+                        var mv = int.Parse(sqlVersion.Substring(0, 2));
+                        if (mv < 11)
+                        {
+                            SqlMapperExtensions.AddSqlAdapter<SqlConnection>(new SqlServerPre2012Adapter());
+                        }
+                    }
 
                     var awfile = File.ReadAllText(".\\Scripts\\sqlserverawlite.sql");
                     connection.Execute(awfile);
