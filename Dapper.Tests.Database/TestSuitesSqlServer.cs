@@ -19,7 +19,7 @@ namespace Dapper.Tests.Database
 
         protected override void CheckSkip()
         {
-            if (_skip) throw new SkipTestException("Skipping Sql Server Tests - no server.");
+            Skip.If(_skip, "Skipping Sql Server Tests - no server.");
         }
 
         public override ISqlDatabase GetSqlDatabase()

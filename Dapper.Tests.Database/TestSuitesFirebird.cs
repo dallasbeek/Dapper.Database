@@ -15,7 +15,7 @@ namespace Dapper.Tests.Database
 
         protected override void CheckSkip()
         {
-            if (_skip) throw new SkipTestException("Skipping Firebird Tests - no server.");
+            Skip.If(_skip, "Skipping Firebird Tests - no server.");
         }
 
         public override ISqlDatabase GetSqlDatabase()

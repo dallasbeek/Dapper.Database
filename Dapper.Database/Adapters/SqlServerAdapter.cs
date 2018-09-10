@@ -205,32 +205,23 @@ namespace Dapper.Database.Adapters
         /// <param name="page">the page to request</param>
         /// <param name="pageSize">the size of the page to request</param>
         /// <param name="sql">a sql statement or partial statement</param>
+        /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated sql statement</returns>
-        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
-            var pageTake = pageSkip + pageSize;
-            var sqlOrderBy = "order by (select null)";
-            var sqlOrderByRemoved = q.Sql;
-
-            if (string.IsNullOrEmpty(q.OrderByClause))
+            var sqlOrderBy = string.Empty;
+            
+            if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
             {
-                if (tableInfo.KeyColumns.Any())
-                {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
-                }
-            }
-            else
-            {
-                sqlOrderBy = q.OrderByClause;
-                sqlOrderByRemoved = sqlOrderByRemoved.Replace(q.OrderByClause, "");
+                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            var columnsOnly = $"page_inner.* FROM ({sqlOrderByRemoved}) page_inner";
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
-            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {pageSkip} and page_rn <= {pageTake}";
-
+            return $"{q.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
         }
 
         /// <summary>

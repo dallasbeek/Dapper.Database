@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
+using FactAttribute = Xunit.SkippableFactAttribute;
 
 
 namespace Dapper.Tests.Database
@@ -14,11 +14,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetMultipleAsync")]
         public async Task GetMultipleAsync()
         {
-            if (GetProvider() != Provider.SqlServer)
-            {
-                CheckSkip();
-                return;
-            }
+            Skip.IfNot(GetProvider() == Provider.SqlServer, $"{GetProvider()} does not support GetMultiple.");
 
             using (var db = GetSqlDatabase())
             {
@@ -41,11 +37,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetMultipleAsync")]
         public async Task GetMultipleAsyncWithParameter()
         {
-            if (GetProvider() != Provider.SqlServer)
-            {
-                CheckSkip();
-                return;
-            }
+            Skip.IfNot(GetProvider() == Provider.SqlServer, $"{GetProvider()} does not support GetMultiple.");
 
             using (var db = GetSqlDatabase())
             {

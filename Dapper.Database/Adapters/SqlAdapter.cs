@@ -10,7 +10,7 @@ namespace Dapper.Database.Adapters
     /// <summary>
     /// Base class for SqlAdapter handlers - provides default/common handling for different database engines
     /// </summary>
-    public abstract partial class SqlAdapter
+    public abstract partial class SqlAdapter : ISqlAdapter
     {
         /// <summary>
         /// Cache for Get Queries
@@ -61,15 +61,25 @@ namespace Dapper.Database.Adapters
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <returns>An insert sql statement</returns>
+        /// <remarks>
+        /// Statements are cached by type handle.
+        /// </remarks>
         public virtual string InsertQuery(TableInfo tableInfo)
         {
             return InsertQueries.Acquire(
                 tableInfo.ClassType.TypeHandle,
                 () => true,
-                () => $"insert into {EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) "
+                () => BuildInsertQuery(tableInfo)
             );
         }
 
+        /// <summary>
+        /// Default implementation of an insert query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An insert sql statement</returns>
+        protected virtual string BuildInsertQuery(TableInfo tableInfo) 
+            => $"insert into {EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) ";
 
         /// <summary>
         /// Default implementation of an update query
@@ -77,18 +87,27 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="columnsToUpdate">columns to be updated</param>
         /// <returns>An update sql statement</returns>
+        /// <remarks>
+        /// Statements are cached by type handle.
+        /// </remarks>
         public virtual string UpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
         {
             return UpdateQueries.Acquire(
                 tableInfo.ClassType.TypeHandle,
                 () => columnsToUpdate == null || !columnsToUpdate.Any(),
-                () =>
-                {
-                    var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
-                    return $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}";
-                }
-            );
+                () => BuildUpdateQuery(tableInfo, columnsToUpdate));
+        }
 
+        /// <summary>
+        /// Default implementation of an update query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="columnsToUpdate">columns to be updated</param>
+        /// <returns>An update sql statement</returns>
+        protected virtual string BuildUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+        {
+            var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
+            return $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}";
         }
 
         /// <summary>
@@ -246,6 +265,7 @@ namespace Dapper.Database.Adapters
             return q.Sql;
         }
 
+
         /// <summary>
         /// Default implementation of a a paged sql statement
         /// </summary>
@@ -253,8 +273,12 @@ namespace Dapper.Database.Adapters
         /// <param name="page">the page to request</param>
         /// <param name="pageSize">the size of the page to request</param>
         /// <param name="sql">a sql statement or partial statement</param>
+        /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated sql statement</returns>
-        public virtual string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+        /// <remarks>
+        /// Base implementation does not modify <paramref name="parameters"/>.
+        /// </remarks>
+        public virtual string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
@@ -266,8 +290,20 @@ namespace Dapper.Database.Adapters
                 sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            return $"{q.Sql} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
+
+            return $"{q.Sql} {sqlOrderBy} limit {EscapeParameter(PageSizeParamName)} offset {EscapeParameter(PageSkipParamName)}";
         }
+
+        /// <summary>
+        /// Parameter name for page size in <see cref="GetPageListQuery"/>.
+        /// </summary>
+        protected virtual string PageSizeParamName { get; } = "__PageSize";
+        /// <summary>
+        /// Parameter name for page skip in <see cref="GetPageListQuery"/>.
+        /// </summary>
+        protected virtual string PageSkipParamName { get; } = "__PageSkip";
 
         /// <summary>
         /// Returns the format for table name

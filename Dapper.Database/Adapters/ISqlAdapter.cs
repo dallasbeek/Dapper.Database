@@ -99,8 +99,12 @@ namespace Dapper.Database.Adapters
         /// <param name="page">the page requested</param>
         /// <param name="pageSize">number of records to return</param>
         /// <param name="sql">a sql statement or partial statement</param>
+        /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated get sql statement</returns>
-        string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql);
+        /// <remarks>
+        /// If supported, the parameters will be added to <paramref name="parameters"/>.
+        /// </remarks>
+        string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters);
 
         /// <summary>
         /// Inserts an entity into table "Ts"

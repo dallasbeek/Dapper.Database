@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Xunit;
 
-using FactAttribute = Dapper.Tests.Database.SkippableFactAttribute;
+using FactAttribute = Xunit.SkippableFactAttribute;
 
 
 namespace Dapper.Tests.Database
@@ -13,11 +13,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetMultiple")]
         public void GetMultiple()
         {
-            if (GetProvider() != Provider.SqlServer)
-            {
-                CheckSkip();
-                return;
-            }
+            Skip.IfNot(GetProvider() == Provider.SqlServer, $"{GetProvider()} does not support GetMultiple.");
 
             using (var db = GetSqlDatabase())
             {
@@ -40,11 +36,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetMultiple")]
         public void GetMultipleWithParameter()
         {
-            if (GetProvider() != Provider.SqlServer)
-            {
-                CheckSkip();
-                return;
-            }
+            Skip.IfNot(GetProvider() == Provider.SqlServer, $"{GetProvider()} does not support GetMultiple.");
 
             using (var db = GetSqlDatabase())
             {

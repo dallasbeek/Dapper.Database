@@ -2,201 +2,126 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper.Database.Extensions;
 
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    /// The Oracle database adapter.
+    /// The Oracle database adapter for modern Oracle databases.
     /// </summary>
-    public partial class OracleAdapter : SqlAdapter, ISqlAdapter
+    /// <remarks>
+    /// Supports 12.1 and later.
+    /// </remarks>
+    /// <seealso cref="Oracle11gAdapter"/>
+    public partial class OracleAdapter : SqlAdapter
     {
+        /// <summary>
+        /// The variable name used for row count.
+        /// </summary>
+        /// <seealso cref="ResolveRowCount"/>
+        protected const string RowCountParamName = "ROW_COUNT$$";
 
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        /// Resolves row count depending on whether the statement return count is from PL/SQL or not.
         /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToInsert">Entity to insert</param>
-        /// <returns>true if the entity was inserted</returns>
-        public override bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
+        /// <param name="count">The statement return count (can be -1, 0, or a positive number).</param>
+        /// <param name="parameters">The parameters used in the statement.</param>
+        /// <returns>The actual count (zero or more).</returns>
+        /// <remarks>
+        /// PL/SQL blocks will automatically return -1 for rows affected.
+        /// The only way to get an accurate count is to bind an additional variable in PL/SQL and capture the builtin variable <c>SQL%rowcount</c>;
+        /// this is the name of the bind variable containing the value.
+        /// </remarks> 
+        protected int ResolveRowCount(int count, DynamicParameters parameters)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
+            // Nonnegative => not PL/SQL.
+            if (count >= 0)
+                return count;
 
+            // Negative => PL/SQL.
+            return parameters.Get<int>(RowCountParamName);
+        }
+
+
+        /// <inheritdoc cref="SqlAdapter.BuildInsertQuery" />
+        protected string BuildBaseInsertQuery(TableInfo tableInfo) => base.BuildInsertQuery(tableInfo);
+
+        /// <summary>
+        /// Oracle implementation of an insert query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An insert sql statement</returns>
+        protected override string BuildInsertQuery(TableInfo tableInfo)
+        {
+            var sql = BuildBaseInsertQuery(tableInfo);
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
-                var parameters = new DynamicParameters(entityToInsert);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToInsert, column);
-                }
-
-                var count = connection.Execute(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
-            }
-            else
-            {
-                return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+                sql = $"{sql} returning {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
             }
 
+            return sql;
         }
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        /// Converts the specified entity to parameters for an INSERT statement.
         /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <typeparam name="T">the type of entity to bind</typeparam>
         /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        /// <param name="entityToInsert">the entity to be inserted</param>
+        /// <returns></returns>
+        protected virtual DynamicParameters BuildInsertParameters<T>(TableInfo tableInfo, T entityToInsert)
         {
-            var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+            // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
+            // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
+            // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
+            var parameters = new DynamicParameters(entityToInsert);
+            foreach (var column in tableInfo.GeneratedColumns)
+            {
+                parameters.Output(entityToInsert, column);
+            }
 
+            return parameters;
+        }
+
+        /// <inheritdoc cref="SqlAdapter.BuildUpdateQuery" />
+        protected string BuildBaseUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate) => base.BuildUpdateQuery(tableInfo, columnsToUpdate);
+
+        /// <summary>
+        /// Oracle implementation of an update query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="columnsToUpdate">columns to be updated</param>
+        /// <returns>An update sql statement</returns>
+        protected override string BuildUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+        {
+            var sql = BuildBaseUpdateQuery(tableInfo, columnsToUpdate);
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
-                var parameters = new DynamicParameters(entityToUpdate);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToUpdate, column);
-                }
-                var count = connection.Execute(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
+                sql = $"{sql} returning {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
             }
-            else
-            {
-                return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
-            }
+
+            return sql;
         }
 
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        /// Converts the specified entity to parameters for an UPDATE statement.
         /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <typeparam name="T">the type of entity to bind</typeparam>
         /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToInsert">Entity to insert</param>
-        /// <returns>true if the entity was inserted</returns>
-        public override async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
+        /// <param name="entityToUpdate">the entity to be updated</param>
+        /// <returns></returns>
+        protected virtual DynamicParameters BuildUpdateParameters<T>(TableInfo tableInfo, T entityToUpdate)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
-
-            if (tableInfo.GeneratedColumns.Any())
+            // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
+            // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
+            // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
+            var parameters = new DynamicParameters(entityToUpdate);
+            foreach (var column in tableInfo.GeneratedColumns)
             {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
-                var parameters = new DynamicParameters(entityToInsert);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToInsert, column);
-                }
-                var count = await connection.ExecuteAsync(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToInsert, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
-            }
-            else
-            {
-                return await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+                parameters.Output(entityToUpdate, column);
             }
 
-        }
-
-        /// <summary>
-        /// updates an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
-        {
-            var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
-
-            if (tableInfo.GeneratedColumns.Any())
-            {
-                cmd.Append($" RETURNING {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}");
-
-                // Oracle does not return RETURNING values in a result set; rather, it returns them as InputOutput parameters.
-                // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
-                // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output().
-                var parameters = new DynamicParameters(entityToUpdate);
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    parameters.Output(entityToUpdate, column);
-                }
-                var count = await connection.ExecuteAsync(cmd.ToString(), parameters, transaction, commandTimeout: commandTimeout);
-
-                if (count == 0) return false;
-
-                foreach (var column in tableInfo.GeneratedColumns)
-                {
-                    var property = column.Property;
-                    var paramName = parameters.ParameterNames.Single(p => column.PropertyName.Equals(p, StringComparison.OrdinalIgnoreCase));
-
-                    property.SetValue(entityToUpdate, Convert.ChangeType(parameters.Get<object>(paramName), property.PropertyType), null);
-                }
-
-                return true;
-            }
-            else
-            {
-                return await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
-            }
+            return parameters;
         }
 
         /// <summary>
@@ -209,7 +134,7 @@ namespace Dapper.Database.Adapters
         {
             var q = new SqlParser(sql ?? "");
 
-            if (q.Sql.StartsWith(";"))
+            if (q.Sql.StartsWith(";", StringComparison.Ordinal))
                 return q.Sql.Substring(1);
 
             if (!q.IsSelect)
@@ -226,40 +151,34 @@ namespace Dapper.Database.Adapters
 
         }
 
-        /// <summary>
-        /// Constructs a paged sql statement
-        /// </summary>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="page">the page to request</param>
-        /// <param name="pageSize">the size of the page to request</param>
-        /// <param name="sql">a sql statement or partial statement</param>
-        /// <returns>A paginated sql statement</returns>
-        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql)
+        /// <inheritdoc />
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
-            var pageTake = pageSkip + pageSize;
-            var sqlOrderBy = "order by (select null)";
-            var sqlOrderByRemoved = q.Sql;
+            var sqlOrderBy = string.Empty;
 
-            if (string.IsNullOrEmpty(q.OrderByClause))
+            if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
             {
-                if (tableInfo.KeyColumns.Any())
-                {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
-                }
-            }
-            else
-            {
-                sqlOrderBy = q.OrderByClause;
-                sqlOrderByRemoved = sqlOrderByRemoved.Replace(q.OrderByClause, "");
+                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            var columnsOnly = $"page_inner.* FROM ({sqlOrderByRemoved}) page_inner";
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
-            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {pageSkip} and page_rn <= {pageTake}";
-
+            return $"{q.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
         }
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Oracle does not like bind variables starting with underscores, so we have to use different ones.
+        /// </remarks>
+        protected override string PageSizeParamName => "PAGE_SIZE$$";
+        /// <inheritdoc />
+        /// <remarks>
+        /// Oracle does not like bind variables starting with underscores, so we have to use different ones.
+        /// </remarks>
+        protected override string PageSkipParamName => "PAGE_SKIP$$";
 
         /// <summary>
         /// Returns the format for parameters
