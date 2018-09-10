@@ -7,6 +7,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using Dapper.Database;
+using Dapper.Database.Adapters;
+using Dapper.Database.Extensions;
 using Oracle.ManagedDataAccess.Client;
 using Xunit;
 
@@ -50,6 +52,14 @@ namespace Dapper.Tests.Database
                 using (var connection = new OracleConnection(ConnectionString))
                 {
                     connection.Open();
+
+                    if (connection.ServerVersion != null && connection.ServerVersion.StartsWith("11.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // We have to override the Oracle adapter with the 11g adapter because:
+                        //  - The managed Oracle drivers (which are 12.1 and later) have some bugs when run against 11.2, which the 11g adapter works around
+                        //  - Oracle's "free" edition (XE) never had a 12.x release (latest is still 11.2)
+                        SqlMapperExtensions.AddSqlAdapter<OracleConnection>(new Oracle11gAdapter());
+                    }
 
                     var awfile = File.ReadAllText(".\\Scripts\\oracleawlite.sql");
 
