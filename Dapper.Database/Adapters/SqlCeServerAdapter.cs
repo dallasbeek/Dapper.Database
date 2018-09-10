@@ -133,7 +133,10 @@ namespace Dapper.Database.Adapters
                 sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            return $"{q.Sql} {sqlOrderBy} offset {pageSkip} rows fetch next {pageSize} rows only";
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
+
+            return $"{q.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
         }
 
         /// <summary>

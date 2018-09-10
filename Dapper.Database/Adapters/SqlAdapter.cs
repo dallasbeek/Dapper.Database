@@ -265,6 +265,7 @@ namespace Dapper.Database.Adapters
             return q.Sql;
         }
 
+
         /// <summary>
         /// Default implementation of a a paged sql statement
         /// </summary>
@@ -289,8 +290,20 @@ namespace Dapper.Database.Adapters
                 sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            return $"{q.Sql} {sqlOrderBy} limit {pageSize} offset {pageSkip}";
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
+
+            return $"{q.Sql} {sqlOrderBy} limit {EscapeParameter(PageSizeParamName)} offset {EscapeParameter(PageSkipParamName)}";
         }
+
+        /// <summary>
+        /// Parameter name for page size in <see cref="GetPageListQuery"/>.
+        /// </summary>
+        protected virtual string PageSizeParamName { get; } = "__PageSize";
+        /// <summary>
+        /// Parameter name for page skip in <see cref="GetPageListQuery"/>.
+        /// </summary>
+        protected virtual string PageSkipParamName { get; } = "__PageSkip";
 
         /// <summary>
         /// Returns the format for table name

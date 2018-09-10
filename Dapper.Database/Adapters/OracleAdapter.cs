@@ -163,15 +163,22 @@ namespace Dapper.Database.Adapters
                 sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            // Oracle supports binding the offset and page size.
-            // Use variable names that are unlikely to be used as parameters, and that are safe to use with ODP.NET and Dapper.
-            // NOTE: this explicitly won't work with Oracle.ManagedDataAccess 12.1.x, only 12.2 and later.
-            // It works with all versions of Oracle.ManagedDataAccess.Core, however...
-            parameters.Add("PAGE_SKIP$$", pageSkip, DbType.Int64);
-            parameters.Add("PAGE_SIZE$$", pageSize, DbType.Int64);
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
-            return $"{q.Sql} {sqlOrderBy} offset :PAGE_SKIP$$ rows fetch next :PAGE_SIZE$$ rows only";
+            return $"{q.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
         }
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Oracle does not like bind variables starting with underscores, so we have to use different ones.
+        /// </remarks>
+        protected override string PageSizeParamName => "PAGE_SIZE$$";
+        /// <inheritdoc />
+        /// <remarks>
+        /// Oracle does not like bind variables starting with underscores, so we have to use different ones.
+        /// </remarks>
+        protected override string PageSkipParamName => "PAGE_SKIP$$";
 
         /// <summary>
         /// Returns the format for parameters

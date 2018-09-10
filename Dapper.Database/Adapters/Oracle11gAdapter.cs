@@ -131,7 +131,6 @@ namespace Dapper.Database.Adapters
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
-            var pageTake = pageSkip + pageSize;
             var sqlOrderBy = string.Empty;
             var sqlOrderByRemoved = q.Sql;
 
@@ -148,16 +147,12 @@ namespace Dapper.Database.Adapters
                 sqlOrderByRemoved = sqlOrderByRemoved.Replace(q.OrderByClause, "");
             }
 
-            // Oracle supports binding the offset and page size.
-            // Use variable names that are unlikely to be used as parameters, and that are safe to use with ODP.NET and Dapper.
-            // NOTE: this explicitly won't work with Oracle.ManagedDataAccess 12.1.x, only 12.2 and later.
-            // It works with all versions of Oracle.ManagedDataAccess.Core, however...
-            parameters.Add("PAGE_SKIP$$", pageSkip, DbType.Int64);
-            parameters.Add("PAGE_TAKE$$", pageTake, DbType.Int64);
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
             var columnsOnly = $"page_inner.* FROM ({sqlOrderByRemoved}) page_inner";
 
-            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > :PAGE_SKIP$$ and page_rn <= :PAGE_TAKE$$";
+            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {EscapeParameter(PageSkipParamName)} and page_rn <= {EscapeParameter(PageSkipParamName)} + {EscapeParameter(PageSizeParamName)}";
         }
     }
 }
