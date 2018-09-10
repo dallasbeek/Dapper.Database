@@ -32,23 +32,14 @@ namespace Dapper.Database
         #endregion
 
         #region Execute Methods
-        /// <summary>
-        /// Execute a query
-        /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <returns>Return Total Count of matching records</returns>
-        public T ExecuteScaler<T>(string sql)
+        /// <inheritdoc />
+        public T ExecuteScalar<T>(string sql)
         {
             return ExecuteInternal(() => _sharedConnection.ExecuteScalar<T>(sql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
-        /// <summary>
-        /// Execute a query
-        /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the clause</param>
-        /// <returns>Return Total Count of matching records</returns>
-        public T ExecuteScaler<T>(string sql, object parameters)
+        /// <inheritdoc />
+        public T ExecuteScalar<T>(string sql, object parameters)
         {
             return ExecuteInternal(() => _sharedConnection.ExecuteScalar<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }

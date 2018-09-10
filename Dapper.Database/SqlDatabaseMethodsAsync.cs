@@ -32,23 +32,14 @@ namespace Dapper.Database
         #endregion
 
         #region Execute Methods
-        /// <summary>
-        /// Execute a query
-        /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <returns>Return Total CountAsync of matching records</returns>
-        public async Task<T> ExecuteScalerAsync<T>(string sql)
+        /// <inheritdoc />
+        public async Task<T> ExecuteScalarAsync<T>(string sql)
         {
             return await ExecuteInternalAsync(() => _sharedConnection.ExecuteScalarAsync<T>(sql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
-        /// <summary>
-        /// Execute a query
-        /// </summary>
-        /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the clause</param>
-        /// <returns>Return Total CountAsync of matching records</returns>
-        public async Task<T> ExecuteScalerAsync<T>(string sql, object parameters)
+        /// <inheritdoc />
+        public async Task<T> ExecuteScalarAsync<T>(string sql, object parameters)
         {
             return await ExecuteInternalAsync(() => _sharedConnection.ExecuteScalarAsync<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
