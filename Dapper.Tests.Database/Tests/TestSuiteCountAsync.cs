@@ -9,6 +9,36 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
         [Fact]
+        [Trait("Category", "aaCount")]
+        public async Task CountNonGenericAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.Equal(89, await db.CountAsync("select * from Product where Color = 'Black'"));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "aaCount")]
+        public async Task CountNonGenericParameterAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.Equal(89, await db.CountAsync($"select * from Product where Color = {P}Color", new { Color = "Black" }));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "aaCount")]
+        public async Task CountNonGenericWithOrderClauseAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.Equal(89, await db.CountAsync("select * from Product where Color = 'Black' order by Color"));
+            }
+        }
+
+        [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountAllAsync()
         {

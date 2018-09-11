@@ -111,7 +111,7 @@ namespace Dapper.Database
         /// <returns>Return Total CountAsync of matching records</returns>
         public async Task<int> CountAsync(string sql)
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.ExecuteScalarAsync<int>(sql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.CountAsync(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Dapper.Database
         /// <returns>Return Total CountAsync of matching records</returns>
         public async Task<int> CountAsync(string sql, object parameters)
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.ExecuteScalarAsync<int>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.CountAsync(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
