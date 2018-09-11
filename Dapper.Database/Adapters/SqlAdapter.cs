@@ -78,7 +78,7 @@ namespace Dapper.Database.Adapters
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <returns>An insert sql statement</returns>
-        protected virtual string BuildInsertQuery(TableInfo tableInfo) 
+        protected virtual string BuildInsertQuery(TableInfo tableInfo)
             => $"insert into {EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) values ({EscapeParameters(tableInfo.InsertColumns)}) ";
 
         /// <summary>

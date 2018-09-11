@@ -146,7 +146,7 @@ namespace Dapper.Tests.Database.OracleClient
                 if (_parameters == null)
                     _parameters = new OracleParameterCollection(RealCommand.Parameters);
 
-                return _parameters; 
+                return _parameters;
             }
         }
 

@@ -94,7 +94,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static bool DeleteAll<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.Execute(GenerateDeleteQuery<T>(connection, (string) null), null, transaction, commandTimeout) > 0;
+            return connection.Execute(GenerateDeleteQuery<T>(connection, (string)null), null, transaction, commandTimeout) > 0;
         }
 
         #endregion

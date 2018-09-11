@@ -48,7 +48,7 @@ namespace Dapper.Tests.Database
         [Column("LastName")]
         public string Last { get; set; }
     }
-    
+
     [Table("Person")]
     public class PersonCompositeKeyWithAliases
     {

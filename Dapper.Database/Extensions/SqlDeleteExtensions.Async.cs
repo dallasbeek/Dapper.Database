@@ -94,7 +94,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<bool> DeleteAllAsync<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return await connection.ExecuteAsync(GenerateDeleteQuery<T>(connection, (string) null), null, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(GenerateDeleteQuery<T>(connection, (string)null), null, transaction, commandTimeout) > 0;
         }
         #endregion
     }
