@@ -221,7 +221,12 @@ namespace Dapper.Database.Adapters
                 sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
-            return $"select first {pageSize} skip {pageSkip} * from ({q.Sql}) page_inner {sqlOrderBy}";
+
+            parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
+            parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
+
+            return $"select first {EscapeParameter(PageSizeParamName)} skip {EscapeParameter(PageSkipParamName)} * from ({q.Sql}) page_inner {sqlOrderBy}";
+
         }
 
         /// <summary>
