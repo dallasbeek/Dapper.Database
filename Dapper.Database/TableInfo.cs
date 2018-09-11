@@ -170,7 +170,7 @@ namespace Dapper.Database
         /// <returns></returns>
         public IEnumerable<ColumnInfo> GetCompositeKeys(string method)
         {
-            return ColumnInfos.Where(p => p.IsKey).ToArray();
+            return _keyColumns.Value;
         }
 
         /// <summary>
