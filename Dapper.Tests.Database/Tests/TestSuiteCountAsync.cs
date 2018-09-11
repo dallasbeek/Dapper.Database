@@ -9,7 +9,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
         [Fact]
-        [Trait("Category", "aaCount")]
+        [Trait("Category", "Count")]
         public async Task CountNonGenericAsync()
         {
             using (var db = GetSqlDatabase())
@@ -19,7 +19,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaCount")]
+        [Trait("Category", "Count")]
         public async Task CountNonGenericParameterAsync()
         {
             using (var db = GetSqlDatabase())
@@ -29,7 +29,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaCount")]
+        [Trait("Category", "Count")]
         public async Task CountNonGenericWithOrderClauseAsync()
         {
             using (var db = GetSqlDatabase())
