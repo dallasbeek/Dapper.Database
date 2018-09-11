@@ -141,7 +141,7 @@ namespace Dapper.Database.Adapters
                 }
             }
 
-            return $"select count(*) from ({q.Sql}) calc_inner";
+            return $"select count(*) from ({q.Sql}) count_innner";
         }
 
         /// <summary>

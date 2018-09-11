@@ -7,6 +7,37 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
+
+        [Fact]
+        [Trait("Category", "Count")]
+        public void CountNonGeneric()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.Equal(89, db.Count("select * from Product where Color = 'Black'"));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Count")]
+        public void CountNonGenericParameter()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.Equal(89, db.Count($"select * from Product where Color = {P}Color", new { Color = "Black" }));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Count")]
+        public void CountNonGenericWithOrderClause()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.Equal(89, db.Count("select * from Product where Color = 'Black' order by Color"));
+            }
+        }
+
         [Fact]
         [Trait("Category", "Count")]
         public void CountAll()

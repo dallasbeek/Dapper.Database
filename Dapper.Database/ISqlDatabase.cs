@@ -94,7 +94,7 @@ namespace Dapper.Database
         /// Count of entities
         /// </summary>
         /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to count</param>
         /// <returns>Return Total Count of matching records</returns>
         int Count(string sql, object parameters);
 
@@ -109,7 +109,7 @@ namespace Dapper.Database
         /// Count of entities
         /// </summary>
         /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to count</param>
         /// <returns>Return Total Count of matching records</returns>
         int Count<T>(string sql, object parameters) where T : class;
 

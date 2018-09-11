@@ -111,18 +111,18 @@ namespace Dapper.Database
         /// <returns>Return Total Count of matching records</returns>
         public int Count(string sql)
         {
-            return ExecuteInternal(() => _sharedConnection.ExecuteScalar<int>(sql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Count(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Count of entities
         /// </summary>
         /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to count</param>
         /// <returns>Return Total Count of matching records</returns>
         public int Count(string sql, object parameters)
         {
-            return ExecuteInternal(() => _sharedConnection.ExecuteScalar<int>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.Count(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Dapper.Database
         /// Count of entities
         /// </summary>
         /// <param name="sql">The sql clause to count</param>
-        /// <param name="parameters">The parameters of the where clause to delete</param>
+        /// <param name="parameters">The parameters of the where clause to count</param>
         /// <returns>Return Total Count of matching records</returns>
         public int Count<T>(string sql, object parameters) where T : class
         {
