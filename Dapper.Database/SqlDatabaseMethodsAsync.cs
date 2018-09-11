@@ -929,18 +929,31 @@ namespace Dapper.Database
 
         #region InsertAsync Methods
         /// <summary>
-        /// InsertAsyncs an entity into table "Ts" and returns identity id or number of inserted rows if inserting a list.
+        /// Inserts an entity into table "Ts".
         /// </summary>
         /// <typeparam name="T">The type to insert.</typeparam>
-        /// <param name="entityToInsertAsync">Entity to insert, can be list of entities</param>
-        /// <returns>the entity to insert or the list of entities</returns>
-        public async Task<bool> InsertAsync<T>(T entityToInsertAsync) where T : class
+        /// <param name="entityToInsert">Entity to insert</param>
+        /// <returns>returns true if entity is inserted</returns>
+        public async Task<bool> InsertAsync<T>(T entityToInsert) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.InsertAsync<T>(entityToInsertAsync, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.InsertAsync<T>(entityToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
 
+        #region InsertListAsync Methods
+        /// <summary>
+        /// Inserts an entity into table "Ts".
+        /// </summary>
+        /// <typeparam name="T">The type to insert.</typeparam>
+        /// <param name="entitiesToInsert">List of Entities</param>
+        /// <returns>returns true if entity is inserted</returns>
+        public async Task<bool> InsertListAsync<T>(IEnumerable<T> entitiesToInsert) where T : class
+        {
+            return await ExecuteInternalAsync(() => _sharedConnection.InsertListAsync<T>(entitiesToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        #endregion
         #region UpdateAsync Queries
         /// <summary>
         /// UpdateAsyncs entity in table "Ts".

@@ -42,6 +42,49 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        public virtual bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
+        {
+            var trans = transaction ?? connection.BeginTransaction();
+            var success = false;
+            try
+            {
+
+                if (!tableInfo.GeneratedColumns.Any())
+                {
+                    success = connection.Execute(InsertQuery(tableInfo), entitiesToInsert, trans, commandTimeout) > 0;
+                }
+                else
+                {
+                    success = true;
+                    foreach (var e in entitiesToInsert)
+                    {
+                        success = success && Insert(connection, trans, commandTimeout, tableInfo, e);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (transaction == null)
+                    trans.Rollback();
+
+                throw;
+            }
+
+            if (transaction == null)
+                trans.Commit();
+
+            return success;
+        }
+
+        /// <summary>
         /// updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
@@ -376,6 +419,49 @@ namespace Dapper.Database.Adapters
         public virtual async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
             return await new Task<bool>(() => false); ;
+        }
+
+        /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        public virtual async Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
+        {
+            var trans = transaction ?? connection.BeginTransaction();
+            var success = false;
+            try
+            {
+
+                if (!tableInfo.GeneratedColumns.Any())
+                {
+                    success = await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, trans, commandTimeout) > 0;
+                }
+                else
+                {
+                    success = true;
+                    foreach (var e in entitiesToInsert)
+                    {
+                        success = success && await InsertAsync(connection, trans, commandTimeout, tableInfo, e);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (transaction == null)
+                    trans.Rollback();
+
+                throw;
+            }
+
+            if (transaction == null)
+                trans.Commit();
+
+            return success;
         }
 
         /// <summary>

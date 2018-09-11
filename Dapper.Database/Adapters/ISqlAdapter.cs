@@ -23,6 +23,17 @@ namespace Dapper.Database.Adapters
         bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert);
 
         /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">Table information</param>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert);
+
+        /// <summary>
         /// updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
@@ -116,6 +127,17 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
         Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert);
+
+        /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">Table information</param>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert);
 
         /// <summary>
         /// updates an entity into table "Ts"

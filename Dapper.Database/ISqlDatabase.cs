@@ -708,9 +708,21 @@ namespace Dapper.Database
         /// Inserts an entity into table "Ts" and returns identity id or number of inserted rows if inserting a list.
         /// </summary>
         /// <typeparam name="T">The type to insert.</typeparam>
-        /// <param name="entityToInsert">Entity to insert, can be list of entities</param>
+        /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>the entity to insert or the list of entities</returns>
         bool Insert<T>(T entityToInsert) where T : class;
+
+        #endregion
+
+        #region InsertList Methods
+
+        /// <summary>
+        /// Inserts an entity into table "Ts" and returns identity id or number of inserted rows if inserting a list.
+        /// </summary>
+        /// <typeparam name="T">The type to insert.</typeparam>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>the entity to insert or the list of entities</returns>
+        bool InsertList<T>(IEnumerable<T> entitiesToInsert) where T : class;
 
         #endregion
 
