@@ -164,6 +164,24 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetPageList")]
+        public void GetPageListWithAliasKeyNoOrderBy()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var lst = db.GetPageList<ProductKeyAlias>(4, 10, $"where Color = {P}Color", new { Color = "Black" });
+                Assert.Equal(10, lst.Count());
+                var p = lst.Single(k => k.Id == 816);
+                Assert.NotNull(p);
+                Assert.Equal(816, p.Id);
+                Assert.Equal("ML Mountain Front Wheel", p.Name);
+                Assert.Equal("FW-M762", p.ProductNumber);
+                Assert.Equal("Black", p.Color);
+            }
+        }
+
+
+        [Fact]
+        [Trait("Category", "GetPageList")]
         public void GetPageListPartialBySelect()
         {
             using (var db = GetSqlDatabase())

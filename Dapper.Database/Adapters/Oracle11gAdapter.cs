@@ -138,7 +138,7 @@ namespace Dapper.Database.Adapters
             {
                 if (tableInfo.KeyColumns.Any())
                 {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
+                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
                 }
             }
             else
