@@ -46,5 +46,42 @@ namespace Dapper.Database.Extensions
         }
 
         #endregion
+
+        #region UpdateListAsync Queries
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public static async Task<bool> UpdateListAsync<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return await connection.UpdateListAsync(entitiesToUpdate, null, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public static async Task<bool> UpdateListAsync<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+            var adapter = GetFormatter(connection);
+            var tinfo = TableInfoCache(type);
+
+            return await adapter.UpdateListAsync(connection, transaction, commandTimeout, tinfo, entitiesToUpdate, columnsToUpdate);
+
+        }
+
+        #endregion
     }
 }

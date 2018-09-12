@@ -46,6 +46,18 @@ namespace Dapper.Database.Adapters
         bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">Table information</param>
+        /// <param name="entititesToUpdate">List of Entities to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entititesToUpdate, IEnumerable<string> columnsToUpdate);
+
+        /// <summary>
         /// constructs an insert query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
@@ -150,6 +162,18 @@ namespace Dapper.Database.Adapters
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
         Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate);
+
+        /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">Table information</param>
+        /// <param name="entititesToUpdate">List of Entities to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entititesToUpdate, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
         /// 

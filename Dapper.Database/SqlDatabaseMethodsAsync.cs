@@ -954,28 +954,55 @@ namespace Dapper.Database
         }
 
         #endregion
+
         #region UpdateAsync Queries
         /// <summary>
         /// UpdateAsyncs entity in table "Ts".
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
-        /// <param name="entityToUpdateAsync">Entity to be updated</param>
+        /// <param name="entityToUpdate">Entity to be updated</param>
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
-        public async Task<bool> UpdateAsync<T>(T entityToUpdateAsync) where T : class
+        public async Task<bool> UpdateAsync<T>(T entityToUpdate) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.UpdateAsync<T>(entityToUpdateAsync, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.UpdateAsync<T>(entityToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// UpdateAsyncs entity in table "Ts".
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
-        /// <param name="entityToUpdateAsync">Entity to be updated</param>
+        /// <param name="entityToUpdate">Entity to be updated</param>
         /// <param name="columnsToUpdateAsync">Columns to be updated</param>
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
-        public async Task<bool> UpdateAsync<T>(T entityToUpdateAsync, IEnumerable<string> columnsToUpdateAsync) where T : class
+        public async Task<bool> UpdateAsync<T>(T entityToUpdate, IEnumerable<string> columnsToUpdateAsync) where T : class
         {
-            return await ExecuteInternalAsync(() => _sharedConnection.UpdateAsync<T>(entityToUpdateAsync, columnsToUpdateAsync, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return await ExecuteInternalAsync(() => _sharedConnection.UpdateAsync<T>(entityToUpdate, columnsToUpdateAsync, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        #endregion
+
+        #region UpdateListAsync Queries
+        /// <summary>
+        /// UpdateAsyncs entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public async Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate) where T : class
+        {
+            return await ExecuteInternalAsync(() => _sharedConnection.UpdateListAsync<T>(entitiesToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// UpdateAsyncs entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="columnsToUpdateAsync">Columns to be updated</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public async Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdateAsync) where T : class
+        {
+            return await ExecuteInternalAsync(() => _sharedConnection.UpdateListAsync<T>(entitiesToUpdate, columnsToUpdateAsync, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion

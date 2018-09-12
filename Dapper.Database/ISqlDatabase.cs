@@ -732,7 +732,7 @@ namespace Dapper.Database
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
         /// <param name="entityToUpdate">Entity to be updated</param>
-        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        /// <returns>true if updated, false if not found or not modified</returns>
         bool Update<T>(T entityToUpdate) where T : class;
 
 
@@ -742,8 +742,29 @@ namespace Dapper.Database
         /// <typeparam name="T">Type to be updated</typeparam>
         /// <param name="entityToUpdate">Entity to be updated</param>
         /// <param name="columnsToUpdate">Columns to be updated</param>
-        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        /// <returns>true if updated, false if not found or not modified</returns>
         bool Update<T>(T entityToUpdate, IEnumerable<string> columnsToUpdate) where T : class;
+
+        #endregion
+
+        #region UpdateList Queries
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <returns>true if updated, false if not found or not modified</returns>
+        bool UpdateList<T>(IEnumerable<T> entitiesToUpdate) where T : class;
+
+
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <returns>true if updated, false if not found or not modified</returns>
+        bool UpdateList<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate) where T : class;
 
         #endregion
 

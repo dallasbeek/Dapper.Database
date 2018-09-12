@@ -741,6 +741,27 @@ namespace Dapper.Database
 
         #endregion
 
+        #region UpdateList Queries
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <returns>true if updated, false if not found or not modified</returns>
+        Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate) where T : class;
+
+
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <returns>true if updated, false if not found or not modified</returns>
+        Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate) where T : class;
+
+        #endregion
+
         #region Upsert Queries
 
         /// <summary>

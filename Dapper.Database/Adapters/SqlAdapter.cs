@@ -52,14 +52,14 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public virtual bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
         {
-            var trans = transaction ?? connection.BeginTransaction();
+            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
             var success = false;
             try
             {
 
                 if (!tableInfo.GeneratedColumns.Any())
                 {
-                    success = connection.Execute(InsertQuery(tableInfo), entitiesToInsert, trans, commandTimeout) > 0;
+                    success = connection.Execute(InsertQuery(tableInfo), entitiesToInsert, trans, commandTimeout) >= entitiesToInsert.Count();
                 }
                 else
                 {
@@ -97,6 +97,41 @@ namespace Dapper.Database.Adapters
         public virtual bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             return false;
+        }
+
+        /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpdate">List Entities to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        public virtual bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
+        {
+            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
+            var success = true;
+            try
+            {
+                foreach (var e in entitiesToUpdate)
+                {
+                    success = success && Update(connection, trans, commandTimeout, tableInfo, e, columnsToUpdate);
+                }
+            }
+            catch (Exception)
+            {
+                if (transaction == null)
+                    trans.Rollback();
+
+                throw;
+            }
+
+            if (transaction == null)
+                trans.Commit();
+
+            return success;
         }
 
         /// <summary>
@@ -408,6 +443,12 @@ namespace Dapper.Database.Adapters
         public virtual string EscapeAssignmentList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
 
         /// <summary>
+        /// Default isolation level for the adapter
+        /// </summary>
+        /// <returns>The default isolation level</returns>
+        public virtual IsolationLevel DefaultIsolationLevel => IsolationLevel.ReadCommitted;
+
+        /// <summary>
         /// Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
@@ -477,6 +518,41 @@ namespace Dapper.Database.Adapters
         public virtual async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             return await new Task<bool>(() => false); ;
+        }
+
+        /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpdate">List Entities to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        public virtual async Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
+        {
+            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
+            var success = true;
+            try
+            {
+                foreach (var e in entitiesToUpdate)
+                {
+                    success = success && await UpdateAsync(connection, trans, commandTimeout, tableInfo, e, columnsToUpdate);
+                }
+            }
+            catch (Exception)
+            {
+                if (transaction == null)
+                    trans.Rollback();
+
+                throw;
+            }
+
+            if (transaction == null)
+                trans.Commit();
+
+            return success;
         }
     }
 

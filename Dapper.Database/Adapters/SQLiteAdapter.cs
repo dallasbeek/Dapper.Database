@@ -195,5 +195,13 @@ namespace Dapper.Database.Adapters
                 return await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
             }
         }
+
+        /// <summary>
+        /// Default isolation level for the adapter
+        /// </summary>
+        /// <returns>The default isolation level</returns>
+        public override IsolationLevel DefaultIsolationLevel => IsolationLevel.Serializable;
+
+
     }
 }
