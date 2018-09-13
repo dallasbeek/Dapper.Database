@@ -1061,6 +1061,60 @@ namespace Dapper.Database
         }
         #endregion
 
+        #region UpsertListAsync Queries
+
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpsert">List of entities to be updated</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public async Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert) where T : class
+        {
+            return await ExecuteInternal(() => _sharedConnection.UpsertListAsync<T>(entitiesToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpsert">List of entities to be updated</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public async Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate) where T : class
+        {
+            return await ExecuteInternal(() => _sharedConnection.UpsertListAsync<T>(entitiesToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpsert">List of entities to be updated</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public async Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction) where T : class
+        {
+            return await ExecuteInternal(() => _sharedConnection.UpsertListAsync<T>(entitiesToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="entitiesToUpsert">List of entities to be updated</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public async Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction) where T : class
+        {
+            return await ExecuteInternal(() => _sharedConnection.UpsertListAsync<T>(entitiesToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+
+        }
+        #endregion
+
         #region Delete Methods
         /// <inheritdoc />
         public async Task<bool> DeleteAsync<T>(T entityToDelete) where T : class

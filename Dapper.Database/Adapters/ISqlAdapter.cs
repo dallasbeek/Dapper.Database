@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using System;
 
 namespace Dapper.Database.Adapters
 {
@@ -56,6 +57,36 @@ namespace Dapper.Database.Adapters
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
         bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entititesToUpdate, IEnumerable<string> columnsToUpdate);
+
+        /// <summary>
+        /// Updates or inserts entity
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        bool Upsert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+
+        /// <summary>
+        /// Updates or inserts entities
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpsert">List of Entities to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
         /// constructs an insert query
@@ -164,7 +195,7 @@ namespace Dapper.Database.Adapters
         Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        /// Updates entity
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -174,6 +205,37 @@ namespace Dapper.Database.Adapters
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
         Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entititesToUpdate, IEnumerable<string> columnsToUpdate);
+
+
+        /// <summary>
+        /// Updates or inserts entity
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        Task<bool> UpsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+
+        /// <summary>
+        /// Updates or inserts entities
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpsert">List of Entities to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
         /// 

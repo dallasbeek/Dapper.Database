@@ -71,18 +71,81 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Upsert<T>(this IDbConnection connection, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            if (!connection.Exists(entityToUpsert, transaction, commandTimeout))
-            {
-                insertAction?.Invoke(entityToUpsert);
-                return connection.Insert(entityToUpsert, transaction, commandTimeout);
-            }
-            else
-            {
-                updateAction?.Invoke(entityToUpsert);
-                return connection.Update(entityToUpsert, columnsToUpdate, transaction, commandTimeout);
-            }
+            var type = typeof(T);
+            var adapter = GetFormatter(connection);
+            var tinfo = TableInfoCache(type);
+
+            return adapter.Upsert(connection, transaction, commandTimeout, tinfo, entityToUpsert, columnsToUpdate, insertAction, updateAction);
         }
         #endregion
 
+        #region UpsertList Queries
+
+        /// <summary>
+        /// Updates or inserts a list of entities in table
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpsert">List of Entities to be updated or inserted</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated or inserted, false if not</returns>
+        public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return connection.UpsertList<T>(entitiesToUpsert, null, null, null, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Updates or inserts a list of entities in table
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpsert">List of Entities to be updated or inserted</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated or inserted, false if not</returns>
+        public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return connection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, null, null, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Updates or inserts a list of entities in table
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpsert">List of Entities to be updated or inserted</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated or inserted, false if not</returns>
+        public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return connection.UpsertList<T>(entitiesToUpsert, null, insertAction, updateAction, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Updates or inserts a list of entities in table
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpsert">List of Entities to be updated or inserted</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated or inserted, false if not</returns>
+        public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+            var adapter = GetFormatter(connection);
+            var tinfo = TableInfoCache(type);
+
+            return adapter.UpsertList(connection, transaction, commandTimeout, tinfo, entitiesToUpsert, columnsToUpdate, insertAction, updateAction);
+        }
+        #endregion
     }
 }
