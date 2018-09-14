@@ -24,6 +24,11 @@ namespace Dapper.Database
         private readonly IsolationLevel _isolationLevel;
 
         /// <summary>
+        /// Globally turns off query caching
+        /// </summary>
+        public static bool CacheQueries = true;
+
+        /// <summary>
         /// Sets the timeout value for all SQL statements.
         /// </summary>
         public int? CommandTimeout

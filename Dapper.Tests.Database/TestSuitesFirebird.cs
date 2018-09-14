@@ -31,7 +31,7 @@ namespace Dapper.Tests.Database
 
         static FirebirdTestSuite()
         {
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());

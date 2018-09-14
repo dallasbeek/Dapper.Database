@@ -19,7 +19,7 @@ namespace Dapper.Database
         public static string Acquire(this ConcurrentDictionary<RuntimeTypeHandle, string> concurrentDict, RuntimeTypeHandle handle, Func<bool> fromcache, Func<string> retrieve)
         {
 
-            if (!fromcache() || Environment.GetEnvironmentVariable("NoCache")?.ToUpperInvariant() == "TRUE")
+            if (!fromcache() || !SqlDatabase.CacheQueries)
             {
                 return retrieve();
             }

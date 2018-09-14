@@ -35,7 +35,7 @@ namespace Dapper.Tests.Database
         static PostgresTestSuite()
         {
 
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());

@@ -32,7 +32,7 @@ namespace Dapper.Tests.Database
         static SqlCETestSuite()
         {
 
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             if (!File.Exists(FileName))

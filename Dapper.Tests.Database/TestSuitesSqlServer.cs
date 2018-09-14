@@ -35,7 +35,7 @@ namespace Dapper.Tests.Database
 
         static SqlServerTestSuite()
         {
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
             ResetDapperTypes();
 
             try
