@@ -11,7 +11,7 @@ namespace Dapper.Tests.Database
     {
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithWhereClause()
+        public async Task GetFirstWithWhereClauseAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -22,7 +22,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithWhereClauseParameter()
+        public async Task GetFirstWithWhereClauseParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithSelectClause()
+        public async Task GetFirstWithSelectClauseAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -44,7 +44,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithSelectClauseParameter()
+        public async Task GetFirstWithSelectClauseParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -55,7 +55,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncShortCircuit()
+        public async Task GetFirstShortCircuitAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -66,7 +66,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncPartialBySelect()
+        public async Task GetFirstPartialBySelectAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -80,7 +80,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncOneJoinUnmapped()
+        public async Task GetFirstOneJoinUnmappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -96,7 +96,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncOneJoinMapped()
+        public async Task GetFirstOneJoinMappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -117,7 +117,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncTwoJoinsUnmapped()
+        public async Task GetFirstTwoJoinsUnmappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -134,7 +134,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncTwoJoinsMapped()
+        public async Task GetFirstTwoJoinsMappedAsync()
         {
             using (var db = GetSqlDatabase())
             {

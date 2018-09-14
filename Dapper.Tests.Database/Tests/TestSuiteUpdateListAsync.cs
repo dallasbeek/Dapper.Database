@@ -21,7 +21,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncNoComputed()
+        public async Task UpdateListNoComputedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -49,7 +49,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncNoComputedPartial()
+        public async Task UpdateListNoComputedPartialAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -79,7 +79,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncNoComputedThrowsException()
+        public async Task UpdateListNoComputedThrowsExceptionAsync()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
 
@@ -108,7 +108,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncIdentity()
+        public async Task UpdateListIdentityAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -135,7 +135,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncIdentityThrowsException()
+        public async Task UpdateListIdentityThrowsExceptionAsync()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
 
@@ -164,7 +164,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncComputed()
+        public async Task UpdateListComputedAsync()
         {
 
             var dnow = DateTime.UtcNow;
@@ -204,7 +204,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncTransactionNoComputed()
+        public async Task UpdateListTransactionNoComputedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -236,7 +236,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncTransactionRollbackNoComputed()
+        public async Task UpdateListTransactionRollbackNoComputedAsync()
         {
             var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
             var q = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Raj", LastName = "Padilla" };
@@ -267,7 +267,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListAsyncTransactionNoComputedThrowsException()
+        public async Task UpdateListTransactionNoComputedThrowsExceptionAsync()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
 

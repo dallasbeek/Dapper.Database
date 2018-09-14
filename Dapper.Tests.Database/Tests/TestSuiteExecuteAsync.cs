@@ -8,7 +8,7 @@ namespace Dapper.Tests.Database
     {
         [Fact]
         [Trait("Category", "ExecuteAsync")]
-        public async Task ExecuteAsyncSql()
+        public async Task ExecuteSqlAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -18,7 +18,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "ExecuteAsync")]
-        public async Task ExecuteAsyncSqlWithParameter()
+        public async Task ExecuteSqlWithParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {

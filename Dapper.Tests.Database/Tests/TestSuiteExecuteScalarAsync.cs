@@ -8,7 +8,7 @@ namespace Dapper.Tests.Database
     {
         [Fact]
         [Trait("Category", "ExecuteScalarAsync")]
-        public async Task ExecuteScalarAsyncSql()
+        public async Task ExecuteScalarSqlAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -18,7 +18,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "ExecuteScalarAsync")]
-        public async Task ExecuteScalarAsyncSqlWithParameter()
+        public async Task ExecuteScalarSqlWithParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {
