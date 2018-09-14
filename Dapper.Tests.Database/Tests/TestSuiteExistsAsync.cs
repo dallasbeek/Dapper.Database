@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Dapper.Database.Extensions;
 using Xunit;
 using System.Threading.Tasks;
@@ -18,7 +17,6 @@ namespace Dapper.Tests.Database
                 Assert.True(await connection.ExistsAsync<Product>());
             }
         }
-
 
         [Fact]
         [Trait("Category", "ExistsAsync")]
@@ -128,6 +126,5 @@ namespace Dapper.Tests.Database
                 Assert.False(await connection.ExistsAsync<Product>(fsql));
             }
         }
-
     }
 }

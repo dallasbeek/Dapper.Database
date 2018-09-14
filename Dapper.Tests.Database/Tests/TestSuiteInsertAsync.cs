@@ -4,12 +4,10 @@ using Dapper.Database.Extensions;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
-
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "InsertAsync")]
         public async Task InsertIdentityAsync()

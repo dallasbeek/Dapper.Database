@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
-using Dapper.Database.Extensions;
-using Xunit;
+﻿using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
@@ -80,7 +73,6 @@ namespace Dapper.Tests.Database
                 }
                 var agp = db.Get<PersonIdentity>(p.IdentityId);  //updates should have been rolled back
                 Assert.Equal("Sally", agp.FirstName);
-
             }
         }
 
@@ -111,6 +103,5 @@ namespace Dapper.Tests.Database
 
             }
         }
-
     }
 }

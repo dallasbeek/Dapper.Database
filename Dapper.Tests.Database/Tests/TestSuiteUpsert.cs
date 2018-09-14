@@ -1,14 +1,12 @@
 ﻿using System;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "Upsert")]
         public void UpsertIdentity()
@@ -128,7 +126,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "Upsert")]
         public void UpsertPartial()
@@ -176,6 +173,5 @@ namespace Dapper.Tests.Database
                 Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
             }
         }
-
     }
 }

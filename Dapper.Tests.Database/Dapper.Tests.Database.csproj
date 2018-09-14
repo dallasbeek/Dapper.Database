@@ -9,24 +9,6 @@
     <TargetFrameworks>net452;netcoreapp2.0;netcoreapp1.0</TargetFrameworks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="SqlBuilder.cs" />
-    <Compile Remove="TestManagerSuites.cs" />
-    <Compile Remove="TestSuite.Async.cs" />
-    <Compile Remove="TestSuiteCountAssync.cs" />
-    <Compile Remove="TestSuiteExists Async.cs" />
-    <Compile Remove="TestSuiteGetAsysnc.cs" />
-    <Compile Remove="TestSuiteGetDataTable.cs" />
-    <Compile Remove="TestSuiteGetMany.cs" />
-    <Compile Remove="TestSuiteGetMultiple.cs" />
-    <Compile Remove="TestSuiteGetMultipleAsync.cs" />
-    <Compile Remove="TestSuiteGetPaged.cs" />
-    <Compile Remove="TestSuites.cs" />
-    <Compile Remove="TestSuiteTransactions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Dapper.Database\TypeExtensions.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Database\Dapper.Database.csproj" />
@@ -77,6 +59,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DBFiles\Test.DB.fdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DBFiles\Test.DB.sdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DBFiles\Test.DB.sqlite">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Scripts\firebirdawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -92,27 +83,19 @@
     <None Update="Scripts\sqlceawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="sqlite3_64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="sqlite3_86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Scripts\sqliteawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Scripts\sqlserverawlite.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test.DB.fdb">
+    <None Update="sqlite3_64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test.DB.sdf">
+    <None Update="sqlite3_86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test.DB.sqlite">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+
   </ItemGroup>
 
   <PropertyGroup>

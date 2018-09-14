@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database
@@ -84,7 +83,7 @@ namespace Dapper.Tests.Database
                 Assert.True(db.InsertList(lst));
 
                 p.FirstName = "Emily";
-                q.FirstName = "a".PadRight(101,'a');
+                q.FirstName = "a".PadRight(101, 'a');
                 r.FirstName = "Laura";
 
                 Assert.ThrowsAny<Exception>(() => db.UpdateList(lst));
@@ -274,7 +273,7 @@ namespace Dapper.Tests.Database
                 using (var t = db.GetTransaction())
                 {
                     p.FirstName = "Emily";
-                    q.FirstName = "a".PadRight(101,'a');
+                    q.FirstName = "a".PadRight(101, 'a');
                     r.FirstName = "Laura";
                     Assert.ThrowsAny<Exception>(() => db.UpdateList(lst));
                 }

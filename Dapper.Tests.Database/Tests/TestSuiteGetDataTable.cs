@@ -1,14 +1,11 @@
-﻿using Xunit;
-
+﻿#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-#if !NETSTANDARD1_3 && !NETCOREAPP1_0
         [Fact]
         [Trait("Category", "GetDataTable")]
         public void GetDataTable()
@@ -23,7 +20,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetDataTable")]
         public void GetDataTableWithParameter()
@@ -37,7 +33,6 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-#endif
-
     }
 }
+#endif

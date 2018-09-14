@@ -5,7 +5,6 @@ using Dapper.Database;
 using Npgsql;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
     [Trait("Provider", "Postgres")]

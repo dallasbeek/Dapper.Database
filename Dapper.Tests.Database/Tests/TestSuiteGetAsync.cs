@@ -4,12 +4,10 @@ using Dapper.Database.Extensions;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
-
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetAsync")]
         public async Task GetByEntityAsync()
@@ -179,6 +177,5 @@ namespace Dapper.Tests.Database
                 ValidateProductModel60(p.ProductModel);
             }
         }
-
     }
 }

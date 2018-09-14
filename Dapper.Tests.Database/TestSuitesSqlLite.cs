@@ -4,14 +4,13 @@ using Dapper.Database;
 using Microsoft.Data.Sqlite;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
 
     [Trait("Provider", "SQLite")]
     public class SQLiteTestSuite : TestSuite
     {
-        private const string FileName = "Test.DB.sqlite";
+        private const string FileName = "DBFiles\\Test.DB.sqlite";
         public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
 
         protected override void CheckSkip()
@@ -61,8 +60,6 @@ namespace Dapper.Tests.Database
             {
                 _skip = true;
             }
-
         }
     }
-
 }

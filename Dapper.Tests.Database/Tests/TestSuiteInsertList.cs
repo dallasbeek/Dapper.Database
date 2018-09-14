@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database

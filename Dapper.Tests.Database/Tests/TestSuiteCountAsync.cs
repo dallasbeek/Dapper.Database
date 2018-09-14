@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
@@ -58,7 +56,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "CountAsync")]
         public async Task CountWithWhereClauseParameterAsync()
@@ -98,7 +95,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal(89, await connection.CountAsync<Product>($";select count(*) from Product where Color = {P}Color", new { Color = "Black" }));
             }
         }
-
-
     }
 }

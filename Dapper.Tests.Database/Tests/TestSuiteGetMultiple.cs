@@ -1,14 +1,11 @@
 ﻿using System.Linq;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetMultiple")]
         public void GetMultiple()
@@ -30,7 +27,6 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetMultiple")]
@@ -54,6 +50,5 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
     }
 }

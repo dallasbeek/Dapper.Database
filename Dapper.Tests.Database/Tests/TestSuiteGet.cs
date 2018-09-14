@@ -7,8 +7,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-
         [Fact]
         [Trait("Category", "Get")]
         public void GetByEntity()
@@ -280,6 +278,5 @@ namespace Dapper.Tests.Database
            where P.ProductID = {P}ProductId";
             }
         }
-
     }
 }

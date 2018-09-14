@@ -3,15 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListNoOrderAsync()
@@ -24,7 +21,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetPageListAsync")]
@@ -57,7 +53,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithWhereClauseParameterAsync()
@@ -84,7 +79,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithWhereOrderClauseAsync()
@@ -98,7 +92,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetPageListAsync")]
@@ -125,6 +118,7 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
+
         [Fact]
         [Trait("Category", "GetPageListAsync")]
         public async Task GetPageListWithSelectOrderClauseAsync()
@@ -236,6 +230,5 @@ namespace Dapper.Tests.Database
                 Assert.NotNull(item.ProductCategory);
             }
         }
-
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database
@@ -193,46 +192,46 @@ namespace Dapper.Tests.Database
             var dnow = DateTime.UtcNow;
             using (var db = GetSqlDatabase())
             {
-                    var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
-                    var q = new PersonExcludedColumns { FirstName = "Raj", LastName = "Padilla", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
-                    var r = new PersonExcludedColumns { FirstName = "Lidia", LastName = "Bain", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
-                    var s = new PersonExcludedColumns { FirstName = "Derren", LastName = "Southern", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
+                var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
+                var q = new PersonExcludedColumns { FirstName = "Raj", LastName = "Padilla", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
+                var r = new PersonExcludedColumns { FirstName = "Lidia", LastName = "Bain", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
+                var s = new PersonExcludedColumns { FirstName = "Derren", LastName = "Southern", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
 
-                    var lst = new List<PersonExcludedColumns> { p, q, r };
+                var lst = new List<PersonExcludedColumns> { p, q, r };
 
-                    Assert.True(await db.UpsertListAsync(lst));
+                Assert.True(await db.UpsertListAsync(lst));
 
-                    p.FirstName = "Emily";
-                    q.FirstName = "Jim";
-                    r.FirstName = "Laura";
-                    lst.Add(s);
+                p.FirstName = "Emily";
+                q.FirstName = "Jim";
+                r.FirstName = "Laura";
+                lst.Add(s);
 
-                    Assert.True(await db.UpsertListAsync(lst));
+                Assert.True(await db.UpsertListAsync(lst));
 
-                    if (p.FullName != null)
-                    {
-                        Assert.Equal("Emily Jones", p.FullName);
-                        Assert.Equal("Jim Padilla", q.FullName);
-                        Assert.Equal("Laura Bain", r.FullName);
-                        Assert.Equal("Derren Southern", s.FullName);
-                    }
+                if (p.FullName != null)
+                {
+                    Assert.Equal("Emily Jones", p.FullName);
+                    Assert.Equal("Jim Padilla", q.FullName);
+                    Assert.Equal("Laura Bain", r.FullName);
+                    Assert.Equal("Derren Southern", s.FullName);
+                }
 
-                    var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
+                var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
 
-                    Assert.Equal(p.IdentityId, gp.IdentityId);
-                    Assert.Null(gp.Notes);
-                    Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
-                    Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
-                    Assert.Equal(p.FirstName, gp.FirstName);
-                    Assert.Equal(p.LastName, gp.LastName);
+                Assert.Equal(p.IdentityId, gp.IdentityId);
+                Assert.Null(gp.Notes);
+                Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
+                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+                Assert.Equal(p.FirstName, gp.FirstName);
+                Assert.Equal(p.LastName, gp.LastName);
 
-                    var gs = await db.GetAsync<PersonExcludedColumns>(s.IdentityId);
-                    Assert.Equal(s.IdentityId, gs.IdentityId);
-                    Assert.Null(gs.Notes);
-                    Assert.Null(gs.UpdatedOn); // to cover clock skew, delay in DML, etc.
-                    Assert.InRange(gs.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
-                    Assert.Equal(s.FirstName, gs.FirstName);
-                    Assert.Equal(s.LastName, gs.LastName);
+                var gs = await db.GetAsync<PersonExcludedColumns>(s.IdentityId);
+                Assert.Equal(s.IdentityId, gs.IdentityId);
+                Assert.Null(gs.Notes);
+                Assert.Null(gs.UpdatedOn); // to cover clock skew, delay in DML, etc.
+                Assert.InRange(gs.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+                Assert.Equal(s.FirstName, gs.FirstName);
+                Assert.Equal(s.LastName, gs.LastName);
 
             }
         }
@@ -273,7 +272,6 @@ namespace Dapper.Tests.Database
 
                 Assert.Equal("Derren", gs.FirstName);
                 Assert.Equal("Southern", gs.LastName);
-
             }
         }
 

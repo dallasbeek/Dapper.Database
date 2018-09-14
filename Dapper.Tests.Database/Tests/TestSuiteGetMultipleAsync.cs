@@ -1,15 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetMultipleAsync")]
         public async Task GetMultipleAsync()
@@ -31,7 +28,6 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetMultipleAsync")]
@@ -55,6 +51,5 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
     }
 }

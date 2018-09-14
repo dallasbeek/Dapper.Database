@@ -8,8 +8,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-
         [Fact]
         [Trait("Category", "GetFirst")]
         public void GetFirstWithWhereClause()
@@ -20,7 +18,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetFirst")]
@@ -183,6 +180,5 @@ namespace Dapper.Tests.Database
                     where Color = {P}Color and ProductId >= {P}ProductId order by ProductId";
             }
         }
-
     }
 }

@@ -8,7 +8,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateIdentityAsync()
@@ -189,7 +188,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal("Smith", gp.LastName);
             }
         }
-
-
     }
 }

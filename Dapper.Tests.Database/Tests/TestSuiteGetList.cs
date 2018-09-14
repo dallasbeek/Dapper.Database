@@ -8,7 +8,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetList")]
         public void GetListAll()
@@ -22,7 +21,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetList")]
         public void GetListWithWhereClause()
@@ -35,7 +33,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetList")]
@@ -222,6 +219,5 @@ namespace Dapper.Tests.Database
                     where P.Color = {P}Color";
             }
         }
-
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database
@@ -75,7 +74,7 @@ namespace Dapper.Tests.Database
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
                 var q = new PersonIdentity { FirstName = "a".PadRight(101, 'a'), LastName = "Padilla" };
                 var r = new PersonIdentity { FirstName = "Lidia", LastName = "Bain" };
-                await Assert.ThrowsAnyAsync<Exception>( () => db.InsertListAsync(new List<PersonIdentity> { p, q, r }));
+                await Assert.ThrowsAnyAsync<Exception>(() => db.InsertListAsync(new List<PersonIdentity> { p, q, r }));
 
                 Assert.Null(await db.GetAsync<PersonIdentity>(p.IdentityId));
             }
@@ -170,7 +169,7 @@ namespace Dapper.Tests.Database
             {
                 using (var t = db.GetTransaction())
                 {
-                    await Assert.ThrowsAnyAsync<Exception>( () =>  db.InsertListAsync(new List<PersonUniqueIdentifier> { p, q, r }));
+                    await Assert.ThrowsAnyAsync<Exception>(() => db.InsertListAsync(new List<PersonUniqueIdentifier> { p, q, r }));
                 }
 
                 Assert.Null(await db.GetAsync<PersonUniqueIdentifier>(p.GuidId));

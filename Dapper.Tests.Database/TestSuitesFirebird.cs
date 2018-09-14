@@ -4,13 +4,13 @@ using Dapper.Database;
 using FirebirdSql.Data.FirebirdClient;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
-
     [Trait("Provider", "Firebird")]
     public class FirebirdTestSuite : TestSuite
     {
+        private const string FileName = "DBFiles\\Test.DB.fdb";
+
         public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;";
 
         protected override void CheckSkip()
@@ -21,8 +21,8 @@ namespace Dapper.Tests.Database
         public override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
-            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
-            return new SqlDatabase(new StringConnectionService<FbConnection>($"Database={filename};{ConnectionString}"));
+            var dbFile = Directory.GetCurrentDirectory() + FileName;
+            return new SqlDatabase(new StringConnectionService<FbConnection>($"Database={dbFile};{ConnectionString}"));
         }
 
         public override Provider GetProvider() => Provider.Firebird;
@@ -36,7 +36,7 @@ namespace Dapper.Tests.Database
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
 
-            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
+            var dbFile = Directory.GetCurrentDirectory() + FileName;
 
             var init = false;
 
@@ -49,7 +49,7 @@ namespace Dapper.Tests.Database
 
             try
             {
-                using (var connection = new FbConnection($"Database={filename};{ConnectionString}"))
+                using (var connection = new FbConnection($"Database={dbFile};{ConnectionString}"))
                 {
                     connection.Open();
 
@@ -80,8 +80,6 @@ namespace Dapper.Tests.Database
             {
                 _skip = true;
             }
-
         }
     }
-
 }

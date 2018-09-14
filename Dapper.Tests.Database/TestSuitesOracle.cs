@@ -1,7 +1,5 @@
 ﻿#if ORACLE
 using System;
-using System.Data;
-using System.Data.Common;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -34,7 +32,6 @@ namespace Dapper.Tests.Database
             CheckSkip();
             return new SqlDatabase(new StringConnectionService<OracleConnection>(ConnectionString));
         }
-
 
         public override Provider GetProvider() => Provider.Oracle;
 

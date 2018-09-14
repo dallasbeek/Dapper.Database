@@ -7,7 +7,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "Update")]
         public void UpdateIdentity()
@@ -188,7 +187,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal("Smith", gp.LastName);
             }
         }
-
-
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
@@ -53,7 +51,6 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
 
         [Fact]
         [Trait("Category", "Timeouts")]
@@ -118,7 +115,6 @@ namespace Dapper.Tests.Database
                     Assert.StartsWith("Invalid CommandTimeout value -1;", ex.Message);
                     break;
             }
-
         }
     }
 }

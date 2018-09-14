@@ -9,7 +9,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetListAsync")]
         public async Task GetListAllAsync()
@@ -23,7 +22,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithWhereClauseAsync()
@@ -36,7 +34,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetListAsync")]
@@ -198,6 +195,5 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
     }
 }

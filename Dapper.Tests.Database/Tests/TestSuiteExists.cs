@@ -17,7 +17,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "Exists")]
         public void ExistsByEntity()
@@ -125,6 +124,5 @@ namespace Dapper.Tests.Database
                 Assert.False(db.Exists<Product>(fsql));
             }
         }
-
     }
 }

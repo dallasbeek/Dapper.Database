@@ -213,6 +213,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal(1, await db.CountAsync<PersonIdentity>("where FirstName = 'DeleteOtherAsync'"));
             }
         }
-
     }
 }
