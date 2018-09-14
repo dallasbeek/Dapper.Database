@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dapper.Database.Adapters
 {
@@ -35,7 +31,7 @@ namespace Dapper.Database.Adapters
             {
                 if (tableInfo.KeyColumns.Any())
                 {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
                 }
             }
             else
@@ -50,6 +46,5 @@ namespace Dapper.Database.Adapters
             parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
             return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {EscapeParameter(PageSkipParamName)} and page_rn <= {EscapeParameter(PageSizeParamName)}";
         }
-
     }
 }
