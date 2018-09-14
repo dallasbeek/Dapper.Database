@@ -10,7 +10,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListNoComputed()
         {
             using (var db = GetSqlDatabase())
@@ -38,7 +38,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListNoComputedPartial()
         {
             using (var db = GetSqlDatabase())
@@ -68,7 +68,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListNoComputedThrowsException()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
@@ -97,7 +97,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListIdentity()
         {
             using (var db = GetSqlDatabase())
@@ -124,7 +124,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListIdentityThrowsException()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
@@ -153,7 +153,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListComputed()
         {
 
@@ -193,7 +193,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListTransactionNoComputed()
         {
             using (var db = GetSqlDatabase())
@@ -225,7 +225,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListTransactionRollbackNoComputed()
         {
             var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
@@ -256,7 +256,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpdateList")]
+        [Trait("Category", "UpdateList")]
         public void UpdateListTransactionNoComputedThrowsException()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");

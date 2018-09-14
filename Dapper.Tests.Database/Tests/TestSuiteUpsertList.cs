@@ -11,7 +11,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListNoComputedAsync()
         {
             using (var db = GetSqlDatabase())
@@ -46,7 +46,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListNoComputedPartialAsync()
         {
             using (var db = GetSqlDatabase())
@@ -81,7 +81,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListNoComputedThrowsExceptionAsync()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
@@ -117,7 +117,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListIdentityAsync()
         {
             using (var db = GetSqlDatabase())
@@ -151,7 +151,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListIdentityThrowsExceptionAsync()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
@@ -186,15 +186,13 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListComputedAsync()
         {
 
             var dnow = DateTime.UtcNow;
             using (var db = GetSqlDatabase())
             {
-                using (var t = db.GetTransaction())
-                {
                     var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
                     var q = new PersonExcludedColumns { FirstName = "Raj", LastName = "Padilla", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
                     var r = new PersonExcludedColumns { FirstName = "Lidia", LastName = "Bain", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
@@ -236,13 +234,11 @@ namespace Dapper.Tests.Database
                     Assert.Equal(s.FirstName, gs.FirstName);
                     Assert.Equal(s.LastName, gs.LastName);
 
-                    t.Complete();
-                }
             }
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListTransactionNoComputedAsync()
         {
             using (var db = GetSqlDatabase())
@@ -282,7 +278,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListComputedCallbacksAsync()
         {
 
@@ -351,7 +347,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListTransactionRollbackNoComputedAsync()
         {
             var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
@@ -390,7 +386,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertListAsync")]
+        [Trait("Category", "UpsertListAsync")]
         public async Task UpsertListTransactionNoComputedThrowsExceptionAsync()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");

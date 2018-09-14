@@ -10,7 +10,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListNoComputed()
         {
             using (var db = GetSqlDatabase())
@@ -45,7 +45,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListNoComputedPartial()
         {
             using (var db = GetSqlDatabase())
@@ -80,7 +80,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListNoComputedThrowsException()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
@@ -116,7 +116,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListIdentity()
         {
             using (var db = GetSqlDatabase())
@@ -150,7 +150,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListIdentityThrowsException()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
@@ -185,7 +185,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListComputed()
         {
 
@@ -237,7 +237,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListTransactionNoComputed()
         {
             using (var db = GetSqlDatabase())
@@ -277,7 +277,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListComputedCallbacks()
         {
 
@@ -346,7 +346,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListTransactionRollbackNoComputed()
         {
             var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
@@ -385,7 +385,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "aaUpsertList")]
+        [Trait("Category", "UpsertList")]
         public void UpsertListTransactionNoComputedThrowsException()
         {
             Skip.If(GetProvider() == Provider.SQLite, "Sqlite doesn't enforce size limit");
