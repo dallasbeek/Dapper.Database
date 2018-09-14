@@ -9,9 +9,10 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "Firebird")]
     public class FirebirdTestSuite : TestSuite
     {
-        private const string FileName = "DBFiles\\Test.DB.fdb";
+        private static string DbName = "DBFiles\\Test.DB.fdb";
+        private static string DbFile;
 
-        public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;";
+        public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={DbFile};";
 
         protected override void CheckSkip()
         {
@@ -21,8 +22,7 @@ namespace Dapper.Tests.Database
         public override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
-            var dbFile = Directory.GetCurrentDirectory() + FileName;
-            return new SqlDatabase(new StringConnectionService<FbConnection>($"Database={dbFile};{ConnectionString}"));
+            return new SqlDatabase(new StringConnectionService<FbConnection>(ConnectionString));
         }
 
         public override Provider GetProvider() => Provider.Firebird;
@@ -31,25 +31,24 @@ namespace Dapper.Tests.Database
 
         static FirebirdTestSuite()
         {
+            DbFile = Directory.GetCurrentDirectory() + "\\DBFiles\\Test.DB.fdb";
             SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
 
-            var dbFile = Directory.GetCurrentDirectory() + FileName;
-
             var init = false;
 
-            //if (File.Exists(filename))
+            //if (File.Exists(DbFile))
             //{
-            //    File.Delete(filename);
+            //    File.Delete(DbFile);
             //}
 
             var commandText = string.Empty;
 
             try
             {
-                using (var connection = new FbConnection($"Database={dbFile};{ConnectionString}"))
+                using (var connection = new FbConnection(ConnectionString))
                 {
                     connection.Open();
 
