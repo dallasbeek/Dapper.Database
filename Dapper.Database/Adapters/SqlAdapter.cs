@@ -53,37 +53,19 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public virtual bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
         {
-            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
-            var success = false;
-            try
+            var success = entitiesToInsert.Any();
+            if (success && !tableInfo.GeneratedColumns.Any())
             {
-
-                if (!tableInfo.GeneratedColumns.Any())
-                {
-                    success = connection.Execute(InsertQuery(tableInfo), entitiesToInsert, trans, commandTimeout) >= entitiesToInsert.Count();
-                }
-                else
-                {
-                    success = true;
-                    foreach (var e in entitiesToInsert)
-                    {
-                        success = success && Insert(connection, trans, commandTimeout, tableInfo, e);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                if (transaction == null)
-                    trans.Rollback();
-
-                throw;
+                return connection.Execute(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= entitiesToInsert.Count();
             }
 
-            if (transaction == null)
-                trans.Commit();
-
+            foreach (var e in entitiesToInsert)
+            {
+                success = success && Insert(connection, transaction, commandTimeout, tableInfo, e);
+            }
             return success;
         }
+
         /// <summary>
         /// Inserts an entity into table "Ts"
         /// </summary>
@@ -109,35 +91,16 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public virtual async Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
         {
-            var trans = transaction ?? connection.BeginTransaction();
-            var success = false;
-            try
+            var success = entitiesToInsert.Any();
+            if (success && !tableInfo.GeneratedColumns.Any())
             {
-
-                if (!tableInfo.GeneratedColumns.Any())
-                {
-                    success = await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, trans, commandTimeout) > 0;
-                }
-                else
-                {
-                    success = true;
-                    foreach (var e in entitiesToInsert)
-                    {
-                        success = success && await InsertAsync(connection, trans, commandTimeout, tableInfo, e);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                if (transaction == null)
-                    trans.Rollback();
-
-                throw;
+                return await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= entitiesToInsert.Count();
             }
 
-            if (transaction == null)
-                trans.Commit();
-
+            foreach (var e in entitiesToInsert)
+            {
+                success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
+            }
             return success;
         }
 
@@ -171,25 +134,11 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public virtual bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
-            var success = true;
-            try
+            var success = entitiesToUpdate.Any();
+            foreach (var e in entitiesToUpdate)
             {
-                foreach (var e in entitiesToUpdate)
-                {
-                    success = success && Update(connection, trans, commandTimeout, tableInfo, e, columnsToUpdate);
-                }
+                success = success && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
             }
-            catch (Exception)
-            {
-                if (transaction == null)
-                    trans.Rollback();
-
-                throw;
-            }
-
-            if (transaction == null)
-                trans.Commit();
 
             return success;
         }
@@ -221,25 +170,11 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public virtual async Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
-            var success = true;
-            try
+            var success = entitiesToUpdate.Any();
+            foreach (var e in entitiesToUpdate)
             {
-                foreach (var e in entitiesToUpdate)
-                {
-                    success = success && await UpdateAsync(connection, trans, commandTimeout, tableInfo, e, columnsToUpdate);
-                }
+                success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
             }
-            catch (Exception)
-            {
-                if (transaction == null)
-                    trans.Rollback();
-
-                throw;
-            }
-
-            if (transaction == null)
-                trans.Commit();
 
             return success;
         }
@@ -289,37 +224,22 @@ namespace Dapper.Database.Adapters
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
-            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
-            var success = true;
-            try
+            var success = entitiesToUpsert.Any();
+            foreach (var e in entitiesToUpsert)
             {
-                foreach (var e in entitiesToUpsert)
+                if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, null), e, transaction, commandTimeout))
                 {
-                    if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, null), e, trans, commandTimeout))
-                    {
-                        insertAction?.Invoke(e);
-                        success = success && Insert(connection, trans, commandTimeout, tableInfo, e);
-                    }
-                    else
-                    {
-                        updateAction?.Invoke(e);
-                        success = success && Update(connection, trans, commandTimeout, tableInfo, e, columnsToUpdate);
-                    }
+                    insertAction?.Invoke(e);
+                    success = success && Insert(connection, transaction, commandTimeout, tableInfo, e);
+                }
+                else
+                {
+                    updateAction?.Invoke(e);
+                    success = success && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
                 }
             }
-            catch (Exception)
-            {
-                if (transaction == null)
-                    trans.Rollback();
-
-                throw;
-            }
-
-            if (transaction == null)
-                trans.Commit();
 
             return success;
-
         }
 
         /// <summary>
@@ -364,37 +284,22 @@ namespace Dapper.Database.Adapters
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual async Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
-            var trans = transaction ?? connection.BeginTransaction(DefaultIsolationLevel);
-            var success = true;
-            try
+            var success = entitiesToUpsert.Any();
+            foreach (var e in entitiesToUpsert)
             {
-                foreach (var e in entitiesToUpsert)
+                if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, null), e, transaction, commandTimeout))
                 {
-                    if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, null), e, trans, commandTimeout))
-                    {
-                        insertAction?.Invoke(e);
-                        success = success && await InsertAsync(connection, trans, commandTimeout, tableInfo, e);
-                    }
-                    else
-                    {
-                        updateAction?.Invoke(e);
-                        success = success && await UpdateAsync(connection, trans, commandTimeout, tableInfo, e, columnsToUpdate);
-                    }
+                    insertAction?.Invoke(e);
+                    success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
+                }
+                else
+                {
+                    updateAction?.Invoke(e);
+                    success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
                 }
             }
-            catch (Exception)
-            {
-                if (transaction == null)
-                    trans.Rollback();
-
-                throw;
-            }
-
-            if (transaction == null)
-                trans.Commit();
 
             return success;
-
         }
         #endregion
 

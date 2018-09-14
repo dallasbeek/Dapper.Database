@@ -10,6 +10,16 @@ namespace Dapper.Tests.Database
     {
         [Fact]
         [Trait("Category", "UpdateList")]
+        public void UpdateEmptyList()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.False(db.UpdateList(new List<PersonUniqueIdentifier>()));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateList")]
         public void UpdateListNoComputed()
         {
             using (var db = GetSqlDatabase())
@@ -205,7 +215,7 @@ namespace Dapper.Tests.Database
 
                 Assert.True(db.InsertList(lst));
 
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     p.FirstName = "Emily";
                     q.FirstName = "Jim";
@@ -237,7 +247,7 @@ namespace Dapper.Tests.Database
             {
                 Assert.True(db.InsertList(lst));
 
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     p.FirstName = "Emily";
                     q.FirstName = "Jim";

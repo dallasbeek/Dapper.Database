@@ -8,6 +8,17 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
+
+        [Fact]
+        [Trait("Category", "InsertList")]
+        public void InsertEmptyList()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.False(db.InsertList(new List<PersonUniqueIdentifier>()));
+            }
+        }
+
         [Fact]
         [Trait("Category", "InsertList")]
         public void InsertListNoComputed()
@@ -121,7 +132,7 @@ namespace Dapper.Tests.Database
 
             using (var db = GetSqlDatabase())
             {
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     Assert.True(db.InsertList(new List<PersonUniqueIdentifier> { p, q, r }));
                     t.Complete();
@@ -144,7 +155,7 @@ namespace Dapper.Tests.Database
 
             using (var db = GetSqlDatabase())
             {
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     Assert.True(db.InsertList(new List<PersonUniqueIdentifier> { p, q, r }));
                     t.Dispose();

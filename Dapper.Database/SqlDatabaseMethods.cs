@@ -950,7 +950,7 @@ namespace Dapper.Database
         /// <returns>the entity to insert or the list of entities</returns>
         public bool InsertList<T>(IEnumerable<T> entitiesToInsert) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.InsertList<T>(entitiesToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.InsertList<T>(entitiesToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         #endregion
@@ -990,7 +990,7 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified</returns>
         public bool UpdateList<T>(IEnumerable<T> entitiesToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpdateList<T>(entitiesToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.UpdateList<T>(entitiesToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1002,7 +1002,7 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified</returns>
         public bool UpdateList<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpdateList<T>(entitiesToUpdate, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.UpdateList<T>(entitiesToUpdate, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         #endregion
@@ -1071,7 +1071,7 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1083,7 +1083,7 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1096,7 +1096,7 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1110,7 +1110,7 @@ namespace Dapper.Database
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
 
         }
         #endregion

@@ -11,6 +11,16 @@ namespace Dapper.Tests.Database
     {
         [Fact]
         [Trait("Category", "UpdateListAsync")]
+        public async Task UpdateEmptyListAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.False(await db.UpdateListAsync(new List<PersonUniqueIdentifier>()));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateListAsync")]
         public async Task UpdateListAsyncNoComputed()
         {
             using (var db = GetSqlDatabase())
@@ -206,7 +216,7 @@ namespace Dapper.Tests.Database
 
                 Assert.True(await db.InsertListAsync(lst));
 
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     p.FirstName = "Emily";
                     q.FirstName = "Jim";
@@ -238,7 +248,7 @@ namespace Dapper.Tests.Database
             {
                 Assert.True(await db.InsertListAsync(lst));
 
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     p.FirstName = "Emily";
                     q.FirstName = "Jim";

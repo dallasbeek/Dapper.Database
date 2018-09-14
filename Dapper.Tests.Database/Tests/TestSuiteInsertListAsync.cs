@@ -11,6 +11,16 @@ namespace Dapper.Tests.Database
     {
         [Fact]
         [Trait("Category", "InsertListAsync")]
+        public async Task InsertEmptyListAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                Assert.False(await db.InsertListAsync(new List<PersonUniqueIdentifier>()));
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "InsertListAsync")]
         public async Task InsertListNoComputedAsync()
         {
             using (var db = GetSqlDatabase())
@@ -122,7 +132,7 @@ namespace Dapper.Tests.Database
 
             using (var db = GetSqlDatabase())
             {
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     Assert.True(await db.InsertListAsync(new List<PersonUniqueIdentifier> { p, q, r }));
                     t.Complete();
@@ -145,7 +155,7 @@ namespace Dapper.Tests.Database
 
             using (var db = GetSqlDatabase())
             {
-                using (var t = db.GetTransaction(GetProvider() == Provider.SQLite ? System.Data.IsolationLevel.Serializable : System.Data.IsolationLevel.ReadCommitted))
+                using (var t = db.GetTransaction())
                 {
                     Assert.True(await db.InsertListAsync(new List<PersonUniqueIdentifier> { p, q, r }));
                     t.Dispose();

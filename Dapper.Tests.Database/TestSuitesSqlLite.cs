@@ -2,6 +2,7 @@
 using System.IO;
 using Dapper.Database;
 using Microsoft.Data.Sqlite;
+using System.Data;
 using Xunit;
 
 namespace Dapper.Tests.Database
@@ -21,7 +22,7 @@ namespace Dapper.Tests.Database
         public override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
-            return new SqlDatabase(new StringConnectionService<SqliteConnection>(ConnectionString));
+            return new SqlDatabase(new StringConnectionService<SqliteConnection>(ConnectionString), IsolationLevel.Serializable);
         }
 
         public override Provider GetProvider() => Provider.SQLite;

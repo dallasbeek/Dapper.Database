@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
+using Dapper.Database.Extensions;
 
 namespace Dapper.Database
 {
@@ -20,7 +21,7 @@ namespace Dapper.Database
         protected IDbConnection _sharedConnection;
 
         private IDbTransaction _transaction;
-        private readonly IsolationLevel _isolationLevel = IsolationLevel.ReadCommitted;
+        private readonly IsolationLevel _isolationLevel;
 
         /// <summary>
         /// Sets the timeout value for all SQL statements.
@@ -44,10 +45,11 @@ namespace Dapper.Database
         /// 
         /// </summary>
         /// <param name="connectionService"></param>
-        public SqlDatabase(IConnectionService connectionService)
+        /// <param name="defaultIsolationLevel">Default Isolation level to use for this database</param>
+        public SqlDatabase(IConnectionService connectionService, IsolationLevel defaultIsolationLevel = IsolationLevel.ReadCommitted)
         {
             _connectionService = connectionService;
-
+            _isolationLevel = defaultIsolationLevel;
             TransactionCount = 0;
         }
 
@@ -117,20 +119,38 @@ namespace Dapper.Database
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="command"></param>
+        /// <param name="forceTransaction">Open a transaction if one isn't already open</param>
         /// <returns></returns>
-        protected T ExecuteInternal<T>(Func<T> command)
+        protected T ExecuteInternal<T>(Func<T> command, bool forceTransaction = false)
         {
+            var openInternalTransaction = false;
+            ITransaction internalTransaction = null;
             try
             {
+                if (forceTransaction && _transaction == null)
+                    openInternalTransaction = true;
+
+                if (openInternalTransaction)
+                    internalTransaction = GetTransaction(_isolationLevel);
+
                 OpenSharedConnectionInternal();
 
                 var data = command();
 
                 if (OneTimeCommandTimeout != null)
-                {
                     OneTimeCommandTimeout = null;
-                }
+
+                if (openInternalTransaction)
+                    internalTransaction.Complete();
+
                 return data;
+            }
+            catch (Exception)
+            {
+                if (openInternalTransaction && internalTransaction != null)
+                    internalTransaction.Dispose();
+
+                throw;
             }
             finally
             {
@@ -143,20 +163,39 @@ namespace Dapper.Database
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="command"></param>
+        /// <param name="forceTransaction">Open a transaction if one isn't already open</param>
         /// <returns></returns>
-        protected async Task<T> ExecuteInternalAsync<T>(Func<Task<T>> command)
+        protected async Task<T> ExecuteInternalAsync<T>(Func<Task<T>> command, bool forceTransaction = false)
         {
+            var openInternalTransaction = false;
+            ITransaction internalTransaction = null;
             try
             {
+                if (forceTransaction && _transaction == null)
+                    openInternalTransaction = true;
+
+                if (openInternalTransaction)
+                    internalTransaction = GetTransaction(_isolationLevel);
+
                 OpenSharedConnectionInternal();
 
                 var data = await command();
 
                 if (OneTimeCommandTimeout != null)
-                {
                     OneTimeCommandTimeout = null;
-                }
+
+                if (openInternalTransaction)
+                    internalTransaction.Complete();
+
+
                 return data;
+            }
+            catch (Exception)
+            {
+                if (openInternalTransaction && internalTransaction != null)
+                    internalTransaction.Dispose();
+
+                throw;
             }
             finally
             {
