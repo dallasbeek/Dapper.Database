@@ -12,10 +12,10 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByEntityAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new Product { ProductID = 806, GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") };
-                ValidateProduct806(await connection.GetAsync(p));
+                ValidateProduct806(await db.GetAsync(p));
             }
         }
 
@@ -23,9 +23,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByIntegerIdAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                ValidateProduct806(await connection.GetAsync<Product>(806));
+                ValidateProduct806(await db.GetAsync<Product>(806));
             }
         }
 
@@ -33,9 +33,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByAliasIntegerIdAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var item = await connection.GetAsync<ProductAlias>(806);
+                var item = await db.GetAsync<ProductAlias>(806);
                 Assert.Equal(806, item.Id);
                 Assert.Equal("ML Headset", item.Name);
                 Assert.Equal("HS-2451", item.ProductNumber);
@@ -48,21 +48,20 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetByGuidIdWhereClauseAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 if (GetProvider() == Provider.SQLite)
                 {
                     return;
-                    //ValidateProduct806(await connection.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else if (GetProvider() == Provider.Firebird)
                 {
-                    ValidateProduct806(await connection.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
+                    ValidateProduct806(await db.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
 
                 {
-                    ValidateProduct806(await connection.GetAsync<Product>($"WHERE rowguid = {P}GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
+                    ValidateProduct806(await db.GetAsync<Product>($"WHERE rowguid = {P}GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
                 }
             }
         }
@@ -71,9 +70,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetPartialBySelectAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var p = await connection.GetAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = 806 });
+                var p = await db.GetAsync<Product>($"select p.ProductId, p.rowguid AS GuidId, p.Name from Product p where p.ProductId = {P}Id", new { Id = 806 });
                 Assert.NotNull(p);
                 Assert.Equal(806, p.ProductID);
                 Assert.Equal("ML Headset", p.Name);
@@ -86,9 +85,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetStarBySelectAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                ValidateProduct806(await connection.GetAsync<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
+                ValidateProduct806(await db.GetAsync<Product>($"select p.*, p.rowguid AS GuidId  from Product p where p.ProductId = {P}Id", new { Id = 806 }));
             }
         }
 
@@ -96,7 +95,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetAsync")]
         public async Task GetShortCircuitSemiColonAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var tsql = "; select 23 AS ProductId";
                 switch (GetProvider())
@@ -108,7 +107,7 @@ namespace Dapper.Tests.Database
                         tsql += " from dual";
                         break;
                 }
-                var p = await connection.GetAsync<Product>(tsql, new { });
+                var p = await db.GetAsync<Product>(tsql, new { });
                 Assert.Equal(23, p.ProductID);
             }
         }
