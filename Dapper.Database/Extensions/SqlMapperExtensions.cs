@@ -90,7 +90,7 @@ namespace Dapper.Database.Extensions
 
         private static string SplitOnArgument(IList<Type> types)
         {
-            return string.Join(",", types.Select(t => TableInfoCache(t).GetSingleKey("SplitOnArgument").PropertyName));
+            return string.Join(",", types.Select(t => TableInfoCache(t).GetSingleKey().PropertyName));
         }
 
 

@@ -48,7 +48,7 @@ namespace Dapper.Database.Extensions
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
-            var key = tinfo.GetSingleKey("Get");
+            var key = tinfo.GetSingleKey();
             var dynParms = new DynamicParameters();
             dynParms.Add(key.PropertyName, primaryKey);
 

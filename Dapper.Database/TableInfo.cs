@@ -152,13 +152,12 @@ namespace Dapper.Database
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="method"></param>
         /// <returns></returns>
-        public ColumnInfo GetSingleKey(string method)
+        public ColumnInfo GetSingleKey()
         {
             var keys = _keyColumns.Value;
-            if (keys.Count() > 1)
-                throw new DataException($"{method}<T> only supports an entity with a single [Key] or [ExplicitKey] property");
+            if (keys.Count() != 1)
+                throw new DataException("<T> only supports an entity with a single [Key]");
 
             return keys.SingleOrDefault();
         }
@@ -166,11 +165,13 @@ namespace Dapper.Database
         /// <summary>
         /// Gets a list of all key columns defined on the table
         /// </summary>
-        /// <param name="method"></param>
         /// <returns></returns>
-        public IEnumerable<ColumnInfo> GetCompositeKeys(string method)
+        public IEnumerable<ColumnInfo> GetCompositeKeys()
         {
-            return _keyColumns.Value;
+            var keys = _keyColumns.Value;
+            if (keys.Count() == 0)
+                throw new DataException("<T> does not have a [Key]");
+            return keys;
         }
 
         /// <summary>

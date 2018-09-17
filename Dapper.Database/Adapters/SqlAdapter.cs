@@ -612,12 +612,6 @@ namespace Dapper.Database.Adapters
         /// <returns></returns>
         public virtual string EscapeAssignmentList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
 
-        /// <summary>
-        /// Default isolation level for the adapter
-        /// </summary>
-        /// <returns>The default isolation level</returns>
-        public virtual IsolationLevel DefaultIsolationLevel => IsolationLevel.ReadCommitted;
 
     }
-
 }
