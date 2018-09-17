@@ -9,6 +9,13 @@
     <TargetFrameworks>net452;netcoreapp2.0;netcoreapp1.0</TargetFrameworks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="TestSuitesFirebird.cs" />
+    <Compile Remove="TestSuitesMySql.cs" />
+    <Compile Remove="TestSuitesOracle.cs" />
+    <Compile Remove="TestSuitesPostgres.cs" />
+    <Compile Remove="TestSuitesSqlServerPre2012.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Database\Dapper.Database.csproj" />
