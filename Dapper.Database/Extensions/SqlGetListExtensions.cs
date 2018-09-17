@@ -24,8 +24,8 @@ namespace Dapper.Database.Extensions
         /// <returns>enumerable list of entities</returns>
         public static IEnumerable<T> GetList<T>(this IDbConnection connection, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var adapter = GetFormatter(connection);
-            return connection.GetList<T>(adapter, sql ?? "where 1 = 1", null, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return connection.Query<T>(sqlHelper.Adapter.GetListQuery(sqlHelper.TableInfo, sql), null, transaction, commandTimeout: commandTimeout);
         }
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static IEnumerable<T> GetList<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var adapter = GetFormatter(connection);
-            return connection.GetList<T>(adapter, sql, parameters, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return connection.Query<T>(sqlHelper.Adapter.GetListQuery(sqlHelper.TableInfo, sql), parameters, transaction, commandTimeout: commandTimeout);
         }
 
         /// <summary>
@@ -224,67 +224,6 @@ namespace Dapper.Database.Extensions
         {
             return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }));
         }
-
-        /// <summary>
-        /// Returns a list entities of type T.  
-        /// </summary>
-        /// <param name="connection">Sql Connection</param>
-        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="sql">The where clause</param>
-        /// <param name="parameters">Parameters of the where clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="fromCache">Cache the query.</param>
-        /// <returns>True if records are deleted</returns>
-        private static IEnumerable<T> GetList<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
-        {
-            var type = typeof(T);
-            var tinfo = TableInfoCache(type);
-            var selectSql = adapter.GetListQuery(tinfo, sql);
-            return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout);
-
-            //T obj;
-
-            //if (type.IsInterface())
-            //{
-            //    var result = connection.Query(selectSql, parameters, transaction, commandTimeout: commandTimeout);
-
-            //    if (result == null)
-            //        return null;
-
-
-            //    var list = new List<T>();
-            //    foreach (IDictionary<string, object> res in result)
-            //    {
-            //        obj = ProxyGenerator.GetInterfaceProxy<T>();
-            //        foreach (var property in tinfo.PropertyList)
-            //        {
-            //            var val = res[property.Name];
-            //            if (val == null) continue;
-            //            if (property.PropertyType.IsGenericType() && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-            //            {
-            //                var genericType = Nullable.GetUnderlyingType(property.PropertyType);
-            //                if (genericType != null) property.SetValue(obj, Convert.ChangeType(val, genericType), null);
-            //            }
-            //            else
-            //            {
-            //                property.SetValue(obj, Convert.ChangeType(val, property.PropertyType), null);
-            //            }
-            //        }
-
-            //    ((IProxy)obj).IsDirty = false;   //reset change tracking and return
-            //        list.Add(obj);
-            //    }
-            //    return list;
-            //}
-            //else
-            //{
-            //    return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout);
-            //}
-        }
-
         #endregion
-
-
     }
 }

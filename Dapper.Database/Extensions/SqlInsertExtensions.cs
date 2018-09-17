@@ -21,10 +21,8 @@ namespace Dapper.Database.Extensions
         /// <returns>the entity to insert or the list of entities</returns>
         public static bool Insert<T>(this IDbConnection connection, T entityToInsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return adapter.Insert(connection, transaction, commandTimeout, tinfo, entityToInsert);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.Insert(connection, transaction, commandTimeout, sqlHelper.TableInfo, entityToInsert);
         }
 
         #endregion
@@ -41,10 +39,8 @@ namespace Dapper.Database.Extensions
         /// <returns>the entity to insert or the list of entities</returns>
         public static bool InsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToInsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return adapter.InsertList(connection, transaction, commandTimeout, tinfo, entitiesToInsert);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.InsertList(connection, transaction, commandTimeout, sqlHelper.TableInfo, entitiesToInsert);
         }
 
         #endregion

@@ -26,7 +26,7 @@ namespace Dapper.Database.Extensions
         public static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var adapter = GetFormatter(connection);
-            return await connection.GetListAsync<T>(adapter, sql ?? "where 1 = 1", null, transaction, commandTimeout);
+            return await connection.GetListAsync<T>(adapter, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>

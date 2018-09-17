@@ -93,8 +93,6 @@ namespace Dapper.Database.Extensions
             return string.Join(",", types.Select(t => TableInfoCache(t).GetSingleKey().PropertyName));
         }
 
-
-
         /// <summary>
         /// Specifies a custom callback that detects the database type instead of relying on the default strategy (the name of the connection type object).
         /// Please note that this callback is global and will be used by all the calls that require a database specific adapter.

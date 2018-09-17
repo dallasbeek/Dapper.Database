@@ -37,11 +37,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static async Task<bool> UpdateAsync<T>(this IDbConnection connection, T entityToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return await adapter.UpdateAsync(connection, transaction, commandTimeout, tinfo, entityToUpdate, columnsToUpdate);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return await sqlHelper.Adapter.UpdateAsync(connection, transaction, commandTimeout, sqlHelper.TableInfo, entityToUpdate, columnsToUpdate);
 
         }
 
@@ -74,11 +71,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static async Task<bool> UpdateListAsync<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return await adapter.UpdateListAsync(connection, transaction, commandTimeout, tinfo, entitiesToUpdate, columnsToUpdate);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return await sqlHelper.Adapter.UpdateListAsync(connection, transaction, commandTimeout, sqlHelper.TableInfo, entitiesToUpdate, columnsToUpdate);
 
         }
 

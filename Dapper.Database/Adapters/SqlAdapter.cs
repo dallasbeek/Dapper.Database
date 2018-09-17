@@ -197,7 +197,8 @@ namespace Dapper.Database.Adapters
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual bool Upsert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
-            if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, null), entityToUpsert, transaction, commandTimeout))
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+            if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, qWhere), entityToUpsert, transaction, commandTimeout))
             {
                 insertAction?.Invoke(entityToUpsert);
                 return Insert(connection, transaction, commandTimeout, tableInfo, entityToUpsert);
@@ -225,9 +226,11 @@ namespace Dapper.Database.Adapters
         public virtual bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
             var success = entitiesToUpsert.Any();
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+
             foreach (var e in entitiesToUpsert)
             {
-                if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, null), e, transaction, commandTimeout))
+                if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, qWhere), e, transaction, commandTimeout))
                 {
                     insertAction?.Invoke(e);
                     success = success && Insert(connection, transaction, commandTimeout, tableInfo, e);
@@ -257,7 +260,8 @@ namespace Dapper.Database.Adapters
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual async Task<bool> UpsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
-            if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, null), entityToUpsert, transaction, commandTimeout))
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+            if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), entityToUpsert, transaction, commandTimeout))
             {
                 insertAction?.Invoke(entityToUpsert);
                 return await InsertAsync(connection, transaction, commandTimeout, tableInfo, entityToUpsert);
@@ -285,9 +289,10 @@ namespace Dapper.Database.Adapters
         public virtual async Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
             var success = entitiesToUpsert.Any();
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
             foreach (var e in entitiesToUpsert)
             {
-                if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, null), e, transaction, commandTimeout))
+                if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), e, transaction, commandTimeout))
                 {
                     insertAction?.Invoke(e);
                     success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
@@ -438,17 +443,12 @@ namespace Dapper.Database.Adapters
 
             if (!q.IsSelect)
             {
-                var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
-
-                if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select 1 where exists (select 1 from {EscapeTableName(tableInfo)} {wc})";
-                else
-                    return $"select 1 where exists (select 1 {wc})";
-
+                return string.IsNullOrEmpty(q.FromClause)
+                    ? $"select 1 where exists (select 1 from {EscapeTableName(tableInfo)} {q.Sql})"
+                    : $"select 1 where exists (select 1 {q.Sql})";
             }
 
-            return $"select 1 where exists ({q.Sql})";
-
+            return $"select 1 from ({q.Sql}) calc_inner";
         }
 
         /// <summary>
@@ -472,12 +472,9 @@ namespace Dapper.Database.Adapters
                     () => cache && string.IsNullOrEmpty(q.Sql),
                     () =>
                     {
-                        var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
-
-                        if (string.IsNullOrEmpty(q.FromClause))
-                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
-                        else
-                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                        return string.IsNullOrEmpty(q.FromClause)
+                            ? $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {q.Sql}"
+                            : $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {q.Sql}";
                     }
                 );
 
@@ -502,12 +499,9 @@ namespace Dapper.Database.Adapters
 
             if (!q.IsSelect)
             {
-                var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
-
-                if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
-                else
-                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                return string.IsNullOrEmpty(q.FromClause)
+                    ? $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {q.Sql}"
+                    : $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {q.Sql}";
             }
 
             return q.Sql;

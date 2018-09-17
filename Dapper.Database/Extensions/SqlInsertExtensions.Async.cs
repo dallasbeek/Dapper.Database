@@ -26,10 +26,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if the entity was inserted</returns>
         public static async Task<bool> InsertAsync<T>(this IDbConnection connection, T entityToInsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return await adapter.InsertAsync(connection, transaction, commandTimeout, tinfo, entityToInsert);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return await sqlHelper.Adapter.InsertAsync(connection, transaction, commandTimeout, sqlHelper.TableInfo, entityToInsert);
         }
 
         #endregion
@@ -46,10 +44,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if the entity was inserted</returns>
         public static async Task<bool> InsertListAsync<T>(this IDbConnection connection, IEnumerable<T> entitiesToInsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return await adapter.InsertListAsync(connection, transaction, commandTimeout, tinfo, entitiesToInsert);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return await sqlHelper.Adapter.InsertListAsync(connection, transaction, commandTimeout, sqlHelper.TableInfo, entitiesToInsert);
         }
 
         #endregion

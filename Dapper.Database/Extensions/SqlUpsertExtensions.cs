@@ -71,11 +71,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Upsert<T>(this IDbConnection connection, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return adapter.Upsert(connection, transaction, commandTimeout, tinfo, entityToUpsert, columnsToUpdate, insertAction, updateAction);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.Upsert(connection, transaction, commandTimeout, sqlHelper.TableInfo, entityToUpsert, columnsToUpdate, insertAction, updateAction);
         }
         #endregion
 
@@ -140,11 +137,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated or inserted, false if not</returns>
         public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return adapter.UpsertList(connection, transaction, commandTimeout, tinfo, entitiesToUpsert, columnsToUpdate, insertAction, updateAction);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.UpsertList(connection, transaction, commandTimeout, sqlHelper.TableInfo, entitiesToUpsert, columnsToUpdate, insertAction, updateAction);
         }
         #endregion
     }

@@ -36,11 +36,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Update<T>(this IDbConnection connection, T entityToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return adapter.Update(connection, transaction, commandTimeout, tinfo, entityToUpdate, columnsToUpdate);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.Update(connection, transaction, commandTimeout, sqlHelper.TableInfo, entityToUpdate, columnsToUpdate);
         }
 
         #endregion
@@ -72,11 +69,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool UpdateList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return adapter.UpdateList(connection, transaction, commandTimeout, tinfo, entitiesToUpdate, columnsToUpdate);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.UpdateList(connection, transaction, commandTimeout, sqlHelper.TableInfo, entitiesToUpdate, columnsToUpdate);
 
         }
 

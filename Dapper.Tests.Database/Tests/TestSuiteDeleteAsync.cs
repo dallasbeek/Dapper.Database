@@ -9,7 +9,7 @@ namespace Dapper.Tests.Database
     public abstract partial class TestSuite
     {
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteIdentityEntityAsync()
         {
             using (var db = GetSqlDatabase())
@@ -31,7 +31,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteUniqueIdentifierEntityAsync()
         {
             using (var db = GetSqlDatabase())
@@ -50,7 +50,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteUniqueIdentifierWithAliasesAsync()
         {
             using (var db = GetSqlDatabase())
@@ -69,7 +69,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteIdentityAsync()
         {
             using (var db = GetSqlDatabase())
@@ -91,7 +91,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteAliasIdentityAsync()
         {
             using (var db = GetSqlDatabase())
@@ -113,7 +113,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteUniqueIdentifierAsync()
         {
             using (var db = GetSqlDatabase())
@@ -132,7 +132,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeletePersonCompositeKeyAsync()
         {
             using (var db = GetSqlDatabase())
@@ -152,7 +152,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeletePersonCompositeKeyWithAliasesAsync()
         {
             using (var db = GetSqlDatabase())
@@ -171,7 +171,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteAllAsync()
         {
             using (var db = GetSqlDatabase())
@@ -188,7 +188,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Delete")]
+        [Trait("Category", "DeleteAsync")]
         public async Task DeleteWhereClauseAsync()
         {
             using (var db = GetSqlDatabase())
