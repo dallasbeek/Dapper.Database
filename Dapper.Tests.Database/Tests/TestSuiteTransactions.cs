@@ -10,7 +10,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Transaction")]
         public void TransactionDispose()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            //if (GetProvider() == Provider.SQLite) return;
 
             using (var db = GetSqlDatabase())
             {
@@ -34,7 +34,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Transaction")]
         public void TransactionAutoDispose()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            //if (GetProvider() == Provider.SQLite) return;
 
             using (var db = GetSqlDatabase())
             {
@@ -58,7 +58,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Transaction")]
         public void TransactionCommit()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            //if (GetProvider() == Provider.SQLite) return;
 
             using (var db = GetSqlDatabase())
             {
@@ -80,7 +80,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Transaction")]
         public void NestedTransactionCommitInnerRollbackOuter()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            //if (GetProvider() == Provider.SQLite) return;
 
             using (var db = GetSqlDatabase())
             {

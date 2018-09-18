@@ -110,7 +110,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var lst = await db.GetListAsync<Product, ProductCategory>(
-                    getListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
+                    GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -135,7 +135,7 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                   getListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
+                   GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -155,7 +155,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var lst = await db.GetListAsync<Product, ProductCategory, ProductModel>(
-                    getListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
+                    GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -182,7 +182,7 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    getListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
+                    GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);

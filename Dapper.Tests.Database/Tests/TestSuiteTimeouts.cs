@@ -10,7 +10,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Timeouts")]
         public void GlobalTimeout()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            Skip.If(GetProvider() == Provider.SQLite, "Sqlite does not implement Timeout.");
 
             using (var db = GetSqlDatabase())
             {
@@ -33,7 +33,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Timeouts")]
         public void OneTimeTimeout()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            Skip.If(GetProvider() == Provider.SQLite, "Sqlite does not implement Timeout.");
 
             using (var db = GetSqlDatabase())
             {
@@ -56,7 +56,7 @@ namespace Dapper.Tests.Database
         [Trait("Category", "Timeouts")]
         public void GlobalAndOneTimeTimeout()
         {
-            if (GetProvider() == Provider.SQLite) return;
+            Skip.If(GetProvider() == Provider.SQLite, "Sqlite does not implement Timeout.");
 
             using (var db = GetSqlDatabase())
             {

@@ -97,31 +97,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.LastName, gp.LastName);
             }
         }
-
-        [Fact]
-        [Trait("Category", "Insert")]
-        public void InsertSequenceComputed()
-        {
-            Skip.IfNot(GetProvider() == Provider.Oracle, $"{GetProvider()} does not support InsertSequenceComputed.");
-
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentitySequence { FirstName = "Person", LastName = "Identity" };
-                Assert.True(db.Insert(p));
-
-                Assert.True(p.IdentityId > 0);
-                if (p.FullName != null)
-                {
-                    Assert.Equal("Person Identity", p.FullName);
-                }
-
-                var gp = db.Get<PersonIdentitySequence>(p.IdentityId);
-
-                Assert.Equal(p.IdentityId, gp.IdentityId);
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-                Assert.Equal("Person Identity", gp.FullName);
-            }
-        }
     }
 }

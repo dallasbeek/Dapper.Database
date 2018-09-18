@@ -59,14 +59,7 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-
-                if (GetProvider() == Provider.SQLite)
-                {
-                    return;
-                    //Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                    //Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));
-                }
-                else if (GetProvider() == Provider.Firebird)
+                if (GetProvider() == Provider.Firebird || GetProvider() == Provider.SQLite)
                 {
                     Assert.True(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                     Assert.False(db.Exists<Product>($"where rowguid = {P}GuidId", new { GuidId = "1115D52B-8C29-4059-B899-75C53B5EE2E6" }));

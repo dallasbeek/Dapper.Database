@@ -85,7 +85,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var item = await db.GetFirstAsync<Product, ProductCategory>(
-                    getFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
+                    GetFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -106,7 +106,7 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    getFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
+                    GetFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -122,7 +122,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel>(
-                    getFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
+                    GetFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -145,7 +145,7 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    getFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
+                    GetFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {

@@ -50,16 +50,16 @@ namespace Dapper.Tests.Database
         {
             using (var db = GetSqlDatabase())
             {
-                if (GetProvider() == Provider.SQLite)
-                {
-                    return;
-                }
-                else if (GetProvider() == Provider.Firebird)
+                //if (GetProvider() == Provider.SQLite)
+                //{
+                //    return;
+                //}
+                //else 
+                if (GetProvider() == Provider.Firebird || GetProvider() == Provider.SQLite)
                 {
                     ValidateProduct806(await db.GetAsync<Product>($"where rowguid = {P}GuidId", new { GuidId = "23B5D52B-8C29-4059-B899-75C53B5EE2E6" }));
                 }
                 else
-
                 {
                     ValidateProduct806(await db.GetAsync<Product>($"WHERE rowguid = {P}GuidId", new { GuidId = new Guid("23B5D52B-8C29-4059-B899-75C53B5EE2E6") }));
                 }
@@ -119,7 +119,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var p = await db.GetAsync<Product, ProductCategory>(
-                    getMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
+                    GetMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
             }
@@ -137,7 +137,7 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    getMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
+                    GetMultiTwoParamQuery, new { ProductId = 806 }, "ProductCategoryId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
             }
@@ -150,7 +150,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var p = await db.GetAsync<Product, ProductCategory, ProductModel>(
-                    getMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
+                    GetMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
                 ValidateProductModel60(p.ProductModel);
@@ -170,7 +170,7 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    getMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
+                    GetMultiThreeParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct806(p);
                 ValidateProductCategory15(p.ProductCategory);
                 ValidateProductModel60(p.ProductModel);
