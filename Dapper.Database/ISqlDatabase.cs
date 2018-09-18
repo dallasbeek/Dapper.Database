@@ -8,9 +8,11 @@ namespace Dapper.Database
     /// <summary>
     /// 
     /// </summary>
+    /// <seealso cref="System.IDisposable" />
     public partial interface ISqlDatabase : IDisposable
     {
         #region Execute Methods
+
         /// <summary>
         /// Execute SQL.
         /// </summary>
@@ -31,6 +33,7 @@ namespace Dapper.Database
         #endregion
 
         #region ExecuteScalar Methods
+
         /// <summary>
         /// Execute SQL that selects a single value.
         /// </summary>
@@ -55,6 +58,7 @@ namespace Dapper.Database
         #endregion
 
         #region GetDataTable Methods
+
 #if !NETSTANDARD1_3 && !NETCOREAPP1_0
         /// <summary>
         /// Execute SQL that returns a DataTable.
@@ -75,9 +79,11 @@ namespace Dapper.Database
         /// </returns>
         DataTable GetDataTable(string fullSql, object parameters);
 #endif
+
         #endregion
 
         #region GetMultiple Methods
+
         /// <summary>
         /// Execute SQL that returns multiple result sets, and access each in turn.
         /// </summary>
@@ -96,9 +102,11 @@ namespace Dapper.Database
         /// A GridReader
         /// </returns>
         GridReader GetMultiple(string fullSql, object parameters);
+
         #endregion
 
         #region Count Methods
+
         /// <summary>
         /// Execute SQL that returns the number of matching records.
         /// </summary>
@@ -142,6 +150,7 @@ namespace Dapper.Database
         #endregion
 
         #region Exists Methods
+
         /// <summary>
         /// Execute SQL that checks if record(s) exist.
         /// </summary>
@@ -165,11 +174,11 @@ namespace Dapper.Database
         /// Execute SQL that checks if an entity exists.
         /// </summary>
         /// <typeparam name="T">Type of entity.</typeparam>
-        /// <param name="entityToExists">Entity to check for existence.</param>
+        /// <param name="entityToCheck">Entity to check for existence.</param>
         /// <returns>
         /// True if record is found.
         /// </returns>
-        bool Exists<T>(T entityToExists) where T : class;
+        bool Exists<T>(T entityToCheck) where T : class;
 
         /// <summary>
         /// Execute SQL that checks if an entity exists.
@@ -205,6 +214,7 @@ namespace Dapper.Database
         #endregion
 
         #region Get Methods
+
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T'.
         /// </summary>
@@ -401,22 +411,25 @@ namespace Dapper.Database
         #endregion
 
         #region GetFirst Methods
+
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T'.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <returns>
-        /// The first matching entity of type <typeparamref name="T"/>.
+        /// The first matching entity of type <typeparamref name="T" />.
         /// </returns>
         T GetFirst<T>(string sql = null) where T : class;
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T'.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <returns>
-        /// The first matching entity of type <typeparamref name="T"/>.
+        /// The first matching entity of type <typeparamref name="T" />.
         /// </returns>
         T GetFirst<T>(string sql, object parameters) where T : class;
 
@@ -428,7 +441,7 @@ namespace Dapper.Database
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
-        /// The first matching entity of type <typeparamref name="T1"/>.
+        /// The first matching entity of type <typeparamref name="T1" />.
         /// </returns>
         T1 GetFirst<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class;
 
@@ -441,7 +454,7 @@ namespace Dapper.Database
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
-        /// The first matching entity of type <typeparamref name="T1"/>.
+        /// The first matching entity of type <typeparamref name="T1" />.
         /// </returns>
         T1 GetFirst<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class;
 
@@ -454,7 +467,7 @@ namespace Dapper.Database
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
-        /// The first matching entity of type <typeparamref name="T1"/>.
+        /// The first matching entity of type <typeparamref name="T1" />.
         /// </returns>
         T1 GetFirst<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class;
 
@@ -593,25 +606,29 @@ namespace Dapper.Database
         /// The first matching entity of type <typeparamref name="TRet"/>.
         /// </returns>
         TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
+ 
         #endregion
 
         #region GetList Methods
+
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T'.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <returns>
-        /// An IEnumerable list of matching entity of type <typeparamref name="T"/>.
+        /// An IEnumerable list of matching entity of type <typeparamref name="T" />.
         /// </returns>
         IEnumerable<T> GetList<T>(string sql = null) where T : class;
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T'.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <returns>
-        /// An IEnumerable list of matching entity of type <typeparamref name="T"/>.
+        /// An IEnumerable list of matching entity of type <typeparamref name="T" />.
         /// </returns>
         IEnumerable<T> GetList<T>(string sql, object parameters) where T : class;
 
@@ -788,9 +805,11 @@ namespace Dapper.Database
         /// An IEnumerable list of matching entity of type <typeparamref name="TRet"/>.
         /// </returns>
         IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class;
+
         #endregion
 
-        #region Get Paged List Methods
+        #region GetPageList Methods
+
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T'.
         /// </summary>
@@ -1044,7 +1063,8 @@ namespace Dapper.Database
 
         #endregion
 
-        #region Update Queries
+        #region Update Methods
+
         /// <summary>
         /// Updates an entity and returns true if successful.
         /// </summary>
@@ -1068,7 +1088,8 @@ namespace Dapper.Database
 
         #endregion
 
-        #region UpdateList Queries
+        #region UpdateList Methods
+
         /// <summary>
         /// Updates a list of entity and returns true if successful.
         /// </summary>
@@ -1092,7 +1113,7 @@ namespace Dapper.Database
 
         #endregion
 
-        #region Upsert Queries
+        #region Upsert Methods
 
         /// <summary>
         /// Updates or inserts an entity and returns true if successful.
@@ -1142,7 +1163,8 @@ namespace Dapper.Database
 
         #endregion
 
-        #region UpsertList Queries
+        #region UpsertList Methods
+
         /// <summary>
         /// Updates or inserts a list of entities and returns true if successful.
         /// </summary>
@@ -1188,6 +1210,7 @@ namespace Dapper.Database
         /// True if the records are updated or inserted.
         /// </returns>
         bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction) where T : class;
+ 
         #endregion
 
         #region Delete Methods
@@ -1198,7 +1221,7 @@ namespace Dapper.Database
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="entityToDelete">Entity to delete. If Keys are specified, they will be used as the WHERE condition to delete.</param>
         /// <returns>
-        /// true if deleted, false if not found
+        /// True if deleted, false if not found.
         /// </returns>
         bool Delete<T>(T entityToDelete) where T : class;
 
@@ -1208,7 +1231,7 @@ namespace Dapper.Database
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKeyValue">a Single primary key to delete</param>
         /// <returns>
-        /// true if deleted, false if not found
+        /// True if deleted, false if not found.
         /// </returns>
         bool Delete<T>(object primaryKeyValue) where T : class;
 
@@ -1219,7 +1242,7 @@ namespace Dapper.Database
         /// <typeparam name="T"></typeparam>
         /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
         /// <returns>
-        /// true if deleted, false if not found
+        /// True if deleted, false if not found.
         /// </returns>
         bool Delete<T>(string whereClause) where T : class;
 
@@ -1245,13 +1268,14 @@ namespace Dapper.Database
 
         #endregion
 
-        #region Transaction
+        #region Transaction Methods
+
         /// <summary>
         /// Get a transaction
         /// </summary>
         /// <returns></returns>
         ITransaction GetTransaction();
-    
+
         /// <summary>
         /// Get a transaction
         /// </summary>

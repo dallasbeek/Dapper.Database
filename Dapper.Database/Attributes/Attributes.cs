@@ -6,6 +6,7 @@ namespace Dapper.Database.Attributes
     /// <summary>
     /// Specifies whether a property should be completely ignored
     /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreAttribute : Attribute
     {
@@ -20,6 +21,7 @@ namespace Dapper.Database.Attributes
     /// <summary>
     /// Specifies whether a field is insertable in the database.
     /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreInsertAttribute : Attribute
     {
@@ -34,6 +36,7 @@ namespace Dapper.Database.Attributes
     /// <summary>
     /// Specifies whether a field is updatable in the database.
     /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreUpdateAttribute : Attribute
     {
@@ -48,6 +51,7 @@ namespace Dapper.Database.Attributes
     /// <summary>
     /// Specifies whether a field should be returned from the database.
     /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreSelectAttribute : Attribute
     {
@@ -62,6 +66,7 @@ namespace Dapper.Database.Attributes
     /// <summary>
     /// Specifies whether a field is read only (same as computed).
     /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
     public class ReadOnlyAttribute : Attribute
     {
@@ -76,6 +81,7 @@ namespace Dapper.Database.Attributes
     /// <summary>
     /// Oracle sequence
     /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
     public class SequenceAttribute : Attribute
     {
