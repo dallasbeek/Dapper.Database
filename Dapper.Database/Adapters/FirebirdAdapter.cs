@@ -189,10 +189,9 @@ namespace Dapper.Database.Adapters
             if (!q.IsSelect)
             {
                 return string.IsNullOrEmpty(q.FromClause)
-                ? $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {q.Sql}"
-                : $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {q.Sql}";
+                ? $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {q.Sql});"
+                : $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {q.Sql});";
             }
-
             return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists ({q.Sql});";
         }
 
