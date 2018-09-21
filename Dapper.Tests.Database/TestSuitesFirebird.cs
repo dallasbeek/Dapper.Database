@@ -9,7 +9,7 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "Firebird")]
     public class FirebirdTestSuite : TestSuite
     {
-        private static string DbName = "DBFiles\\Test.DB.fdb";
+        private static string DbName = "\\DBFiles\\Test.DB.fdb";
         private static string DbFile;
 
         public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={DbFile};";
@@ -31,7 +31,7 @@ namespace Dapper.Tests.Database
 
         static FirebirdTestSuite()
         {
-            DbFile = Directory.GetCurrentDirectory() + "\\DBFiles\\Test.DB.fdb";
+            DbFile = Directory.GetCurrentDirectory() + DbName;
             SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
