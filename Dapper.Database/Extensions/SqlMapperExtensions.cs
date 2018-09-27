@@ -90,10 +90,8 @@ namespace Dapper.Database.Extensions
 
         private static string SplitOnArgument(IList<Type> types)
         {
-            return string.Join(",", types.Select(t => TableInfoCache(t).GetSingleKey("SplitOnArgument").PropertyName));
+            return string.Join(",", types.Select(t => TableInfoCache(t).GetSingleKey().PropertyName));
         }
-
-
 
         /// <summary>
         /// Specifies a custom callback that detects the database type instead of relying on the default strategy (the name of the connection type object).

@@ -27,6 +27,7 @@ namespace Dapper.Database.Adapters
         /// </summary>
         protected static readonly ConcurrentDictionary<RuntimeTypeHandle, string> UpdateQueries = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 
+        #region Insert Implementations
         /// <summary>
         /// Inserts an entity into table "Ts"
         /// </summary>
@@ -42,6 +43,71 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        public virtual bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
+        {
+            var success = entitiesToInsert.Any();
+            if (success && !tableInfo.GeneratedColumns.Any())
+            {
+                return connection.Execute(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= entitiesToInsert.Count();
+            }
+
+            foreach (var e in entitiesToInsert)
+            {
+                success = success && Insert(connection, transaction, commandTimeout, tableInfo, e);
+            }
+            return success;
+        }
+
+        /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entityToInsert">Entity to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        public virtual async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
+        {
+            return await new Task<bool>(() => false); ;
+        }
+
+        /// <summary>
+        /// Inserts an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToInsert">List of Entities to insert</param>
+        /// <returns>true if the entity was inserted</returns>
+        public virtual async Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
+        {
+            var success = entitiesToInsert.Any();
+            if (success && !tableInfo.GeneratedColumns.Any())
+            {
+                return await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= entitiesToInsert.Count();
+            }
+
+            foreach (var e in entitiesToInsert)
+            {
+                success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
+            }
+            return success;
+        }
+
+        #endregion
+
+        #region Update Implementations
+        /// <summary>
         /// updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
@@ -55,6 +121,193 @@ namespace Dapper.Database.Adapters
         {
             return false;
         }
+
+        /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpdate">List Entities to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        public virtual bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
+        {
+            var success = entitiesToUpdate.Any();
+            foreach (var e in entitiesToUpdate)
+            {
+                success = success && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entityToUpdate">Entity to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        public virtual async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        {
+            return await new Task<bool>(() => false); ;
+        }
+
+        /// <summary>
+        /// updates an entity into table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpdate">List Entities to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <returns>true if the entity was updated</returns>
+        public virtual async Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
+        {
+            var success = entitiesToUpdate.Any();
+            foreach (var e in entitiesToUpdate)
+            {
+                success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
+            }
+
+            return success;
+        }
+
+        #endregion
+
+        #region Upsert Implementations
+        /// <summary>
+        /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        public virtual bool Upsert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
+        {
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+            if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, qWhere), entityToUpsert, transaction, commandTimeout))
+            {
+                insertAction?.Invoke(entityToUpsert);
+                return Insert(connection, transaction, commandTimeout, tableInfo, entityToUpsert);
+            }
+            else
+            {
+                updateAction?.Invoke(entityToUpsert);
+                return Update(connection, transaction, commandTimeout, tableInfo, entityToUpsert, columnsToUpdate);
+            }
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpsert">Entity to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        public virtual bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
+        {
+            var success = entitiesToUpsert.Any();
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+
+            foreach (var e in entitiesToUpsert)
+            {
+                if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, qWhere), e, transaction, commandTimeout))
+                {
+                    insertAction?.Invoke(e);
+                    success = success && Insert(connection, transaction, commandTimeout, tableInfo, e);
+                }
+                else
+                {
+                    updateAction?.Invoke(e);
+                    success = success && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
+                }
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        public virtual async Task<bool> UpsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
+        {
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+            if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), entityToUpsert, transaction, commandTimeout))
+            {
+                insertAction?.Invoke(entityToUpsert);
+                return await InsertAsync(connection, transaction, commandTimeout, tableInfo, entityToUpsert);
+            }
+            else
+            {
+                updateAction?.Invoke(entityToUpsert);
+                return await UpdateAsync(connection, transaction, commandTimeout, tableInfo, entityToUpsert, columnsToUpdate);
+            }
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts", checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entitiesToUpsert">Entity to Update Or Insert to update</param>
+        /// <param name="columnsToUpdate">A list of columns to update</param>
+        /// <param name="insertAction">Callback action when inserting</param>
+        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <returns>true if inserted or updated, false if not</returns>
+        public virtual async Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
+        {
+            var success = entitiesToUpsert.Any();
+            var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
+            foreach (var e in entitiesToUpsert)
+            {
+                if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), e, transaction, commandTimeout))
+                {
+                    insertAction?.Invoke(e);
+                    success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
+                }
+                else
+                {
+                    updateAction?.Invoke(e);
+                    success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
+                }
+            }
+
+            return success;
+        }
+        #endregion
+
 
         /// <summary>
         /// Default implementation of an insert query
@@ -190,17 +443,12 @@ namespace Dapper.Database.Adapters
 
             if (!q.IsSelect)
             {
-                var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
-
-                if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select 1 where exists (select 1 from {EscapeTableName(tableInfo)} {wc})";
-                else
-                    return $"select 1 where exists (select 1 {wc})";
-
+                return string.IsNullOrEmpty(q.FromClause)
+                    ? $"select 1 where exists (select 1 from {EscapeTableName(tableInfo)} {q.Sql})"
+                    : $"select 1 where exists (select 1 {q.Sql})";
             }
 
-            return $"select 1 where exists ({q.Sql})";
-
+            return $"select 1 from ({q.Sql}) calc_inner";
         }
 
         /// <summary>
@@ -224,12 +472,9 @@ namespace Dapper.Database.Adapters
                     () => cache && string.IsNullOrEmpty(q.Sql),
                     () =>
                     {
-                        var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
-
-                        if (string.IsNullOrEmpty(q.FromClause))
-                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
-                        else
-                            return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                        return string.IsNullOrEmpty(q.FromClause)
+                            ? $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {q.Sql}"
+                            : $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {q.Sql}";
                     }
                 );
 
@@ -254,12 +499,9 @@ namespace Dapper.Database.Adapters
 
             if (!q.IsSelect)
             {
-                var wc = string.IsNullOrWhiteSpace(q.Sql) ? $"where {EscapeWhereList(tableInfo.KeyColumns)}" : q.Sql;
-
-                if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {wc}";
-                else
-                    return $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {wc}";
+                return string.IsNullOrEmpty(q.FromClause)
+                    ? $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {q.Sql}"
+                    : $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {q.Sql}";
             }
 
             return q.Sql;
@@ -364,34 +606,6 @@ namespace Dapper.Database.Adapters
         /// <returns></returns>
         public virtual string EscapeAssignmentList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
 
-        /// <summary>
-        /// Inserts an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToInsert">Entity to insert</param>
-        /// <returns>true if the entity was inserted</returns>
-        public virtual async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
-        {
-            return await new Task<bool>(() => false); ;
-        }
 
-        /// <summary>
-        /// updates an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public virtual async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
-        {
-            return await new Task<bool>(() => false); ;
-        }
     }
-
 }

@@ -8,8 +8,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-
         [Fact]
         [Trait("Category", "GetFirst")]
         public void GetFirstWithWhereClause()
@@ -20,7 +18,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetFirst")]
@@ -87,12 +84,12 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var item = db.GetFirst<Product, ProductCategory>(
-                    getFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
+                    GetFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
                 ValidateProduct816(item);
-                if (GetProvider() != Provider.SQLite)
-                {
-                    ValidateProductCategory21(item.ProductCategory);
-                }
+                //if (GetProvider() != Provider.SQLite)
+                //{
+                //    ValidateProductCategory21(item.ProductCategory);
+                //}
             }
         }
 
@@ -108,12 +105,12 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    getFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
+                    GetFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
                 ValidateProduct816(item);
-                if (GetProvider() != Provider.SQLite)
-                {
-                    ValidateProductCategory21(item.ProductCategory);
-                }
+                //if (GetProvider() != Provider.SQLite)
+                //{
+                //    ValidateProductCategory21(item.ProductCategory);
+                //}
             }
         }
 
@@ -124,13 +121,13 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var item = db.GetFirst<Product, ProductCategory, ProductModel>(
-                    getFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
+                    GetFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct816(item);
-                if (GetProvider() != Provider.SQLite)
-                {
-                    ValidateProductCategory21(item.ProductCategory);
-                    ValidateProductModel45(item.ProductModel);
-                }
+                //if (GetProvider() != Provider.SQLite)
+                //{
+                //    ValidateProductCategory21(item.ProductCategory);
+                //    ValidateProductModel45(item.ProductModel);
+                //}
             }
         }
 
@@ -147,42 +144,14 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    getFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
+                    GetFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct816(item);
-                if (GetProvider() != Provider.SQLite)
-                {
-                    ValidateProductCategory21(item.ProductCategory);
-                    ValidateProductModel45(item.ProductModel);
-                }
+                //if (GetProvider() != Provider.SQLite)
+                //{
+                //    ValidateProductCategory21(item.ProductCategory);
+                //    ValidateProductModel45(item.ProductModel);
+                //}
             }
         }
-
-        private string getFirstTwoParamQuery
-        {
-            get
-            {
-                return
-
-            $@"select  P.*, P.rowguid as GuidId, PC.* 
-            from Product P
-            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-            where Color = {P}Color and ProductId >= {P}ProductId order by ProductId";
-
-            }
-        }
-
-        private string getFirstThreeParamQuery
-        {
-            get
-            {
-                return
-                    $@"select  P.*, P.rowguid as GuidId, PC.*, PM.*
-                    from Product P
-                    join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-                    join ProductModel PM on PM.ProductModelID = P.ProductModelID
-                    where Color = {P}Color and ProductId >= {P}ProductId order by ProductId";
-            }
-        }
-
     }
 }

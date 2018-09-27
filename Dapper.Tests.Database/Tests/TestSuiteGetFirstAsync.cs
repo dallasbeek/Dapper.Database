@@ -9,11 +9,9 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
-
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithWhereClause()
+        public async Task GetFirstWithWhereClauseAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -22,10 +20,9 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithWhereClauseParameter()
+        public async Task GetFirstWithWhereClauseParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -36,7 +33,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithSelectClause()
+        public async Task GetFirstWithSelectClauseAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -47,7 +44,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncWithSelectClauseParameter()
+        public async Task GetFirstWithSelectClauseParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -58,7 +55,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncShortCircuit()
+        public async Task GetFirstShortCircuitAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -69,7 +66,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncPartialBySelect()
+        public async Task GetFirstPartialBySelectAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -83,12 +80,12 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncOneJoinUnmapped()
+        public async Task GetFirstOneJoinUnmappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
                 var item = await db.GetFirstAsync<Product, ProductCategory>(
-                    getFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
+                    GetFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -99,7 +96,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncOneJoinMapped()
+        public async Task GetFirstOneJoinMappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -109,7 +106,7 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                    getFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
+                    GetFirstTwoParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -120,12 +117,12 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncTwoJoinsUnmapped()
+        public async Task GetFirstTwoJoinsUnmappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
                 var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel>(
-                    getFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
+                    GetFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -137,7 +134,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "GetFirstAsync")]
-        public async Task GetFirstAsyncTwoJoinsMapped()
+        public async Task GetFirstTwoJoinsMappedAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -148,7 +145,7 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    getFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
+                    GetFirstThreeParamQuery, new { Color = "Black", ProductId = 816 }, "ProductCategoryId,ProductModelId");
                 ValidateProduct816(item);
                 if (GetProvider() != Provider.SQLite)
                 {
@@ -157,6 +154,5 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
     }
 }

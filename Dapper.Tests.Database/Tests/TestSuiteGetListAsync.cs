@@ -9,42 +9,39 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetListAsync")]
         public async Task GetListAllAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>();
+                var lst = await db.GetListAsync<Product>();
                 Assert.Equal(295, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithWhereClauseAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>("where Color = 'Black'");
+                var lst = await db.GetListAsync<Product>("where Color = 'Black'");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithWhereClauseParameterAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>($"where Color = {P}Color", new { Color = "Black" });
+                var lst = await db.GetListAsync<Product>($"where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -55,9 +52,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithSelectClauseAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'");
+                var lst = await db.GetListAsync<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -68,9 +65,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListWithSelectClauseParameterAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
+                var lst = await db.GetListAsync<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -81,9 +78,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListShortCircuitAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
+                var lst = await db.GetListAsync<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -94,9 +91,9 @@ namespace Dapper.Tests.Database
         [Trait("Category", "GetListAsync")]
         public async Task GetListPartialBySelectAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
-                var lst = await connection.GetListAsync<Product>($"select ProductId, rowguid AS GuidId, Name from Product where Color = {P}Color", new { Color = "Black" });
+                var lst = await db.GetListAsync<Product>($"select ProductId, rowguid AS GuidId, Name from Product where Color = {P}Color", new { Color = "Black" });
                 Assert.Equal(89, lst.Count());
                 var p = lst.Single(a => a.ProductID == 816);
                 Assert.Equal(816, p.ProductID);
@@ -113,7 +110,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var lst = await db.GetListAsync<Product, ProductCategory>(
-                    getListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
+                    GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -138,7 +135,7 @@ namespace Dapper.Tests.Database
                         pr.ProductCategory = pc;
                         return pr;
                     },
-                   getListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
+                   GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -158,7 +155,7 @@ namespace Dapper.Tests.Database
             using (var db = GetSqlDatabase())
             {
                 var lst = await db.GetListAsync<Product, ProductCategory, ProductModel>(
-                    getListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
+                    GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -185,7 +182,7 @@ namespace Dapper.Tests.Database
                         pr.ProductModel = pm;
                         return pr;
                     },
-                    getListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
+                    GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
                 Assert.Equal(89, lst.Count());
                 var item = lst.Single(p => p.ProductID == 816);
                 ValidateProduct816(item);
@@ -198,6 +195,5 @@ namespace Dapper.Tests.Database
                 }
             }
         }
-
     }
 }

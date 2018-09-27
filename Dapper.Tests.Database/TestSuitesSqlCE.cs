@@ -5,19 +5,18 @@ using System.IO;
 using Dapper.Database;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
 
     [Trait("Provider", "SqlCE")]
     public class SqlCETestSuite : TestSuite
     {
-        const string FileName = "Test.DB.sdf";
+        private const string FileName = "DBFiles\\Test.DB.sdf";
         public static string ConnectionString => $"Data Source={FileName};";
 
         protected override void CheckSkip()
         {
-            Skip.If(_skip, "Skipping SqlCE Tests - no server.");
+            Skip.If(_skip, "Skipping SqlCE Tests - no server or file.");
         }
 
         public override ISqlDatabase GetSqlDatabase()
@@ -32,7 +31,8 @@ namespace Dapper.Tests.Database
 
         static SqlCETestSuite()
         {
-            Environment.SetEnvironmentVariable("NoCache", "True");
+
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             if (!File.Exists(FileName))
@@ -65,19 +65,21 @@ namespace Dapper.Tests.Database
                 }
                 catch (Exception)
                 {
-
                     throw;
                 }
             }
-            else
+            try
             {
                 using (var connection = new SqlCeConnection(ConnectionString))
                 {
                     connection.Execute("delete from [Person]");
                 }
             }
+            catch (SqlCeException)
+            {
+                _skip = true;
+            }
         }
     }
-
 }
 #endif

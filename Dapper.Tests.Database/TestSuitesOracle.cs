@@ -1,7 +1,5 @@
 ﻿#if ORACLE
 using System;
-using System.Data;
-using System.Data.Common;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -11,7 +9,7 @@ using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
 using Oracle.ManagedDataAccess.Client;
 using Xunit;
-
+using FactAttribute = Xunit.SkippableFactAttribute;
 using OracleConnection = Dapper.Tests.Database.OracleClient.OracleConnection;
 
 namespace Dapper.Tests.Database
@@ -35,7 +33,6 @@ namespace Dapper.Tests.Database
             return new SqlDatabase(new StringConnectionService<OracleConnection>(ConnectionString));
         }
 
-
         public override Provider GetProvider() => Provider.Oracle;
 
         private static readonly bool _skip;
@@ -44,7 +41,7 @@ namespace Dapper.Tests.Database
 
         static OracleTestSuite()
         {
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
@@ -107,6 +104,33 @@ namespace Dapper.Tests.Database
                 _skip = true;
             }
         }
+
+        #region Oracle Specific Tests
+
+        [Fact]
+        [Trait("Category", "Insert")]
+        public void InsertSequenceComputed()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonIdentitySequence { FirstName = "Person", LastName = "Identity" };
+                Assert.True(db.Insert(p));
+
+                Assert.True(p.IdentityId > 0);
+                if (p.FullName != null)
+                {
+                    Assert.Equal("Person Identity", p.FullName);
+                }
+
+                var gp = db.Get<PersonIdentitySequence>(p.IdentityId);
+
+                Assert.Equal(p.IdentityId, gp.IdentityId);
+                Assert.Equal(p.FirstName, gp.FirstName);
+                Assert.Equal(p.LastName, gp.LastName);
+                Assert.Equal("Person Identity", gp.FullName);
+            }
+        }
+        #endregion
     }
 }
 #endif

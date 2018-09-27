@@ -1,12 +1,10 @@
 ﻿using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
-
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "Execute")]
         public void ExecuteSql()
@@ -17,7 +15,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "Execute")]
         public void ExecuteSqlWithParameter()
@@ -27,6 +24,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal(89, db.Execute($"update Product set color = {P}Color where Color = {P}Color", new { Color = "Black" }));
             }
         }
-
     }
 }

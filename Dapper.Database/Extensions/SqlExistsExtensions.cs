@@ -24,10 +24,9 @@ namespace Dapper.Database.Extensions
             if (entityToExists == null)
                 throw new ArgumentException("Cannot Exists null Object", nameof(entityToExists));
 
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, null), entityToExists, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            var existsQuery = sqlHelper.GenerateCompositeKeyQuery(entityToExists, (ti, sql) => sqlHelper.Adapter.ExistsQuery(ti, sql));
+            return connection.ExecuteScalar<bool>(existsQuery.SqlStatement, existsQuery.Parameters, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -40,13 +39,9 @@ namespace Dapper.Database.Extensions
         /// <returns>true if record is found</returns>
         public static bool Exists<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            var key = tinfo.GetSingleKey("Exists");
-            var dynParms = new DynamicParameters();
-            dynParms.Add(key.PropertyName, primaryKey);
-            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, null), dynParms, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            var existsQuery = sqlHelper.GenerateSingleKeyQuery(primaryKey, (ti, sql) => sqlHelper.Adapter.ExistsQuery(ti, sql));
+            return connection.ExecuteScalar<bool>(existsQuery.SqlStatement, existsQuery.Parameters, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -59,10 +54,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if record is found</returns>
         public static bool Exists<T>(this IDbConnection connection, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, sql ?? "where 1 = 1"), null, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return connection.ExecuteScalar<bool>(sqlHelper.Adapter.ExistsQuery(sqlHelper.TableInfo, sql), null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -76,10 +69,8 @@ namespace Dapper.Database.Extensions
         /// <returns>true if record is found</returns>
         public static bool Exists<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return connection.ExecuteScalar<bool>(adapter.ExistsQuery(tinfo, sql), parameters, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return connection.ExecuteScalar<bool>(sqlHelper.Adapter.ExistsQuery(sqlHelper.TableInfo, sql), parameters, transaction, commandTimeout);
         }
         #endregion
 

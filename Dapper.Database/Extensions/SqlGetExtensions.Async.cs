@@ -29,9 +29,9 @@ namespace Dapper.Database.Extensions
             if (entityToGet == null)
                 throw new ArgumentException("Cannot Get null Object", nameof(entityToGet));
 
-            var adapter = GetFormatter(connection);
-
-            return await connection.GetAsync<T>(adapter, null, entityToGet, transaction, commandTimeout, true);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            var getQuery = sqlHelper.GenerateCompositeKeyQuery(entityToGet, (ti, sql) => sqlHelper.Adapter.GetQuery(ti, sql));
+            return (await connection.QueryAsync<T>(getQuery.SqlStatement, getQuery.Parameters, transaction, commandTimeout: commandTimeout)).SingleOrDefault();
         }
 
         /// <summary>
@@ -45,14 +45,9 @@ namespace Dapper.Database.Extensions
         /// <returns>the entity, else null</returns>
         public static async Task<T> GetAsync<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            var key = tinfo.GetSingleKey("Get");
-            var dynParms = new DynamicParameters();
-            dynParms.Add(key.PropertyName, primaryKey);
-
-            return await connection.GetAsync<T>(adapter, null, dynParms, transaction, commandTimeout, true);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            var getQuery = sqlHelper.GenerateSingleKeyQuery(primaryKey, (ti, sql) => sqlHelper.Adapter.GetQuery(ti, sql));
+            return (await connection.QueryAsync<T>(getQuery.SqlStatement, getQuery.Parameters, transaction, commandTimeout: commandTimeout)).SingleOrDefault();
         }
 
         /// <summary>
@@ -67,9 +62,8 @@ namespace Dapper.Database.Extensions
         /// <returns>the entity, else null</returns>
         public static async Task<T> GetAsync<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            return await connection.GetAsync<T>(adapter, sql, parameters, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return (await connection.QueryAsync<T>(sqlHelper.Adapter.GetQuery(sqlHelper.TableInfo, sql), parameters, transaction, commandTimeout: commandTimeout)).SingleOrDefault();
         }
 
         /// <summary>
@@ -237,27 +231,6 @@ namespace Dapper.Database.Extensions
         public static async Task<TRet> GetAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
             return (await connection.QueryAsync(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) }))).SingleOrDefault();
-        }
-
-        /// <summary>
-        /// Returns a single entity of type T.  
-        /// </summary>
-        /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="fromCache">Cache the query.</param>
-        /// <returns>the entity, else null</returns>
-        private static async Task<T> GetAsync<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
-        {
-            var type = typeof(T);
-            var tinfo = TableInfoCache(type);
-            var selectSql = adapter.GetQuery(tinfo, sql, fromCache);
-
-            return (await connection.QueryAsync<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout)).SingleOrDefault();
         }
         #endregion
 

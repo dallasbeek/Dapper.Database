@@ -2,8 +2,8 @@
 using System.IO;
 using Dapper.Database;
 using Microsoft.Data.Sqlite;
+using System.Data;
 using Xunit;
-
 
 namespace Dapper.Tests.Database
 {
@@ -11,7 +11,7 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "SQLite")]
     public class SQLiteTestSuite : TestSuite
     {
-        private const string FileName = "Test.DB.sqlite";
+        private const string FileName = "DBFiles\\Test.DB.sqlite";
         public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
 
         protected override void CheckSkip()
@@ -22,7 +22,7 @@ namespace Dapper.Tests.Database
         public override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
-            return new SqlDatabase(new StringConnectionService<SqliteConnection>(ConnectionString));
+            return new SqlDatabase(new StringConnectionService<SqliteConnection>(ConnectionString), IsolationLevel.Serializable);
         }
 
         public override Provider GetProvider() => Provider.SQLite;
@@ -31,7 +31,7 @@ namespace Dapper.Tests.Database
 
         static SQLiteTestSuite()
         {
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
@@ -61,8 +61,6 @@ namespace Dapper.Tests.Database
             {
                 _skip = true;
             }
-
         }
     }
-
 }

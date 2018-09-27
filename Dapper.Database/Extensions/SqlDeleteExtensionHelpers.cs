@@ -30,7 +30,7 @@ namespace Dapper.Database.Extensions
             var type = typeof(T);
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
-            var keys = tinfo.GetCompositeKeys("Delete");
+            var keys = tinfo.GetCompositeKeys();
             var dynParms = new DynamicParameters();
             foreach (var key in keys)
             {
@@ -55,7 +55,7 @@ namespace Dapper.Database.Extensions
             var adapter = GetFormatter(connection);
             var tinfo = TableInfoCache(type);
 
-            var key = tinfo.GetSingleKey("Delete");
+            var key = tinfo.GetSingleKey();
             var dynParms = new DynamicParameters();
             dynParms.Add(key.PropertyName, primaryKeyValue);
             var qWhere = $" where {adapter.EscapeWhereList(tinfo.KeyColumns)}";

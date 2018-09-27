@@ -1,14 +1,12 @@
 ﻿using System;
 using Dapper.Database.Extensions;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "Insert")]
         public void InsertIdentity()
@@ -97,32 +95,6 @@ namespace Dapper.Tests.Database
                 Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
-            }
-        }
-
-        [Fact]
-        [Trait("Category", "Insert")]
-        public void InsertSequenceComputed()
-        {
-            Skip.IfNot(GetProvider() == Provider.Oracle, $"{GetProvider()} does not support InsertSequenceComputed.");
-
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentitySequence { FirstName = "Person", LastName = "Identity" };
-                Assert.True(db.Insert(p));
-
-                Assert.True(p.IdentityId > 0);
-                if (p.FullName != null)
-                {
-                    Assert.Equal("Person Identity", p.FullName);
-                }
-
-                var gp = db.Get<PersonIdentitySequence>(p.IdentityId);
-
-                Assert.Equal(p.IdentityId, gp.IdentityId);
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-                Assert.Equal("Person Identity", gp.FullName);
             }
         }
     }

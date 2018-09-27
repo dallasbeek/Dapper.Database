@@ -28,9 +28,9 @@ namespace Dapper.Database.Extensions
             if (entityToGet == null)
                 throw new ArgumentException("Cannot Get null Object", nameof(entityToGet));
 
-            var adapter = GetFormatter(connection);
-
-            return connection.Get<T>(adapter, null, entityToGet, transaction, commandTimeout, true);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            var getQuery = sqlHelper.GenerateCompositeKeyQuery(entityToGet, (ti, sql) => sqlHelper.Adapter.GetQuery(ti, sql));
+            return connection.Query<T>(getQuery.SqlStatement, getQuery.Parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
         }
 
         /// <summary>
@@ -44,14 +44,9 @@ namespace Dapper.Database.Extensions
         /// <returns>the entity, else null</returns>
         public static T Get<T>(this IDbConnection connection, object primaryKey, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            var key = tinfo.GetSingleKey("Get");
-            var dynParms = new DynamicParameters();
-            dynParms.Add(key.PropertyName, primaryKey);
-
-            return connection.Get<T>(adapter, null, dynParms, transaction, commandTimeout, true);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            var getQuery = sqlHelper.GenerateSingleKeyQuery(primaryKey, (ti, sql) => sqlHelper.Adapter.GetQuery(ti, sql));
+            return connection.Query<T>(getQuery.SqlStatement, getQuery.Parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
         }
 
         /// <summary>
@@ -66,9 +61,8 @@ namespace Dapper.Database.Extensions
         /// <returns>the entity, else null</returns>
         public static T Get<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            return connection.Get<T>(adapter, sql, parameters, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return connection.Query<T>(sqlHelper.Adapter.GetQuery(sqlHelper.TableInfo,sql),parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
         }
 
         /// <summary>
@@ -238,26 +232,6 @@ namespace Dapper.Database.Extensions
             return connection.Query(sql, mapper, parameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })).SingleOrDefault();
         }
 
-        /// <summary>
-        /// Returns a single entity of type T.  
-        /// </summary>
-        /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
-        /// <param name="sql">The sql clause</param>
-        /// <param name="parameters">Parameters of the sql clause</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="fromCache">Cache the query.</param>
-        /// <returns>the entity, else null</returns>
-        private static T Get<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
-        {
-            var type = typeof(T);
-            var tinfo = TableInfoCache(type);
-            var selectSql = adapter.GetQuery(tinfo, sql, fromCache);
-
-            return connection.Query<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout).SingleOrDefault();
-        }
         #endregion
 
     }

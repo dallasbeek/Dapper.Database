@@ -28,20 +28,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-
-                if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
-                {
-                    cmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = SCOPE_IDENTITY();");
-                }
-                else
-                {
-                    cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-                }
-
-                var multi = connection.QueryMultiple(cmd.ToString(), entityToInsert, transaction, commandTimeout);
-
-                var vals = multi.Read().ToList();
+                var vals = connection.Query(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
 
                 if (!vals.Any()) return false;
 
@@ -50,7 +37,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -79,12 +66,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-                cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-
-                var multi = connection.QueryMultiple(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
-
-                var vals = multi.Read().ToList();
+                var vals = connection.Query(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
 
                 if (!vals.Any()) return false;
 
@@ -93,7 +75,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -121,20 +103,9 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var rslt = await connection.QueryAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
 
-                if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
-                {
-                    cmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = SCOPE_IDENTITY();");
-                }
-                else
-                {
-                    cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-                }
-
-                var multi = await connection.QueryMultipleAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout);
-
-                var vals = multi.Read().ToList();
+                var vals = rslt.ToList();
 
                 if (!vals.Any()) return false;
 
@@ -143,7 +114,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -172,12 +143,9 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-                cmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+                var rslt = await connection.QueryAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
 
-                var multi = await connection.QueryMultipleAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
-
-                var vals = multi.Read().ToList();
+                var vals = rslt.ToList();
 
                 if (!vals.Any()) return false;
 
@@ -186,7 +154,7 @@ namespace Dapper.Database.Adapters
                 foreach (var key in rvals.Keys)
                 {
                     var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
+                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
                     p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
                 }
 
@@ -231,6 +199,32 @@ namespace Dapper.Database.Adapters
         /// <returns></returns>
         public override string EscapeTableName(TableInfo tableInfo) =>
             (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) + EscapeTableName(tableInfo.TableName);
+
+        /// <summary>
+        /// implementation of an insert query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An insert sql statement</returns>
+        protected override string BuildInsertQuery(TableInfo tableInfo)
+            => tableInfo.GeneratedColumns.Any()
+            ? $"insert into {EscapeTableName(tableInfo)} ({EscapeColumnList(tableInfo.InsertColumns)}) output {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, "inserted")} values ({EscapeParameters(tableInfo.InsertColumns)}) "
+            : base.BuildInsertQuery(tableInfo);
+
+        /// <summary>
+        /// Default implementation of an update query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="columnsToUpdate">columns to be updated</param>
+        /// <returns>An update sql statement</returns>
+        protected override string BuildUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
+        {
+            if (tableInfo.GeneratedColumns.Any())
+            {
+                var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
+                return $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} output {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, "inserted")} where {EscapeWhereList(tableInfo.KeyColumns)}";
+            }
+            return base.BuildUpdateQuery(tableInfo, columnsToUpdate);
+        }
 
     }
 }

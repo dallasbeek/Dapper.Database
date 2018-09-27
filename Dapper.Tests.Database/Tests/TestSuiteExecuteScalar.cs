@@ -1,13 +1,10 @@
 ﻿using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "ExecuteScalar")]
         public void ExecuteScalarSql()
@@ -18,7 +15,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "ExecuteScalar")]
         public void ExecuteScalarSqlWithParameter()
@@ -28,6 +24,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal(102.29m, db.ExecuteScalar<decimal>($"select listprice from Product where productid = {P}ProductId", new { ProductId = 806 }));
             }
         }
-
     }
 }

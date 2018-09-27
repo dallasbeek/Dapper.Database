@@ -1,13 +1,10 @@
 ﻿using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "Count")]
         public void CountNonGeneric()
@@ -98,7 +95,5 @@ namespace Dapper.Tests.Database
                 Assert.Equal(89, db.Count<Product>($";select count(*) from Product where Color = {P}Color", new { Color = "Black" }));
             }
         }
-
-
     }
 }

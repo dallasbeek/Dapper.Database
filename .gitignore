@@ -15,6 +15,5 @@ NuGet.exe
 *.lock.json
 *.coverage
 TestResults/
-Dapper.Tests/*.sdf
 Dapper.Tests/SqlServerTypes/
 .dotnet/*

@@ -1,17 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
-
 using FactAttribute = Xunit.SkippableFactAttribute;
-
 
 namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "ExecuteAsync")]
-        public async Task ExecuteAsyncSql()
+        public async Task ExecuteSqlAsync()
         {
             using (var db = GetSqlDatabase())
             {
@@ -19,16 +16,14 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "ExecuteAsync")]
-        public async Task ExecuteAsyncSqlWithParameter()
+        public async Task ExecuteSqlWithParameterAsync()
         {
             using (var db = GetSqlDatabase())
             {
                 Assert.Equal(89, await db.ExecuteAsync($"update Product set color = {P}Color where Color = {P}Color", new { Color = "Black" }));
             }
         }
-
     }
 }

@@ -38,7 +38,6 @@ namespace Dapper.Tests.Database
         }
     }
 
-
     public class NumericTypeHandler : SqlMapper.TypeHandler<decimal>
     {
         public override decimal Parse(object value)

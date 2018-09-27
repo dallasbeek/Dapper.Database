@@ -62,10 +62,8 @@ namespace Dapper.Database.Extensions
         /// <returns>Return Total Count of matching records</returns>
         public static async Task<int> CountAsync<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-            return await connection.ExecuteScalarAsync<int>(adapter.CountQuery(tinfo, sql), parameters, transaction, commandTimeout);
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return await connection.ExecuteScalarAsync<int>(sqlHelper.Adapter.CountQuery(sqlHelper.TableInfo, sql), parameters, transaction, commandTimeout);
         }
         #endregion
 

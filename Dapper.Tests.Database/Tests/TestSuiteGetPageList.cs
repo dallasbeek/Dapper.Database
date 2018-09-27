@@ -10,7 +10,6 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListNoOrder()
@@ -36,7 +35,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetPageList")]
@@ -82,7 +80,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListWithWhereOrderClause()
@@ -96,7 +93,6 @@ namespace Dapper.Tests.Database
                 ValidateProduct816(item);
             }
         }
-
 
         [Fact]
         [Trait("Category", "GetPageList")]
@@ -179,7 +175,6 @@ namespace Dapper.Tests.Database
             }
         }
 
-
         [Fact]
         [Trait("Category", "GetPageList")]
         public void GetPageListPartialBySelect()
@@ -253,75 +248,5 @@ namespace Dapper.Tests.Database
                 Assert.NotNull(item.ProductCategory);
             }
         }
-
-        //[Fact(Provider.SQLite)]
-        //[Trait("Category", "GetPageList")]
-        //public void GetPageListOneJoinMapped()
-        //{
-        //    using (var connection = GetConnection())
-        //    {
-        //        var lst = connection.GetPageList<Product, ProductCategory, Product>(
-        //            (pr, pc) =>
-        //            {
-        //                pr.ProductCategory = pc;
-        //                return pr;
-        //            },
-        //            @"select P.*, P.rowguid AS GuidId, PC.* 
-        //            from Product P
-        //            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-        //            where Color = {P}Color", new { Color = "Black" });
-        //        Assert.Equal(89, lst.Count());
-        //        var item = lst.Single(p => p.ProductID == 816);
-        //        ValidateProduct816(item);
-        //        ValidateProductCategory21(item.ProductCategory);
-        //    }
-        //}
-
-        //[Fact(Provider.SQLite)]
-        //[Trait("Category", "GetPageList")]
-        //public void GetPageListTwoJoinsUnmapped()
-        //{
-        //    using (var connection = GetConnection())
-        //    {
-        //        var lst = connection.GetPageList<Product, ProductCategory, ProductModel>(
-        //            @"select P.*, P.rowguid AS GuidId, PC.*, PM.*
-        //            from Product P
-        //            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-        //            join ProductModel PM on PM.ProductModelID = P.ProductModelID
-        //            where Color = {P}Color", new { Color = "Black" });
-        //        Assert.Equal(89, lst.Count());
-        //        var item = lst.Single(p => p.ProductID == 816);
-        //        ValidateProduct816(item);
-        //        ValidateProductCategory21(item.ProductCategory);
-        //        ValidateProductModel45(item.ProductModel);
-        //    }
-        //}
-
-        //[Fact(Provider.SQLite)]
-        //[Trait("Category", "GetPageList")]
-        //public void GetPageListTwoJoinsMapped()
-        //{
-        //    using (var connection = GetConnection())
-        //    {
-        //        var lst = connection.GetPageList<Product, ProductCategory, ProductModel, Product>(
-        //            (pr, pc, pm) =>
-        //            {
-        //                pr.ProductCategory = pc;
-        //                pr.ProductModel = pm;
-        //                return pr;
-        //            },
-        //            @"select P.*, P.rowguid AS GuidId, PC.*, PM.*
-        //            from Product P
-        //            join ProductCategory PC on PC.ProductCategoryID = P.ProductCategoryID
-        //            join ProductModel PM on PM.ProductModelID = P.ProductModelID
-        //            where Color = {P}Color", new { Color = "Black" });
-        //        Assert.Equal(89, lst.Count());
-        //        var item = lst.Single(p => p.ProductID == 816);
-        //        ValidateProduct816(item);
-        //        ValidateProductCategory21(item.ProductCategory);
-        //        ValidateProductModel45(item.ProductModel);
-        //    }
-        //}
-
     }
 }

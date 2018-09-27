@@ -5,7 +5,6 @@ using Dapper.Database;
 using Npgsql;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
     [Trait("Provider", "Postgres")]
@@ -36,7 +35,7 @@ namespace Dapper.Tests.Database
         static PostgresTestSuite()
         {
 
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());

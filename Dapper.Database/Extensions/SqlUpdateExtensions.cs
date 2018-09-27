@@ -36,54 +36,45 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Update<T>(this IDbConnection connection, T entityToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var type = typeof(T);
-            var adapter = GetFormatter(connection);
-            var tinfo = TableInfoCache(type);
-
-            return adapter.Update(connection, transaction, commandTimeout, tinfo, entityToUpdate, columnsToUpdate);
-
-            //    if (entityToUpdate is IProxy proxy && !proxy.IsDirty)
-            //{
-            //    return false;
-            //}
-
-            //var type = typeof(T);
-            //var isList = false;
-
-            //if (type.IsArray)
-            //{
-            //    isList = true;
-            //    type = type.GetElementType();
-            //}
-            //else if (type.IsGenericType())
-            //{
-            //    var typeInfo = type.GetTypeInfo();
-            //    bool implementsGenericIEnumerableOrIsGenericIEnumerable =
-            //        typeInfo.ImplementedInterfaces.Any(ti => ti.IsGenericType() && ti.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
-            //        typeInfo.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-
-            //    if (implementsGenericIEnumerableOrIsGenericIEnumerable)
-            //    {
-            //        isList = true;
-            //        type = type.GetGenericArguments()[0];
-            //    }
-            //}
-
-            //var adapter = GetFormatter(connection);
-            //var tinfo = TableInfoCache(type);
-
-            //if (!isList)
-            //{
-            //    return adapter.Update(connection, transaction, commandTimeout, tinfo, entityToUpdate, columnsToUpdate);
-            //}
-            //else
-            //{
-            //    return connection.Execute(adapter.UpdateQuery(tinfo, columnsToUpdate), entityToUpdate, transaction, commandTimeout) > 0;
-            //}
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.Update(connection, transaction, commandTimeout, sqlHelper.TableInfo, entityToUpdate, columnsToUpdate);
         }
 
         #endregion
 
+        #region UpdateList Queries
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public static bool UpdateList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            return connection.UpdateList(entitiesToUpdate, null, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Updates entity in table "Ts".
+        /// </summary>
+        /// <typeparam name="T">Type to be updated</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="entitiesToUpdate">List of Entities to be updated</param>
+        /// <param name="columnsToUpdate">Columns to be updated</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        public static bool UpdateList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.UpdateList(connection, transaction, commandTimeout, sqlHelper.TableInfo, entitiesToUpdate, columnsToUpdate);
+
+        }
+
+        #endregion
 
     }
 }

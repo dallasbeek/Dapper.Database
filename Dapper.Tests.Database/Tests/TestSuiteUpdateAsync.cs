@@ -8,22 +8,21 @@ namespace Dapper.Tests.Database
 {
     public abstract partial class TestSuite
     {
-
         [Fact]
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateIdentityAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await db.InsertAsync(p));
                 Assert.True(p.IdentityId > 0);
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(await connection.UpdateAsync(p));
+                Assert.True(await db.UpdateAsync(p));
 
-                var gp = await connection.GetAsync<PersonIdentity>(p.IdentityId);
+                var gp = await db.GetAsync<PersonIdentity>(p.IdentityId);
 
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Equal(p.FirstName, gp.FirstName);
@@ -35,16 +34,16 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateUniqueIdentifierAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await db.InsertAsync(p));
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(await connection.UpdateAsync(p));
+                Assert.True(await db.UpdateAsync(p));
 
-                var gp = await connection.GetAsync<PersonUniqueIdentifier>(p.GuidId);
+                var gp = await db.GetAsync<PersonUniqueIdentifier>(p.GuidId);
 
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
@@ -55,16 +54,16 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateUniqueIdentifierWithAliasesAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
-                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await db.InsertAsync(p));
 
                 p.First = "Greg";
                 p.Last = "Smith";
-                Assert.True(await connection.UpdateAsync(p));
+                Assert.True(await db.UpdateAsync(p));
 
-                var gp = await connection.GetAsync<PersonUniqueIdentifierWithAliases>(p.GuidId);
+                var gp = await db.GetAsync<PersonUniqueIdentifierWithAliases>(p.GuidId);
 
                 Assert.Equal(p.First, gp.First);
                 Assert.Equal(p.Last, gp.Last);
@@ -75,16 +74,16 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdatePersonCompositeKeyAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await db.InsertAsync(p));
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(await connection.UpdateAsync(p));
+                Assert.True(await db.UpdateAsync(p));
 
-                var gp = await connection.GetAsync<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
+                var gp = await db.GetAsync<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
                 Assert.Equal(p.StringId, gp.StringId);
                 Assert.Equal(p.FirstName, gp.FirstName);
@@ -172,24 +171,22 @@ namespace Dapper.Tests.Database
         [Trait("Category", "UpdateAsync")]
         public async Task UpdatePartialAsync()
         {
-            using (var connection = GetSqlDatabase())
+            using (var db = GetSqlDatabase())
             {
                 var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await connection.InsertAsync(p));
+                Assert.True(await db.InsertAsync(p));
                 Assert.True(p.IdentityId > 0);
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(await connection.UpdateAsync(p, new string[] { "LastName" }));
+                Assert.True(await db.UpdateAsync(p, new string[] { "LastName" }));
 
-                var gp = await connection.GetAsync<PersonIdentity>(p.IdentityId);
+                var gp = await db.GetAsync<PersonIdentity>(p.IdentityId);
 
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Equal("Alice", gp.FirstName);
                 Assert.Equal("Smith", gp.LastName);
             }
         }
-
-
     }
 }

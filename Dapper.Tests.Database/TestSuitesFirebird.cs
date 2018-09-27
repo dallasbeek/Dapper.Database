@@ -4,14 +4,15 @@ using Dapper.Database;
 using FirebirdSql.Data.FirebirdClient;
 using Xunit;
 
-
 namespace Dapper.Tests.Database
 {
-
     [Trait("Provider", "Firebird")]
     public class FirebirdTestSuite : TestSuite
     {
-        public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;";
+        private static string DbName = "DBFiles\\Test.DB.fdb";
+        private static string DbFile;
+
+        public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={DbFile};";
 
         protected override void CheckSkip()
         {
@@ -21,8 +22,7 @@ namespace Dapper.Tests.Database
         public override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
-            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
-            return new SqlDatabase(new StringConnectionService<FbConnection>($"Database={filename};{ConnectionString}"));
+            return new SqlDatabase(new StringConnectionService<FbConnection>(ConnectionString));
         }
 
         public override Provider GetProvider() => Provider.Firebird;
@@ -31,25 +31,24 @@ namespace Dapper.Tests.Database
 
         static FirebirdTestSuite()
         {
-            Environment.SetEnvironmentVariable("NoCache", "True");
+            DbFile = Directory.GetCurrentDirectory() + "\\DBFiles\\Test.DB.fdb";
+            SqlDatabase.CacheQueries = false;
 
             ResetDapperTypes();
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
 
-            var filename = Directory.GetCurrentDirectory() + "\\Test.Db.fdb";
-
             var init = false;
 
-            //if (File.Exists(filename))
+            //if (File.Exists(DbFile))
             //{
-            //    File.Delete(filename);
+            //    File.Delete(DbFile);
             //}
 
             var commandText = string.Empty;
 
             try
             {
-                using (var connection = new FbConnection($"Database={filename};{ConnectionString}"))
+                using (var connection = new FbConnection(ConnectionString))
                 {
                     connection.Open();
 
@@ -80,8 +79,6 @@ namespace Dapper.Tests.Database
             {
                 _skip = true;
             }
-
         }
     }
-
 }
