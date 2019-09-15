@@ -68,7 +68,6 @@ namespace Dapper.Database
 
         #region GetDataTable Methods
 
-#if !NETSTANDARD1_3 && !NETCOREAPP1_0
         /// <summary>
         /// Execute SQL that returns a DataTable.
         /// </summary>
@@ -103,7 +102,6 @@ namespace Dapper.Database
                 return dt;
             });
         }
-#endif
 
         #endregion
 

@@ -2,10 +2,6 @@
 using System.Data;
 using System.Threading.Tasks;
 
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#endif
-
 namespace Dapper.Database.Extensions
 {
     /// <summary>

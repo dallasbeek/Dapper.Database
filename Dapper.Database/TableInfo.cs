@@ -10,10 +10,6 @@ using Dapper.Database.Attributes;
 using Dapper.Database.Extensions;
 using static Dapper.Database.Extensions.SqlMapperExtensions;
 
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#endif
-
 namespace Dapper.Database
 {
 
@@ -45,11 +41,7 @@ namespace Dapper.Database
             }
             else
             {
-                var tableAttr = type
-#if NETSTANDARD1_3
-                .GetTypeInfo()
-#endif
-                .GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "TableAttribute") as dynamic;
+                var tableAttr = type.GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "TableAttribute") as dynamic;
 
                 if (tableAttr != null)
                 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+#if !NETSTANDARD
 using System.Configuration;
 #endif
 
@@ -46,7 +46,7 @@ namespace Dapper.Database
         }
     }
 
-#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+#if !NETSTANDARD
     /// <summary>
     /// 
     /// </summary>

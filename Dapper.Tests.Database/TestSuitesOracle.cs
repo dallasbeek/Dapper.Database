@@ -1,5 +1,4 @@
-﻿#if ORACLE
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -10,7 +9,7 @@ using Dapper.Database.Extensions;
 using Oracle.ManagedDataAccess.Client;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
-using OracleConnection = Dapper.Tests.Database.OracleClient.OracleConnection;
+//using OracleConnection = Dapper.Tests.Database.OracleClient.OracleConnection;
 
 namespace Dapper.Tests.Database
 {
@@ -97,7 +96,7 @@ namespace Dapper.Tests.Database
                 _skip = e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
                     || e.Message.Contains("No connection could be made because the target machine actively refused it")
                     || e.Message.Contains("Unable to resolve connect hostname")
-                    ;
+                    || e.Message.Contains("Connection request timed out");
             }
             catch (SocketException e) when (e.Message.Contains("No connection could be made because the target machine actively refused it"))
             {
@@ -133,4 +132,3 @@ namespace Dapper.Tests.Database
         #endregion
     }
 }
-#endif

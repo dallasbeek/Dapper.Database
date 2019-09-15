@@ -5,11 +5,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using Dapper.Database.Adapters;
 
-#if NETSTANDARD1_3
-using DataException = System.InvalidOperationException;
-#else
 using System.Threading;
-#endif
 
 namespace Dapper.Database.Extensions
 {
