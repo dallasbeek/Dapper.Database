@@ -16,8 +16,7 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "Oracle")]
     public partial class OracleTestSuite : TestSuite
     {
-        public static string ConnectionString => $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=Denver)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
-        //public static string ConnectionString => "User Id=testuser;Password=Password12!;Data Source=localhost:1521/ORCLPDB1.localdomain";
+        public static string ConnectionString => $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
 
         protected override string P => ":";
 
