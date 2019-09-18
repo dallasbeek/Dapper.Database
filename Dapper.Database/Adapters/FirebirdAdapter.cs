@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    /// The Postgres database adapter.
+    /// The Firebird database adapter.
     /// </summary>
     public partial class FirebirdAdapter : SqlAdapter, ISqlAdapter
     {
