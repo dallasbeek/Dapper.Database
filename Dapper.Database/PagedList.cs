@@ -7,7 +7,7 @@ namespace Dapper.Database
     /// Represents a paged result
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IPagedEnumerable<T> : IEnumerable<T>
+    public interface IPagedEnumerable<out T> : IEnumerable<T>
     {
         /// <summary>
         /// Current Page Requested
@@ -56,7 +56,7 @@ namespace Dapper.Database
         public PagedList(IEnumerable<T> source, int currentPage, int pageSize, int totalCount)
         {
             if (pageSize <= 0)
-                throw new ArgumentOutOfRangeException("pageSize", "pageSize must be greater than zero");
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "pageSize must be greater than zero");
 
             CurrentPage = currentPage;
             PageSize = pageSize;

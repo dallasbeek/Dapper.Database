@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper;
 using Dapper.Database.Adapters;
 using Dapper.Mapper;
 
@@ -14,7 +13,7 @@ namespace Dapper.Database.Extensions
     public static partial class SqlMapperExtensions
     {
 
-        #region GetListAsync Queries
+        #region GetListImplAsync Queries
         /// <summary>
         /// Returns a list entities of type T.  
         /// </summary>
@@ -26,7 +25,7 @@ namespace Dapper.Database.Extensions
         public static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var adapter = GetFormatter(connection);
-            return await connection.GetListAsync<T>(adapter, sql, null, transaction, commandTimeout);
+            return await connection.GetListImplAsync<T>(adapter, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace Dapper.Database.Extensions
         public static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var adapter = GetFormatter(connection);
-            return await connection.GetListAsync<T>(adapter, sql, parameters, transaction, commandTimeout);
+            return await connection.GetListImplAsync<T>(adapter, sql, parameters, transaction, commandTimeout);
         }
 
 
@@ -145,7 +144,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
         {
-            return await connection.QueryAsync<T1, T2, TRet>(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) }));
+            return await connection.QueryAsync(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) }));
         }
 
         /// <summary>
@@ -236,13 +235,12 @@ namespace Dapper.Database.Extensions
         /// <param name="parameters">Parameters of the where clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="fromCache">Cache the query.</param>
         /// <returns>True if records are deleted</returns>
-        private static async Task<IEnumerable<T>> GetListAsync<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
+        private static async Task<IEnumerable<T>> GetListImplAsync<T>(this IDbConnection connection, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
-            var tinfo = TableInfoCache(type);
-            var selectSql = adapter.GetListQuery(tinfo, sql);
+            var tableInfoCache = TableInfoCache(type);
+            var selectSql = adapter.GetListQuery(tableInfoCache, sql);
             return await connection.QueryAsync<T>(selectSql, parameters, transaction, commandTimeout: commandTimeout);
         }
 

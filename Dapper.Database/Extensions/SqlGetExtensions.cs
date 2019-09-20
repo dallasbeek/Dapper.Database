@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using Dapper;
-using Dapper.Database.Adapters;
 using Dapper.Mapper;
 
 namespace Dapper.Database.Extensions
@@ -150,7 +148,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static TRet Get<T1, T2, TRet>(this IDbConnection connection, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            return connection.Query<T1, T2, TRet>(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
+            return connection.Query(sql, mapper, null, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })).SingleOrDefault();
         }
 
         /// <summary>

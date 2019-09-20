@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -10,7 +9,7 @@ namespace Dapper.Database.Adapters
     /// <summary>
     /// The Postgres database adapter.
     /// </summary>
-    public partial class MySqlAdapter : SqlAdapter, ISqlAdapter
+    public class MySqlAdapter : SqlAdapter
     {
 
         /// <summary>
@@ -29,38 +28,25 @@ namespace Dapper.Database.Adapters
             if (tableInfo.GeneratedColumns.Any())
             {
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
-                if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
-                {
-                    selectcmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = LAST_INSERT_ID();");
-                }
-                else
-                {
-                    selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-                }
+                selectCommand.Append(tableInfo.KeyColumns.Any(k => k.IsIdentity)
+                    ? $"where {EscapeColumn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = LAST_INSERT_ID();"
+                    : $"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 var wasClosed = connection.State == ConnectionState.Closed;
                 if (wasClosed) connection.Open();
 
                 connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout);
-                var r = connection.Query(selectcmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
+                var result = connection.Query(selectCommand.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
 
                 if (wasClosed) connection.Close();
 
-                var vals = r.ToList();
+                var values = result.ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
-                    p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToInsert, ((IDictionary<string, object>)values[0]));
                 return true;
             }
             else
@@ -86,31 +72,21 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-                selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+                var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                selectCommand.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
-                var r = connection.Query(selectcmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
+                var result = connection.Query(selectCommand.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
 
-                var vals = r.ToList();
+                var values = result.ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
-                    p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToUpdate, ((IDictionary<string, object>)values[0]));
                 return true;
             }
-            else
-            {
-                return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
-            }
+
+            return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -129,38 +105,25 @@ namespace Dapper.Database.Adapters
             if (tableInfo.GeneratedColumns.Any())
             {
 
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
-                if (tableInfo.KeyColumns.Any(k => k.IsIdentity))
-                {
-                    selectcmd.Append($"where {EscapeColumnn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = LAST_INSERT_ID();");
-                }
-                else
-                {
-                    selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
-                }
+                selectCommand.Append(tableInfo.KeyColumns.Any(k => k.IsIdentity)
+                    ? $"where {EscapeColumn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = LAST_INSERT_ID();"
+                    : $"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 var wasClosed = connection.State == ConnectionState.Closed;
                 if (wasClosed) connection.Open();
 
                 await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout);
-                var r = await connection.QueryAsync(selectcmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
+                var result = await connection.QueryAsync(selectCommand.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
 
                 if (wasClosed) connection.Close();
 
-                var vals = r.ToList();
+                var values = result.ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
-                    p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToInsert, ((IDictionary<string, object>)values[0]));
                 return true;
             }
             else
@@ -186,25 +149,17 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                var selectcmd = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-                selectcmd.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
+                var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+                selectCommand.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
                 await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout);
-                var r = await connection.QueryAsync(selectcmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
+                var result = await connection.QueryAsync(selectCommand.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
 
-                var vals = r.ToList();
+                var values = result.ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.PropertyName == key).Property;
-                    p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToUpdate, ((IDictionary<string, object>)values[0]));
                 return true;
             }
             else
@@ -232,7 +187,7 @@ namespace Dapper.Database.Adapters
                     ? $"select exists (select * from {EscapeTableName(tableInfo)} {q.Sql})"
                     : $"select exists (select * {q.Sql})";
             }
-    
+
             return $"select exists ({q.Sql})";
 
         }
@@ -253,7 +208,7 @@ namespace Dapper.Database.Adapters
         /// <summary>
         /// Returns the format for column
         /// </summary>
-        public override string EscapeColumnn(string value) => $"`{value}`";
+        public override string EscapeColumn(string value) => $"`{value}`";
 
     }
 }

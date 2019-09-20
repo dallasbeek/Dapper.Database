@@ -5,8 +5,6 @@ using System.Linq;
 using System.Collections.Concurrent;
 using Dapper.Database.Adapters;
 
-using System.Threading;
-
 namespace Dapper.Database.Extensions
 {
     /// <summary>
@@ -14,29 +12,7 @@ namespace Dapper.Database.Extensions
     /// </summary>
     public static partial class SqlMapperExtensions
     {
-        /// <summary>
-        /// Defined a proxy object with a possibly dirty state.
-        /// </summary>
-        public interface IProxy //must be kept public
-        {
-            /// <summary>
-            /// Whether the object has been changed.
-            /// </summary>
-            bool IsDirty { get; set; }
-        }
 
-        /// <summary>
-        /// Defines a table name mapper for getting table names from types.
-        /// </summary>
-        public interface ITableNameMapper
-        {
-            /// <summary>
-            /// Gets a table name from a given <see cref="Type"/>.
-            /// </summary>
-            /// <param name="type">The <see cref="Type"/> to get a name from.</param>
-            /// <returns>The table name for the given <paramref name="type"/>.</returns>
-            string GetTableName(Type type);
-        }
 
         /// <summary>
         /// The function to get a database type from the given <see cref="IDbConnection"/>.
@@ -79,7 +55,7 @@ namespace Dapper.Database.Extensions
         }
 
         /// <summary>
-        /// Specify a custom table name mapper based on the POCO type name
+        /// Specify a custom table name mapper
         /// </summary>
         public static TableNameMapperDelegate TableNameMapper;
 
@@ -127,7 +103,7 @@ namespace Dapper.Database.Extensions
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (adapter == null) throw new ArgumentNullException(nameof(adapter));
 
-            AdapterDictionary.AddOrUpdate(CleanSqlAdapterName(name), adapter, (_name, oldAdapter) => adapter);
+            AdapterDictionary.AddOrUpdate(CleanSqlAdapterName(name), adapter, (theName, oldAdapter) => adapter);
         }
 
         /// <summary>

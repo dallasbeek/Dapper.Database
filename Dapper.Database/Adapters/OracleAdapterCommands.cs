@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Dapper.Database.Extensions;
 
 namespace Dapper.Database.Adapters
 {

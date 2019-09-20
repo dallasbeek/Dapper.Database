@@ -6,7 +6,7 @@ namespace Dapper.Database.Adapters
     /// <summary>
     /// The SQL Server database adapter.
     /// </summary>
-    public partial class SqlServerPre2012Adapter : SqlServerAdapter
+    public class SqlServerPre2012Adapter : SqlServerAdapter
     {
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Dapper.Database.Adapters
             {
                 if (tableInfo.KeyColumns.Any())
                 {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
+                    sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().PropertyName)}";
                 }
             }
             else

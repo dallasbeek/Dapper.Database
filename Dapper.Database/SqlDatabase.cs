@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper.Database.Extensions;
 
 namespace Dapper.Database
 {
     /// <summary>
     /// 
     /// </summary>
-    public partial class SqlDatabase : IDisposable
+    public partial class SqlDatabase : ISqlDatabase
     {
         /// <summary>
         /// 
         /// </summary>
-        protected readonly IConnectionService _connectionService;
+        protected readonly IConnectionService ConnectionService;
 
         /// <summary>
         /// 
         /// </summary>
-        protected IDbConnection _sharedConnection;
+        protected IDbConnection SharedConnection;
 
         private IDbTransaction _transaction;
         private readonly IsolationLevel _isolationLevel;
@@ -53,7 +52,7 @@ namespace Dapper.Database
         /// <param name="defaultIsolationLevel">Default Isolation level to use for this database</param>
         public SqlDatabase(IConnectionService connectionService, IsolationLevel defaultIsolationLevel = IsolationLevel.ReadCommitted)
         {
-            _connectionService = connectionService;
+            ConnectionService = connectionService;
             _isolationLevel = defaultIsolationLevel;
             TransactionCount = 0;
         }
@@ -63,34 +62,33 @@ namespace Dapper.Database
         /// </summary>
         protected void OpenSharedConnectionInternal()
         {
-            OpenSharedConnectionImp(true);
+            OpenSharedConnectionImp();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="isInternal"></param>
-        private void OpenSharedConnectionImp(bool isInternal)
+        private void OpenSharedConnectionImp()
         {
-            if (_sharedConnection != null && _sharedConnection.State != ConnectionState.Broken && _sharedConnection.State != ConnectionState.Closed)
+            if (SharedConnection != null && SharedConnection.State != ConnectionState.Broken && SharedConnection.State != ConnectionState.Closed)
             {
                 return;
             }
 
-            _sharedConnection = _connectionService.GetConnection();
+            SharedConnection = ConnectionService.GetConnection();
 
-            if (_sharedConnection == null)
+            if (SharedConnection == null)
                 throw new Exception("SQL Connection failed to configure.");
 
 
-            if (_sharedConnection.State == ConnectionState.Broken)
+            if (SharedConnection.State == ConnectionState.Broken)
             {
-                _sharedConnection.Close();
+                SharedConnection.Close();
             }
 
-            if (_sharedConnection.State == ConnectionState.Closed)
+            if (SharedConnection.State == ConnectionState.Closed)
             {
-                _sharedConnection.Open();
+                SharedConnection.Open();
             }
 
         }
@@ -100,12 +98,12 @@ namespace Dapper.Database
         /// </summary>
         public void CloseSharedConnection()
         {
-            if (_sharedConnection == null)
+            if (SharedConnection == null)
                 return;
 
-            _sharedConnection.Close();
-            _sharedConnection.Dispose();
-            _sharedConnection = null;
+            SharedConnection.Close();
+            SharedConnection.Dispose();
+            SharedConnection = null;
         }
 
         /// <summary>
@@ -152,13 +150,14 @@ namespace Dapper.Database
             }
             catch (Exception)
             {
-                if (openInternalTransaction && internalTransaction != null)
-                    internalTransaction.Dispose();
+                if (openInternalTransaction)
+                    internalTransaction?.Dispose();
 
                 throw;
             }
             finally
             {
+                //internalTransaction?.Dispose();
                 CloseSharedConnectionInternal();
             }
         }
@@ -197,13 +196,14 @@ namespace Dapper.Database
             }
             catch (Exception)
             {
-                if (openInternalTransaction && internalTransaction != null)
-                    internalTransaction.Dispose();
+                if (openInternalTransaction)
+                    internalTransaction?.Dispose();
 
                 throw;
             }
             finally
             {
+                //internalTransaction?.Dispose();
                 CloseSharedConnectionInternal();
             }
         }
@@ -273,7 +273,7 @@ namespace Dapper.Database
             {
                 TransactionCount = 0;
                 OpenSharedConnectionInternal();
-                _transaction = _sharedConnection.BeginTransaction(isolationLevel);
+                _transaction = SharedConnection.BeginTransaction(isolationLevel);
             }
 
             if (_transaction != null)
@@ -313,17 +313,16 @@ namespace Dapper.Database
             if (TransactionIsOk())
                 _transaction.Rollback();
 
-            if (_transaction != null)
-                _transaction.Dispose();
+            _transaction?.Dispose();
 
             _transaction = null;
             TransactionIsAborted = false;
 
             // You cannot continue to use a connection after a transaction has been rolled back
-            if (_sharedConnection != null)
+            if (SharedConnection != null)
             {
-                _sharedConnection.Close();
-                _sharedConnection.Open();
+                SharedConnection.Close();
+                SharedConnection.Open();
             }
 
             CloseSharedConnectionInternal();
@@ -350,8 +349,7 @@ namespace Dapper.Database
             if (TransactionIsOk())
                 _transaction.Commit();
 
-            if (_transaction != null)
-                _transaction.Dispose();
+            _transaction?.Dispose();
 
             _transaction = null;
 
@@ -360,10 +358,7 @@ namespace Dapper.Database
 
         private bool TransactionIsOk()
         {
-            return _sharedConnection != null
-                && _transaction != null
-                && _transaction.Connection != null
-                && _transaction.Connection.State == ConnectionState.Open;
+            return SharedConnection != null && _transaction?.Connection != null && _transaction.Connection.State == ConnectionState.Open;
         }
     }
 
@@ -409,10 +404,7 @@ namespace Dapper.Database
         /// </summary>
         public void Dispose()
         {
-            if (_db != null)
-            {
-                _db.AbortTransaction();
-            }
+            _db?.AbortTransaction();
         }
 
         SqlDatabase _db;

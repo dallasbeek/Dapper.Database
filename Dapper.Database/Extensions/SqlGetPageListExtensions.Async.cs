@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper;
-using Dapper.Database.Adapters;
 using Dapper.Mapper;
 
 namespace Dapper.Database.Extensions
@@ -13,7 +11,7 @@ namespace Dapper.Database.Extensions
     public static partial class SqlMapperExtensions
     {
 
-        #region GetListAsync Queries
+        #region GetListImplAsync Queries
         /// <summary>
         /// Returns a paged list entities of type T.  
         /// </summary>
@@ -26,8 +24,7 @@ namespace Dapper.Database.Extensions
         /// <returns>enumerable list of entities</returns>
         public static async Task<IPagedEnumerable<T>> GetPageListAsync<T>(this IDbConnection connection, int page, int pageSize, string sql = null, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var adapter = GetFormatter(connection);
-            return await connection.GetPageListAsync<T>(page, pageSize, adapter, sql, null, transaction, commandTimeout);
+            return await connection.GetPageListAsync<T>(page, pageSize, sql, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -43,8 +40,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<T>> GetPageListAsync<T>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            var adapter = GetFormatter(connection);
-            return await connection.GetPageListAsync<T>(page, pageSize, adapter, sql, parameters, transaction, commandTimeout);
+            return await connection.GetPageListImplAsync<T>(page, pageSize, sql, parameters, transaction, commandTimeout);
         }
 
 
@@ -78,12 +74,6 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class
         {
-            //var type = typeof(T1);
-            //var tinfo = TableInfoCache(type);
-            //var adapter = GetFormatter(connection);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
-
             var sqlHelper = new SqlQueryHelper(typeof(T1), connection);
             var selectParameters = new DynamicParameters(parameters);
             var selectSql = sqlHelper.Adapter.GetPageListQuery(sqlHelper.TableInfo, page, pageSize, sql, selectParameters);
@@ -109,7 +99,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
-            return await GetPageListAsync<T1, T2, T3>(connection, page, pageSize, sql, null, transaction, commandTimeout);
+            return await GetPageListAsync<T1, T2, T3>(connection, page, pageSize, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -126,11 +116,6 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
-            //var type = typeof(T1);
-            //var tinfo = TableInfoCache(type);
-            //var adapter = GetFormatter(connection);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             var sqlHelper = new SqlQueryHelper(typeof(T1), connection);
             var selectParameters = new DynamicParameters(parameters);
@@ -158,7 +143,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return await GetPageListAsync<T1, T2, T3, T4>(connection, page, pageSize, sql, null, transaction, commandTimeout);
+            return await GetPageListAsync<T1, T2, T3, T4>(connection, page, pageSize, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -175,12 +160,6 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            //var type = typeof(T1);
-            //var tinfo = TableInfoCache(type);
-            //var adapter = GetFormatter(connection);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
-
             var sqlHelper = new SqlQueryHelper(typeof(T1), connection);
             var selectParameters = new DynamicParameters(parameters);
             var selectSql = sqlHelper.Adapter.GetPageListQuery(sqlHelper.TableInfo, page, pageSize, sql, selectParameters);
@@ -207,7 +186,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            return await GetPageListAsync<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return await GetPageListAsync(connection, page, pageSize, mapper, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -225,16 +204,9 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            //var type = typeof(T1);
-            //var tinfo = TableInfoCache(type);
-            //var adapter = GetFormatter(connection);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
-
             var sqlHelper = new SqlQueryHelper(typeof(T1), connection);
             var selectParameters = new DynamicParameters(parameters);
             var selectSql = sqlHelper.Adapter.GetPageListQuery(sqlHelper.TableInfo, page, pageSize, sql, selectParameters);
-
 
             return new PagedList<TRet>(
                 await connection.QueryAsync(selectSql, mapper, selectParameters, transaction, commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
@@ -258,7 +230,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return await GetPageListAsync<T1, T2, T3, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return await GetPageListAsync(connection, page, pageSize, mapper, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -276,11 +248,6 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            //var type = typeof(T1);
-            //var tinfo = TableInfoCache(type);
-            //var adapter = GetFormatter(connection);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             var sqlHelper = new SqlQueryHelper(typeof(T1), connection);
             var selectParameters = new DynamicParameters(parameters);
@@ -310,7 +277,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return await GetPageListAsync<T1, T2, T3, T4, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return await GetPageListAsync(connection, page, pageSize, mapper, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -328,12 +295,6 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static async Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            //var type = typeof(T1);
-            //var tinfo = TableInfoCache(type);
-            //var adapter = GetFormatter(connection);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
-
             var sqlHelper = new SqlQueryHelper(typeof(T1), connection);
             var selectParameters = new DynamicParameters(parameters);
             var selectSql = sqlHelper.Adapter.GetPageListQuery(sqlHelper.TableInfo, page, pageSize, sql, selectParameters);
@@ -353,24 +314,17 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Sql Connection</param>
         /// <param name="page">The page to return</param>
         /// <param name="pageSize">The number of records to return per page</param>
-        /// <param name="adapter">ISqlAdapter for getting the sql statement</param>
         /// <param name="sql">The where clause</param>
         /// <param name="parameters">Parameters of the where clause</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="fromCache">Cache the query.</param>
         /// <returns>True if records are deleted</returns>
-        private static async Task<IPagedEnumerable<T>> GetPageListAsync<T>(this IDbConnection connection, int page, int pageSize, ISqlAdapter adapter, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null, bool fromCache = false) where T : class
+        private static async Task<IPagedEnumerable<T>> GetPageListImplAsync<T>(this IDbConnection connection, int page, int pageSize, string sql, object parameters, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            //var type = typeof(T);
-            //var tinfo = TableInfoCache(type);
-            //var selectParameters = new DynamicParameters(parameters);
-            //var selectSql = adapter.GetPageListQuery(tinfo, page, pageSize, sql, selectParameters);
 
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             var selectParameters = new DynamicParameters(parameters);
             var selectSql = sqlHelper.Adapter.GetPageListQuery(sqlHelper.TableInfo, page, pageSize, sql, selectParameters);
-
 
             return new PagedList<T>(
                 await connection.QueryAsync<T>(selectSql, selectParameters, transaction, commandTimeout: commandTimeout),

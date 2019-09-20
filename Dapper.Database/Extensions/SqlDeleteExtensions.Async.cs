@@ -47,7 +47,7 @@ namespace Dapper.Database.Extensions
         }
 
         /// <summary>
-        /// Delete entity in table "Ts" by an unparameterized WHERE clause.
+        /// Delete entity in table "Ts" by an un-parameterized WHERE clause.
         /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
@@ -97,7 +97,7 @@ namespace Dapper.Database.Extensions
         public static async Task<bool> DeleteAllAsync<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
-            return await connection.ExecuteAsync(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, (string)null), null, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, null), null, transaction, commandTimeout) > 0;
         }
         #endregion
     }

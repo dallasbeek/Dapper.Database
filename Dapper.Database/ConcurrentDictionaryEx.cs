@@ -13,24 +13,21 @@ namespace Dapper.Database
         /// </summary>
         /// <param name="concurrentDict"></param>
         /// <param name="handle"></param>
-        /// <param name="fromcache"></param>
+        /// <param name="fromCache"></param>
         /// <param name="retrieve"></param>
         /// <returns></returns>
-        public static string Acquire(this ConcurrentDictionary<RuntimeTypeHandle, string> concurrentDict, RuntimeTypeHandle handle, Func<bool> fromcache, Func<string> retrieve)
+        public static string Acquire(this ConcurrentDictionary<RuntimeTypeHandle, string> concurrentDict, RuntimeTypeHandle handle, Func<bool> fromCache, Func<string> retrieve)
         {
 
-            if (!fromcache() || !SqlDatabase.CacheQueries)
+            if (!fromCache() || !SqlDatabase.CacheQueries)
             {
                 return retrieve();
             }
 
-            if (!concurrentDict.TryGetValue(handle, out string sql))
-            {
-                sql = retrieve();
-                concurrentDict[handle] = sql;
-                return sql;
-            }
-            return retrieve();
+            if (concurrentDict.TryGetValue(handle, out _)) return retrieve();
+            var sql = retrieve();
+            concurrentDict[handle] = sql;
+            return sql;
         }
 
     }

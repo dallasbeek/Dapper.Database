@@ -6,7 +6,7 @@ using static Dapper.SqlMapper;
 
 namespace Dapper.Database
 {
-    public partial class SqlDatabase : ISqlDatabase, IDisposable
+    public partial class SqlDatabase
     {
         #region Execute Methods
 
@@ -19,7 +19,7 @@ namespace Dapper.Database
         /// </returns>
         public int Execute(string fullSql)
         {
-            return ExecuteInternal(() => _sharedConnection.Execute(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Execute(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Dapper.Database
         /// <returns></returns>
         public int Execute(string fullSql, object parameters)
         {
-            return ExecuteInternal(() => _sharedConnection.Execute(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Execute(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -47,7 +47,7 @@ namespace Dapper.Database
         /// </returns>
         public T ExecuteScalar<T>(string fullSql)
         {
-            return ExecuteInternal(() => _sharedConnection.ExecuteScalar<T>(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.ExecuteScalar<T>(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Dapper.Database
         /// </returns>
         public T ExecuteScalar<T>(string fullSql, object parameters)
         {
-            return ExecuteInternal(() => _sharedConnection.ExecuteScalar<T>(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.ExecuteScalar<T>(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -80,7 +80,7 @@ namespace Dapper.Database
             return ExecuteInternal(() =>
             {
                 var dt = new DataTable();
-                dt.Load(_sharedConnection.ExecuteReader(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+                dt.Load(SharedConnection.ExecuteReader(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
                 return dt;
             });
         }
@@ -98,7 +98,7 @@ namespace Dapper.Database
             return ExecuteInternal(() =>
             {
                 var dt = new DataTable();
-                dt.Load(_sharedConnection.ExecuteReader(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+                dt.Load(SharedConnection.ExecuteReader(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
                 return dt;
             });
         }
@@ -116,7 +116,7 @@ namespace Dapper.Database
         /// </returns>
         public GridReader GetMultiple(string fullSql)
         {
-            return ExecuteInternal(() => _sharedConnection.QueryMultiple(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.QueryMultiple(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Dapper.Database
         /// </returns>
         public GridReader GetMultiple(string fullSql, object parameters)
         {
-            return ExecuteInternal(() => _sharedConnection.QueryMultiple(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.QueryMultiple(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -144,7 +144,7 @@ namespace Dapper.Database
         /// </returns>
         public int Count(string fullSql)
         {
-            return ExecuteInternal(() => _sharedConnection.Count(fullSql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Count(fullSql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Dapper.Database
         /// </returns>
         public int Count(string fullSql, object parameters)
         {
-            return ExecuteInternal(() => _sharedConnection.Count(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Count(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Dapper.Database
         /// </returns>
         public int Count<T>(string sql = null) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Count<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Count<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Dapper.Database
         /// </returns>
         public int Count<T>(string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Count<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Count<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -200,7 +200,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Exists(string fullSql)
         {
-            return ExecuteInternal(() => _sharedConnection.ExecuteScalar<bool>(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.ExecuteScalar<bool>(fullSql, null, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Exists(string fullSql, object parameters)
         {
-            return ExecuteInternal(() => _sharedConnection.ExecuteScalar<bool>(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.ExecuteScalar<bool>(fullSql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Exists<T>(T entityToCheck) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Exists<T>(entityToCheck, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Exists(entityToCheck, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Exists<T>(object primaryKey) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Exists<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Exists<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Exists<T>(string sql = null) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Exists<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Exists<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Exists<T>(string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Exists<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Exists<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -283,7 +283,7 @@ namespace Dapper.Database
         /// </returns>
         public T Get<T>(T entityToGet) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T>(entityToGet, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(entityToGet, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace Dapper.Database
         /// </returns>
         public T Get<T>(object primaryKey) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T>(primaryKey, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -310,14 +310,14 @@ namespace Dapper.Database
         /// </returns>
         public T Get<T>(string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -326,15 +326,15 @@ namespace Dapper.Database
         /// </returns>
         public T1 Get<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -342,15 +342,15 @@ namespace Dapper.Database
         /// </returns>
         public T1 Get<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -359,16 +359,16 @@ namespace Dapper.Database
         /// </returns>        
         public T1 Get<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -376,16 +376,16 @@ namespace Dapper.Database
         /// </returns>        
         public T1 Get<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -394,15 +394,15 @@ namespace Dapper.Database
         /// </returns>
         public T1 Get<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="TRet">The combined type to return.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="TRet">The combined type to record set.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -411,14 +411,14 @@ namespace Dapper.Database
         /// </returns>
         public TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -429,15 +429,15 @@ namespace Dapper.Database
         /// </returns>
         public TRet Get<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -447,15 +447,15 @@ namespace Dapper.Database
         /// </returns>
         public TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -466,16 +466,16 @@ namespace Dapper.Database
         /// </returns>
         public TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -485,16 +485,16 @@ namespace Dapper.Database
         /// </returns>
         public TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -505,7 +505,7 @@ namespace Dapper.Database
         /// </returns>
         public TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.Get<T1, T2, T3, T4, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Get(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -522,7 +522,7 @@ namespace Dapper.Database
         /// </returns>
         public T GetFirst<T>(string sql = null) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -536,14 +536,14 @@ namespace Dapper.Database
         /// </returns>
         public T GetFirst<T>(string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -551,14 +551,14 @@ namespace Dapper.Database
         /// </returns>
         public T1 GetFirst<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T1, T2>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -567,15 +567,15 @@ namespace Dapper.Database
         /// </returns>
         public T1 GetFirst<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -583,15 +583,15 @@ namespace Dapper.Database
         /// </returns>
         public T1 GetFirst<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -600,16 +600,16 @@ namespace Dapper.Database
         /// </returns>
         public T1 GetFirst<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -617,16 +617,16 @@ namespace Dapper.Database
         /// </returns>
         public T1 GetFirst<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -635,14 +635,14 @@ namespace Dapper.Database
         /// </returns>
         public T1 GetFirst<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -652,14 +652,14 @@ namespace Dapper.Database
         /// </returns>
         public TRet GetFirst<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -670,15 +670,15 @@ namespace Dapper.Database
         /// </returns>
         public TRet GetFirst<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -688,15 +688,15 @@ namespace Dapper.Database
         /// </returns>
         public TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -707,16 +707,16 @@ namespace Dapper.Database
         /// </returns>
         public TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -726,16 +726,16 @@ namespace Dapper.Database
         /// </returns>
         public TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -746,7 +746,7 @@ namespace Dapper.Database
         /// </returns>
         public TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetFirst<T1, T2, T3, T4, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetFirst(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -763,7 +763,7 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T> GetList<T>(string sql = null) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T>(sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -777,14 +777,14 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T> GetList<T>(string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T>(sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -792,14 +792,14 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T1> GetList<T1, T2>(string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T1, T2>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -808,15 +808,15 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T1> GetList<T1, T2>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T1, T2>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -824,15 +824,15 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T1> GetList<T1, T2, T3>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T1, T2, T3>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -841,16 +841,16 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T1> GetList<T1, T2, T3>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T1, T2, T3>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -858,16 +858,16 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T1, T2, T3, T4>(sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -876,14 +876,14 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<T1> GetList<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList<T1, T2, T3, T4>(sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -893,14 +893,14 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -911,15 +911,15 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<TRet> GetList<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -929,15 +929,15 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -948,16 +948,16 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -967,16 +967,16 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4, TRet>(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList(mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -987,7 +987,7 @@ namespace Dapper.Database
         /// </returns>
         public IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetList<T1, T2, T3, T4, TRet>(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetList(mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -998,7 +998,7 @@ namespace Dapper.Database
         /// Execute SQL that returns a page of matching records of type 'T'.
         /// </summary>
         /// <typeparam name="T">The type of entity to retrieve.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <returns>
@@ -1006,14 +1006,14 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T> GetPageList<T>(int page, int pageSize, string sql = null) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T>(page, pageSize, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T>(page, pageSize, sql, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T'.
         /// </summary>
         /// <typeparam name="T">The type of entity to retrieve.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -1022,15 +1022,15 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T> GetPageList<T>(int page, int pageSize, string sql, object parameters) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T>(page, pageSize, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T>(page, pageSize, sql, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -1039,15 +1039,15 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T1, T2>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -1057,16 +1057,16 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T1, T2>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -1075,16 +1075,16 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -1094,17 +1094,17 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T1> GetPageList<T1, T2, T3>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T1, T2, T3>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -1113,17 +1113,17 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -1133,16 +1133,16 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList<T1, T2, T3, T4>(page, pageSize, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1152,16 +1152,16 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, TRet>(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1172,17 +1172,17 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, TRet>(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1192,17 +1192,17 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, TRet>(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1213,19 +1213,19 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, TRet>(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
 
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1235,18 +1235,18 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4, TRet>(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList(page, pageSize, mapper, sql, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1257,7 +1257,7 @@ namespace Dapper.Database
         /// </returns>
         public IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return ExecuteInternal(() => _sharedConnection.GetPageList<T1, T2, T3, T4, TRet>(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.GetPageList(page, pageSize, mapper, sql, parameters, splitOn, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -1274,7 +1274,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Insert<T>(T entityToInsert) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Insert<T>(entityToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Insert(entityToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -1291,7 +1291,7 @@ namespace Dapper.Database
         /// </returns>
         public bool InsertList<T>(IEnumerable<T> entitiesToInsert) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.InsertList<T>(entitiesToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.InsertList(entitiesToInsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         #endregion
@@ -1308,7 +1308,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Update<T>(T entityToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Update<T>(entityToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Update(entityToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1322,7 +1322,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Update<T>(T entityToUpdate, IEnumerable<string> columnsToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Update<T>(entityToUpdate, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Update(entityToUpdate, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion
@@ -1339,7 +1339,7 @@ namespace Dapper.Database
         /// </returns>
         public bool UpdateList<T>(IEnumerable<T> entitiesToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpdateList<T>(entitiesToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.UpdateList(entitiesToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1353,7 +1353,7 @@ namespace Dapper.Database
         /// </returns>
         public bool UpdateList<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpdateList<T>(entitiesToUpdate, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.UpdateList(entitiesToUpdate, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         #endregion
@@ -1370,7 +1370,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Upsert<T>(T entityToUpsert) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Upsert<T>(entityToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Upsert(entityToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1384,7 +1384,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Upsert<T>(entityToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Upsert(entityToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1399,7 +1399,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Upsert<T>(T entityToUpsert, Action<T> insertAction, Action<T> updateAction) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Upsert<T>(entityToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Upsert(entityToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1415,7 +1415,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Upsert<T>(entityToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Upsert(entityToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
 
         }
 
@@ -1433,7 +1433,7 @@ namespace Dapper.Database
         /// </returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.UpsertList(entitiesToUpsert, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1447,7 +1447,7 @@ namespace Dapper.Database
         /// </returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.UpsertList(entitiesToUpsert, columnsToUpdate, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1462,7 +1462,7 @@ namespace Dapper.Database
         /// </returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.UpsertList(entitiesToUpsert, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
         }
 
         /// <summary>
@@ -1478,7 +1478,7 @@ namespace Dapper.Database
         /// </returns>
         public bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
+            return ExecuteInternal(() => SharedConnection.UpsertList(entitiesToUpsert, columnsToUpdate, insertAction, updateAction, _transaction, OneTimeCommandTimeout ?? CommandTimeout), true);
 
         }
     
@@ -1496,7 +1496,7 @@ namespace Dapper.Database
         /// </returns>
         public bool Delete<T>(T entityToDelete) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(entityToDelete, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Delete(entityToDelete, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1509,11 +1509,11 @@ namespace Dapper.Database
         /// </returns>
         public bool Delete<T>(object primaryKeyValue) where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(primaryKeyValue, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Delete<T>(primaryKeyValue, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
-        /// Delete entity in table "Ts" by an unparameterized WHERE clause.
+        /// Delete entity in table "Ts" by an un-parameterized WHERE clause.
         /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1527,7 +1527,7 @@ namespace Dapper.Database
             {
                 throw new ArgumentNullException(nameof(whereClause), "Must specify a where clause for deletion.");
             }
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(whereClause, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Delete<T>(whereClause, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1545,7 +1545,7 @@ namespace Dapper.Database
             {
                 throw new ArgumentNullException(nameof(whereClause), "Must specify a where clause for deletion.");
             }
-            return ExecuteInternal(() => _sharedConnection.Delete<T>(whereClause, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.Delete<T>(whereClause, parameters, _transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         /// <summary>
@@ -1557,7 +1557,7 @@ namespace Dapper.Database
         /// </returns>
         public bool DeleteAll<T>() where T : class
         {
-            return ExecuteInternal(() => _sharedConnection.DeleteAll<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
+            return ExecuteInternal(() => SharedConnection.DeleteAll<T>(_transaction, OneTimeCommandTimeout ?? CommandTimeout));
         }
 
         #endregion

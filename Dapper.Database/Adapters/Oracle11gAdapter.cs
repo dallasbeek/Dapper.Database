@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -10,7 +9,8 @@ namespace Dapper.Database.Adapters
     /// Oracle database adapter for Oracle 11g.
     /// </summary>
     /// <seealso cref="OracleAdapter">For Oracle 12.1 and later.</seealso>
-    public partial class Oracle11gAdapter : OracleAdapter
+    // ReSharper disable once InconsistentNaming
+    public class Oracle11gAdapter : OracleAdapter
     {
         /// <summary>
         /// Simulates <c>INSERT..RETURNING</c> with a PL/SQL block that does an <c>INSERT</c> followed by a <c>SELECT</c>.
@@ -138,7 +138,7 @@ namespace Dapper.Database.Adapters
             {
                 if (tableInfo.KeyColumns.Any())
                 {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
+                    sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().PropertyName)}";
                 }
             }
             else

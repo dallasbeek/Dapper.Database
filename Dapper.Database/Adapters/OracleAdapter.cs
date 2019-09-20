@@ -34,12 +34,7 @@ namespace Dapper.Database.Adapters
         /// </remarks> 
         protected int ResolveRowCount(int count, DynamicParameters parameters)
         {
-            // Nonnegative => not PL/SQL.
-            if (count >= 0)
-                return count;
-
-            // Negative => PL/SQL.
-            return parameters.Get<int>(RowCountParamName);
+            return count >= 0 ? count : parameters.Get<int>(RowCountParamName);
         }
 
 
@@ -132,37 +127,37 @@ namespace Dapper.Database.Adapters
         /// <returns>A sql statement that selects true if a record matches</returns>
         public override string ExistsQuery(TableInfo tableInfo, string sql)
         {
-            var q = new SqlParser(sql ?? "");
+            var sqlParser = new SqlParser(sql ?? "");
 
-            if (q.Sql.StartsWith(";", StringComparison.Ordinal))
-                return q.Sql.Substring(1);
+            if (sqlParser.Sql.StartsWith(";", StringComparison.Ordinal))
+                return sqlParser.Sql.Substring(1);
 
-            if (!q.IsSelect)
+            if (!sqlParser.IsSelect)
             {
-                return string.IsNullOrEmpty(q.FromClause)
-                    ? $"select case when exists (select * from {EscapeTableName(tableInfo)} {q.Sql}) then 1 else 0 end as rec_exists from dual"
-                    : $"select case when exists (select * {q.Sql}) then 1 else 0 end as rec_exists from dual"; ;
+                return string.IsNullOrEmpty(sqlParser.FromClause)
+                    ? $"select case when exists (select * from {EscapeTableName(tableInfo)} {sqlParser.Sql}) then 1 else 0 end as rec_exists from dual"
+                    : $"select case when exists (select * {sqlParser.Sql}) then 1 else 0 end as rec_exists from dual";
             }
 
-            return $"select case when exists ({q.Sql}) then 1 else 0 end as rec_exists from dual";
+            return $"select case when exists ({sqlParser.Sql}) then 1 else 0 end as rec_exists from dual";
         }
 
         /// <inheritdoc />
         public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
         {
-            var q = new SqlParser(GetListQuery(tableInfo, sql));
+            var sqlParser = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
             var sqlOrderBy = string.Empty;
 
-            if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
+            if (string.IsNullOrEmpty(sqlParser.OrderByClause) && tableInfo.KeyColumns.Any())
             {
-                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
+                sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().PropertyName)}";
             }
 
             parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
             parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
-            return $"{q.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
+            return $"{sqlParser.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
         }
 
         /// <inheritdoc />
@@ -206,7 +201,7 @@ namespace Dapper.Database.Adapters
         /// <summary>
         /// Returns the format for column
         /// </summary>
-        public override string EscapeColumnn(string value) => $"\"{value.ToUpperInvariant()}\"";
+        public override string EscapeColumn(string value) => $"\"{value.ToUpperInvariant()}\"";
 
         /// <summary>
         /// Returns the format for parameter

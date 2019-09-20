@@ -23,7 +23,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Upsert<T>(this IDbConnection connection, T entityToUpsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.Upsert<T>(entityToUpsert, null, null, null, transaction, commandTimeout);
+            return connection.Upsert(entityToUpsert, null, null, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Upsert<T>(this IDbConnection connection, T entityToUpsert, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.Upsert<T>(entityToUpsert, columnsToUpdate, null, null, transaction, commandTimeout);
+            return connection.Upsert(entityToUpsert, columnsToUpdate, null, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -48,13 +48,13 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="entityToUpsert">Entity to be inserted or updated</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
         public static bool Upsert<T>(this IDbConnection connection, T entityToUpsert, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.Upsert<T>(entityToUpsert, null, insertAction, updateAction, transaction, commandTimeout);
+            return connection.Upsert(entityToUpsert, null, insertAction, updateAction, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Dapper.Database.Extensions
         /// <param name="entityToUpsert">Entity to be inserted or updated</param>
         /// <param name="columnsToUpdate">Columns to be updated</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
@@ -89,7 +89,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated or inserted, false if not</returns>
         public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.UpsertList<T>(entitiesToUpsert, null, null, null, transaction, commandTimeout);
+            return connection.UpsertList(entitiesToUpsert, null, null, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if updated or inserted, false if not</returns>
         public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.UpsertList<T>(entitiesToUpsert, columnsToUpdate, null, null, transaction, commandTimeout);
+            return connection.UpsertList(entitiesToUpsert, columnsToUpdate, null, null, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -114,13 +114,13 @@ namespace Dapper.Database.Extensions
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="entitiesToUpsert">List of Entities to be updated or inserted</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if updated or inserted, false if not</returns>
         public static bool UpsertList<T>(this IDbConnection connection, IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
-            return connection.UpsertList<T>(entitiesToUpsert, null, insertAction, updateAction, transaction, commandTimeout);
+            return connection.UpsertList(entitiesToUpsert, null, insertAction, updateAction, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Dapper.Database.Extensions
         /// <param name="entitiesToUpsert">List of Entities to be updated or inserted</param>
         /// <param name="columnsToUpdate">Columns to be updated</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if updated or inserted, false if not</returns>

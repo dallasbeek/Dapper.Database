@@ -8,7 +8,7 @@ namespace Dapper.Database
     /// <summary>
     /// 
     /// </summary>
-    public partial interface ISqlDatabase : IDisposable
+    public partial interface ISqlDatabase
     {
 
         #region Execute Methods
@@ -224,8 +224,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -237,9 +237,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -250,9 +250,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -264,10 +264,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -278,10 +278,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -293,8 +293,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -307,8 +307,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -322,9 +322,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -337,9 +337,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -353,10 +353,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -369,10 +369,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a single entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -411,8 +411,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -423,8 +423,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -436,9 +436,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -449,9 +449,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -463,10 +463,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -477,10 +477,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -492,8 +492,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -506,8 +506,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -521,9 +521,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -536,9 +536,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -552,10 +552,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -568,10 +568,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns the first entity of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -610,8 +610,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -622,8 +622,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -635,9 +635,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -648,9 +648,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -662,10 +662,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
         /// <returns>
@@ -676,10 +676,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -691,8 +691,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -705,8 +705,8 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -720,9 +720,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -735,9 +735,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -751,10 +751,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -767,10 +767,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns all matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -789,7 +789,7 @@ namespace Dapper.Database
         /// Execute SQL that returns a page of matching records of type 'T'.
         /// </summary>
         /// <typeparam name="T">The type of entity to retrieve.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <returns>
@@ -801,7 +801,7 @@ namespace Dapper.Database
         /// Execute SQL that returns a page of matching records of type 'T'.
         /// </summary>
         /// <typeparam name="T">The type of entity to retrieve.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -813,9 +813,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -827,9 +827,9 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -842,10 +842,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -857,10 +857,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -873,11 +873,11 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="splitOn">The field we should split the result on to return the next object.</param>
@@ -889,11 +889,11 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'T1'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="sql">The SQL to execute.</param>
         /// <param name="parameters">The parameters to use for this query.</param>
@@ -906,10 +906,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -922,10 +922,10 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -939,11 +939,11 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -956,11 +956,11 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -974,12 +974,12 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -992,12 +992,12 @@ namespace Dapper.Database
         /// <summary>
         /// Execute SQL that returns a page of matching records of type 'TRet'.
         /// </summary>
-        /// <typeparam name="T1">The first type in the recordset.</typeparam>
-        /// <typeparam name="T2">The second type in the recordset.</typeparam>
-        /// <typeparam name="T3">The third type in the recordset.</typeparam>
-        /// <typeparam name="T4">The fourth type in the recordset.</typeparam>
+        /// <typeparam name="T1">The first type in the record set.</typeparam>
+        /// <typeparam name="T2">The second type in the record set.</typeparam>
+        /// <typeparam name="T3">The third type in the record set.</typeparam>
+        /// <typeparam name="T4">The fourth type in the record set.</typeparam>
         /// <typeparam name="TRet">The combined type to return.</typeparam>
-        /// <param name="page">The page number to retreive.</param>
+        /// <param name="page">The page number to retrieve.</param>
         /// <param name="pageSize">The number of records to return per page.</param>
         /// <param name="mapper">The function to map row types to the return type.</param>
         /// <param name="sql">The SQL to execute.</param>
@@ -1211,7 +1211,7 @@ namespace Dapper.Database
         Task<bool> DeleteAsync<T>(object primaryKeyValue) where T : class;
 
         /// <summary>
-        /// Delete entity in table "Ts" by an unparameterized WHERE clause.
+        /// Delete entity in table "Ts" by an un-parameterized WHERE clause.
         /// If you want to Delete All of the data, call the DeleteAll() command
         /// </summary>
         /// <typeparam name="T"></typeparam>

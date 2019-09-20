@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Data;
-using Dapper;
-using Dapper.Database.Adapters;
 using Dapper.Mapper;
 
 namespace Dapper.Database.Extensions
@@ -109,7 +107,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static IPagedEnumerable<T1> GetPageList<T1, T2, T3>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class
         {
-            return GetPageList<T1, T2, T3>(connection, page, pageSize, sql, null, transaction, commandTimeout);
+            return GetPageList<T1, T2, T3>(connection, page, pageSize, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -152,7 +150,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static IPagedEnumerable<T1> GetPageList<T1, T2, T3, T4>(this IDbConnection connection, int page, int pageSize, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class
         {
-            return GetPageList<T1, T2, T3, T4>(connection, page, pageSize, sql, null, transaction, commandTimeout);
+            return GetPageList<T1, T2, T3, T4>(connection, page, pageSize, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -196,7 +194,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static IPagedEnumerable<TRet> GetPageList<T1, T2, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where TRet : class
         {
-            return GetPageList<T1, T2, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return GetPageList(connection, page, pageSize, mapper, sql,null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -240,7 +238,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where TRet : class
         {
-            return GetPageList<T1, T2, T3, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return GetPageList(connection, page, pageSize, mapper, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>
@@ -286,7 +284,7 @@ namespace Dapper.Database.Extensions
         /// <returns>true if deleted, false if not found</returns>
         public static IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(this IDbConnection connection, int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null, IDbTransaction transaction = null, int? commandTimeout = null) where T1 : class where T2 : class where T3 : class where T4 : class where TRet : class
         {
-            return GetPageList<T1, T2, T3, T4, TRet>(connection, page, pageSize, mapper, sql, null, transaction, commandTimeout);
+            return GetPageList(connection, page, pageSize, mapper, sql, null, splitOn, transaction, commandTimeout);
         }
 
         /// <summary>

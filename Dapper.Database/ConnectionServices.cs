@@ -50,6 +50,7 @@ namespace Dapper.Database
     /// <summary>
     /// 
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public class ConfigConnectionService<T> : IConnectionService where T : IDbConnection
     {
         private readonly string _key;

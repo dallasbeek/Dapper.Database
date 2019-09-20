@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Dapper.Database.Attributes;
-using Dapper.Database.Extensions;
 using static Dapper.Database.Extensions.SqlMapperExtensions;
 
 namespace Dapper.Database
@@ -30,12 +29,12 @@ namespace Dapper.Database
         /// 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="tablenameMapper"></param>
-        public TableInfo(Type type, TableNameMapperDelegate tablenameMapper)
+        /// <param name="tableNameMapper"></param>
+        public TableInfo(Type type, TableNameMapperDelegate tableNameMapper)
         {
             ClassType = type;
 
-            if (tablenameMapper != null)
+            if (tableNameMapper != null)
             {
                 TableName = TableNameMapper(type);
             }
@@ -54,58 +53,57 @@ namespace Dapper.Database
                 else
                 {
                     TableName = type.Name + "s";
-                    if (type.IsInterface() && TableName.StartsWith("I"))
+                    if (type.IsInterface && TableName.StartsWith("I"))
                         TableName = TableName.Substring(1);
                 }
             }
 
             ColumnInfos = type.GetProperties()
-                .Where(t => t.GetCustomAttributes(typeof(IgnoreAttribute), false).Count() == 0)
-                .Select(t =>
+                .Where(typeProperty => !typeProperty.GetCustomAttributes(typeof(IgnoreAttribute), false).Any())
+                .Select(typeProperty =>
                 {
-                    var columnAtt = t.GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "ColumnAttribute") as dynamic;
-                    var seqAtt = t.GetCustomAttributes(false).SingleOrDefault(a => a is SequenceAttribute) as dynamic;
+                    var columnAtt = typeProperty.GetCustomAttributes(false).SingleOrDefault(attr => attr.GetType().Name == "ColumnAttribute") as dynamic;
+                    var seqAtt = typeProperty.GetCustomAttributes(false).SingleOrDefault(a => a is SequenceAttribute) as dynamic;
 
                     var ci = new ColumnInfo
                     {
-                        Property = t,
-                        ColumnName = columnAtt?.Name ?? t.Name,
-                        PropertyName = t.Name,
-                        IsKey = t.GetCustomAttributes(false).Any(a => a is KeyAttribute),
-                        IsIdentity = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
+                        Property = typeProperty,
+                        ColumnName = columnAtt?.Name ?? typeProperty.Name,
+                        PropertyName = typeProperty.Name,
+                        IsKey = typeProperty.GetCustomAttributes(false).Any(a => a is KeyAttribute),
+                        IsIdentity = (typeProperty.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
                           && g.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity))
                           || seqAtt != null,
-                        IsGenerated = (t.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
+                        IsGenerated = (typeProperty.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
                             && g.DatabaseGeneratedOption != DatabaseGeneratedOption.None))
                             || seqAtt != null,
-                        ExcludeOnSelect = t.GetCustomAttributes(false).Any(a => a is IgnoreSelectAttribute),
+                        ExcludeOnSelect = typeProperty.GetCustomAttributes(false).Any(a => a is IgnoreSelectAttribute),
                         SequenceName = seqAtt?.Name
                     };
 
                     ci.ExcludeOnInsert = (ci.IsGenerated && seqAtt == null)
-                        || t.GetCustomAttributes(false).Any(a => a is IgnoreInsertAttribute)
-                        || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
+                        || typeProperty.GetCustomAttributes(false).Any(a => a is IgnoreInsertAttribute)
+                        || typeProperty.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
 
                     ci.ExcludeOnUpdate = ci.IsGenerated
-                        || t.GetCustomAttributes(false).Any(a => a is IgnoreUpdateAttribute)
-                        || t.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
+                        || typeProperty.GetCustomAttributes(false).Any(a => a is IgnoreUpdateAttribute)
+                        || typeProperty.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
 
-                    if (ci.IsGenerated)
-                    {
-                        var parameter = Expression.Parameter(type);
-                        var property = Expression.Property(parameter, ci.Property);
-                        var conversion = Expression.Convert(property, typeof(object));
-                        var lambda = Expression.Lambda(conversion, parameter);
-                        ci.Output = lambda;
-                    }
+                    if (!ci.IsGenerated) return ci;
+
+                    var parameter = Expression.Parameter(type);
+                    var property = Expression.Property(parameter, ci.Property);
+                    var conversion = Expression.Convert(property, typeof(object));
+                    var lambda = Expression.Lambda(conversion, parameter);
+                    ci.Output = lambda;
 
                     return ci;
                 })
                 .ToArray();
 
-            if (!ColumnInfos.Any(k => k.IsKey))
+            if (!ColumnInfos.Any(columnInfo => columnInfo.IsKey))
             {
-                var idProp = ColumnInfos.FirstOrDefault(p => string.Equals(p.PropertyName, "id", StringComparison.CurrentCultureIgnoreCase));
+                var idProp = ColumnInfos.FirstOrDefault(columnInfo => string.Equals(columnInfo.PropertyName, "id", StringComparison.CurrentCultureIgnoreCase));
 
                 if (idProp != null)
                 {
@@ -124,22 +122,22 @@ namespace Dapper.Database
         /// <summary>
         /// 
         /// </summary>
-        public Type ClassType { get; private set; }
+        public Type ClassType { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string TableName { get; private set; }
+        public string TableName { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string SchemaName { get; private set; }
+        public string SchemaName { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        private IEnumerable<ColumnInfo> ColumnInfos { get; set; }
+        private IEnumerable<ColumnInfo> ColumnInfos { get; }
 
         /// <summary>
         /// 
@@ -148,10 +146,11 @@ namespace Dapper.Database
         public ColumnInfo GetSingleKey()
         {
             var keys = _keyColumns.Value;
-            if (keys.Count() != 1)
+            var columnInfos = keys as ColumnInfo[] ?? keys.ToArray();
+            if (keys != null && columnInfos.Length != 1)
                 throw new DataException("<T> only supports an entity with a single [Key]");
 
-            return keys.SingleOrDefault();
+            return columnInfos.SingleOrDefault();
         }
 
         /// <summary>
@@ -161,9 +160,10 @@ namespace Dapper.Database
         public IEnumerable<ColumnInfo> GetCompositeKeys()
         {
             var keys = _keyColumns.Value;
-            if (keys.Count() == 0)
+            var compositeKeys = keys as ColumnInfo[] ?? keys.ToArray();
+            if (!compositeKeys.Any())
                 throw new DataException("<T> does not have a [Key]");
-            return keys;
+            return compositeKeys;
         }
 
         /// <summary>
@@ -196,17 +196,17 @@ namespace Dapper.Database
         /// <returns></returns>
         public IEnumerable<ColumnInfo> GeneratedColumns => _generatedColumns.Value;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<PropertyInfo> PropertyList => _propertyList.Value;
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <returns></returns>
+        //public IEnumerable<PropertyInfo> PropertyList => _propertyList.Value;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public bool HasSequenceName => ColumnInfos.Any(ci => !string.IsNullOrWhiteSpace(ci.SequenceName));
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool HasSequenceName => ColumnInfos.Any(ci => !string.IsNullOrWhiteSpace(ci.SequenceName));
 
     }
 

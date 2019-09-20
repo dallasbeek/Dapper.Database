@@ -10,7 +10,7 @@ namespace Dapper.Database.Adapters
     /// <summary>
     /// Base class for SqlAdapter handlers - provides default/common handling for different database engines
     /// </summary>
-    public abstract partial class SqlAdapter : ISqlAdapter
+    public abstract class SqlAdapter : ISqlAdapter
     {
         /// <summary>
         /// Cache for Get Queries
@@ -53,17 +53,14 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public virtual bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
         {
-            var success = entitiesToInsert.Any();
+            var toInsert = entitiesToInsert as T[] ?? entitiesToInsert.ToArray();
+            var success = toInsert.Any();
             if (success && !tableInfo.GeneratedColumns.Any())
             {
-                return connection.Execute(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= entitiesToInsert.Count();
+                return connection.Execute(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= toInsert.Length;
             }
 
-            foreach (var e in entitiesToInsert)
-            {
-                success = success && Insert(connection, transaction, commandTimeout, tableInfo, e);
-            }
-            return success;
+            return toInsert.Aggregate(success, (current, e) => current && Insert(connection, transaction, commandTimeout, tableInfo, e));
         }
 
         /// <summary>
@@ -77,7 +74,7 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public virtual async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
-            return await new Task<bool>(() => false); ;
+            return await new Task<bool>(() => false);
         }
 
         /// <summary>
@@ -91,13 +88,14 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was inserted</returns>
         public virtual async Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert)
         {
-            var success = entitiesToInsert.Any();
+            var toInsert = entitiesToInsert as T[] ?? entitiesToInsert.ToArray();
+            var success = toInsert.Any();
             if (success && !tableInfo.GeneratedColumns.Any())
             {
-                return await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= entitiesToInsert.Count();
+                return await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, transaction, commandTimeout) >= toInsert.Length;
             }
 
-            foreach (var e in entitiesToInsert)
+            foreach (var e in toInsert)
             {
                 success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
             }
@@ -134,13 +132,10 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public virtual bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var success = entitiesToUpdate.Any();
-            foreach (var e in entitiesToUpdate)
-            {
-                success = success && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
-            }
+            var toUpdate = entitiesToUpdate as T[] ?? entitiesToUpdate.ToArray();
+            var success = toUpdate.Any();
 
-            return success;
+            return toUpdate.Aggregate(success, (current, e) => current && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate));
         }
 
         /// <summary>
@@ -155,7 +150,7 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public virtual async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            return await new Task<bool>(() => false); ;
+            return await new Task<bool>(() => false);
         }
 
         /// <summary>
@@ -170,9 +165,11 @@ namespace Dapper.Database.Adapters
         /// <returns>true if the entity was updated</returns>
         public virtual async Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var success = entitiesToUpdate.Any();
-            foreach (var e in entitiesToUpdate)
+            var toUpdate = entitiesToUpdate as T[] ?? entitiesToUpdate.ToArray();
+            var success = toUpdate.Any();
+            foreach (var e in toUpdate)
             {
+                // ReSharper disable once PossibleMultipleEnumeration
                 success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
             }
 
@@ -193,7 +190,7 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual bool Upsert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
@@ -221,14 +218,15 @@ namespace Dapper.Database.Adapters
         /// <param name="entitiesToUpsert">Entity to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
-            var success = entitiesToUpsert.Any();
+            var toUpsert = entitiesToUpsert as T[] ?? entitiesToUpsert.ToArray();
+            var success = toUpsert.Any();
             var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
 
-            foreach (var e in entitiesToUpsert)
+            foreach (var e in toUpsert)
             {
                 if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, qWhere), e, transaction, commandTimeout))
                 {
@@ -238,6 +236,7 @@ namespace Dapper.Database.Adapters
                 else
                 {
                     updateAction?.Invoke(e);
+                    // ReSharper disable once PossibleMultipleEnumeration
                     success = success && Update(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
                 }
             }
@@ -256,7 +255,7 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual async Task<bool> UpsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
@@ -284,13 +283,14 @@ namespace Dapper.Database.Adapters
         /// <param name="entitiesToUpsert">Entity to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
         public virtual async Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction)
         {
-            var success = entitiesToUpsert.Any();
+            var toUpsert = entitiesToUpsert as T[] ?? entitiesToUpsert.ToArray();
+            var success = toUpsert.Any();
             var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
-            foreach (var e in entitiesToUpsert)
+            foreach (var e in toUpsert)
             {
                 if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), e, transaction, commandTimeout))
                 {
@@ -300,6 +300,7 @@ namespace Dapper.Database.Adapters
                 else
                 {
                     updateAction?.Invoke(e);
+                    // ReSharper disable once PossibleMultipleEnumeration
                     success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e, columnsToUpdate);
                 }
             }
@@ -359,7 +360,8 @@ namespace Dapper.Database.Adapters
         /// <returns>An update sql statement</returns>
         protected virtual string BuildUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
         {
-            var updates = tableInfo.UpdateColumns.Where(ci => (columnsToUpdate == null || !columnsToUpdate.Any() || columnsToUpdate.Contains(ci.PropertyName)));
+            var updateColumns = columnsToUpdate?.ToArray() ?? new string[0];
+            var updates = tableInfo.UpdateColumns.Where(ci => (!updateColumns.Any() || updateColumns.Contains(ci.PropertyName)));
             return $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}";
         }
 
@@ -394,7 +396,7 @@ namespace Dapper.Database.Adapters
                 }
             }
 
-            return $"select count(*) from ({q.Sql}) count_innner";
+            return $"select count(*) from ({q.Sql}) count_inner";
         }
 
         /// <summary>
@@ -470,13 +472,9 @@ namespace Dapper.Database.Adapters
                 return GetQueries.Acquire(
                     tableInfo.ClassType.TypeHandle,
                     () => cache && string.IsNullOrEmpty(q.Sql),
-                    () =>
-                    {
-                        return string.IsNullOrEmpty(q.FromClause)
-                            ? $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {q.Sql}"
-                            : $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {q.Sql}";
-                    }
-                );
+                    () => string.IsNullOrEmpty(q.FromClause)
+                        ? $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} {q.Sql}"
+                        : $"select {EscapeColumnListWithAliases(tableInfo.SelectColumns, tableInfo.TableName)} {q.Sql}");
 
             }
             return q.Sql;
@@ -529,7 +527,7 @@ namespace Dapper.Database.Adapters
 
             if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
             {
-                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().ColumnName)}";
+                sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().ColumnName)}";
             }
 
             parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
@@ -562,7 +560,7 @@ namespace Dapper.Database.Adapters
         /// <summary>
         /// Returns the format for column
         /// </summary>
-        public virtual string EscapeColumnn(string value) => $"[{value}]";
+        public virtual string EscapeColumn(string value) => $"[{value}]";
 
         /// <summary>
         /// Returns the format for parameter
@@ -575,7 +573,7 @@ namespace Dapper.Database.Adapters
         /// <param name="columns"></param>
         /// <param name="tableName"></param> 
         /// <returns></returns>
-        public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumnn(ci.ColumnName)));
+        public virtual string EscapeColumnList(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumn(ci.ColumnName)));
 
         /// <summary>
         /// Returns the format for columns
@@ -583,14 +581,14 @@ namespace Dapper.Database.Adapters
         /// <param name="columns"></param>
         /// <param name="tableName"></param> 
         /// <returns></returns>
-        public virtual string EscapeColumnListWithAliases(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumnn(ci.ColumnName) + (ci.ColumnName != ci.PropertyName ? " AS " + EscapeColumnn(ci.PropertyName) : "")));
+        public virtual string EscapeColumnListWithAliases(IEnumerable<ColumnInfo> columns, string tableName = null) => string.Join(", ", columns.Select(ci => (tableName != null ? EscapeTableName(tableName) + "." : "") + EscapeColumn(ci.ColumnName) + (ci.ColumnName != ci.PropertyName ? " AS " + EscapeColumn(ci.PropertyName) : "")));
 
         /// <summary>
         /// Returns the format for where clause
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns) => string.Join(" and ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
+        public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns) => string.Join(" and ", columns.Select(ci => $"{EscapeColumn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
 
         /// <summary>
         /// Returns the format for parameters
@@ -604,8 +602,25 @@ namespace Dapper.Database.Adapters
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public virtual string EscapeAssignmentList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => $"{EscapeColumnn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
+        public virtual string EscapeAssignmentList(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => $"{EscapeColumn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tableInfo"></param>
+        /// <param name="entity"></param>
+        /// <param name="returnValues"></param>
+        protected virtual void ApplyGeneratedValues<T>(TableInfo tableInfo, T entity, IDictionary<string, object> returnValues)
+        {
+            foreach (var key in returnValues.Keys)
+            {
+                var returnValue = returnValues[key];
+
+                var generatedProperty = tableInfo.GeneratedColumns.Single(generatedColumn => generatedColumn.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
+               generatedProperty.SetValue(entity, Convert.ChangeType(returnValue, generatedProperty.PropertyType),null);
+            }
+        }
     }
 }
