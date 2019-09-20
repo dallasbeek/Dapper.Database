@@ -9,7 +9,7 @@ using Dapper.Database.Extensions;
 using Oracle.ManagedDataAccess.Client;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
-//using OracleConnection = Dapper.Tests.Database.OracleClient.OracleConnection;
+using OracleConnection = Dapper.Tests.Database.OracleClient.OracleConnection;
 
 namespace Dapper.Tests.Database
 {

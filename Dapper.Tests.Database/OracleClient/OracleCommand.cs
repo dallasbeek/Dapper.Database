@@ -1,5 +1,4 @@
-﻿#if ORACLE
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using System.Threading;
@@ -179,4 +178,3 @@ namespace Dapper.Tests.Database.OracleClient
         protected override Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken) => RealCommand.ExecuteReaderAsync(behavior, cancellationToken);
     }
 }
-#endif
