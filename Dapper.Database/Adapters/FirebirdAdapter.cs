@@ -27,7 +27,7 @@ namespace Dapper.Database.Adapters
 
             if (!tableInfo.GeneratedColumns.Any())
                 return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
-            cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+            cmd.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
             var values = connection.Query(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
 
@@ -54,7 +54,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+                cmd.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
                 var values = connection.Query(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
 
@@ -84,7 +84,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                command.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+                command.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
                 var result = await connection.QueryAsync(command.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
 
@@ -118,7 +118,7 @@ namespace Dapper.Database.Adapters
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                command.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+                command.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
                 var result = await connection.QueryAsync(command.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
 

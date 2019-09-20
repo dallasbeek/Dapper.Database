@@ -619,7 +619,7 @@ namespace Dapper.Database.Adapters
                 var returnValue = returnValues[key];
 
                 var generatedProperty = tableInfo.GeneratedColumns.Single(generatedColumn => generatedColumn.PropertyName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
-               generatedProperty.SetValue(entity, Convert.ChangeType(returnValue, generatedProperty.PropertyType),null);
+                generatedProperty.SetValue(entity, Convert.ChangeType(returnValue, generatedProperty.PropertyType), null);
             }
         }
     }
