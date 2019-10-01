@@ -9,8 +9,8 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "Firebird")]
     public class FirebirdTestSuite : TestSuite
     {
-        private static string DbName = "\\DBFiles\\Test.DB.fdb";
-        private static string DbFile;
+        private static readonly string DbName = "\\DBFiles\\Test.DB.fdb";
+        private static readonly string DbFile;
 
         public static string ConnectionString => $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={DbFile};";
 
@@ -54,24 +54,27 @@ namespace Dapper.Tests.Database
 
                     if (init)
                     {
-                        var file = File.OpenText(".\\Scripts\\firebirdawlite.sql");
-                        var line = string.Empty;
-
-                        while ((line = file.ReadLine()) != null)
+                        using (var file = File.OpenText(".\\Scripts\\firebirdawlite.sql"))
                         {
-                            if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
+                            var line = string.Empty;
+
+                            while ((line = file.ReadLine()) != null)
                             {
-                                if (!string.IsNullOrEmpty(commandText))
-                                    connection.Execute(commandText);
-                                commandText = string.Empty;
-                            }
-                            else
-                            {
-                                commandText += "\r\n" + line;
+                                if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if (!string.IsNullOrEmpty(commandText))
+                                        connection.Execute(commandText);
+                                    commandText = string.Empty;
+                                }
+                                else
+                                {
+                                    commandText += "\r\n" + line;
+                                }
                             }
                         }
+
+                        connection.Execute("delete from Person");
                     }
-                    connection.Execute("delete from Person");
                 }
 
             }

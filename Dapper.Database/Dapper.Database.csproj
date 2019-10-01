@@ -6,45 +6,22 @@
     <Title>Dapper.Database</Title>
     <Description>get, insert, update, upsert, getlist, getpagedlist, and delete helpers for Dapper.net.</Description>
     <Authors>Dallas Beek</Authors>
-    <TargetFrameworks>net451;netstandard2.0;netstandard1.3</TargetFrameworks>
-    <!-- TODO: Docs -->
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <Company />
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net451|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETFULL</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_3</DefineConstants>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
-  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
-  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
-  </ItemGroup>
-  
+
   <ItemGroup>
-    <Compile Remove="Extensions\SqlDeleteExtensionHelpers.cs" />
-    <Compile Remove="SqlAdapterAsync.cs" />
-    <Compile Remove="SqlMapperExtensions.Async.cs" />
-    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Dapper" Version="2.0.4" />
     <PackageReference Include="Dapper.Mapper" Version="2.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />
   </ItemGroup>
   
 </Project>

@@ -1,12 +1,12 @@
-﻿#if ORACLE
-using System;
+﻿using System;
 using System.Data;
+using System.Data.Common;
 using Oracle.ManagedDataAccess.Types;
 using RealOracleParameter = Oracle.ManagedDataAccess.Client.OracleParameter;
 
 namespace Dapper.Tests.Database.OracleClient
 {
-    public class OracleParameter : System.Data.Common.DbParameter
+    public class OracleParameter : DbParameter
     {
         internal RealOracleParameter RealParameter { get; }
 
@@ -138,5 +138,4 @@ namespace Dapper.Tests.Database.OracleClient
         }
     }
 }
-#endif
 

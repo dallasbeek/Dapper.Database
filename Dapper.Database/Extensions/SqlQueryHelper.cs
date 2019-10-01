@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 using System.Data;
 using Dapper.Database.Adapters;
-using System;
-
 
 namespace Dapper.Database.Extensions
 {
@@ -19,28 +17,30 @@ namespace Dapper.Database.Extensions
             public ISqlAdapter Adapter { get; }
             public TableInfo TableInfo { get; }
 
-            public GenQuery GenerateSingleKeyQuery(object primaryKeyValue, Func<TableInfo, string, string> adapterMethod)
+            public GenQuery GenerateSingleKeyQuery(object primaryKeyValue,
+                Func<TableInfo, string, string> adapterMethod)
             {
                 var key = TableInfo.GetSingleKey();
-                var dynParms = new DynamicParameters();
-                dynParms.Add(key.PropertyName, primaryKeyValue);
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add(key.PropertyName, primaryKeyValue);
                 var qWhere = $" where {Adapter.EscapeWhereList(TableInfo.KeyColumns)}";
 
-                return new GenQuery(dynParms, adapterMethod.Invoke(TableInfo, qWhere));
+                return new GenQuery(dynamicParameters, adapterMethod.Invoke(TableInfo, qWhere));
             }
 
             public GenQuery GenerateCompositeKeyQuery<T>(T entity, Func<TableInfo, string, string> adapterMethod)
             {
                 var keys = TableInfo.GetCompositeKeys();
-                var dynParms = new DynamicParameters();
+                var dynamicParameters = new DynamicParameters();
                 foreach (var key in keys)
                 {
                     var value = key.GetValue(entity);
-                    dynParms.Add(key.PropertyName, value);
+                    dynamicParameters.Add(key.PropertyName, value);
                 }
+
                 var qWhere = $" where {Adapter.EscapeWhereList(TableInfo.KeyColumns)}";
 
-                return new GenQuery(dynParms, adapterMethod.Invoke(TableInfo, qWhere));
+                return new GenQuery(dynamicParameters, adapterMethod.Invoke(TableInfo, qWhere));
             }
         }
 
@@ -55,6 +55,5 @@ namespace Dapper.Database.Extensions
             public DynamicParameters Parameters { get; }
             public string SqlStatement { get; }
         }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿#if ORACLE
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -17,8 +16,7 @@ namespace Dapper.Tests.Database
     [Trait("Provider", "Oracle")]
     public partial class OracleTestSuite : TestSuite
     {
-        public static string ConnectionString => $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=Denver)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
-        //public static string ConnectionString => "User Id=testuser;Password=Password12!;Data Source=localhost:1521/ORCLPDB1.localdomain";
+        public static string ConnectionString => $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
 
         protected override string P => ":";
 
@@ -97,7 +95,7 @@ namespace Dapper.Tests.Database
                 _skip = e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
                     || e.Message.Contains("No connection could be made because the target machine actively refused it")
                     || e.Message.Contains("Unable to resolve connect hostname")
-                    ;
+                    || e.Message.Contains("Connection request timed out");
             }
             catch (SocketException e) when (e.Message.Contains("No connection could be made because the target machine actively refused it"))
             {
@@ -133,4 +131,3 @@ namespace Dapper.Tests.Database
         #endregion
     }
 }
-#endif

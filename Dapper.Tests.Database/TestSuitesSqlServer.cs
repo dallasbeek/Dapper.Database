@@ -16,8 +16,8 @@ namespace Dapper.Tests.Database
         private const string DbName = "tempdb";
         public static string ConnectionString =>
             IsAppVeyor
-                ? @"Server=(local)\SQL2017;Database=tempdb;User ID=sa;Password=Password12!"
-                : $"Data Source=(local)\\Dallas;Initial Catalog={DbName};Integrated Security=True";
+                ? $"Server=(local)\\SQL2017;Database={DbName};User ID=sa;Password=Password12!"
+                : $"Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DbName};Integrated Security=True";
 
         protected override void CheckSkip()
         {

@@ -4,13 +4,12 @@ using System.Linq;
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    /// The SQL Server database adapter.
+    ///     The SQL Server database adapter.
     /// </summary>
-    public partial class SqlServerPre2012Adapter : SqlServerAdapter
+    public class SqlServerPre2012Adapter : SqlServerAdapter
     {
-
         /// <summary>
-        /// Constructs a paged sql statement
+        ///     Constructs a paged sql statement
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="page">the page to request</param>
@@ -18,9 +17,9 @@ namespace Dapper.Database.Adapters
         /// <param name="sql">a sql statement or partial statement</param>
         /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated sql statement</returns>
-        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql,
+            DynamicParameters parameters)
         {
-
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
             var pageTake = pageSkip + pageSize;
@@ -30,9 +29,7 @@ namespace Dapper.Database.Adapters
             if (string.IsNullOrEmpty(q.OrderByClause))
             {
                 if (tableInfo.KeyColumns.Any())
-                {
-                    sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
-                }
+                    sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().PropertyName)}";
             }
             else
             {
@@ -44,7 +41,8 @@ namespace Dapper.Database.Adapters
 
             parameters.Add(PageSizeParamName, pageTake, DbType.Int64);
             parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
-            return $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {EscapeParameter(PageSkipParamName)} and page_rn <= {EscapeParameter(PageSizeParamName)}";
+            return
+                $"select * from (select row_number() over ({sqlOrderBy}) page_rn, {columnsOnly}) page_outer where page_rn > {EscapeParameter(PageSkipParamName)} and page_rn <= {EscapeParameter(PageSizeParamName)}";
         }
     }
 }

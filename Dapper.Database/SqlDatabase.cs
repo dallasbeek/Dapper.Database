@@ -1,126 +1,118 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper.Database.Extensions;
 
 namespace Dapper.Database
 {
     /// <summary>
-    /// 
     /// </summary>
-    public partial class SqlDatabase : IDisposable
+    public partial class SqlDatabase : ISqlDatabase
     {
         /// <summary>
-        /// 
-        /// </summary>
-        protected readonly IConnectionService _connectionService;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected IDbConnection _sharedConnection;
-
-        private IDbTransaction _transaction;
-        private readonly IsolationLevel _isolationLevel;
-
-        /// <summary>
-        /// Globally turns off query caching
+        ///     Globally turns off query caching
         /// </summary>
         public static bool CacheQueries = true;
 
-        /// <summary>
-        /// Sets the timeout value for all SQL statements.
-        /// </summary>
-        public int? CommandTimeout
-        {
-            get;
-            set;
-        }
+        private readonly IsolationLevel _isolationLevel;
 
         /// <summary>
-        /// Sets the timeout value for the next (and only next) SQL statement
         /// </summary>
-        public int? OneTimeCommandTimeout
-        {
-            get;
-            set;
-        }
+        protected readonly IConnectionService ConnectionService;
+
+        private IDbTransaction _transaction;
 
         /// <summary>
-        /// 
+        /// </summary>
+        protected IDbConnection SharedConnection;
+
+        /// <summary>
         /// </summary>
         /// <param name="connectionService"></param>
         /// <param name="defaultIsolationLevel">Default Isolation level to use for this database</param>
-        public SqlDatabase(IConnectionService connectionService, IsolationLevel defaultIsolationLevel = IsolationLevel.ReadCommitted)
+        public SqlDatabase(IConnectionService connectionService,
+            IsolationLevel defaultIsolationLevel = IsolationLevel.ReadCommitted)
         {
-            _connectionService = connectionService;
+            ConnectionService = connectionService;
             _isolationLevel = defaultIsolationLevel;
             TransactionCount = 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected void OpenSharedConnectionInternal()
-        {
-            OpenSharedConnectionImp(true);
-        }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="isInternal"></param>
-        private void OpenSharedConnectionImp(bool isInternal)
+        internal bool TransactionIsAborted { get; set; }
+
+        /// <summary>
+        /// </summary>
+        internal int TransactionCount { get; set; }
+
+        /// <summary>
+        ///     Sets the timeout value for all SQL statements.
+        /// </summary>
+        public int? CommandTimeout { get; set; }
+
+        /// <summary>
+        ///     Sets the timeout value for the next (and only next) SQL statement
+        /// </summary>
+        public int? OneTimeCommandTimeout { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public void Dispose() => CloseSharedConnection();
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public ITransaction GetTransaction() => GetTransaction(_isolationLevel);
+
+        /// <summary>
+        /// </summary>
+        /// <param name="isolationLevel"></param>
+        /// <returns></returns>
+        public ITransaction GetTransaction(IsolationLevel isolationLevel) => new Transaction(this, isolationLevel);
+
+        /// <summary>
+        /// </summary>
+        protected void OpenSharedConnectionInternal() => OpenSharedConnectionImp();
+
+        /// <summary>
+        /// </summary>
+        private void OpenSharedConnectionImp()
         {
-            if (_sharedConnection != null && _sharedConnection.State != ConnectionState.Broken && _sharedConnection.State != ConnectionState.Closed)
-            {
-                return;
-            }
+            if (SharedConnection != null && SharedConnection.State != ConnectionState.Broken &&
+                SharedConnection.State != ConnectionState.Closed) return;
 
-            _sharedConnection = _connectionService.GetConnection();
+            SharedConnection = ConnectionService.GetConnection();
 
-            if (_sharedConnection == null)
+            if (SharedConnection == null)
                 throw new Exception("SQL Connection failed to configure.");
 
 
-            if (_sharedConnection.State == ConnectionState.Broken)
-            {
-                _sharedConnection.Close();
-            }
+            if (SharedConnection.State == ConnectionState.Broken) SharedConnection.Close();
 
-            if (_sharedConnection.State == ConnectionState.Closed)
-            {
-                _sharedConnection.Open();
-            }
-
+            if (SharedConnection.State == ConnectionState.Closed) SharedConnection.Open();
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public void CloseSharedConnection()
         {
-            if (_sharedConnection == null)
+            if (SharedConnection == null)
                 return;
 
-            _sharedConnection.Close();
-            _sharedConnection.Dispose();
-            _sharedConnection = null;
+            SharedConnection.Close();
+            SharedConnection.Dispose();
+            SharedConnection = null;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         protected void CloseSharedConnectionInternal()
         {
-            if (_transaction == null)
-            {
-                CloseSharedConnection();
-            }
+            if (_transaction == null) CloseSharedConnection();
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="command"></param>
@@ -152,19 +144,19 @@ namespace Dapper.Database
             }
             catch (Exception)
             {
-                if (openInternalTransaction && internalTransaction != null)
-                    internalTransaction.Dispose();
+                if (openInternalTransaction)
+                    internalTransaction?.Dispose();
 
                 throw;
             }
             finally
             {
+                //internalTransaction?.Dispose();
                 CloseSharedConnectionInternal();
             }
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="command"></param>
@@ -197,74 +189,28 @@ namespace Dapper.Database
             }
             catch (Exception)
             {
-                if (openInternalTransaction && internalTransaction != null)
-                    internalTransaction.Dispose();
+                if (openInternalTransaction)
+                    internalTransaction?.Dispose();
 
                 throw;
             }
             finally
             {
+                //internalTransaction?.Dispose();
                 CloseSharedConnectionInternal();
             }
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public void Dispose()
-        {
-            CloseSharedConnection();
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal bool TransactionIsAborted { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal int TransactionCount { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public ITransaction GetTransaction()
-        {
-            return GetTransaction(_isolationLevel);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="isolationLevel"></param>
-        /// <returns></returns>
-        public ITransaction GetTransaction(IsolationLevel isolationLevel)
-        {
-            return new Transaction(this, isolationLevel);
-        }
-
-        /// <summary>
-        /// 
         /// </summary>
         /// <param name="tran"></param>
-        public void SetTransaction(IDbTransaction tran)
-        {
-            _transaction = tran;
-        }
+        public void SetTransaction(IDbTransaction tran) => _transaction = tran;
 
         /// <summary>
-        /// 
         /// </summary>
-        public void BeginTransaction()
-        {
-            BeginTransaction(_isolationLevel);
-        }
+        public void BeginTransaction() => BeginTransaction(_isolationLevel);
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="isolationLevel"></param>
         public void BeginTransaction(IsolationLevel isolationLevel)
@@ -273,17 +219,13 @@ namespace Dapper.Database
             {
                 TransactionCount = 0;
                 OpenSharedConnectionInternal();
-                _transaction = _sharedConnection.BeginTransaction(isolationLevel);
+                _transaction = SharedConnection.BeginTransaction(isolationLevel);
             }
 
-            if (_transaction != null)
-            {
-                TransactionCount++;
-            }
+            if (_transaction != null) TransactionCount++;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public void AbortTransaction()
         {
@@ -292,7 +234,6 @@ namespace Dapper.Database
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="fromComplete"></param>
         public void AbortTransaction(bool fromComplete)
@@ -313,24 +254,22 @@ namespace Dapper.Database
             if (TransactionIsOk())
                 _transaction.Rollback();
 
-            if (_transaction != null)
-                _transaction.Dispose();
+            _transaction?.Dispose();
 
             _transaction = null;
             TransactionIsAborted = false;
 
             // You cannot continue to use a connection after a transaction has been rolled back
-            if (_sharedConnection != null)
+            if (SharedConnection != null)
             {
-                _sharedConnection.Close();
-                _sharedConnection.Open();
+                SharedConnection.Close();
+                SharedConnection.Open();
             }
 
             CloseSharedConnectionInternal();
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public void CompleteTransaction()
         {
@@ -350,42 +289,35 @@ namespace Dapper.Database
             if (TransactionIsOk())
                 _transaction.Commit();
 
-            if (_transaction != null)
-                _transaction.Dispose();
+            _transaction?.Dispose();
 
             _transaction = null;
 
             CloseSharedConnectionInternal();
         }
 
-        private bool TransactionIsOk()
-        {
-            return _sharedConnection != null
-                && _transaction != null
-                && _transaction.Connection != null
-                && _transaction.Connection.State == ConnectionState.Open;
-        }
+        private bool TransactionIsOk() => SharedConnection != null && _transaction?.Connection != null &&
+                                          _transaction.Connection.State == ConnectionState.Open;
     }
 
     /// <summary>
-    /// 
     /// </summary>
     public interface ITransaction : IDisposable
     {
         /// <summary>
-        /// 
         /// </summary>
         void Complete();
     }
 
 
     /// <summary>
-    /// Transaction object helps maintain transaction depth counts
+    ///     Transaction object helps maintain transaction depth counts
     /// </summary>
     public class Transaction : ITransaction
     {
+        private SqlDatabase _db;
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="db"></param>
         /// <param name="isolationLevel"></param>
@@ -396,7 +328,6 @@ namespace Dapper.Database
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public void Complete()
         {
@@ -405,17 +336,7 @@ namespace Dapper.Database
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        public void Dispose()
-        {
-            if (_db != null)
-            {
-                _db.AbortTransaction();
-            }
-        }
-
-        SqlDatabase _db;
+        public void Dispose() => _db?.AbortTransaction();
     }
-
 }

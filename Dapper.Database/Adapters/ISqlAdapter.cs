@@ -1,19 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using System;
 
 namespace Dapper.Database.Adapters
 {
-
     /// <summary>
-    /// The interface for all Dapper.Database database operations
-    /// Implementing this is each provider's model.
+    ///     The interface for all Dapper.Database database operations
+    ///     Implementing this is each provider's model.
     /// </summary>
-    public partial interface ISqlAdapter
+    public interface ISqlAdapter
     {
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        ///     Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -21,10 +20,11 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">Table information</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert);
+        bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo,
+            T entityToInsert);
 
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        ///     Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -32,10 +32,11 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">Table information</param>
         /// <param name="entitiesToInsert">List of Entities to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert);
+        bool InsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, IEnumerable<T> entitiesToInsert);
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        ///     updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -44,22 +45,24 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate);
+        bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo,
+            T entityToUpdate, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        ///     updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <param name="tableInfo">Table information</param>
-        /// <param name="entititesToUpdate">List of Entities to update</param>
+        /// <param name="entitiesToUpdate">List of Entities to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entititesToUpdate, IEnumerable<string> columnsToUpdate);
+        bool UpdateList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
-        /// Updates or inserts entity
+        ///     Updates or inserts entity
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -69,12 +72,13 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
-        bool Upsert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+        bool Upsert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo,
+            T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
-        /// Updates or inserts entities
+        ///     Updates or inserts entities
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -84,19 +88,21 @@ namespace Dapper.Database.Adapters
         /// <param name="entitiesToUpsert">List of Entities to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
-        bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+        bool UpsertList<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate,
+            Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
-        /// constructs an insert query
+        ///     constructs an insert query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <returns>An insert sql statement</returns>
         string InsertQuery(TableInfo tableInfo);
 
         /// <summary>
-        /// Returns an update query
+        ///     Returns an update query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="columnsToUpdate">columns to be updated</param>
@@ -104,7 +110,7 @@ namespace Dapper.Database.Adapters
         string UpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
-        /// Returns a count query
+        ///     Returns a count query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
@@ -112,16 +118,19 @@ namespace Dapper.Database.Adapters
         string CountQuery(TableInfo tableInfo, string sql);
 
         /// <summary>
-        /// Returns a delete query
+        ///     Returns a delete query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="sql">a sql statement or partial statement. 
-        /// If NULL is passed in, this will return a DELETE without a WHERE condition. This will typically delete all data from the database.</param>
+        /// <param name="sql">
+        ///     a sql statement or partial statement.
+        ///     If NULL is passed in, this will return a DELETE without a WHERE condition. This will typically delete all data from
+        ///     the database.
+        /// </param>
         /// <returns>A delete sql statement</returns>
         string DeleteQuery(TableInfo tableInfo, string sql);
 
         /// <summary>
-        /// Returns an exists query
+        ///     Returns an exists query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
@@ -129,7 +138,7 @@ namespace Dapper.Database.Adapters
         string ExistsQuery(TableInfo tableInfo, string sql);
 
         /// <summary>
-        /// Returns a get query
+        ///     Returns a get query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
@@ -138,7 +147,7 @@ namespace Dapper.Database.Adapters
         string GetQuery(TableInfo tableInfo, string sql, bool fromCache = false);
 
         /// <summary>
-        /// Returns a get list query
+        ///     Returns a get list query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
@@ -147,7 +156,7 @@ namespace Dapper.Database.Adapters
 
 
         /// <summary>
-        /// Returns a get paged list query
+        ///     Returns a get paged list query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="page">the page requested</param>
@@ -156,12 +165,13 @@ namespace Dapper.Database.Adapters
         /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated get sql statement</returns>
         /// <remarks>
-        /// If supported, the parameters will be added to <paramref name="parameters"/>.
+        ///     If supported, the parameters will be added to <paramref name="parameters" />.
         /// </remarks>
-        string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters);
+        string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql,
+            DynamicParameters parameters);
 
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        ///     Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -169,10 +179,11 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">Table information</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert);
+        Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entityToInsert);
 
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        ///     Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -180,10 +191,11 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">Table information</param>
         /// <param name="entitiesToInsert">List of Entities to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToInsert);
+        Task<bool> InsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, IEnumerable<T> entitiesToInsert);
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        ///     updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -192,23 +204,25 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate);
+        Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate);
 
         /// <summary>
-        /// Updates entity
+        ///     Updates entity
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <param name="tableInfo">Table information</param>
-        /// <param name="entititesToUpdate">List of Entities to update</param>
+        /// <param name="entitiesToUpdate">List of Entities to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entititesToUpdate, IEnumerable<string> columnsToUpdate);
+        Task<bool> UpdateListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate);
 
 
         /// <summary>
-        /// Updates or inserts entity
+        ///     Updates or inserts entity
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -218,12 +232,14 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpsert">Entity to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
-        Task<bool> UpsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+        Task<bool> UpsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction,
+            Action<T> updateAction);
 
         /// <summary>
-        /// Updates or inserts entities
+        ///     Updates or inserts entities
         /// </summary>
         /// <typeparam name="T">Type to be updated</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -233,12 +249,13 @@ namespace Dapper.Database.Adapters
         /// <param name="entitiesToUpsert">List of Entities to Update Or Insert to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <param name="insertAction">Callback action when inserting</param>
-        /// <param name="updateAction">Update action when updatinRg</param>
+        /// <param name="updateAction">Update action when updating</param>
         /// <returns>true if inserted or updated, false if not</returns>
-        Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+        Task<bool> UpsertListAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate,
+            Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>

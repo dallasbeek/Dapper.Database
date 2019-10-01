@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -8,13 +7,12 @@ using System.Threading.Tasks;
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    /// The Postgres database adapter.
+    ///     The Firebird database adapter.
     /// </summary>
-    public partial class FirebirdAdapter : SqlAdapter, ISqlAdapter
+    public class FirebirdAdapter : SqlAdapter
     {
-
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        ///     Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -22,38 +20,26 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        public override bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
+        public override bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entityToInsert)
         {
             var cmd = new StringBuilder(InsertQuery(tableInfo));
 
-            if (tableInfo.GeneratedColumns.Any())
-            {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
-
-                var vals = connection.Query(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout).ToList();
-
-                if (!vals.Any()) return false;
-
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
-                    p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
-                return true;
-            }
-            else
-            {
+            if (!tableInfo.GeneratedColumns.Any())
                 return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
-            }
+            cmd.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
+            var values = connection.Query(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout)
+                .ToList();
+
+            if (!values.Any()) return false;
+
+            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>) values[0]);
+            return true;
         }
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        ///     updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -62,37 +48,29 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+                cmd.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
-                var vals = connection.Query(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
+                var values = connection
+                    .Query(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
-                    p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
                 return true;
             }
-            else
-            {
-                return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
-            }
+
+            return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
-        /// Inserts an entity into table "Ts"
+        ///     Inserts an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -100,40 +78,31 @@ namespace Dapper.Database.Adapters
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="entityToInsert">Entity to insert</param>
         /// <returns>true if the entity was inserted</returns>
-        public override async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToInsert)
+        public override async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction,
+            int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
+            var command = new StringBuilder(InsertQuery(tableInfo));
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+                command.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
-                var rslt = await connection.QueryAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
+                var result =
+                    await connection.QueryAsync(command.ToString(), entityToInsert, transaction, commandTimeout);
 
-                var vals = rslt.ToList();
+                var values = result.ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
-                    p.SetValue(entityToInsert, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>) values[0]);
                 return true;
             }
-            else
-            {
-                return await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
-            }
 
+            return await connection.ExecuteAsync(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
-        /// updates an entity into table "Ts"
+        ///     updates an entity into table "Ts"
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
@@ -142,39 +111,31 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction,
+            int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+            var command = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnList(tableInfo.GeneratedColumns)};");
+                command.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
-                var rslt = await connection.QueryAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
+                var result =
+                    await connection.QueryAsync(command.ToString(), entityToUpdate, transaction, commandTimeout);
 
-                var vals = rslt.ToList();
+                var values = result.ToList();
 
-                if (!vals.Any()) return false;
+                if (!values.Any()) return false;
 
-                var rvals = ((IDictionary<string, object>)vals[0]);
-
-                foreach (var key in rvals.Keys)
-                {
-                    var rval = rvals[key];
-                    var p = tableInfo.GeneratedColumns.Single(gp => gp.ColumnName.Equals(key, StringComparison.OrdinalIgnoreCase)).Property;
-                    p.SetValue(entityToUpdate, Convert.ChangeType(rval, p.PropertyType), null);
-                }
-
+                ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
                 return true;
             }
-            else
-            {
-                return await connection.ExecuteAsync(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
-            }
+
+            return await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
-        /// Default implementation of an Exists query
+        ///     Default implementation of an Exists query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
@@ -187,16 +148,14 @@ namespace Dapper.Database.Adapters
                 return q.Sql.Substring(1);
 
             if (!q.IsSelect)
-            {
                 return string.IsNullOrEmpty(q.FromClause)
-                ? $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {q.Sql});"
-                : $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {q.Sql});";
-            }
+                    ? $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 from {EscapeTableName(tableInfo)} {q.Sql});"
+                    : $"select first 1 1 from {EscapeTableName(tableInfo)} where exists (select 1 {q.Sql});";
             return $"select first 1 1 from {EscapeTableName(tableInfo)} where exists ({q.Sql});";
         }
 
         /// <summary>
-        /// Default implementation of a a paged sql statement
+        ///     Default implementation of a a paged sql statement
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="page">the page to request</param>
@@ -204,7 +163,8 @@ namespace Dapper.Database.Adapters
         /// <param name="sql">a sql statement or partial statement</param>
         /// <param name="parameters">the dynamic parameters for the query</param>
         /// <returns>A paginated sql statement</returns>
-        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql,
+            DynamicParameters parameters)
         {
             var q = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
@@ -212,35 +172,33 @@ namespace Dapper.Database.Adapters
             var sqlOrderBy = string.Empty;
 
             if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
-            {
-                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
-            }
+                sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().PropertyName)}";
 
 
             parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
             parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
-            return $"select first {EscapeParameter(PageSizeParamName)} skip {EscapeParameter(PageSkipParamName)} * from ({q.Sql}) page_inner {sqlOrderBy}";
-
+            return
+                $"select first {EscapeParameter(PageSizeParamName)} skip {EscapeParameter(PageSkipParamName)} * from ({q.Sql}) page_inner {sqlOrderBy}";
         }
 
         /// <summary>
-        /// Applies a schema name is one is specified
+        ///     Applies a schema name is one is specified
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <returns></returns>
         public override string EscapeTableName(TableInfo tableInfo) =>
-            (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) + EscapeTableName(tableInfo.TableName);
+            (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) +
+            EscapeTableName(tableInfo.TableName);
 
         /// <summary>
-        /// Returns the format for table name
+        ///     Returns the format for table name
         /// </summary>
         public override string EscapeTableName(string value) => $"{value}";
 
         /// <summary>
-        /// Returns the format for column
+        ///     Returns the format for column
         /// </summary>
-        public override string EscapeColumnn(string value) => $"{value}";
-
+        public override string EscapeColumn(string value) => $"{value}";
     }
 }

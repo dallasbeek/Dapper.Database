@@ -1,5 +1,4 @@
-﻿#if ORACLE
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using RealOracleConnection = Oracle.ManagedDataAccess.Client.OracleConnection;
@@ -61,4 +60,3 @@ namespace Dapper.Tests.Database.OracleClient
         public override string ServerVersion => RealConnection.ServerVersion;
     }
 }
-#endif

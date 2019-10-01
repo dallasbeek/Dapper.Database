@@ -1,55 +1,45 @@
 ﻿using System;
 using System.Data;
 
-#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+#if !NETSTANDARD
 using System.Configuration;
 #endif
 
 namespace Dapper.Database
 {
     /// <summary>
-    /// Represents a service that returns a database connection
+    ///     Represents a service that returns a database connection
     /// </summary>
     public interface IConnectionService
     {
-
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         IDbConnection GetConnection();
     }
 
     /// <summary>
-    /// 
     /// </summary>
     public class StringConnectionService<T> : IConnectionService where T : IDbConnection
     {
         private readonly string _connectionString;
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="connectionString"></param>
-        public StringConnectionService(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
+        public StringConnectionService(string connectionString) => _connectionString = connectionString;
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
-        public IDbConnection GetConnection()
-        {
-            return (T)Activator.CreateInstance(typeof(T), _connectionString);
-        }
+        public IDbConnection GetConnection() => (T) Activator.CreateInstance(typeof(T), _connectionString);
     }
 
-#if !NETSTANDARD1_3 && !NETCOREAPP1_0
+#if !NETSTANDARD
     /// <summary>
     /// 
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public class ConfigConnectionService<T> : IConnectionService where T : IDbConnection
     {
         private readonly string _key;

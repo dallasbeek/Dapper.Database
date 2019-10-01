@@ -7,47 +7,53 @@ using Dapper.Database.Extensions;
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    /// The Oracle database adapter for modern Oracle databases.
+    ///     The Oracle database adapter for modern Oracle databases.
     /// </summary>
     /// <remarks>
-    /// Supports 12.1 and later.
+    ///     Supports 12.1 and later.
     /// </remarks>
-    /// <seealso cref="Oracle11gAdapter"/>
+    /// <seealso cref="Oracle11gAdapter" />
     public partial class OracleAdapter : SqlAdapter
     {
         /// <summary>
-        /// The variable name used for row count.
+        ///     The variable name used for row count.
         /// </summary>
-        /// <seealso cref="ResolveRowCount"/>
+        /// <seealso cref="ResolveRowCount" />
         protected const string RowCountParamName = "ROW_COUNT$$";
 
+        /// <inheritdoc />
+        /// <remarks>
+        ///     Oracle does not like bind variables starting with underscores, so we have to use different ones.
+        /// </remarks>
+        protected override string PageSizeParamName => "PAGE_SIZE$$";
+
+        /// <inheritdoc />
+        /// <remarks>
+        ///     Oracle does not like bind variables starting with underscores, so we have to use different ones.
+        /// </remarks>
+        protected override string PageSkipParamName => "PAGE_SKIP$$";
+
         /// <summary>
-        /// Resolves row count depending on whether the statement return count is from PL/SQL or not.
+        ///     Resolves row count depending on whether the statement return count is from PL/SQL or not.
         /// </summary>
         /// <param name="count">The statement return count (can be -1, 0, or a positive number).</param>
         /// <param name="parameters">The parameters used in the statement.</param>
         /// <returns>The actual count (zero or more).</returns>
         /// <remarks>
-        /// PL/SQL blocks will automatically return -1 for rows affected.
-        /// The only way to get an accurate count is to bind an additional variable in PL/SQL and capture the builtin variable <c>SQL%rowcount</c>;
-        /// this is the name of the bind variable containing the value.
-        /// </remarks> 
-        protected int ResolveRowCount(int count, DynamicParameters parameters)
-        {
-            // Nonnegative => not PL/SQL.
-            if (count >= 0)
-                return count;
-
-            // Negative => PL/SQL.
-            return parameters.Get<int>(RowCountParamName);
-        }
+        ///     PL/SQL blocks will automatically return -1 for rows affected.
+        ///     The only way to get an accurate count is to bind an additional variable in PL/SQL and capture the builtin variable
+        ///     <c>SQL%rowcount</c>;
+        ///     this is the name of the bind variable containing the value.
+        /// </remarks>
+        protected int ResolveRowCount(int count, DynamicParameters parameters) =>
+            count >= 0 ? count : parameters.Get<int>(RowCountParamName);
 
 
         /// <inheritdoc cref="SqlAdapter.BuildInsertQuery" />
         protected string BuildBaseInsertQuery(TableInfo tableInfo) => base.BuildInsertQuery(tableInfo);
 
         /// <summary>
-        /// Oracle implementation of an insert query.
+        ///     Oracle implementation of an insert query.
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <returns>An insert sql statement</returns>
@@ -55,15 +61,14 @@ namespace Dapper.Database.Adapters
         {
             var sql = BuildBaseInsertQuery(tableInfo);
             if (tableInfo.GeneratedColumns.Any())
-            {
-                sql = $"{sql} returning {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
-            }
+                sql =
+                    $"{sql} returning {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
 
             return sql;
         }
 
         /// <summary>
-        /// Converts the specified entity to parameters for an INSERT statement.
+        ///     Converts the specified entity to parameters for an INSERT statement.
         /// </summary>
         /// <typeparam name="T">the type of entity to bind</typeparam>
         /// <param name="tableInfo">table information about the entity</param>
@@ -75,19 +80,17 @@ namespace Dapper.Database.Adapters
             // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
             // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
             var parameters = new DynamicParameters(entityToInsert);
-            foreach (var column in tableInfo.GeneratedColumns)
-            {
-                parameters.Output(entityToInsert, column);
-            }
+            foreach (var column in tableInfo.GeneratedColumns) parameters.Output(entityToInsert, column);
 
             return parameters;
         }
 
         /// <inheritdoc cref="SqlAdapter.BuildUpdateQuery" />
-        protected string BuildBaseUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate) => base.BuildUpdateQuery(tableInfo, columnsToUpdate);
+        protected string BuildBaseUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate) =>
+            base.BuildUpdateQuery(tableInfo, columnsToUpdate);
 
         /// <summary>
-        /// Oracle implementation of an update query.
+        ///     Oracle implementation of an update query.
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="columnsToUpdate">columns to be updated</param>
@@ -96,15 +99,14 @@ namespace Dapper.Database.Adapters
         {
             var sql = BuildBaseUpdateQuery(tableInfo, columnsToUpdate);
             if (tableInfo.GeneratedColumns.Any())
-            {
-                sql = $"{sql} returning {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
-            }
+                sql =
+                    $"{sql} returning {EscapeColumnList(tableInfo.GeneratedColumns)} into {EscapeReturnParameters(tableInfo.GeneratedColumns)}";
 
             return sql;
         }
 
         /// <summary>
-        /// Converts the specified entity to parameters for an UPDATE statement.
+        ///     Converts the specified entity to parameters for an UPDATE statement.
         /// </summary>
         /// <typeparam name="T">the type of entity to bind</typeparam>
         /// <param name="tableInfo">table information about the entity</param>
@@ -116,100 +118,90 @@ namespace Dapper.Database.Adapters
             // We need to wrap the incoming object in a DynamicParameters collection to get at the values.
             // While it does InputOutput binding, it does _not_ set size for strings by default; we have to call parameters.Output() to do that.
             var parameters = new DynamicParameters(entityToUpdate);
-            foreach (var column in tableInfo.GeneratedColumns)
-            {
-                parameters.Output(entityToUpdate, column);
-            }
+            foreach (var column in tableInfo.GeneratedColumns) parameters.Output(entityToUpdate, column);
 
             return parameters;
         }
 
         /// <summary>
-        /// Oracle-specific implementation of an Exists query.
+        ///     Oracle-specific implementation of an Exists query.
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="sql">a sql statement or partial statement</param>
         /// <returns>A sql statement that selects true if a record matches</returns>
         public override string ExistsQuery(TableInfo tableInfo, string sql)
         {
-            var q = new SqlParser(sql ?? "");
+            var sqlParser = new SqlParser(sql ?? "");
 
-            if (q.Sql.StartsWith(";", StringComparison.Ordinal))
-                return q.Sql.Substring(1);
+            if (sqlParser.Sql.StartsWith(";", StringComparison.Ordinal))
+                return sqlParser.Sql.Substring(1);
 
-            if (!q.IsSelect)
-            {
-                return string.IsNullOrEmpty(q.FromClause)
-                    ? $"select case when exists (select * from {EscapeTableName(tableInfo)} {q.Sql}) then 1 else 0 end as rec_exists from dual"
-                    : $"select case when exists (select * {q.Sql}) then 1 else 0 end as rec_exists from dual"; ;
-            }
+            if (!sqlParser.IsSelect)
+                return string.IsNullOrEmpty(sqlParser.FromClause)
+                    ? $"select case when exists (select * from {EscapeTableName(tableInfo)} {sqlParser.Sql}) then 1 else 0 end as rec_exists from dual"
+                    : $"select case when exists (select * {sqlParser.Sql}) then 1 else 0 end as rec_exists from dual";
 
-            return $"select case when exists ({q.Sql}) then 1 else 0 end as rec_exists from dual";
+            return $"select case when exists ({sqlParser.Sql}) then 1 else 0 end as rec_exists from dual";
         }
 
         /// <inheritdoc />
-        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql, DynamicParameters parameters)
+        public override string GetPageListQuery(TableInfo tableInfo, long page, long pageSize, string sql,
+            DynamicParameters parameters)
         {
-            var q = new SqlParser(GetListQuery(tableInfo, sql));
+            var sqlParser = new SqlParser(GetListQuery(tableInfo, sql));
             var pageSkip = (page - 1) * pageSize;
             var sqlOrderBy = string.Empty;
 
-            if (string.IsNullOrEmpty(q.OrderByClause) && tableInfo.KeyColumns.Any())
-            {
-                sqlOrderBy = $"order by {EscapeColumnn(tableInfo.KeyColumns.First().PropertyName)}";
-            }
+            if (string.IsNullOrEmpty(sqlParser.OrderByClause) && tableInfo.KeyColumns.Any())
+                sqlOrderBy = $"order by {EscapeColumn(tableInfo.KeyColumns.First().PropertyName)}";
 
             parameters.Add(PageSizeParamName, pageSize, DbType.Int64);
             parameters.Add(PageSkipParamName, pageSkip, DbType.Int64);
 
-            return $"{q.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
+            return
+                $"{sqlParser.Sql} {sqlOrderBy} offset {EscapeParameter(PageSkipParamName)} rows fetch next {EscapeParameter(PageSizeParamName)} rows only";
         }
 
-        /// <inheritdoc />
-        /// <remarks>
-        /// Oracle does not like bind variables starting with underscores, so we have to use different ones.
-        /// </remarks>
-        protected override string PageSizeParamName => "PAGE_SIZE$$";
-        /// <inheritdoc />
-        /// <remarks>
-        /// Oracle does not like bind variables starting with underscores, so we have to use different ones.
-        /// </remarks>
-        protected override string PageSkipParamName => "PAGE_SKIP$$";
-
         /// <summary>
-        /// Returns the format for parameters
+        ///     Returns the format for parameters
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public override string EscapeParameters(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => string.IsNullOrWhiteSpace(ci.SequenceName) ? EscapeParameter(ci.PropertyName) : ci.SequenceName + ".nextval"));
+        public override string EscapeParameters(IEnumerable<ColumnInfo> columns) => string.Join(", ",
+            columns.Select(ci =>
+                string.IsNullOrWhiteSpace(ci.SequenceName)
+                    ? EscapeParameter(ci.PropertyName)
+                    : ci.SequenceName + ".nextval"));
 
         /// <summary>
-        /// Returns the format for parameters
+        ///     Returns the format for parameters
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public string EscapeReturnParameters(IEnumerable<ColumnInfo> columns) => string.Join(", ", columns.Select(ci => EscapeParameter(ci.PropertyName)));
+        public string EscapeReturnParameters(IEnumerable<ColumnInfo> columns) =>
+            string.Join(", ", columns.Select(ci => EscapeParameter(ci.PropertyName)));
 
         /// <summary>
-        /// Applies a schema name is one is specified
+        ///     Applies a schema name is one is specified
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <returns></returns>
         public override string EscapeTableName(TableInfo tableInfo) =>
-            (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) + EscapeTableName(tableInfo.TableName);
+            (!string.IsNullOrEmpty(tableInfo.SchemaName) ? EscapeTableName(tableInfo.SchemaName) + "." : null) +
+            EscapeTableName(tableInfo.TableName);
 
         /// <summary>
-        /// Returns the format for table name
+        ///     Returns the format for table name
         /// </summary>
         public override string EscapeTableName(string value) => $"\"{value.ToUpperInvariant()}\"";
 
         /// <summary>
-        /// Returns the format for column
+        ///     Returns the format for column
         /// </summary>
-        public override string EscapeColumnn(string value) => $"\"{value.ToUpperInvariant()}\"";
+        public override string EscapeColumn(string value) => $"\"{value.ToUpperInvariant()}\"";
 
         /// <summary>
-        /// Returns the format for parameter
+        ///     Returns the format for parameter
         /// </summary>
         public override string EscapeParameter(string value) => $":{value}";
     }
