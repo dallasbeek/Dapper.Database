@@ -11,15 +11,21 @@ namespace Dapper.Database.Adapters
 
             Sql = string.Join(" ", words);
 
-            CommandClause = words.FirstOrDefault(w => new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "CALL", "EXECUTE", "EXEC" }.Contains(w, StringComparer.OrdinalIgnoreCase));
+            CommandClause = words.FirstOrDefault(w =>
+                new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "CALL", "EXECUTE", "EXEC" }.Contains(w,
+                    StringComparer.OrdinalIgnoreCase));
 
-            var fromLoc = words.IndexOf(words.FirstOrDefault(w => w.Equals("FROM", StringComparison.OrdinalIgnoreCase)));
+            var fromLoc =
+                words.IndexOf(words.FirstOrDefault(w => w.Equals("FROM", StringComparison.OrdinalIgnoreCase)));
 
             if (IsSelect)
             {
                 var commandLoc = words.IndexOf(CommandClause);
 
-                SelectColumns = string.Join(" ", fromLoc > -1 ? words.Skip(commandLoc + 1).Take(fromLoc - commandLoc - 1) : words.Skip(commandLoc + 1));
+                SelectColumns = string.Join(" ",
+                    fromLoc > -1
+                        ? words.Skip(commandLoc + 1).Take(fromLoc - commandLoc - 1)
+                        : words.Skip(commandLoc + 1));
             }
 
             if (fromLoc != -1)
@@ -31,25 +37,21 @@ namespace Dapper.Database.Adapters
                     || w.Equals("ORDER", StringComparison.OrdinalIgnoreCase)
                 ));
 
-                FromClause = string.Join(" ", endFromLoc > -1 ? words.Skip(fromLoc).Take(endFromLoc - fromLoc) : words.Skip(fromLoc));
+                FromClause = string.Join(" ",
+                    endFromLoc > -1 ? words.Skip(fromLoc).Take(endFromLoc - fromLoc) : words.Skip(fromLoc));
             }
 
             var orderLoc = -1;
             if (words.Count > 1)
-            {
                 for (var c = words.Count - 1; c != 0; c--)
-                {
-                    if (orderLoc == -1 && words[c].Equals("BY", StringComparison.OrdinalIgnoreCase) && words[c - 1].Equals("ORDER", StringComparison.OrdinalIgnoreCase))
+                    if (orderLoc == -1 && words[c].Equals("BY", StringComparison.OrdinalIgnoreCase) &&
+                        words[c - 1].Equals("ORDER", StringComparison.OrdinalIgnoreCase))
                     {
                         orderLoc = c - 1;
                         break;
                     }
-                }
-            }
-            if (orderLoc != -1)
-            {
-                OrderByClause = string.Join(" ", words.Skip(orderLoc));
-            }
+
+            if (orderLoc != -1) OrderByClause = string.Join(" ", words.Skip(orderLoc));
         }
 
         public string Sql { get; set; }
@@ -59,8 +61,10 @@ namespace Dapper.Database.Adapters
         public string FromClause { get; set; }
         public string OrderByClause { get; set; }
 
-        public bool IsSelect => !string.IsNullOrEmpty(CommandClause) && CommandClause.Equals("SELECT", StringComparison.OrdinalIgnoreCase);
+        public bool IsSelect => !string.IsNullOrEmpty(CommandClause) &&
+                                CommandClause.Equals("SELECT", StringComparison.OrdinalIgnoreCase);
 
-        public bool IsDelete => !string.IsNullOrEmpty(CommandClause) && CommandClause.Equals("DELETE", StringComparison.OrdinalIgnoreCase);
+        public bool IsDelete => !string.IsNullOrEmpty(CommandClause) &&
+                                CommandClause.Equals("DELETE", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -4,50 +4,35 @@ using System.Collections.Generic;
 namespace Dapper.Database
 {
     /// <summary>
-    /// Represents a paged result
+    ///     Represents a paged result
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IPagedEnumerable<out T> : IEnumerable<T>
     {
         /// <summary>
-        /// Current Page Requested
+        ///     Current Page Requested
         /// </summary>
         int CurrentPage { get; }
 
         /// <summary>
-        /// Size of the Page Requested
+        ///     Size of the Page Requested
         /// </summary>
         int PageSize { get; }
 
         /// <summary>
-        /// Total Matching records
+        ///     Total Matching records
         /// </summary>
         int TotalCount { get; }
     }
 
     /// <summary>
-    /// Paged Result List
+    ///     Paged Result List
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class PagedList<T> : List<T>, IPagedEnumerable<T>
     {
         /// <summary>
-        /// Current Page
-        /// </summary>
-        public int CurrentPage { get; set; }
-
-        /// <summary>
-        /// Page Size Requested
-        /// </summary>
-        public int PageSize { get; set; }
-
-        /// <summary>
-        /// Total count of matching records
-        /// </summary>
-        public int TotalCount { get; set; }
-
-        /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         /// <param name="source"></param>
         /// <param name="currentPage"></param>
@@ -65,5 +50,19 @@ namespace Dapper.Database
             AddRange(source);
         }
 
+        /// <summary>
+        ///     Current Page
+        /// </summary>
+        public int CurrentPage { get; set; }
+
+        /// <summary>
+        ///     Page Size Requested
+        /// </summary>
+        public int PageSize { get; set; }
+
+        /// <summary>
+        ///     Total count of matching records
+        /// </summary>
+        public int TotalCount { get; set; }
     }
 }
