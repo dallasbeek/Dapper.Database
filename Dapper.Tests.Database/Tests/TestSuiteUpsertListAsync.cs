@@ -339,7 +339,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Null(gp.Notes);
                 Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
-                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-3), dnow.AddSeconds(3)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
                 Assert.Equal(p.FirstName, gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
 
@@ -347,7 +347,7 @@ namespace Dapper.Tests.Database
                 Assert.Equal(s.IdentityId, gs.IdentityId);
                 Assert.Null(gs.Notes);
                 Assert.Null(gs.UpdatedOn); // to cover clock skew, delay in DML, etc.
-                Assert.InRange(gs.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+                Assert.InRange(gs.CreatedOn.Value, dnow.AddSeconds(-3), dnow.AddSeconds(3)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
                 Assert.Equal(s.FirstName, gs.FirstName);
                 Assert.Equal(s.LastName, gs.LastName);
 
