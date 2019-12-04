@@ -7,6 +7,8 @@ using Xunit;
 using System.Linq;
 using FactAttribute = Xunit.SkippableFactAttribute;
 using System.Threading.Tasks;
+using System.Data;
+using System;
 
 namespace Dapper.Tests.Database
 {
@@ -154,6 +156,29 @@ namespace Dapper.Tests.Database
                 }
             }
         }
+
+        [Fact]
+        [Trait("Category", "GetList")]
+        public void GetListUsingTableValueParamter()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var dataTable = new DataTable("DT");
+                dataTable.Columns.Add("ProductId", typeof(int));
+                dataTable.Rows.Add(816);
+                dataTable.Rows.Add(731);
+
+                var lst = db.GetList<Product>(sql: @"
+                    SELECT P.*, P.rowguid as GuidId FROM Product P
+                    INNER JOIN @productIdTVP PTVP ON PTVP.ProductId = P.ProductId",
+                    parameters: new { productIdTVP = dataTable.AsTableValuedParameter("[dbo].[ProductIdTable]") });
+
+                Assert.Equal(2, lst.Count());
+                var item = lst.Single(p => p.ProductID == 816);
+                ValidateProduct816(item);
+            }
+        }
+
         #endregion
     }
 }
