@@ -28,7 +28,7 @@ indent_size = 2
 
 # SQL files
 [*.sql]
-indent_style = tabs
+indent_style = tab
 indent_size = 4
 
 # Dotnet code style settings:
