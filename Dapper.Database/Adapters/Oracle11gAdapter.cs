@@ -90,7 +90,7 @@ namespace Dapper.Database.Adapters
                 .Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} ")
                 .Append($"into {EscapeReturnParameters(tableInfo.GeneratedColumns)} ")
                 .Append($"from {EscapeTableName(tableInfo)} ")
-                .Append($"where {EscapeWhereList(tableInfo.KeyColumns)}; ")
+                .Append($"where {EscapeWhereList(tableInfo.KeyColumns.Union(tableInfo.ConcurrencyCheckColumns))}; ")
                 .Append($":{RowCountParamName} := SQL%rowcount; ")
                 .Append("end;")
                 .ToString();

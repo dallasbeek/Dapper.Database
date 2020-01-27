@@ -252,7 +252,7 @@ namespace Dapper.Database.Adapters
             var updates =
                 tableInfo.UpdateColumns.Where(ci => !updateColumns.Any() || updateColumns.Contains(ci.PropertyName));
             return
-                $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns)}";
+                $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.KeyColumns.Union(tableInfo.ConcurrencyCheckColumns))}";
         }
 
         /// <summary>
