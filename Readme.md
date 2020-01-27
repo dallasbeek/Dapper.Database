@@ -111,11 +111,17 @@ using (var db = new SqlDatabase(new StringConnectionService<SqlConnection>("conn
 }
 ```
 
+Attributes
+----------
+
 There are a number of attributes you can use to decorate your classes. 
 
-From `System.ComponentModel.DataAnnotations`
+### From `System.ComponentModel.DataAnnotations`
 
-`TableAttribute` Specifies the SQL table to use.  For databases that support schema generated queries will include a schema if specified.
+#### [TableAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.tableattribute)
+
+Specifies the SQL table to use.  For databases that support schema generated queries will include a schema if specified.
+
 ```csharp
 [Table("User", Schema = "Security")]
 public class User
@@ -123,7 +129,10 @@ public class User
 }
 ```
 
-`ColumnAttribute` Optional attribute that allows mapping a property to an alternately named column.
+#### [ColumnAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.columnattribute)
+
+Optional attribute that allows mapping a property to an alternately named column.
+
 ```csharp
 public class User
 {
@@ -132,7 +141,10 @@ public class User
 }
 ```
 
-`DatabaseGeneratedAttribute` Attribute for computed columns and identity columns.  Logic will refresh generated properties after insert and update.
+#### [DatabaseGeneratedAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.databasegeneratedattribute)
+
+Attribute for computed columns and identity columns.  Logic will refresh generated properties after insert and update.
+
 ```csharp
 public class User
 {
@@ -144,7 +156,10 @@ public class User
 }
 ```
 
-`KeyAttribute` Attribute for to be used for primary keys.  
+#### [KeyAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.keyattribute)
+
+Attribute for to be used for primary keys.  
+
 ```csharp
 public class User
 {
@@ -153,9 +168,12 @@ public class User
 }
 ```
 
-From `Dapper.Database.Attributes`
+### From `Dapper.Database.Attributes`
 
-`IgnoreInsertAttribute` Ignores the property on an insert statement.
+#### IgnoreInsertAttribute
+
+Ignores the property on an insert statement.
+
 ```csharp
 public class User
 {
@@ -164,7 +182,10 @@ public class User
 }
 ```
 
-`IgnoreUpdateAttribute` Ignores the property on update statements.
+#### IgnoreUpdateAttribute
+
+Ignores the property on update statements.
+
 ```csharp
 public class User
 {
@@ -173,7 +194,10 @@ public class User
 }
 ```
 
-`IgnoreSelectAttribute` Ignores the property on select statements.
+#### IgnoreSelectAttribute
+
+Ignores the property on select statements.
+
 ```csharp
 public class User
 {
@@ -182,7 +206,10 @@ public class User
 }
 ```
 
-`ReadOnlyAttribute` Ignores the property on insert and update.
+#### ReadOnlyAttribute
+
+Ignores the property on insert and update.
+
 ```csharp
 public class User
 {
@@ -191,7 +218,10 @@ public class User
 }
 ```
 
-`IgnoreAttribute` Indicates that there isn't a database backing column.
+#### IgnoreAttribute
+
+Indicates that there isn't a database backing column.
+
 ```csharp
 public class User
 {
@@ -199,6 +229,8 @@ public class User
     public string NoDbColumn { get; set; }
 }
 ```
+
+### Example
 
 An example implementation with attribute markup.
 
@@ -212,10 +244,10 @@ public class Location
     [Column]
     public virtual string Code { get; set; }
     
-    [Column]
+    [Column, ConcurrencyCheck]
     public virtual string Name { get; set; }
     
-    [Column("Database")]
+    [Column("Database"), ConcurrencyCheck]
     public virtual string DatabaseName { get; set; }
     
     [Column, IgnoreUpdate]
