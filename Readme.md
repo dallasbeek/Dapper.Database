@@ -168,6 +168,31 @@ public class User
 }
 ```
 
+#### [ConcurrencyCheckAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.concurrencycheckattribute)
+
+Attribute for columns that should be checked on update and delete statements, for optimistic concurrency.
+
+```csharp
+public class User
+{
+    [ConcurrencyCheck]
+    public DateTime? ModifiedOn { get; set; }
+}
+```
+
+#### [TimestampAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.timestampattribute)
+
+Attribute for a database-generated "row version" column that should be checked on update and delete statements, for optimistic concurrency.
+
+```csharp
+public class User
+{
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+}
+```
+
+
 ### From `Dapper.Database.Attributes`
 
 #### IgnoreInsertAttribute
