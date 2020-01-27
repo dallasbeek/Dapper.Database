@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Dapper.Database.Attributes;
+using Dapper.Database.Extensions;
 using static Dapper.Database.Extensions.SqlMapperExtensions;
 
 namespace Dapper.Database
@@ -37,8 +38,7 @@ namespace Dapper.Database
             }
             else
             {
-                var tableAttr = type.GetCustomAttributes(false)
-                    .SingleOrDefault(attr => attr.GetType().Name == "TableAttribute") as dynamic;
+                var tableAttr = type.GetCustomAttributes(false).SingleOrDefaultOfType("TableAttribute");
 
                 if (tableAttr != null)
                 {
@@ -54,39 +54,36 @@ namespace Dapper.Database
             }
 
             ColumnInfos = type.GetProperties()
-                .Where(typeProperty => !typeProperty.GetCustomAttributes(typeof(IgnoreAttribute), false).Any())
+                .Where(typeProperty => !typeProperty.GetCustomAttributes(false).AnyOfType<IgnoreAttribute>())
                 .Select(typeProperty =>
                 {
-                    var columnAtt = typeProperty.GetCustomAttributes(false)
-                        .SingleOrDefault(attr => attr.GetType().Name == "ColumnAttribute") as dynamic;
-                    var seqAtt =
-                        typeProperty.GetCustomAttributes(false).SingleOrDefault(a => a is SequenceAttribute) as dynamic;
+                    var attributes = typeProperty.GetCustomAttributes(false);
+                    var columnAtt = attributes.SingleOrDefaultOfType("ColumnAttribute");
+                    var seqAtt = attributes.SingleOrDefaultOfType<SequenceAttribute>();
+                    var genAtt = attributes.SingleOrDefaultOfType<DatabaseGeneratedAttribute>();
+                    var hasReadOnlyAttribute = attributes.AnyOfType<ReadOnlyAttribute>();
 
                     var ci = new ColumnInfo
                     {
                         Property = typeProperty,
                         ColumnName = columnAtt?.Name ?? typeProperty.Name,
                         PropertyName = typeProperty.Name,
-                        IsKey = typeProperty.GetCustomAttributes(false).Any(a => a is KeyAttribute),
-                        IsIdentity = typeProperty.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
-                                                                                      && g.DatabaseGeneratedOption ==
-                                                                                      DatabaseGeneratedOption.Identity)
+                        IsKey = attributes.AnyOfType<KeyAttribute>(),
+                        IsIdentity = genAtt?.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity
                                      || seqAtt != null,
-                        IsGenerated = typeProperty.GetCustomAttributes(false).Any(a => a is DatabaseGeneratedAttribute g
-                                                                                       && g.DatabaseGeneratedOption !=
-                                                                                       DatabaseGeneratedOption.None)
+                        IsGenerated = genAtt != null && genAtt.DatabaseGeneratedOption != DatabaseGeneratedOption.None
                                       || seqAtt != null,
-                        ExcludeOnSelect = typeProperty.GetCustomAttributes(false).Any(a => a is IgnoreSelectAttribute),
+                        ExcludeOnSelect = attributes.AnyOfType<IgnoreSelectAttribute>(),
                         SequenceName = seqAtt?.Name
                     };
 
                     ci.ExcludeOnInsert = ci.IsGenerated && seqAtt == null
-                                         || typeProperty.GetCustomAttributes(false).Any(a => a is IgnoreInsertAttribute)
-                                         || typeProperty.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
+                                         || attributes.AnyOfType<IgnoreInsertAttribute>()
+                                         || hasReadOnlyAttribute;
 
                     ci.ExcludeOnUpdate = ci.IsGenerated
-                                         || typeProperty.GetCustomAttributes(false).Any(a => a is IgnoreUpdateAttribute)
-                                         || typeProperty.GetCustomAttributes(false).Any(a => a is ReadOnlyAttribute);
+                                         || attributes.AnyOfType<IgnoreUpdateAttribute>()
+                                         || hasReadOnlyAttribute;
 
                     if (!ci.IsGenerated) return ci;
 
