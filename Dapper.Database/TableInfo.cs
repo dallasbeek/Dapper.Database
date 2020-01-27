@@ -23,6 +23,7 @@ namespace Dapper.Database
         private readonly Lazy<IEnumerable<PropertyInfo>> _propertyList;
         private readonly Lazy<IEnumerable<ColumnInfo>> _selectColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _updateColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _concurrencyCheckColumns;
 
         /// <summary>
         /// </summary>
@@ -63,6 +64,10 @@ namespace Dapper.Database
                     var genAtt = attributes.SingleOrDefaultOfType<DatabaseGeneratedAttribute>();
                     var hasReadOnlyAttribute = attributes.AnyOfType<ReadOnlyAttribute>();
 
+                    // Microsoft implies that TimestampAttribute is equivalent to ConcurrencyCheck + IsGenerated.
+                    // @see https://www.learnentityframeworkcore.com/configuration/data-annotation-attributes/timestamp-attribute
+                    var hasTimestampAttribute = attributes.OfType<TimestampAttribute>().Any();
+
                     var ci = new ColumnInfo
                     {
                         Property = typeProperty,
@@ -72,7 +77,10 @@ namespace Dapper.Database
                         IsIdentity = genAtt?.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity
                                      || seqAtt != null,
                         IsGenerated = genAtt != null && genAtt.DatabaseGeneratedOption != DatabaseGeneratedOption.None
-                                      || seqAtt != null,
+                                      || seqAtt != null
+                                      || hasTimestampAttribute,
+                        IsConcurrencyToken = hasTimestampAttribute
+                                             || attributes.AnyOfType<ConcurrencyCheckAttribute>(),
                         ExcludeOnSelect = attributes.AnyOfType<IgnoreSelectAttribute>(),
                         SequenceName = seqAtt?.Name
                     };
@@ -115,6 +123,7 @@ namespace Dapper.Database
                 new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnSelect), true);
             _keyColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsKey), true);
             _generatedColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsGenerated), true);
+            _concurrencyCheckColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsConcurrencyToken), true);
             _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => ColumnInfos.Select(ci => ci.Property), true);
         }
 
@@ -158,6 +167,12 @@ namespace Dapper.Database
         /// </summary>
         /// <returns></returns>
         public IEnumerable<ColumnInfo> GeneratedColumns => _generatedColumns.Value;
+
+        /// <summary>
+        /// Gets the set of columns to use in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement as part of concurrency management.
+        /// </summary>
+        /// <value>A sequnce of zero or more columns.</value>
+        public IEnumerable<ColumnInfo> ConcurrencyCheckColumns => _concurrencyCheckColumns.Value;
 
         /// <summary>
         /// </summary>
@@ -245,6 +260,13 @@ namespace Dapper.Database
         /// <summary>
         /// </summary>
         public LambdaExpression Output { get; set; }
+
+        /// <summary>
+        /// Indicates whether this column should be included in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement as part of concurrency management.
+        /// </summary>
+        /// <seealso cref="ConcurrencyCheckAttribute"/>
+        /// <seealso cref="TimestampAttribute"/>
+        public bool IsConcurrencyToken { get; set; }
 
         /// <summary>
         ///     Gets the value of the specified column for a given instance of the object
