@@ -241,6 +241,68 @@ namespace Dapper.Tests.Database
             }
         }
 
+        [Fact]
+        [Trait("Category", "Upsert")]
+        public void UpsertTimestamp()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonTimestamp { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
+                Assert.True(db.Upsert(p));
+                Assert.NotNull(p.ConcurrencyToken);
+                var token1 = p.ConcurrencyToken;
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(db.Upsert(p), "ConcurrencyToken matched, update succeeded");
+                Assert.NotEqual(token1, p.ConcurrencyToken);
+
+                // Simulate an independent change
+                db.Execute("update Person set Age = 1 where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(db.Upsert(p), "ConcurrencyToken did not match, update failed");
+
+                var gp = db.Get<PersonTimestamp>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+                Assert.NotEqual(gp.ConcurrencyToken, p.ConcurrencyToken);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpsertAsync")]
+        public async Task UpsertTimestampAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonTimestamp { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
+                Assert.True(await db.UpsertAsync(p));
+                Assert.NotNull(p.ConcurrencyToken);
+                var token1 = p.ConcurrencyToken;
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(await db.UpsertAsync(p), "ConcurrencyToken matched, update succeeded");
+                Assert.NotEqual(token1, p.ConcurrencyToken);
+
+                // Simulate an independent change
+                db.Execute("update Person set Age = 1 where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(await db.UpsertAsync(p), "ConcurrencyToken did not match, update failed");
+
+                var gp = await db.GetAsync<PersonTimestamp>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+                Assert.NotEqual(gp.ConcurrencyToken, p.ConcurrencyToken);
+            }
+        }
+
         #endregion
     }
 }

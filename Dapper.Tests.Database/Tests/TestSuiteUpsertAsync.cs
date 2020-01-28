@@ -174,5 +174,32 @@ namespace Dapper.Tests.Database
                 Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
             }
         }
+
+        [Fact]
+        [Trait("Category", "UpsertAsync")]
+        public async Task UpsertConcurrencyCheckAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
+                Assert.True(await db.UpsertAsync(p));
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(await db.UpsertAsync(p), "StringId unchanged");
+
+                // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
+                await db.ExecuteAsync("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(await db.UpsertAsync(p), "StringId changed elsewhere, upsert not permitted");
+
+                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+            }
+        }
     }
 }

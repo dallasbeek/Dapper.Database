@@ -173,5 +173,32 @@ namespace Dapper.Tests.Database
                 Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
             }
         }
+
+        [Fact]
+        [Trait("Category", "Upsert")]
+        public void UpsertConcurrencyCheck()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
+                Assert.True(db.Upsert(p));
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(db.Upsert(p), "StringId unchanged");
+
+                // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
+                db.Execute("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(db.Upsert(p), "StringId changed elsewhere, upsert not permitted");
+
+                var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+            }
+        }
     }
 }
