@@ -25,7 +25,8 @@ CREATE TABLE [dbo].[Person](
 	[Notes] [varchar](100) NULL,
 	[Age] [int] NULL,
 	[UpdatedOn] [datetime] NULL,
-	[CreatedOn] [datetime] NULL
+	[CreatedOn] [datetime] NULL,
+	[ConcurrencyToken] [rowversion]
 )
 END
 
