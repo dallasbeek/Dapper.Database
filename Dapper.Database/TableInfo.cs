@@ -24,6 +24,7 @@ namespace Dapper.Database
         private readonly Lazy<IEnumerable<ColumnInfo>> _selectColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _updateColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _concurrencyCheckColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _comparisonColumns;
 
         /// <summary>
         /// </summary>
@@ -124,6 +125,7 @@ namespace Dapper.Database
             _keyColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsKey), true);
             _generatedColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsGenerated), true);
             _concurrencyCheckColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsConcurrencyToken), true);
+            _comparisonColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsKey || ci.IsConcurrencyToken), true);
             _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => ColumnInfos.Select(ci => ci.Property), true);
         }
 
@@ -169,10 +171,17 @@ namespace Dapper.Database
         public IEnumerable<ColumnInfo> GeneratedColumns => _generatedColumns.Value;
 
         /// <summary>
-        /// Gets the set of columns to use in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement as part of concurrency management.
+        /// Gets the set of columns to use in optimistic concurrency checks.
         /// </summary>
         /// <value>A sequnce of zero or more columns.</value>
         public IEnumerable<ColumnInfo> ConcurrencyCheckColumns => _concurrencyCheckColumns.Value;
+
+        /// <summary>
+        /// Gets the set of columns to use in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement.
+        /// Columns should consist of key columns as well as those involved with optimistic concurrency checks.
+        /// </summary>
+        /// <value>A sequnce of zero or more columns.</value>
+        public IEnumerable<ColumnInfo> ComparisonColumns => _comparisonColumns.Value;
 
         /// <summary>
         /// </summary>

@@ -106,4 +106,26 @@ namespace Dapper.Tests.Database
 
     }
 
+    [Table("Person")]
+    public class PersonConcurrencyCheck
+    {
+        [Key]
+        public Guid GuidId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [ConcurrencyCheck]
+        public string StringId { get; set; }
+
+    }
+
+    [Table("Person")]
+    public class PersonTimestamp
+    {
+        [Key]
+        public Guid GuidId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [Timestamp]
+        public byte[] ConcurrencyToken { get; set; }
+    }
 }

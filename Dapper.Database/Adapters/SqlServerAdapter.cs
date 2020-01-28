@@ -185,7 +185,7 @@ namespace Dapper.Database.Adapters
 
             var updates = tableInfo.UpdateColumns.Where(ci => !toUpdate.Any() || toUpdate.Contains(ci.PropertyName));
             return
-                $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} output {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, "inserted")} where {EscapeWhereList(tableInfo.KeyColumns)}";
+                $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} output {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, "inserted")} where {EscapeWhereList(tableInfo.ComparisonColumns)}";
         }
     }
 }

@@ -187,5 +187,32 @@ namespace Dapper.Tests.Database
                 Assert.Equal("Smith", gp.LastName);
             }
         }
+
+        [Fact]
+        [Trait("Category", "Update")]
+        public void UpdateConcurrencyCheck()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
+                Assert.True(db.Insert(p));
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(db.Update(p), "StringId unchanged");
+
+                // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
+                db.Execute("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(db.Update(p), "StringId changed elsewhere, update not permitted");
+
+                var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+            }
+        }
     }
 }

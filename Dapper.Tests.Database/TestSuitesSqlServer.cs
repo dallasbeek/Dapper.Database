@@ -179,6 +179,37 @@ namespace Dapper.Tests.Database
             }
         }
 
+        [Fact]
+        [Trait("Category", "Update")]
+        public void UpdateTimestamp()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonTimestamp { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
+                Assert.True(db.Insert(p));
+                Assert.NotNull(p.ConcurrencyToken);
+                var token1 = p.ConcurrencyToken;
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(db.Update(p), "ConcurrencyToken matched");
+                Assert.NotEqual(token1, p.ConcurrencyToken);
+
+                // Simulate an independent change
+                db.Execute("update Person set Age = 1 where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(db.Update(p), "ConcurrencyToken should be different");
+
+                var gp = db.Get<PersonTimestamp>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+                Assert.NotEqual(gp.ConcurrencyToken, p.ConcurrencyToken);
+            }
+        }
+
         #endregion
     }
 }
