@@ -55,18 +55,9 @@ namespace Dapper.Database.Adapters
             return connection.Execute(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
-        /// <summary>
-        ///     updates an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
-            TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        /// <inheritdoc />
+        protected override bool UpdateInternal<T>(IDbConnection connection, IDbTransaction transaction,
+            int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var command = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
@@ -164,17 +155,8 @@ namespace Dapper.Database.Adapters
             return await connection.ExecuteAsync(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
-        /// <summary>
-        ///     updates an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction,
+        /// <inheritdoc />
+        protected override async Task<bool> UpdateInternalAsync<T>(IDbConnection connection, IDbTransaction transaction,
             int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var command = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));

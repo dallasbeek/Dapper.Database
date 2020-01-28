@@ -43,7 +43,7 @@ namespace Dapper.Database.Adapters
         }
 
         /// <inheritdoc />
-        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction,
+        protected override async Task<bool> UpdateInternalAsync<T>(IDbConnection connection, IDbTransaction transaction,
             int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var sql = UpdateQuery(tableInfo, columnsToUpdate);

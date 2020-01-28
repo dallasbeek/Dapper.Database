@@ -39,18 +39,9 @@ namespace Dapper.Database.Adapters
             return connection.Execute(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
-        /// <summary>
-        ///     updates an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
-            TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        /// <inheritdoc />
+        protected override bool UpdateInternal<T>(IDbConnection connection, IDbTransaction transaction,
+            int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var command = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
@@ -59,29 +50,15 @@ namespace Dapper.Database.Adapters
                 var values = connection
                     .Query(command.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
 
-                if (values.Any())
-                {
-                    ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
-                    return true;
-                }
-            }
-            else
-            {
+                if (!values.Any()) return false;
 
-                if (connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0)
-                {
-                    return true;
-                }
+                ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
+                return true;
             }
 
-            // Update failed, check for optimistic concurrency failure
-            if (tableInfo.ComparisonColumns.Any())
-            {
-                CheckConcurrency(connection, transaction, commandTimeout, tableInfo, entityToUpdate);
-            }
-
-            return false;
+            return connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
+
 
         /// <summary>
         ///     Inserts an entity into table "Ts"
@@ -111,17 +88,8 @@ namespace Dapper.Database.Adapters
             return await connection.ExecuteAsync(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
-        /// <summary>
-        ///     updates an entity into table "Ts"
-        /// </summary>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entityToUpdate">Entity to update</param>
-        /// <param name="columnsToUpdate">A list of columns to update</param>
-        /// <returns>true if the entity was updated</returns>
-        public override async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction,
+        /// <inheritdoc />
+        protected override async Task<bool> UpdateInternalAsync<T>(IDbConnection connection, IDbTransaction transaction,
             int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var command = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
@@ -132,28 +100,13 @@ namespace Dapper.Database.Adapters
                     (await connection.QueryAsync(command.ToString(), entityToUpdate, transaction, commandTimeout))
                     .ToList();
 
-                if (values.Any())
-                {
-                    ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
-                    return true;
-                }
-            }
-            else
-            {
-                if (await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0)
-                {
-                    return true;
-                }
+                if (!values.Any()) return false;
+
+                ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
+                return true;
             }
 
-            // Update failed, check for optimistic concurrency failure
-            if (tableInfo.ComparisonColumns.Any())
-            {
-                await CheckConcurrencyAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate);
-            }
-
-            return false;
-
+            return await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
 
         /// <summary>

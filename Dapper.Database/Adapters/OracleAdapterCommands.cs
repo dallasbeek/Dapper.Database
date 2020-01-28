@@ -42,8 +42,8 @@ namespace Dapper.Database.Adapters
         }
 
         /// <inheritdoc />
-        public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
-            TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
+        protected override bool UpdateInternal<T>(IDbConnection connection, IDbTransaction transaction,
+            int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
             var sql = UpdateQuery(tableInfo, columnsToUpdate);
 

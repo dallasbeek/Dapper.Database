@@ -38,6 +38,7 @@ namespace Dapper.Database.Adapters
         /// <summary>
         ///     updates an entity into table "Ts"
         /// </summary>
+        /// <typeparam name="T">the entity type</typeparam>
         /// <param name="connection">Open SqlConnection</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
@@ -45,6 +46,7 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
+        /// <exception cref="OptimisticConcurrencyException">if <paramref name="entityToUpdate"/> was modified by a different connection</exception>
         bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, TableInfo tableInfo,
             T entityToUpdate, IEnumerable<string> columnsToUpdate);
 
