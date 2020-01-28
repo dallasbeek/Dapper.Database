@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper.Database;
 using Dapper.Database.Extensions;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
@@ -94,7 +95,7 @@ namespace Dapper.Tests.Database
 
                 p.FirstName = "Alice";
                 p.LastName = "Jones";
-                Assert.False(await db.UpdateAsync(p), "ConcurrencyToken did not match, update failed");
+                await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpdateAsync(p));
 
                 var gp = await db.GetAsync<PersonTimestamp>(p.GuidId);
 
@@ -125,7 +126,7 @@ namespace Dapper.Tests.Database
 
                 p.FirstName = "Alice";
                 p.LastName = "Jones";
-                Assert.False(await db.UpsertAsync(p), "ConcurrencyToken did not match, update failed");
+                await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpsertAsync(p));
 
                 var gp = await db.GetAsync<PersonTimestamp>(p.GuidId);
 
