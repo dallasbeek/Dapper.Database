@@ -23,13 +23,13 @@ namespace Dapper.Database.Adapters
         public override bool Insert<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
             TableInfo tableInfo, T entityToInsert)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
+            var command = new StringBuilder(InsertQuery(tableInfo));
 
             if (!tableInfo.GeneratedColumns.Any())
-                return connection.Execute(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
-            cmd.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
+                return connection.Execute(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+            command.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
-            var values = connection.Query(cmd.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout)
+            var values = connection.Query(command.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout)
                 .ToList();
 
             if (!values.Any()) return false;
@@ -51,14 +51,14 @@ namespace Dapper.Database.Adapters
         public override bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
             TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            var cmd = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
+            var command = new StringBuilder(UpdateQuery(tableInfo, columnsToUpdate));
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                cmd.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
+                command.Append($" RETURNING  {EscapeColumnListWithAliases(tableInfo.GeneratedColumns)};");
 
                 var values = connection
-                    .Query(cmd.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
+                    .Query(command.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
 
                 if (!values.Any()) return false;
 
@@ -66,7 +66,7 @@ namespace Dapper.Database.Adapters
                 return true;
             }
 
-            return connection.Execute(cmd.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
+            return connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
 
         /// <summary>

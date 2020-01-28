@@ -95,11 +95,11 @@ namespace Dapper.Database.Adapters
         public override async Task<bool> InsertAsync<T>(IDbConnection connection, IDbTransaction transaction,
             int? commandTimeout, TableInfo tableInfo, T entityToInsert)
         {
-            var cmd = new StringBuilder(InsertQuery(tableInfo));
+            var command = new StringBuilder(InsertQuery(tableInfo));
 
             if (tableInfo.GeneratedColumns.Any())
             {
-                var values = (await connection.QueryAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout))
+                var values = (await connection.QueryAsync(command.ToString(), entityToInsert, transaction, commandTimeout))
                     .ToList();
 
                 if (!values.Any()) return false;
@@ -108,7 +108,7 @@ namespace Dapper.Database.Adapters
                 return true;
             }
 
-            return await connection.ExecuteAsync(cmd.ToString(), entityToInsert, transaction, commandTimeout) > 0;
+            return await connection.ExecuteAsync(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
