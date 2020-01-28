@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dapper.Database;
 using Dapper.Database.Extensions;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
@@ -344,14 +345,14 @@ namespace Dapper.Tests.Database
                 // Simulate the data changing out from underneath us by modifying the second item.
                 q.StringId += "X";
 
-                Assert.False(db.UpdateList(lst));
+                Assert.ThrowsAny<OptimisticConcurrencyException>(() => db.UpdateList(lst));
 
                 var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
                 var gq = db.Get<PersonConcurrencyCheck>(q.GuidId);
                 var gr = db.Get<PersonConcurrencyCheck>(r.GuidId);
 
-                // first item changed, second/third did not.
-                Assert.Equal(p.FirstName, gp.FirstName);
+                // None of the items should have changed.
+                Assert.NotEqual(p.FirstName, gp.FirstName);
                 Assert.NotEqual(q.FirstName, gq.FirstName);
                 Assert.NotEqual(r.FirstName, gr.FirstName);
             }

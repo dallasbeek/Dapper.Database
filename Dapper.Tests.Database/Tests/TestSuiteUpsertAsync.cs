@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dapper.Database;
 using Dapper.Database.Extensions;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
@@ -193,7 +194,7 @@ namespace Dapper.Tests.Database
 
                 p.FirstName = "Alice";
                 p.LastName = "Jones";
-                Assert.False(await db.UpsertAsync(p), "StringId changed elsewhere, upsert not permitted");
+                await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpsertAsync(p));
 
                 var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
 
