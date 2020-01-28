@@ -132,13 +132,28 @@ namespace Dapper.Database.Adapters
                     (await connection.QueryAsync(command.ToString(), entityToUpdate, transaction, commandTimeout))
                     .ToList();
 
-                if (!values.Any()) return false;
-
-                ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
-                return true;
+                if (values.Any())
+                {
+                    ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
+                    return true;
+                }
+            }
+            else
+            {
+                if (await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0)
+                {
+                    return true;
+                }
             }
 
-            return await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
+            // Update failed, check for optimistic concurrency failure
+            if (tableInfo.ComparisonColumns.Any())
+            {
+                await CheckConcurrencyAsync(connection, transaction, tableInfo, entityToUpdate);
+            }
+
+            return false;
+
         }
 
         /// <summary>
