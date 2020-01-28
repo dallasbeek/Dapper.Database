@@ -296,5 +296,66 @@ namespace Dapper.Tests.Database
                 Assert.Equal(p.LastName, gp.LastName);
             }
         }
+
+        [Fact]
+        [Trait("Category", "UpdateListAsync")]
+        public async Task UpdateListConcurrencyCheckAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "aj" };
+                var q = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Raj", LastName = "Padilla", StringId = "rp" };
+                var r = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Lidia", LastName = "Bain", StringId = "lb" };
+
+                var lst = new[] { p, q, r };
+
+                Assert.True(await db.InsertListAsync(lst));
+
+                p.FirstName = "Emily";
+                q.FirstName = "Jim";
+                r.FirstName = "Laura";
+
+                Assert.True(await db.UpdateListAsync(lst));
+
+                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal("Emily", gp.FirstName);
+                Assert.Equal(p.LastName, gp.LastName);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateListAsync")]
+        public async Task UpdateListConcurrencyCheckModifiedAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "aj" };
+                var q = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Raj", LastName = "Padilla", StringId = "rp" };
+                var r = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Lidia", LastName = "Bain", StringId = "lb" };
+
+                var lst = new[] { p, q, r };
+
+                Assert.True(await db.InsertListAsync(lst));
+
+                p.FirstName = "Emily";
+                q.FirstName = "Jim";
+                r.FirstName = "Laura";
+
+                // Simulate the data changing out from underneath us by modifying the second item.
+                q.StringId += "X";
+
+                Assert.False(await db.UpdateListAsync(lst));
+
+                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
+                var gq = await db.GetAsync<PersonConcurrencyCheck>(q.GuidId);
+                var gr = await db.GetAsync<PersonConcurrencyCheck>(r.GuidId);
+
+                // first item changed, second/third did not.
+                Assert.Equal(p.FirstName, gp.FirstName);
+                Assert.NotEqual(q.FirstName, gq.FirstName);
+                Assert.NotEqual(r.FirstName, gr.FirstName);
+            }
+        }
     }
 }

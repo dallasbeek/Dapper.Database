@@ -152,7 +152,7 @@ namespace Dapper.Tests.Database
                 q.FirstName = "a".PadRight(101, 'a');
                 r.FirstName = "Laura";
 
-                Assert.ThrowsAny<Exception>(() => db.UpdateList(new List<PersonIdentity> { p, q, r }));
+                Assert.ThrowsAny<Exception>(() => db.UpdateList(lst));
 
                 var gp = db.Get<PersonIdentity>(p.IdentityId);
 
@@ -293,6 +293,67 @@ namespace Dapper.Tests.Database
 
                 Assert.Equal("Alice", gp.FirstName);
                 Assert.Equal(p.LastName, gp.LastName);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateList")]
+        public void UpdateListConcurrencyCheck()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "aj" };
+                var q = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Raj", LastName = "Padilla", StringId = "rp" };
+                var r = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Lidia", LastName = "Bain", StringId = "lb" };
+
+                var lst = new[] { p, q, r };
+
+                Assert.True(db.InsertList(lst));
+
+                p.FirstName = "Emily";
+                q.FirstName = "Jim";
+                r.FirstName = "Laura";
+
+                Assert.True(db.UpdateList(lst));
+
+                var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal("Emily", gp.FirstName);
+                Assert.Equal(p.LastName, gp.LastName);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateList")]
+        public void UpdateListConcurrencyCheckModified()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "aj" };
+                var q = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Raj", LastName = "Padilla", StringId = "rp" };
+                var r = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Lidia", LastName = "Bain", StringId = "lb" };
+
+                var lst = new[] { p, q, r };
+
+                Assert.True(db.InsertList(lst));
+
+                p.FirstName = "Emily";
+                q.FirstName = "Jim";
+                r.FirstName = "Laura";
+
+                // Simulate the data changing out from underneath us by modifying the second item.
+                q.StringId += "X";
+
+                Assert.False(db.UpdateList(lst));
+
+                var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
+                var gq = db.Get<PersonConcurrencyCheck>(q.GuidId);
+                var gr = db.Get<PersonConcurrencyCheck>(r.GuidId);
+
+                // first item changed, second/third did not.
+                Assert.Equal(p.FirstName, gp.FirstName);
+                Assert.NotEqual(q.FirstName, gq.FirstName);
+                Assert.NotEqual(r.FirstName, gr.FirstName);
             }
         }
     }
