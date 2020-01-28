@@ -77,7 +77,7 @@ namespace Dapper.Database.Adapters
             // Update failed, check for optimistic concurrency failure
             if (tableInfo.ComparisonColumns.Any())
             {
-                CheckConcurrency(connection, transaction, tableInfo, entityToUpdate);
+                CheckConcurrency(connection, transaction, commandTimeout, tableInfo, entityToUpdate);
             }
 
             return false;
@@ -149,7 +149,7 @@ namespace Dapper.Database.Adapters
             // Update failed, check for optimistic concurrency failure
             if (tableInfo.ComparisonColumns.Any())
             {
-                await CheckConcurrencyAsync(connection, transaction, tableInfo, entityToUpdate);
+                await CheckConcurrencyAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate);
             }
 
             return false;

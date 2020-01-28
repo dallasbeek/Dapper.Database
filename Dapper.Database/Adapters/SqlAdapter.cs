@@ -696,6 +696,7 @@ namespace Dapper.Database.Adapters
         /// <typeparam name="T"></typeparam>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
+        /// <param name="commandTimeout"></param>
         /// <param name="tableInfo"></param>
         /// <param name="entity"></param>
         /// <exception cref="OptimisticConcurrencyException">if the object exists</exception>
@@ -703,13 +704,13 @@ namespace Dapper.Database.Adapters
         /// Base implementation currently assumes the caller performed an operation that resulted in possible concurrency failure,
         /// and does not attempt to compare the values again.
         /// </remarks>
-        protected virtual void CheckConcurrency<T>(IDbConnection connection, IDbTransaction transaction, TableInfo tableInfo,
-            T entity)
+        protected virtual void CheckConcurrency<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entity)
         {
             if (!tableInfo.ComparisonColumns.Any())
                 return;
 
-            if (Exists(connection, transaction, null, tableInfo, entity))
+            if (Exists(connection, transaction, commandTimeout, tableInfo, entity))
             {
                 throw new OptimisticConcurrencyException(tableInfo, entity);
             }
@@ -721,6 +722,7 @@ namespace Dapper.Database.Adapters
         /// <typeparam name="T"></typeparam>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
+        /// <param name="commandTimeout"></param>
         /// <param name="tableInfo"></param>
         /// <param name="entity"></param>
         /// <exception cref="OptimisticConcurrencyException">if the object exists</exception>
@@ -728,13 +730,13 @@ namespace Dapper.Database.Adapters
         /// Base implementation currently assumes the caller performed an operation that resulted in possible concurrency failure,
         /// and does not attempt to compare the values again.
         /// </remarks>
-        protected virtual async Task CheckConcurrencyAsync<T>(IDbConnection connection, IDbTransaction transaction, TableInfo tableInfo,
-            T entity)
+        protected virtual async Task CheckConcurrencyAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entity)
         {
             if (!tableInfo.ComparisonColumns.Any())
                 return;
 
-            if (await ExistsAsync(connection, transaction, null, tableInfo, entity))
+            if (await ExistsAsync(connection, transaction, commandTimeout, tableInfo, entity))
             {
                 throw new OptimisticConcurrencyException(tableInfo, entity);
             }
