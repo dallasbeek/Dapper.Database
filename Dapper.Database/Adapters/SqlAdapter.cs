@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper.Database.Extensions;
 
 namespace Dapper.Database.Adapters
 {
@@ -12,6 +13,12 @@ namespace Dapper.Database.Adapters
     /// </summary>
     public abstract class SqlAdapter : ISqlAdapter
     {
+        /// <summary>
+        ///     Cache for Exists Object Queries
+        /// </summary>
+        protected static readonly ConcurrentDictionary<RuntimeTypeHandle, string> ExistsQueries =
+            new ConcurrentDictionary<RuntimeTypeHandle, string>();
+
         /// <summary>
         ///     Cache for Get Queries
         /// </summary>
@@ -70,6 +77,21 @@ namespace Dapper.Database.Adapters
                 tableInfo.ClassType.TypeHandle,
                 () => columnsToUpdate == null || !columnsToUpdate.Any(),
                 () => BuildUpdateQuery(tableInfo, columnsToUpdate));
+
+        /// <summary>
+        ///     Default implementation of an exists object query
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An exists sql statement</returns>
+        /// <remarks>
+        ///     Statements are cached by type handle.
+        /// </remarks>
+        public virtual string ExistsQuery(TableInfo tableInfo) =>
+            ExistsQueries.Acquire(
+                tableInfo.ClassType.TypeHandle,
+                () => true,
+                () => BuildExistsQuery(tableInfo)
+            );
 
         /// <summary>
         ///     Default implementation of a count query
@@ -254,6 +276,15 @@ namespace Dapper.Database.Adapters
             return
                 $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} where {EscapeWhereList(tableInfo.ComparisonColumns)}";
         }
+
+        /// <summary>
+        ///     Default implementation of an exists object query.
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An exists sql statement</returns>
+        protected virtual string BuildExistsQuery(TableInfo tableInfo)
+            =>
+                $"select 1 from {EscapeTableName(tableInfo)} where {EscapeWhereList(tableInfo.KeyColumns)}";
 
         /// <summary>
         ///     Returns the format for table name
@@ -619,6 +650,69 @@ namespace Dapper.Database.Adapters
                 }
 
             return success;
+        }
+
+        #endregion
+
+        #region Exists Implementations
+
+        /// <summary>
+        ///     Tests whether an entity exists in table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entity">Entity to check</param>
+        /// <returns>true if the entity exists</returns>
+        public virtual bool Exists<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entity)
+        {
+            return connection.ExecuteScalar<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
+        }
+
+        /// <summary>
+        ///     Tests whether an entity exists in table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entity">Entity to check</param>
+        /// <returns>true if the entity exists</returns>
+        public virtual async Task<bool> ExistsAsync<T>(IDbConnection connection, IDbTransaction transaction,
+            int? commandTimeout, TableInfo tableInfo, T entity)
+        {
+            return await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
+        }
+
+        #endregion
+
+        #region Concurrency Check Implementations
+
+        /// <summary>
+        ///     Checks whether the specified object exists, and if so, throws a concurrency exception.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connection"></param>
+        /// <param name="transaction"></param>
+        /// <param name="tableInfo"></param>
+        /// <param name="entity"></param>
+        /// <exception cref="OptimisticConcurrencyException">if the object exists</exception>
+        /// <remarks>
+        /// Base implementation currently assumes the caller performed an operation that resulted in possible concurrency failure,
+        /// and does not attempt to compare the values again.
+        /// </remarks>
+        protected virtual void CheckConcurrency<T>(IDbConnection connection, IDbTransaction transaction, TableInfo tableInfo,
+            T entity)
+        {
+            if (!tableInfo.ComparisonColumns.Any())
+                return;
+
+            if (Exists(connection, transaction, null, tableInfo, entity))
+            {
+                throw new OptimisticConcurrencyException(tableInfo, entity);
+            }
         }
 
         #endregion

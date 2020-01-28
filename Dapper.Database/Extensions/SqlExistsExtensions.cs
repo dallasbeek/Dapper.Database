@@ -12,26 +12,23 @@ namespace Dapper.Database.Extensions
         #region Exists Extensions
 
         /// <summary>
-        ///     Check if a record exists
+        ///     Check if a record exists in table "Ts"
         /// </summary>
         /// <typeparam name="T">Type of entity</typeparam>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToExists">Entity to delete</param>
+        /// <param name="entity">Entity to check</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if record is found</returns>
-        public static bool Exists<T>(this IDbConnection connection, T entityToExists, IDbTransaction transaction = null,
+        public static bool Exists<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null,
             int? commandTimeout = null) where T : class
         {
-            if (entityToExists == null)
-                throw new ArgumentException("Cannot Exists null Object", nameof(entityToExists));
+            if (entity == null)
+                throw new ArgumentException("Cannot check null object for existence", nameof(entity));
 
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
-            var existsQuery =
-                sqlHelper.GenerateCompositeKeyQuery(entityToExists,
-                    (ti, sql) => sqlHelper.Adapter.ExistsQuery(ti, sql));
-            return connection.ExecuteScalar<bool>(existsQuery.SqlStatement, existsQuery.Parameters, transaction,
-                commandTimeout);
+            return sqlHelper.Adapter.Exists(connection, transaction, commandTimeout, sqlHelper.TableInfo,
+                entity);
         }
 
         /// <summary>

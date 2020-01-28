@@ -59,15 +59,29 @@ namespace Dapper.Database.Adapters
                 var values = connection
                     .Query(command.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout).ToList();
 
-                if (!values.Any()) return false;
+                if (values.Any())
+                {
+                    ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
+                    return true;
+                }
+            }
+            else
+            {
 
-                ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
-                return true;
+                if (connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0)
+                {
+                    return true;
+                }
             }
 
-            return connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
-        }
+            // Update failed, check for optimistic concurrency failure
+            if (tableInfo.ComparisonColumns.Any())
+            {
+                CheckConcurrency(connection, transaction, tableInfo, entityToUpdate);
+            }
 
+            return false;
+        }
 
         /// <summary>
         ///     Inserts an entity into table "Ts"

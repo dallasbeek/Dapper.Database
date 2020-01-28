@@ -95,6 +95,18 @@ namespace Dapper.Database.Adapters
             Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
+        ///     Tests whether an entity exists in table "Ts"
+        /// </summary>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="entity">Entity to check</param>
+        /// <returns>true if the entity exists</returns>
+        bool Exists<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, T entity);
+
+        /// <summary>
         ///     constructs an insert query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
