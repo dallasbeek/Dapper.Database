@@ -479,7 +479,10 @@ namespace Dapper.Database.Adapters
             // Update failed, check for optimistic concurrency failure
             if (tableInfo.ConcurrencyCheckColumns.Any())
             {
-                CheckConcurrency(connection, transaction, commandTimeout, tableInfo, entityToUpdate);
+                if (Exists(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
+                {
+                    throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
+                }
             }
 
             return false;
@@ -541,7 +544,10 @@ namespace Dapper.Database.Adapters
             // Update failed, check for optimistic concurrency failure
             if (tableInfo.ConcurrencyCheckColumns.Any())
             {
-                await CheckConcurrencyAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate);
+                if (await ExistsAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
+                {
+                    throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
+                }
             }
 
             return false;
@@ -741,62 +747,6 @@ namespace Dapper.Database.Adapters
             int? commandTimeout, TableInfo tableInfo, T entity)
         {
             return await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
-        }
-
-        #endregion
-
-        #region Concurrency Check Implementations
-
-        /// <summary>
-        ///     Checks whether the specified object exists, and if so, throws a concurrency exception.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="connection"></param>
-        /// <param name="transaction"></param>
-        /// <param name="commandTimeout"></param>
-        /// <param name="tableInfo"></param>
-        /// <param name="entity"></param>
-        /// <exception cref="OptimisticConcurrencyException">if the object exists</exception>
-        /// <remarks>
-        /// Base implementation currently assumes the caller performed an operation that resulted in possible concurrency failure,
-        /// and does not attempt to compare the values again.
-        /// </remarks>
-        protected virtual void CheckConcurrency<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
-            TableInfo tableInfo, T entity)
-        {
-            if (!tableInfo.ConcurrencyCheckColumns.Any())
-                return;
-
-            if (Exists(connection, transaction, commandTimeout, tableInfo, entity))
-            {
-                throw new OptimisticConcurrencyException(tableInfo, entity);
-            }
-        }
-
-        /// <summary>
-        ///     Checks whether the specified object exists, and if so, throws a concurrency exception.
-        /// </summary>
-        /// <typeparam name="T">the entity type</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <param name="entity">Entity to check</param>
-        /// <exception cref="OptimisticConcurrencyException">if the object exists</exception>
-        /// <remarks>
-        /// Base implementation currently assumes the caller performed an operation that resulted in possible concurrency failure,
-        /// and does not attempt to compare the values again.
-        /// </remarks>
-        protected virtual async Task CheckConcurrencyAsync<T>(IDbConnection connection, IDbTransaction transaction,
-            int? commandTimeout, TableInfo tableInfo, T entity)
-        {
-            if (!tableInfo.ConcurrencyCheckColumns.Any())
-                return;
-
-            if (await ExistsAsync(connection, transaction, commandTimeout, tableInfo, entity))
-            {
-                throw new OptimisticConcurrencyException(tableInfo, entity);
-            }
         }
 
         #endregion
