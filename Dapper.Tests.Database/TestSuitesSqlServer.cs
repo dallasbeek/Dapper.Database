@@ -192,7 +192,7 @@ namespace Dapper.Tests.Database
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(db.Update(p), "ConcurrencyToken matched");
+                Assert.True(db.Update(p), "ConcurrencyToken matched, update succeeded");
                 Assert.NotEqual(token1, p.ConcurrencyToken);
 
                 // Simulate an independent change
@@ -200,9 +200,40 @@ namespace Dapper.Tests.Database
 
                 p.FirstName = "Alice";
                 p.LastName = "Jones";
-                Assert.False(db.Update(p), "ConcurrencyToken should be different");
+                Assert.False(db.Update(p), "ConcurrencyToken did not match, update failed");
 
                 var gp = db.Get<PersonTimestamp>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+                Assert.NotEqual(gp.ConcurrencyToken, p.ConcurrencyToken);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateAsync")]
+        public async Task UpdateTimestampAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonTimestamp { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
+                Assert.True(await db.InsertAsync(p));
+                Assert.NotNull(p.ConcurrencyToken);
+                var token1 = p.ConcurrencyToken;
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(await db.UpdateAsync(p), "ConcurrencyToken matched, update succeeded");
+                Assert.NotEqual(token1, p.ConcurrencyToken);
+
+                // Simulate an independent change
+                db.Execute("update Person set Age = 1 where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(await db.UpdateAsync(p), "ConcurrencyToken did not match, update failed");
+
+                var gp = await db.GetAsync<PersonTimestamp>(p.GuidId);
 
                 Assert.Equal("Greg", gp.FirstName);
                 Assert.Equal("Smith", gp.LastName);

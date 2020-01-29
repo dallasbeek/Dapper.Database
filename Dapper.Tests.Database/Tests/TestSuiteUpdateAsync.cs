@@ -128,7 +128,7 @@ namespace Dapper.Tests.Database
         }
 
         [Fact]
-        [Trait("Category", "Update")]
+        [Trait("Category", "UpdateAsync")]
         public async Task UpdateComputedAliasAsync()
         {
 
@@ -185,6 +185,33 @@ namespace Dapper.Tests.Database
 
                 Assert.Equal(p.IdentityId, gp.IdentityId);
                 Assert.Equal("Alice", gp.FirstName);
+                Assert.Equal("Smith", gp.LastName);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpdateAsync")]
+        public async Task UpdateConcurrencyCheckAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
+                Assert.True(await db.InsertAsync(p));
+
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
+                Assert.True(await db.UpdateAsync(p), "StringId unchanged");
+
+                // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
+                await db.ExecuteAsync("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
+
+                p.FirstName = "Alice";
+                p.LastName = "Jones";
+                Assert.False(await db.UpdateAsync(p), "StringId changed elsewhere, update not permitted");
+
+                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal("Greg", gp.FirstName);
                 Assert.Equal("Smith", gp.LastName);
             }
         }
