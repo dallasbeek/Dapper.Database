@@ -169,6 +169,8 @@ public class User
 }
 ```
 
+ℹ️ Keys are considered non-nullable, regardless of type.
+
 #### [RequiredAttribute]
 
 Attribute for fields that require a non-null value.
