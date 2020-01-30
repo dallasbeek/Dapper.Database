@@ -87,6 +87,7 @@ namespace Dapper.Database
                     };
 
                     ci.IsNullable = !ci.IsKey // do not allow Keys to be nullable
+                            || attributes.AnyOfType<RequiredAttribute>() // LATER: do we want to validate empty values? Using this for pre-C# 8 nullable enforcement
                             || ci.Property.IsNullable();
 
 
