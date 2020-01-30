@@ -115,6 +115,8 @@ namespace Dapper.Tests.Database
         public string LastName { get; set; }
         [ConcurrencyCheck]
         public string StringId { get; set; }
+        [ConcurrencyCheck]
+        public DateTime? UpdatedOn { get; set; }
 
     }
 
