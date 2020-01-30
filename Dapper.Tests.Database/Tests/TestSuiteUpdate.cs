@@ -191,28 +191,49 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "Update")]
-        public void UpdateConcurrencyCheck()
+        public void UpdateConcurrencyCheckNotModified()
         {
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
                 Assert.True(db.Insert(p));
 
+                Assert.Equal("abc", p.StringId);
+                Assert.Null(p.UpdatedOn);
+
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(db.Update(p), "StringId unchanged");
+                Assert.True(db.Update(p), "Concurrent fields unchanged");
+
+                var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal(p.FirstName, gp.FirstName);
+                Assert.Equal(p.LastName, gp.LastName);
+                Assert.Equal(p.StringId, gp.StringId);
+                Assert.Equal(p.UpdatedOn, gp.UpdatedOn);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Update")]
+        public void UpdateConcurrencyCheckModified()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
+                Assert.True(db.Insert(p));
 
                 // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
                 db.Execute("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
 
-                p.FirstName = "Alice";
-                p.LastName = "Jones";
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
                 Assert.ThrowsAny<OptimisticConcurrencyException>(() => db.Update(p));
 
                 var gp = db.Get<PersonConcurrencyCheck>(p.GuidId);
 
-                Assert.Equal("Greg", gp.FirstName);
-                Assert.Equal("Smith", gp.LastName);
+                Assert.Equal("Alice", gp.FirstName);
+                Assert.Equal("Jones", gp.LastName);
             }
         }
     }
