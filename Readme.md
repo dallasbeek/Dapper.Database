@@ -1,4 +1,4 @@
-Dapper.Database - more extensions for dapper and SqlDatabase connection manager
+﻿Dapper.Database - more extensions for dapper and SqlDatabase connection manager
 ========================================
 [![Build status](https://ci.appveyor.com/api/projects/status/t7ajnmavtjdpkw0a?svg=true)](https://ci.appveyor.com/project/dallasbeek/dapper-database)
 
@@ -118,7 +118,7 @@ There are a number of attributes you can use to decorate your classes.
 
 ### From `System.ComponentModel.DataAnnotations`
 
-#### [TableAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.tableattribute)
+#### [TableAttribute]
 
 Specifies the SQL table to use.  For databases that support schema generated queries will include a schema if specified.
 
@@ -129,7 +129,7 @@ public class User
 }
 ```
 
-#### [ColumnAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.columnattribute)
+#### [ColumnAttribute]
 
 Optional attribute that allows mapping a property to an alternately named column.
 
@@ -141,7 +141,8 @@ public class User
 }
 ```
 
-#### [DatabaseGeneratedAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.databasegeneratedattribute)
+#### [DatabaseGeneratedAttribute]
+
 
 Attribute for computed columns and identity columns.  Logic will refresh generated properties after insert and update.
 
@@ -156,7 +157,7 @@ public class User
 }
 ```
 
-#### [KeyAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.keyattribute)
+#### [KeyAttribute]
 
 Attribute for to be used for primary keys.  
 
@@ -168,7 +169,40 @@ public class User
 }
 ```
 
-#### [ConcurrencyCheckAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.concurrencycheckattribute)
+#### [RequiredAttribute]
+
+Attribute for fields that require a non-null value.
+Used to perform null checks in SQL where necessary.
+
+```csharp
+#nullable disable
+
+public class User
+{
+    [Required]
+    public string FirstName { get; set; }
+    public string MiddleName { get; set; }
+    [Required]
+    public string LastName { get; set; }
+}
+```
+
+Note that non-null value types (and non-null reference types in C# 8.0+) are also honored.
+
+The following is equivalent to the above:
+
+```csharp
+#nullable enable
+
+public class User
+{
+    public string FirstName { get; set; }
+    public string? MiddleName { get; set; }
+    public string LastName { get; set; }
+}
+```
+
+#### [ConcurrencyCheckAttribute]
 
 Attribute for columns that should be checked on update and delete statements, for optimistic concurrency.
 
@@ -180,7 +214,7 @@ public class User
 }
 ```
 
-#### [TimestampAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.timestampattribute)
+#### [TimestampAttribute]
 
 Attribute for a database-generated "row version" column that should be checked on update and delete statements, for optimistic concurrency.
 
@@ -254,6 +288,14 @@ public class User
     public string NoDbColumn { get; set; }
 }
 ```
+
+[ColumnAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.columnattribute
+[ConcurrencyCheckAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.concurrencycheckattribute
+[DatabaseGeneratedAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.databasegeneratedattribute
+[KeyAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.keyattribute
+[RequiredAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.requiredattribute
+[TableAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.schema.tableattribute
+[TimestampAttribute]: https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.timestampattribute
 
 ### Example
 
@@ -362,10 +404,10 @@ connection.Delete<Car>("where Name = 'Audi'")
 Insert if it doesn't exist or updates the record, callbacks can be used to update properties
 ```
 connection.Upsert(
-	new Car()
-	, new[] { "LastName", "CreatedOn", "UpdatedOn" }
-	, (insert) => insert.CreatedOn = DateTime.Now()
-	, (update) => u.UpdatedOn = DateTime.Now()
+    new Car()
+    , new[] { "LastName", "CreatedOn", "UpdatedOn" }
+    , (insert) => insert.CreatedOn = DateTime.Now()
+    , (update) => u.UpdatedOn = DateTime.Now()
 );
 ```
 
