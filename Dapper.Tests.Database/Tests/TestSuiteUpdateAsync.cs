@@ -229,7 +229,7 @@ namespace Dapper.Tests.Database
 
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.ThrowsAny<OptimisticConcurrencyException>(() => db.Update(p));
+                await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpdateAsync(p));
 
                 var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
 

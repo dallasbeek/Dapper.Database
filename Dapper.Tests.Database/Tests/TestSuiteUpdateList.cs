@@ -299,7 +299,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateList")]
-        public void UpdateListConcurrencyCheck()
+        public void UpdateListConcurrencyCheckNotModified()
         {
             using (var db = GetSqlDatabase())
             {

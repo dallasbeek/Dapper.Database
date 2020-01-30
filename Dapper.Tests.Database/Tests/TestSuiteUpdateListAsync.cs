@@ -300,7 +300,7 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpdateListAsync")]
-        public async Task UpdateListConcurrencyCheckAsync()
+        public async Task UpdateListConcurrencyCheckNotModifiedAsync()
         {
             using (var db = GetSqlDatabase())
             {

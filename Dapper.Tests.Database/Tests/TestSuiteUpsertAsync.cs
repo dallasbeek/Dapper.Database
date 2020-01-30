@@ -178,28 +178,49 @@ namespace Dapper.Tests.Database
 
         [Fact]
         [Trait("Category", "UpsertAsync")]
-        public async Task UpsertConcurrencyCheckAsync()
+        public async Task UpsertConcurrencyCheckNotModifiedAsync()
         {
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
                 Assert.True(await db.UpsertAsync(p));
 
+                Assert.Equal("abc", p.StringId);
+                Assert.Null(p.UpdatedOn);
+
                 p.FirstName = "Greg";
                 p.LastName = "Smith";
-                Assert.True(await db.UpsertAsync(p), "StringId unchanged");
+                Assert.True(await db.UpsertAsync(p), "Concurrent fields unchanged");
+
+                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
+
+                Assert.Equal(p.FirstName, gp.FirstName);
+                Assert.Equal(p.LastName, gp.LastName);
+                Assert.Equal(p.StringId, gp.StringId);
+                Assert.Equal(p.UpdatedOn, gp.UpdatedOn);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "UpsertAsync")]
+        public async Task UpsertConcurrencyCheckModifiedAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
+                Assert.True(await db.UpsertAsync(p));
 
                 // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
                 await db.ExecuteAsync("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
 
-                p.FirstName = "Alice";
-                p.LastName = "Jones";
+                p.FirstName = "Greg";
+                p.LastName = "Smith";
                 await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpsertAsync(p));
 
                 var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
 
-                Assert.Equal("Greg", gp.FirstName);
-                Assert.Equal("Smith", gp.LastName);
+                Assert.Equal("Alice", gp.FirstName);
+                Assert.Equal("Jones", gp.LastName);
             }
         }
     }
