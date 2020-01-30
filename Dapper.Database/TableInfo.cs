@@ -86,6 +86,10 @@ namespace Dapper.Database
                         SequenceName = seqAtt?.Name
                     };
 
+                    ci.IsNullable = !ci.IsKey // do not allow Keys to be nullable
+                            || ci.Property.IsNullable();
+
+
                     ci.ExcludeOnInsert = ci.IsGenerated && seqAtt == null
                                          || attributes.AnyOfType<IgnoreInsertAttribute>()
                                          || hasReadOnlyAttribute;
@@ -269,6 +273,11 @@ namespace Dapper.Database
         /// <summary>
         /// </summary>
         public LambdaExpression Output { get; set; }
+
+        /// <summary>
+        /// Indicates whether this column can be set to a null value.
+        /// </summary>
+        public bool IsNullable { get; set; }
 
         /// <summary>
         /// Indicates whether this column should be included in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement as part of concurrency management.

@@ -246,12 +246,34 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
-        ///     Returns the format for where clause
+        ///     Returns the format for a single column in the <c>WHERE</c> clause.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        protected virtual string EscapeWhereColumn(ColumnInfo column)
+        {
+            var escColumnName = EscapeColumn(column.ColumnName);
+            var escParameterName = EscapeParameter(column.PropertyName);
+
+            var eqExpression = $"{escColumnName} = {escParameterName}";
+
+            if (column.IsNullable)
+            {
+                // (x = :x or (x is null and :x is null))
+                return $"({eqExpression} or ({escColumnName} is null and {escParameterName} is null))";
+            }
+
+            return eqExpression;
+        }
+
+        /// <summary>
+        ///     Returns the format for a collection of columns in the <c>WHERE</c> clause.
         /// </summary>
         /// <param name="columns"></param>
-        /// <returns></returns>
-        public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns) => string.Join(" and ",
-            columns.Select(ci => $"{EscapeColumn(ci.ColumnName)} = {EscapeParameter(ci.PropertyName)}"));
+        /// <returns>A <see cref="string"/> consisting of all column equality expression, joined by <c>AND</c>.</returns>
+        public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns)
+            =>
+                string.Join(" and ", columns.Select(EscapeWhereColumn));
 
         /// <summary>
         ///     Default implementation of an insert query.
