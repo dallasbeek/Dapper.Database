@@ -27,12 +27,24 @@ namespace Dapper.Database
         private readonly Lazy<IEnumerable<ColumnInfo>> _comparisonColumns;
 
         /// <summary>
+        /// Creates a new TableInfo for the specified type with the default table mapper.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="tableNameMapper"></param>
+        /// <param name="type">The entity <see cref="Type"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/></exception>
+        public TableInfo(Type type)
+            : this(type, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new TableInfo for the specified type, with optional table mapper.
+        /// </summary>
+        /// <param name="type">The entity <see cref="Type"/>.</param>
+        /// <param name="tableNameMapper">A delegate for how to generate the table name from the <paramref name="type"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/></exception>
         public TableInfo(Type type, TableNameMapperDelegate tableNameMapper)
         {
-            ClassType = type;
+            ClassType = type ?? throw new ArgumentNullException(nameof(type));
 
             if (tableNameMapper != null)
             {
@@ -55,7 +67,7 @@ namespace Dapper.Database
                 }
             }
 
-            ColumnInfos = type.GetProperties()
+            Columns = type.GetProperties()
                 .Where(typeProperty => !typeProperty.GetCustomAttributes(false).AnyOfType<IgnoreAttribute>())
                 .Select(typeProperty =>
                 {
@@ -86,10 +98,9 @@ namespace Dapper.Database
                         SequenceName = seqAtt?.Name
                     };
 
-                    ci.IsNullable = !ci.IsKey // do not allow Keys to be nullable
-                            || attributes.AnyOfType<RequiredAttribute>() // LATER: do we want to validate empty values? Using this for pre-C# 8 nullable enforcement
-                            || ci.Property.IsNullable();
-
+                    ci.IsNullable = !ci.IsKey                               // do not allow Keys to be nullable
+                            && !attributes.AnyOfType<RequiredAttribute>()   // Required cannot be null. LATER: do we want to validate empty values? Using this for pre-C# 8 nullable enforcement
+                            && ci.Property.IsNullable();
 
                     ci.ExcludeOnInsert = ci.IsGenerated && seqAtt == null
                                          || attributes.AnyOfType<IgnoreInsertAttribute>()
@@ -111,9 +122,9 @@ namespace Dapper.Database
                 })
                 .ToArray();
 
-            if (!ColumnInfos.Any(columnInfo => columnInfo.IsKey))
+            if (!Columns.Any(columnInfo => columnInfo.IsKey))
             {
-                var idProp = ColumnInfos.FirstOrDefault(columnInfo =>
+                var idProp = Columns.FirstOrDefault(columnInfo =>
                     string.Equals(columnInfo.PropertyName, "id", StringComparison.CurrentCultureIgnoreCase));
 
                 if (idProp != null)
@@ -122,16 +133,16 @@ namespace Dapper.Database
             }
 
             _insertColumns =
-                new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnInsert), true);
+                new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => !ci.ExcludeOnInsert), true);
             _updateColumns =
-                new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnUpdate), true);
+                new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => !ci.ExcludeOnUpdate), true);
             _selectColumns =
-                new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => !ci.ExcludeOnSelect), true);
-            _keyColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsKey), true);
-            _generatedColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsGenerated), true);
-            _concurrencyCheckColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsConcurrencyToken), true);
-            _comparisonColumns = new Lazy<IEnumerable<ColumnInfo>>(() => ColumnInfos.Where(ci => ci.IsKey || ci.IsConcurrencyToken), true);
-            _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => ColumnInfos.Select(ci => ci.Property), true);
+                new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => !ci.ExcludeOnSelect), true);
+            _keyColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsKey), true);
+            _generatedColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsGenerated), true);
+            _concurrencyCheckColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsConcurrencyToken), true);
+            _comparisonColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsKey || ci.IsConcurrencyToken), true);
+            _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => Columns.Select(ci => ci.Property), true);
         }
 
         /// <summary>
@@ -148,7 +159,7 @@ namespace Dapper.Database
 
         /// <summary>
         /// </summary>
-        private IEnumerable<ColumnInfo> ColumnInfos { get; }
+        internal IEnumerable<ColumnInfo> Columns { get; } // LATER: before making public maybe make this a list-dictionary hybrid?
 
         /// <summary>
         /// </summary>
