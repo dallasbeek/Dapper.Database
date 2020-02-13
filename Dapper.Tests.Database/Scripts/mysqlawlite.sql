@@ -2,6 +2,7 @@ CREATE DATABASE IF NOT EXISTS `test`;
 
 USE `test`;
 
+
 DROP TABLE IF EXISTS `Person`;
 DROP TABLE IF EXISTS `Address`;
 DROP TABLE IF EXISTS `Customer`;
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `Address`(
 	`CountryRegion` varchar(50) NOT NULL,
 	`PostalCode` varchar(15) NOT NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` timestamp NOT NULL,
+	`ModifiedDate` timestamp  NOT NULL DEFAULT  CURRENT_TIMESTAMP,
     PRIMARY KEY (`AddressID`)
 );
 
@@ -509,7 +510,7 @@ CREATE TABLE IF NOT EXISTS `Customer`(
 	`PasswordHash` varchar(128) NOT NULL,
 	`PasswordSalt` varchar(10) NOT NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL,
+	`ModifiedDate` TIMESTAMP  NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`CustomerID`)
 );
 
@@ -1368,7 +1369,7 @@ CREATE TABLE IF NOT EXISTS `CustomerAddress`(
 	`AddressID` int NOT NULL,
 	`AddressType` varchar(50) NOT NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP
 );
 
 INSERT IGNORE `CustomerAddress` (`CustomerID`, `AddressID`, `AddressType`, `rowguid`, `ModifiedDate`) 
@@ -1808,7 +1809,7 @@ CREATE TABLE IF NOT EXISTS `Product`(
 	`ThumbNailPhoto` LONGBLOB NULL,
 	`ThumbnailPhotoFileName` varchar(50) NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`ProductID`)
 );
 
@@ -2115,7 +2116,7 @@ CREATE TABLE IF NOT EXISTS `ProductCategory`(
 	`ParentProductCategoryID` integer NULL,
 	`Name` text NOT NULL,
 	`rowguid` text  NOT NULL,
-	`ModifiedDate` text NOT NULL,
+	`ModifiedDate` timestamp NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`ProductCategoryID`)
 );
 
@@ -2167,7 +2168,7 @@ CREATE TABLE IF NOT EXISTS `ProductDescription`(
 	`ProductDescriptionID` int(11) NOT NULL AUTO_INCREMENT,
 	`Description` varchar(400) NOT NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`ProductDescriptionID`)
 );
 
@@ -2941,7 +2942,7 @@ CREATE TABLE IF NOT EXISTS `ProductModel`(
 	`Name` varchar(50) NOT NULL,
 	`CatalogDescription` text NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`ProductModelID`)
 );
 
@@ -3118,7 +3119,7 @@ CREATE TABLE IF NOT EXISTS `ProductModelProductDescription`(
 	`ProductDescriptionID` int NOT NULL,
 	`Culture` nchar(6) NOT NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP
 );
 
 INSERT IGNORE `ProductModelProductDescription` (`ProductModelID`, `ProductDescriptionID`, `Culture`, `rowguid`, `ModifiedDate`) 
@@ -3895,7 +3896,7 @@ CREATE TABLE IF NOT EXISTS `SalesOrderDetail`(
 	`UnitPriceDiscount` numeric(14,4) NOT NULL,
 	`LineTotal` numeric(14,4) AS (`UnitPrice` * (1.0 - `UnitPriceDiscount`) * `OrderQty`),
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`SalesOrderDetailID`)
 );
 
@@ -4466,7 +4467,7 @@ CREATE TABLE IF NOT EXISTS `SalesOrderHeader`(
 	`TotalDue` numeric(14,4) AS (`SubTotal`+`TaxAmt`+`Freight`),
 	`Comment` varchar(4000) NULL,
 	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
 	PRIMARY KEY (`SalesOrderID`)
 );
 
