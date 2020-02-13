@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Database\Dapper.Database.csproj" />
     <PackageReference Include="Dapper" Version="2.0.4" />
-    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="7.1.1" />
+    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="7.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="1.1.1" />
     <PackageReference Include="MySql.Data" Version="8.0.17" />
