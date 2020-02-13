@@ -96,7 +96,7 @@
     </PostBuildEvent>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='net472'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
     <DefineConstants>$(DefineConstants);SQLCE</DefineConstants>
   </PropertyGroup>
 
