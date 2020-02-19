@@ -34,7 +34,7 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="$(xUnitVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net472'">
     <PackageReference Include="Microsoft.SqlServer.Compact" Version="4.0.8876.1" />
   </ItemGroup>
 
@@ -96,7 +96,7 @@
     </PostBuildEvent>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net472'">
     <DefineConstants>$(DefineConstants);SQLCE</DefineConstants>
   </PropertyGroup>
 
