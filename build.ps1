@@ -54,7 +54,7 @@ $projectsToBuild =
     'Dapper.Database'
 
 $testsToRun =
-    'Dapper.Tests.Database'
+    'Dapper.Database.Tests'
 
 if (!$Version -and !$BuildNumber) {
     Write-Host "ERROR: You must supply either a -Version or -BuildNumber argument. `

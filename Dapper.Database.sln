@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EBF0E48B-BAE2-4101-9ECB-D1A0E517269D}"
 	ProjectSection(SolutionItems) = preProject
@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Database", "Dapper.Database\Dapper.Database.csproj", "{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Tests.Database", "Dapper.Tests.Database\Dapper.Tests.Database.csproj", "{F326DE00-7C5F-410D-A0E3-3E3968BB5DB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Database.Tests", "Dapper.Database.Tests\Dapper.Database.Tests.csproj", "{0DB1B71B-D2AD-4268-B630-67D10C001A9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,17 +39,17 @@ Global
 		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F326DE00-7C5F-410D-A0E3-3E3968BB5DB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F326DE00-7C5F-410D-A0E3-3E3968BB5DB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F326DE00-7C5F-410D-A0E3-3E3968BB5DB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F326DE00-7C5F-410D-A0E3-3E3968BB5DB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE} = {EBF0E48B-BAE2-4101-9ECB-D1A0E517269D}
-		{F326DE00-7C5F-410D-A0E3-3E3968BB5DB8} = {53E40F54-51C5-43B0-90BA-37F282F06440}
+		{0DB1B71B-D2AD-4268-B630-67D10C001A9A} = {53E40F54-51C5-43B0-90BA-37F282F06440}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB77A014-BDE3-4DAC-AB63-0D5EF30CE9BF}
