@@ -1,7 +1,0 @@
-{
-  "profiles": {
-    "Dapper.Tests.Database": {
-      "commandName": "Project"
-    }
-  }
-}

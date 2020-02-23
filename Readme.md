@@ -20,6 +20,17 @@ bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate);
 bool Upsert<T>(T entityToUpsert, Action<T> insertAction, Action<T> updateAction);
 bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
+bool InsertList<T>(IEnumerable<T> entitiesToInsert);
+
+bool UpdateList<T>(IEnumerable<T> entitiesToUpdate);
+bool UpdateList<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate);
+
+bool UpsertList<T>(IEnumerable<T> entitiesToUpsert) where T : class;
+bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate);
+bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction);
+bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
+
+
 bool Delete<T>(T entityToDelete);
 bool Delete<T>(object primaryKey);
 bool Delete<T>(string sql = null);

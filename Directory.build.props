@@ -19,12 +19,8 @@
     <DebugType>embedded</DebugType>
     <DefaultLanguage>en-US</DefaultLanguage>
     <IncludeSymbols>false</IncludeSymbols>
-    <xUnitVersion>2.3.0-beta5-build3769</xUnitVersion>
+    <xUnitVersion>2.4.1</xUnitVersion>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-    <Reference Include="System.Core" Pack="false" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="SourceLink.Create.GitHub" Version="2.1.2" PrivateAssets="All" /> 
