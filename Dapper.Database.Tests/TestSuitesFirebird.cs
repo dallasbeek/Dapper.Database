@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !CI_Build
+using System;
 using System.IO;
 using Dapper.Database;
 using FirebirdSql.Data.FirebirdClient;
@@ -85,3 +86,4 @@ namespace Dapper.Database.Tests
         }
     }
 }
+#endif
