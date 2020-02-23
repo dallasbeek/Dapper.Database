@@ -90,7 +90,7 @@
     <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(CI)' == 'True' ">
+  <PropertyGroup Condition=" '$(APPVEYOR)' == 'True' ">
     <DefineConstants>$(DefineConstants);CI_Build</DefineConstants>
   </PropertyGroup>
 
