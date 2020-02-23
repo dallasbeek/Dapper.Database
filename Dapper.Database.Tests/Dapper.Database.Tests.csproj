@@ -90,4 +90,8 @@
     <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />
   </ItemGroup>
 
+  <PropertyGroup Condition=" '$(CI)' == 'True' ">
+    <DefineConstants>$(DefineConstants);CI_Build</DefineConstants>
+  </PropertyGroup>
+
 </Project>
