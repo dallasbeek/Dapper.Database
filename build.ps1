@@ -4,6 +4,29 @@ param(
     [bool] $RunTests = $true,
     [string] $PullRequestNumber
 )
+Write-Host 'OSArchitecture: ' (Get-WmiObject Win32_OperatingSystem).OSArchitecture
+$exePath = "$env:USERPROFILE\SSCERuntime.exe"
+
+If ((Get-WmiObject Win32_OperatingSystem).OSArchitecture -eq '64-bit') {
+    (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/0/5/D/05DCCDB5-57E0-4314-A016-874F228A8FAD/SSCERuntime_x64-ENU.exe', $exePath )
+} Else {
+    (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/0/5/D/05DCCDB5-57E0-4314-A016-874F228A8FAD/SSCERuntime_x86-ENU.exe', $exePath)
+}
+
+$destPath = "$env:USERPROFILE\SSCERuntime"
+Write-Host "Unpacking..."
+7z x $exePath -o"$destPath" | Out-Null
+
+Write-Host "Installing..."
+
+If ((Get-WmiObject Win32_OperatingSystem).OSArchitecture -eq '64-bit') {
+    cmd /c start /wait $destPath\SSCERuntime_x64-ENU.msi /quiet /norestart
+} Else {
+    cmd /c start /wait $destPath\SSCERuntime_x86-ENU.msi /quiet /norestart
+}
+
+Write-Host "SQL Server Compact installed" -foregroundcolor Green
+
 
 Write-Host "Run Parameters:" -ForegroundColor Cyan
 Write-Host "  CreatePackages: $CreatePackages"
