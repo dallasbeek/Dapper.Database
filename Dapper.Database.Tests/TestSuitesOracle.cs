@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !Appveyor
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -131,3 +132,4 @@ namespace Dapper.Database.Tests
         #endregion
     }
 }
+#endif

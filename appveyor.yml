@@ -8,6 +8,7 @@ skip_commits:
 
 install:
   - choco install dotnetcore-sdk --version 3.0.100
+  - choco install mssqlserver-compact3.5
 
 environment:
   Appveyor: true

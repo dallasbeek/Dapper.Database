@@ -16,6 +16,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestSuitesFirebird.cs" />
+    <Compile Remove="TestSuitesMySql.cs" />
+    <Compile Remove="TestSuitesPostgres.cs" />
+    <Compile Remove="TestSuitesSqlLite.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="7.5.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
