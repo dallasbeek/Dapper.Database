@@ -28,6 +28,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Database", "Dapper.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Database.Tests", "Dapper.Database.Tests\Dapper.Database.Tests.csproj", "{0DB1B71B-D2AD-4268-B630-67D10C001A9A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A061514E-09D0-4E54-93AF-ABB9E3E08F01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactApp", "ContactApp\ContactApp.csproj", "{BA73DE5F-1FDD-4403-9314-C4CFD7DF3170}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,10 @@ Global
 		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DB1B71B-D2AD-4268-B630-67D10C001A9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA73DE5F-1FDD-4403-9314-C4CFD7DF3170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA73DE5F-1FDD-4403-9314-C4CFD7DF3170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA73DE5F-1FDD-4403-9314-C4CFD7DF3170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA73DE5F-1FDD-4403-9314-C4CFD7DF3170}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +57,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9C783F3A-1B6B-479E-9108-15EAFCF73AEE} = {EBF0E48B-BAE2-4101-9ECB-D1A0E517269D}
 		{0DB1B71B-D2AD-4268-B630-67D10C001A9A} = {53E40F54-51C5-43B0-90BA-37F282F06440}
+		{BA73DE5F-1FDD-4403-9314-C4CFD7DF3170} = {A061514E-09D0-4E54-93AF-ABB9E3E08F01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB77A014-BDE3-4DAC-AB63-0D5EF30CE9BF}

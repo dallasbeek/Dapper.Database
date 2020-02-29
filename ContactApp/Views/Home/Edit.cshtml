@@ -1,0 +1,86 @@
+﻿@model Contact
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="Edit" id="contactform">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="Id" type="hidden"/>
+            <input asp-for="Timestamp" type="hidden"/>
+
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control"/>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control"/>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Company" class="control-label"></label>
+                <input asp-for="Company" class="form-control"/>
+                <span asp-validation-for="Company" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control"/>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <hr/>
+            <a href="#" id="addNumber" class="btn btn-success mb-2">Create New Number</a>
+
+            <div id="phonenumbers">
+                @Html.EditorFor(model => model.Phones)
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary"/>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        $(document).ready(function() {
+            $('#addNumber').on('click',
+                function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: '/home/addNumber',
+                        success: function(data) {
+                            $('#phonenumbers').append(data);
+                            jQuery.validator.unobtrusive.parse("#contactform");
+                        },
+                        error: function(a, b, c) {
+                            console.log(a, b, c);
+                        }
+                    });
+                });
+
+            $("#phonenumbers").on("click",
+                "#deleteNumber",
+                function(e) {
+                    e.preventDefault();
+                    $(this).closest(".row").remove();
+                });
+        });
+    </script>
+}

@@ -17,3 +17,4 @@ NuGet.exe
 TestResults/
 Dapper.Tests/SqlServerTypes/
 .dotnet/*
+node_modules/

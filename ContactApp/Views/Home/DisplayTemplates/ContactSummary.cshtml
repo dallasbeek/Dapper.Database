@@ -1,0 +1,25 @@
+﻿@model ContactSummary
+
+@{
+    Layout = null;
+}
+
+<div class="row mb-3">
+    <div class="col-3">
+        @Html.DisplayFor(model => model.FullName)
+    </div>
+    <div class="col-3">
+        @Html.DisplayFor(model => model.Email)
+    </div>
+    <div class="col-2">
+        @Html.DisplayFor(model => model.Phone)
+    </div>
+    <div class="col-3">
+        @Html.DisplayFor(model => model.TitleCompany)
+    </div>
+    <div class="col-1">
+        @*@Html.ActionLink("Edit", "Edit", new { id = @Model.Id })*@
+        <a class="page-link btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    </div>
+
+</div>

@@ -1,0 +1,27 @@
+﻿@model Phone
+@using (var scope = Html.ModelItemScope("Phones", Model.Id.ToString()))
+{
+    <div class="row">
+        @Html.ModelItemScopeIndex(scope)
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="Id" type="hidden"/>
+
+        <div class="col-4 form-group">
+            <input asp-for="Number" class="form-control" placeholder="Phone Number"/>
+            <span asp-validation-for="Number" class="text-danger"></span>
+        </div>
+        <div class=" col-4 form-group">
+            <select asp-for="Label" class="form-control">
+                <option value="">Unspecified</option>
+                <option value="cell">Cell</option>
+                <option value="home">Home</option>
+                <option value="office">Office</option>
+            </select>
+
+            <span asp-validation-for="Label" class="text-danger"></span>
+        </div>
+        <div class=" col-4 form-group">
+            <button id="deleteNumber" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+}
