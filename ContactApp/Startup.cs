@@ -22,7 +22,7 @@ namespace ContactApp
         {
             services.AddControllersWithViews();
 
-            var connectionString = Configuration.GetValue<string>("connectionStrings:add:ContactApp:connectionString");
+            var connectionString = Configuration.GetValue<string>("ConnectionStrings:ContactApp");
 
             services.AddScoped<IConnectionService>(_ => new StringConnectionService<SqlConnection>(connectionString));
             services.AddTransient<ISqlDatabase, SqlDatabase>();

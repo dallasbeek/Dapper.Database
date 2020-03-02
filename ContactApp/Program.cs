@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace ContactApp
@@ -15,7 +14,6 @@ namespace ContactApp
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureAppConfiguration(c => c.AddXmlFile("app.config"));
                     webBuilder.UseStartup<Startup>();
                 });
     }
