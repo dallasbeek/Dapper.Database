@@ -1,5 +1,7 @@
 ﻿using System.Data.SqlClient;
+using System.Reflection;
 using Dapper.Database;
+using DbUp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +33,19 @@ namespace ContactApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var connectionString = Configuration.GetValue<string>("ConnectionStrings:ContactApp");
+
+            EnsureDatabase.For.SqlDatabase(connectionString);
+
+            var dbUpgrade = DeployChanges.To
+                .SqlDatabase(connectionString)
+                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+                .WithTransactionPerScript()
+                .LogToConsole()
+                .Build();
+
+            var result = dbUpgrade.PerformUpgrade();
+
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else

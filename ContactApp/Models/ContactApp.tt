@@ -44,6 +44,7 @@
     var tables = LoadTables();
     var schemas = GetSchemas(tables);
 
+    tables["SchemaVersions"].Ignore = true;                          // To ignore a table
     tables["Contact"]["CreatedOn"].IgnoreUpdate = true;         // To ignore a column on insert
     tables["Phone"]["CreatedOn"].IgnoreUpdate = true;           // To ignore a column on insert
 
