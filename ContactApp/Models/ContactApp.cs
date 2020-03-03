@@ -5,7 +5,7 @@
 // 
 //     Connection String Name:       `ConnectionStrings:ContactApp`
 //     Provider:                     `System.Data.SqlClient`
-//     Connection String:            `Server=(local);Database=ContactApp;Trusted_Connection=True;`
+//     Connection String:            `Server=(localdb)\mssqllocaldb;;Database=ContactApp;Trusted_Connection=True;`
 //     Include Views:                `False`
 //     Include IncludeRelationships: `True`
 
