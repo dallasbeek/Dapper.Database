@@ -37,17 +37,18 @@
     IncludeViews = false;                                       // Include Views in the generated code
     IncludeRelationships = false;                               // Include properties for related classes based on schema foreign keys
     NamespacePerSchema = false;                                 // For databases that have multiple namespaces this will wrap the generated tables in the namespace with the exception of dbo
-    ExcludeTablePrefixes = new string[]{"aspnet_","webpages_"}; // Ignore tables with these prefixes
-    ExcludeSchemas = new string[]{};                            // Ignore tables in these schemas
+    ExcludeTablePrefixes = new string[]{"aspnet_","webpages_"}; // Exclude tables with these prefixes
+    ExcludeSchemas = new string[]{};                            // Exclude tables in these schemas
 
     // Read schema
     var tables = LoadTables();
     var schemas = GetSchemas(tables);
 
     /* Tweak Schema
-    tables["tablename"].Ignore = true;                          // To ignore a table
+    tables["tablename"].Exclude = true;                         // To exclude a table
     tables["tablename"].ClassName = "newname";                  // To change the class name of a table
-    tables["tablename"]["columnname"].Ignore = true;            // To ignore a column
+    tables["tablename"]["columnname"].Exclude = true;           // To exclude property generation of column
+    tables["tablename"]["columnname"].Ignore = true;            // To ignore a column on insert/update/select
     tables["tablename"]["columnname"].PropertyName="newname";   // To change the property name of a column
     tables["tablename"]["columnname"].PropertyType="bool";      // To change the property type of a column
     tables["tablename"]["columnname"].IgnoreSelect = true;      // To ignore a column on select
@@ -91,7 +92,7 @@
 #>
 <#
         indent++;
-        foreach(Table tbl in from t in tables where t.Schema == schema && !t.Ignore select t)
+        foreach(Table tbl in from t in tables where t.Schema == schema && !t.Exclude select t)
         {
             if(IsExcluded(tbl.Name, ExcludeTablePrefixes)) continue;
 
@@ -106,7 +107,7 @@
 <#=Tab(indent)#>{
 <#
             indent++;
-            foreach(Column col in from c in tbl.Columns where !c.Ignore select c)
+            foreach(Column col in from c in tbl.Columns where !c.Exclude select c)
             {
 #>
 
@@ -118,7 +119,7 @@
             { 
                 foreach(Key key in from k in tbl.OuterKeys select k)
                 {
-                    if(tables[key.ReferencedTableName].Ignore || ExcludeSchemas.Contains(tables[key.ReferencedTableName].Schema)) continue;
+                    if(tables[key.ReferencedTableName].Exclude || ExcludeSchemas.Contains(tables[key.ReferencedTableName].Schema)) continue;
 #>
 
 <#=Tab(indent)#>[Ignore] public virtual <#=tables[key.ReferencedTableName].ClassName #> <#=tables[key.ReferencedTableName].ClassName #> { get; set; }
@@ -126,7 +127,7 @@
                 }
                 foreach(Key key in from k in tbl.InnerKeys select k)
                 {
-                    if(tables[key.ReferencingTableName].Ignore || ExcludeSchemas.Contains(tables[key.ReferencingTableName].Schema)) continue;
+                    if(tables[key.ReferencingTableName].Exclude || ExcludeSchemas.Contains(tables[key.ReferencingTableName].Schema)) continue;
 #>
 
 <#=Tab(indent)#>[Ignore] public virtual IEnumerable<<#=tables[key.ReferencingTableName].ClassName #>> <#=tables[key.ReferencingTableName].PluralClassName #> { get; set; }
@@ -175,7 +176,7 @@
         public string ClassName;
         public string PluralClassName;
         public string SequenceName;
-        public bool Ignore;
+        public bool Exclude;
 
         public Column PK
         {
@@ -208,6 +209,7 @@
         public bool IsNullable;
         public bool IsAutoIncrement;
         public bool Ignore;
+        public bool Exclude;
         public int MaxLength;
         public bool IsComputed;
         public string DbType;
@@ -265,6 +267,10 @@
                 if (DbType == "timestamp")
                 {
                     attributes.Add("Timestamp");
+                }
+                if (Ignore)
+                {
+                    attributes.Add("Ignore");
                 }
                 if (IgnoreSelect)
                 {
@@ -685,7 +691,7 @@
     }
 
     List<string> GetSchemas(Tables tables){
-        return (from t in tables where !t.Ignore && !ExcludeSchemas.Contains(t.Schema) select t.Schema).Distinct().ToList();
+        return (from t in tables where !t.Exclude && !ExcludeSchemas.Contains(t.Schema) select t.Schema).Distinct().ToList();
     }
 
     abstract class SchemaReader
