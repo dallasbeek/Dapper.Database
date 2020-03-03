@@ -7,7 +7,6 @@
     <Description>get, insert, update, upsert, getlist, getpagedlist, and delete helpers for dapper.net.</Description>
     <Authors>Dallas Beek</Authors>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <Version>1.0.0-rc</Version>
     <Copyright>2020 Dallas Beek</Copyright>
   </PropertyGroup>
 

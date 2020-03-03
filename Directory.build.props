@@ -1,20 +1,15 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>0.10.0</VersionPrefix>
-
-    <Copyright>2018 Dallas Beek</Copyright>
-
+    <Copyright>2020 Dallas Beek</Copyright>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--<AssemblyOriginatorKeyFile>../Dapper.Database.snk</AssemblyOriginatorKeyFile>-->
-
     <PackageId>$(AssemblyName)</PackageId>
     <RepositoryType>git</RepositoryType>
     <!--<PackageReleaseNotes></PackageReleaseNotes>-->
     <PackageProjectUrl>https://github.com/dallasbeek/Dapper.Database</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/dallasbeek/Dapper.Database</RepositoryUrl>
-    
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
     <DefaultLanguage>en-US</DefaultLanguage>
