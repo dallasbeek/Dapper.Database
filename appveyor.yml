@@ -50,7 +50,7 @@ artifacts:
 
 deploy:
 - provider: NuGet
-  server: https://www.myget.org/F/dapper-database/api/v2
+  server: https://www.myget.org/F/dapper-database/api/v3/index.json
   on:
     branch: master  
   api_key:
