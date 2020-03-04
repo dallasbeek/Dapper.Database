@@ -43,7 +43,7 @@ dotnet_csproj:
   patch: true
   file: '**\*.csproj'
   package_version: '{version}'
-  version: '{version}'
+  version: '1.0.0.{build}'
   assembly_version: '1.0.0.{build}'
   file_version: '{version}'
   informational_version: '{version}'

@@ -1,7 +1,7 @@
 [CmdletBinding(PositionalBinding=$false)]
 param(
     [bool] $CreatePackages,
-    [bool] $RunTests = $false,
+    [bool] $RunTests = $true,
     [string] $PullRequestNumber
 )
 Write-Host 'OSArchitecture: ' (Get-WmiObject Win32_OperatingSystem).OSArchitecture
