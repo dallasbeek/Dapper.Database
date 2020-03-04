@@ -1,4 +1,4 @@
-﻿#if NET472
+﻿#if NET472 || NET48
 
 using System;
 using System.Data.SqlServerCe;
