@@ -29,8 +29,8 @@
     */
 
     // Settings
-    ConnectionStringName = "ConnectionStrings:ContactApp";      // Uses last connection string in config if not specified
-    ConfigPath = @"";                                           // Looks in current project for web.config or app.config by default. This overrides to a relative path - useful for seperate class library projects.
+    ConnectionStringName = "ConnectionStrings:ContactApp";      // Uses last connection string in config if not specified (for json if not specified will use last value in ConnectionStrings value.  Json notation Key:SubKey:3
+    ConfigPath = @"";                                           // Looks in current project for web.config, app.config, or appsettings.json by default. This overrides to a relative path - useful for seperate class library projects.
     Namespace = "ContactApp.Models";                            // Wrapping namespace
     ClassPrefix = "";                                           // Class Prefix
     ClassSuffix = "";                                           // Class Suffix
@@ -58,6 +58,7 @@
     tables["tablename"]["columnname"].IgnoreSelect = true;      // To ignore a column on select
     tables["tablename"]["columnname"].IgnoreUpdate = true;      // To ignore a column on update
     tables["tablename"]["columnname"].IgnoreInsert = true;      // To ignore a column on insert
+    tables["tablename"]["columnname"].ConcurrencyCheck = true;  // To fail update if value in database is not expected value
     */
 
     var indent = 0;
@@ -221,6 +222,7 @@
         public bool IgnoreSelect;
         public bool IgnoreInsert;
         public bool IgnoreUpdate;
+        public bool ConcurrencyCheck;
 
         public List<string> Attributes
         {
@@ -287,6 +289,10 @@
                 if (IgnoreInsert)
                 {
                     attributes.Add("IgnoreInsert");
+                }
+                if (ConcurrencyCheck)
+                {
+                    attributes.Add("ConcurrencyCheck");
                 }
 
                 return attributes;
