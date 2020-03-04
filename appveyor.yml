@@ -26,6 +26,7 @@ environment:
   MYSQL_ENV_MYSQL_USER: root
   MYSQL_ENV_MYSQL_PASSWORD: Password12!
   MYSQL_ENV_MYSQL_DATABASE: test
+
 services:
   - mssql2017
   - mysql
@@ -37,6 +38,15 @@ init:
 
 nuget:
   disable_publish_on_pr: true
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 
 build_script:
   # Postgres
