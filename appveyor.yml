@@ -1,6 +1,6 @@
 image: Visual Studio 2019
 
-version: 1.0.0.{build}-rc
+version: 1.0.0.{build}
 
 skip_branch_with_pr: true
 skip_tags: true
@@ -42,9 +42,9 @@ nuget:
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  package_version: '{version}'
-  version: '1.0.0.{build}'
-  assembly_version: '1.0.0.{build}'
+  package_version: '{version}-rc'
+  version: '{version}'
+  assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
 
