@@ -1,6 +1,6 @@
 image: Visual Studio 2019
 
-version: 1.0.0.{build}-rc
+version: 1.0.0.{build}
 
 skip_branch_with_pr: true
 skip_tags: true
