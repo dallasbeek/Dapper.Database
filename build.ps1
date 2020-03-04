@@ -50,7 +50,7 @@ dotnet restore
 Write-Host "Done restoring." -ForegroundColor "Green"
 
 Write-Host "Building all projects..." -ForegroundColor "Magenta"
-dotnet build -c Release --no-restore /p:CI=true --version-suffix "rc"
+dotnet build -c Release --no-restore /p:CI=true
 Write-Host "Done building." -ForegroundColor "Green"
 
 if ($RunTests) {
@@ -80,7 +80,7 @@ if ($CreatePackages) {
 
     foreach ($project in $projectsToBuild) {
         Write-Host "Packing $project (dotnet pack)..." -ForegroundColor "Magenta"
-        dotnet pack ".\$project\$project.csproj" --no-build -c Release --version-suffix "rc" /p:PackageOutputPath=$packageOutputFolder /p:NoPackageAnalysis=true /p:CI=true
+        dotnet pack ".\$project\$project.csproj" --no-build -c Release /p:PackageOutputPath=$packageOutputFolder /p:NoPackageAnalysis=true /p:CI=true
         Write-Host ""
     }
 }
