@@ -4,6 +4,8 @@ param(
     [bool] $RunTests = $true,
     [string] $PullRequestNumber
 )
+
+<#
 Write-Host 'OSArchitecture: ' (Get-WmiObject Win32_OperatingSystem).OSArchitecture
 $exePath = "$env:USERPROFILE\SSCERuntime.exe"
 
@@ -26,7 +28,7 @@ If ((Get-WmiObject Win32_OperatingSystem).OSArchitecture -eq '64-bit') {
 }
 
 Write-Host "SQL Server Compact installed" -foregroundcolor Green
-
+#>
 
 Write-Host "Run Parameters:" -ForegroundColor Cyan
 Write-Host "  CreatePackages: $CreatePackages"
