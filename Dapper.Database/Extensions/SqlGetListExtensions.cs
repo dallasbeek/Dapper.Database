@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper.Database.Adapters;
-using Dapper.Mapper;
+using Dapper.Database.Mapper;
 
 namespace Dapper.Database.Extensions
 {

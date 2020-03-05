@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper.Mapper;
+using Dapper.Database.Mapper;
 
 namespace Dapper.Database.Extensions
 {

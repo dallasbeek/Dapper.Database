@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper.Mapper;
+using Dapper.Database.Mapper;
 
 namespace Dapper.Database.Extensions
 {
