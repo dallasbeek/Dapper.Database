@@ -9,8 +9,8 @@ skip_commits:
     - '**/*.md'
 
 install:
-  - choco install dotnetcore-sdk
-  - choco install dotnet-5.0-sdk
+  - cinst dotnetcore-sdk
+  - cinst dotnet-5.0-sdk
 
 environment:
   Appveyor: true
