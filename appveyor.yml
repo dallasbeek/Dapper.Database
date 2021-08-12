@@ -8,10 +8,6 @@ skip_commits:
   files:
     - '**/*.md'
 
-install:
-  - cinst dotnetcore-sdk
-  - cinst dotnet-5.0-sdk
-
 environment:
   Appveyor: true
   # Postgres
