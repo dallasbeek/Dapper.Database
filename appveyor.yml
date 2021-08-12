@@ -8,9 +8,6 @@ skip_commits:
   files:
     - '**/*.md'
 
-install:
-  - choco install dotnetcore-sdk --version 3.0.100
-
 environment:
   Appveyor: true
   # Postgres
@@ -28,13 +25,13 @@ environment:
   MYSQL_ENV_MYSQL_DATABASE: test
 
 services:
-  - mssql2017
   - mysql
   - postgresql101
 
 init:
   - git config --global core.autocrlf input
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
+  - net start MSSQL$SQL2019
 
 nuget:
   disable_publish_on_pr: true

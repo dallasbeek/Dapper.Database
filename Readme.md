@@ -420,7 +420,7 @@ connection.Upsert(
     new Car()
     , new[] { "LastName", "CreatedOn", "UpdatedOn" }
     , (insert) => insert.CreatedOn = DateTime.Now()
-    , (update) => u.UpdatedOn = DateTime.Now()
+    , (update) => update.UpdatedOn = DateTime.Now()
 );
 ```
 

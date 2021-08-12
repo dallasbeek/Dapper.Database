@@ -16,7 +16,7 @@ namespace Dapper.Database.Tests
             {
                 //can't force it to timeout since it's in seconds so verify it's set invalid
                 db.CommandTimeout = -1;
-                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                if (GetProvider() == Provider.Postgres)
                 {
                     var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
                     AssertTimeoutExceptionMessage(ex);
@@ -39,7 +39,7 @@ namespace Dapper.Database.Tests
             {
                 //can't force it to timeout since it's in seconds so verify it's set invalid
                 db.OneTimeCommandTimeout = -1;
-                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                if (GetProvider() == Provider.Postgres)
                 {
                     var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
                     AssertTimeoutExceptionMessage(ex);
@@ -62,7 +62,7 @@ namespace Dapper.Database.Tests
             {
                 //can't force it to timeout since it's in seconds so verify it's set invalid
                 db.CommandTimeout = -1;
-                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                if (GetProvider() == Provider.Postgres)
                 {
                     var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
                     AssertTimeoutExceptionMessage(ex);
@@ -76,7 +76,7 @@ namespace Dapper.Database.Tests
                 db.OneTimeCommandTimeout = 0;
                 Assert.Equal(295, db.Count<Product>());
 
-                if (GetProvider() == Provider.MySql || GetProvider() == Provider.Postgres)
+                if (GetProvider() == Provider.Postgres)
                 {
                     var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
                     AssertTimeoutExceptionMessage(ex);
@@ -99,7 +99,7 @@ namespace Dapper.Database.Tests
                     Assert.StartsWith("SqlCeCommand.CommandTimeout does not support non-zero values.", ex.Message);
                     break;
                 case Provider.MySql:
-                    Assert.StartsWith("Timeout can be only be set to 'System.Threading.Timeout.Infinite'", ex.Message);
+                    Assert.StartsWith("Command timeout must not be negative", ex.Message);
                     break;
                 case Provider.Postgres:
                     Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
