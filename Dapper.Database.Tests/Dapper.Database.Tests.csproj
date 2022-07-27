@@ -17,15 +17,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.26" />
+    <PackageReference Include="MySql.Data" Version="8.0.30" />
     <PackageReference Include="Npgsql" Version="5.0.7" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="3.1.0">
+    <PackageReference Include="coverlet.collector" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp3.1'">
-    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="7.10.1" />
+    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="8.0.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.18" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.19.120" />
   </ItemGroup>
@@ -57,6 +57,12 @@
 
   <ItemGroup>
     <None Update="DBFiles\Test.DB.fdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DBFiles\Test.DB.sdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DBFiles\Test.DB.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Scripts\firebirdawlite.sql">
