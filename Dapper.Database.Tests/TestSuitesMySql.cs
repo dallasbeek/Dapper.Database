@@ -13,7 +13,7 @@ namespace Dapper.Database.Tests
         private const string DbName = "test";
         public static string ConnectionString =>
             IsAppVeyor
-                ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};"
+                ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;"
                 : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 
         protected override void CheckSkip()
@@ -37,7 +37,7 @@ namespace Dapper.Database.Tests
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             try
             {
-                using (var connection = new MySqlConnection($"Server=localhost;Port=3306;User Id=root;Password=Password12!;"))
+                using (var connection = new MySqlConnection($"Server=localhost;Port=3306;User Id=root;Password=Password12!;SSL Mode=None;"))
                 {
                     connection.Open();
 
