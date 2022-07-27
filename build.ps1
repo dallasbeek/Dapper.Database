@@ -5,6 +5,11 @@ param(
     [string] $PullRequestNumber
 )
 
+Write-Host "Run Parameters:" -ForegroundColor Cyan
+Write-Host "  CreatePackages: $CreatePackages"
+Write-Host "  RunTests: $RunTests"
+Write-Host "  dotnet --version:" (dotnet --version)
+
 <#
 Write-Host 'OSArchitecture: ' (Get-WmiObject Win32_OperatingSystem).OSArchitecture
 $exePath = "$env:USERPROFILE\SSCERuntime.exe"
