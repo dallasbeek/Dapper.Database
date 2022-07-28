@@ -1,4 +1,4 @@
-﻿
+
 IF TYPE_ID(N'ProductIdTable') IS NOT NULL
 	DROP TYPE [dbo].[ProductIdTable]
 
@@ -8817,3 +8817,11 @@ INSERT [dbo].[SalesOrderHeader] ([SalesOrderID], [RevisionNumber], [OrderDate], 
 SET IDENTITY_INSERT [dbo].[SalesOrderHeader] OFF
 
 END
+
+IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'PK_ProductModel', 'PK') AND parent_object_id = OBJECT_ID(N'ProductModel', 'U'))
+	ALTER TABLE [dbo].[ProductModel] ADD CONSTRAINT [PK_ProductModel] PRIMARY KEY CLUSTERED ([ProductModelID])
+
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'FK_ProductModelProductDescription_ProductModel','F') AND parent_object_id = OBJECT_ID(N'ProductModelProductDescription', 'U'))
+	ALTER TABLE [dbo].[ProductModelProductDescription] ADD CONSTRAINT [FK_ProductModelProductDescription_ProductModel] FOREIGN KEY ([ProductModelID]) REFERENCES [dbo].[ProductModel] ([ProductModelID])
+
+

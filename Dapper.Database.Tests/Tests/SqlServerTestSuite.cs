@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using Dapper.Database;
@@ -134,5 +134,32 @@ namespace Dapper.Database.Tests
                 Assert.NotEqual(gp.ConcurrencyToken, p.ConcurrencyToken);
             }
         }
+
+
+        [Fact]
+        [Trait("Category", "Delete")]
+        public void DeleteConstraint()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var ex = Assert.ThrowsAny<SqlException>(() => db.Delete<ProductModel>(20));
+                Assert.Contains("FK_ProductModelProductDescription_ProductModel", ex.Message);
+            }
+        }
+
+
+        [Fact]
+        [Trait("Category", "Delete")]
+        public async Task DeleteConstraintAsync()
+        {
+            using (var db = GetSqlDatabase())
+            {
+                var ex = await Assert.ThrowsAnyAsync<SqlException>(() => db.DeleteAsync<ProductModel>(20));
+                Assert.Contains("FK_ProductModelProductDescription_ProductModel", ex.Message);
+
+            }
+        }
+
+
     }
 }
