@@ -38,14 +38,14 @@ namespace Dapper.Database.Tests
             SqlMapper.AddTypeHandler<Guid>(new GuidTypeHandler());
             SqlMapper.AddTypeHandler<decimal>(new NumericTypeHandler());
 
-            if (RuntimeInformation.OSArchitecture == Architecture.X86 || RuntimeInformation.OSArchitecture == Architecture.X86)
-            {
-                File.Copy("sqlite3_86.dll", "sqlite3.dll", true);
-            }
-            else
-            {
-                File.Copy("sqlite3_64.dll", "sqlite3.dll", true);
-            }
+            //if (RuntimeInformation.OSArchitecture == Architecture.X86 || RuntimeInformation.OSArchitecture == Architecture.X86)
+            //{
+            //    File.Copy("sqlite3_86.dll", "sqlite3.dll", true);
+            //}
+            //else
+            //{
+            //    File.Copy("sqlite3_64.dll", "sqlite3.dll", true);
+            //}
 
             //if (File.Exists(FileName))
             //{

@@ -183,5 +183,27 @@ namespace Dapper.Database.Adapters
 
             return await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
         }
+
+        /// <summary>
+        ///     Returns the format for a single column in the <c>WHERE</c> clause.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        protected override string EscapeWhereColumn(ColumnInfo column)
+        {
+            var escColumnName = EscapeColumn(column.ColumnName);
+            var escParameterName = EscapeParameter(column.PropertyName);
+
+            var eqExpression = $"{escColumnName} = {escParameterName}";
+
+
+            //if (column.IsNullable)
+            //{
+            //    // (x = :x or (x is null and :x is null))
+            //    eqExpression = $"({eqExpression} or ({escColumnName} = CASE {escParameterName} IS NULL THEN '' ELSE {escParameterName} END))";
+            //}
+
+            return eqExpression;
+        }
     }
 }

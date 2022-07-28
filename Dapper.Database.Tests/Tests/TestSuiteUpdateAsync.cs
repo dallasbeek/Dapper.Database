@@ -194,6 +194,8 @@ namespace Dapper.Database.Tests
         [Trait("Category", "UpdateAsync")]
         public async Task UpdateConcurrencyCheckNotModifiedAsync()
         {
+            Skip.If(GetProvider() == Provider.SqlCE, "SqlCE doesn't handle null concurrency field");
+
             using (var db = GetSqlDatabase())
             {
                 var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
