@@ -163,58 +163,58 @@ namespace Dapper.Database.Tests
         }
 
 
-        [Fact]
-        [Trait("Category", "Insert")]
-        public async Task InsertHasTrigger()
-        {
-            var dnow = DateTime.UtcNow;
-            using (var db = GetSqlDatabase())
-            {
-                var p = new AccountModel { FirstName = "Jim", LastName = "Beam"};
+        //[Fact]
+        //[Trait("Category", "Insert")]
+        //public void InsertHasTrigger()
+        //{
+        //    var dnow = DateTime.UtcNow;
+        //    using (var db = GetSqlDatabase())
+        //    {
+        //        var p = new AccountModel { FirstName = "Jim", LastName = "Beam"};
 
-                Assert.Equal(DateTime.MinValue, p.CreatedOn);
+        //        Assert.Equal(DateTime.MinValue, p.CreatedOn);
 
-                Assert.True(db.Insert(p));
-                Assert.True(p.AccountId > 0);
-                Assert.NotNull(p.ConcurrencyToken);
-                Assert.NotEqual(DateTime.MinValue,p.CreatedOn);
-                Assert.InRange(p.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        //        Assert.True(db.Insert(p));
+        //        Assert.True(p.AccountId > 0);
+        //        Assert.NotNull(p.ConcurrencyToken);
+        //        Assert.NotEqual(DateTime.MinValue,p.CreatedOn);
+        //        Assert.InRange(p.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
 
-                var gp = db.Get<AccountModel>(p.AccountId);
+        //        var gp = db.Get<AccountModel>(p.AccountId);
 
-                Assert.Equal(p.AccountId, gp.AccountId);
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
-                Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        //        Assert.Equal(p.AccountId, gp.AccountId);
+        //        Assert.Equal(p.FirstName, gp.FirstName);
+        //        Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
+        //        Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
 
-            }
-        }
+        //    }
+        //}
 
-        [Fact]
-        [Trait("Category", "Update")]
-        public async Task UpdateHasTrigger()
-        {
-            var dnow = DateTime.UtcNow;
-            using (var db = GetSqlDatabase())
-            {
-                var p = new AccountModel { FirstName = "Sally", LastName = "Walker" };
-                Assert.True(db.Insert(p));
-                Assert.NotNull(p.ConcurrencyToken);
-                var token1 = p.ConcurrencyToken;
+        //[Fact]
+        //[Trait("Category", "Update")]
+        //public void UpdateHasTrigger()
+        //{
+        //    var dnow = DateTime.UtcNow;
+        //    using (var db = GetSqlDatabase())
+        //    {
+        //        var p = new AccountModel { FirstName = "Sally", LastName = "Walker" };
+        //        Assert.True(db.Insert(p));
+        //        Assert.NotNull(p.ConcurrencyToken);
+        //        var token1 = p.ConcurrencyToken;
 
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                Assert.True(db.Update(p), "ConcurrencyToken matched, update succeeded");
-                Assert.NotEqual(token1, p.ConcurrencyToken);
+        //        p.FirstName = "Greg";
+        //        p.LastName = "Smith";
+        //        Assert.True(db.Update(p), "ConcurrencyToken matched, update succeeded");
+        //        Assert.NotEqual(token1, p.ConcurrencyToken);
 
-                var gp = db.Get<AccountModel>(p.AccountId);
+        //        var gp = db.Get<AccountModel>(p.AccountId);
 
-                Assert.Equal(p.AccountId, gp.AccountId);
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
-                Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        //        Assert.Equal(p.AccountId, gp.AccountId);
+        //        Assert.Equal(p.FirstName, gp.FirstName);
+        //        Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
+        //        Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
 
-            }
-        }
+        //    }
+        //}
     }
 }
