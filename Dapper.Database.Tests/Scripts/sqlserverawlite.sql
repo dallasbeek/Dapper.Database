@@ -8824,4 +8824,27 @@ IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'PK_Produc
 IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'FK_ProductModelProductDescription_ProductModel','F') AND parent_object_id = OBJECT_ID(N'ProductModelProductDescription', 'U'))
 	ALTER TABLE [dbo].[ProductModelProductDescription] ADD CONSTRAINT [FK_ProductModelProductDescription_ProductModel] FOREIGN KEY ([ProductModelID]) REFERENCES [dbo].[ProductModel] ([ProductModelID])
 
-
+
+IF OBJECT_ID('Account', 'U') IS NULL BEGIN
+	CREATE TABLE [dbo].[Account](
+		[AccountId] [int] NOT NULL IDENTITY(1, 1),
+		[FirstName] [nvarchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+		[LastName] [nvarchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+		[FullName] AS ((isnull([FirstName],'')+' ')+isnull([LastName],'')),
+		[UpdatedOn] [datetime] NULL,
+		[CreatedOn] [datetime] NULL CONSTRAINT [DF_Account_CreatedOn] DEFAULT (getutcdate()),
+		[ConcurrencyToken] [timestamp] NOT NULL
+	)
+
+END
+
+IF OBJECT_ID(N'[trg_Account]', 'TR') IS NULL
+	EXEC sp_executesql N'
+	CREATE TRIGGER [dbo].[trg_Account]
+	   ON  [dbo].[Account]
+	   AFTER INSERT,UPDATE
+	AS 
+	BEGIN
+		SET NOCOUNT ON;
+	END
+	'

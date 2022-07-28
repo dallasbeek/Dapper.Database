@@ -130,4 +130,27 @@ namespace Dapper.Database.Tests
         [Timestamp]
         public byte[] ConcurrencyToken { get; set; }
     }
+
+
+    [Table("Account")]
+    public class AccountModel
+    {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int AccountId { get; set; }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public string FullName { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [IgnoreInsert]
+        public DateTime CreatedOn { get; set; }
+
+        [Timestamp]
+        public byte[] ConcurrencyToken { get; set; }
+
+    }
+
 }
