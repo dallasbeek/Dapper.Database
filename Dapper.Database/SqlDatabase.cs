@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -106,7 +106,7 @@ namespace Dapper.Database
                 return;
 
             SharedConnection.Close();
-            SharedConnection.Dispose();
+            //SharedConnection.Dispose();
             SharedConnection = null;
         }
 
