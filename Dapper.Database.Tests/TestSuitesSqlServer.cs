@@ -10,7 +10,7 @@ namespace Dapper.Database.Tests
     [Trait("Provider", "SqlServer")]
     public partial class SqlServerTestSuite : TestSuite
     {
-        private const string DbName = "dapperdb";
+        private const string DbName = "tempdb";
         public static string ConnectionString =>
             IsAppVeyor
                 ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!"
