@@ -10,11 +10,11 @@ namespace Dapper.Database.Tests
     [Trait("Provider", "SqlServer")]
     public partial class SqlServerTestSuite : TestSuite
     {
-        private const string DbName = "tempdb";
+        private const string DbName = "dapperdb";
         public static string ConnectionString =>
             IsAppVeyor
                 ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!"
-                : $"Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DbName};Integrated Security=True";
+                : $"Data Source=localhost;Initial Catalog={DbName};Integrated Security=True";
 
         protected override void CheckSkip()
         {
@@ -35,6 +35,8 @@ namespace Dapper.Database.Tests
         static SqlServerTestSuite()
         {
             SqlDatabase.CacheQueries = false;
+            SqlDatabase.SqlServerSelectComputed = false;
+
             ResetDapperTypes();
 
             try

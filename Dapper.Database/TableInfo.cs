@@ -16,6 +16,8 @@ namespace Dapper.Database
     /// </summary>
     public class TableInfo
     {
+        private readonly Lazy<IEnumerable<ColumnInfo>> _comparisonColumns;
+        private readonly Lazy<IEnumerable<ColumnInfo>> _concurrencyCheckColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _generatedColumns;
 
         private readonly Lazy<IEnumerable<ColumnInfo>> _insertColumns;
@@ -23,25 +25,27 @@ namespace Dapper.Database
         private readonly Lazy<IEnumerable<PropertyInfo>> _propertyList;
         private readonly Lazy<IEnumerable<ColumnInfo>> _selectColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _updateColumns;
-        private readonly Lazy<IEnumerable<ColumnInfo>> _concurrencyCheckColumns;
-        private readonly Lazy<IEnumerable<ColumnInfo>> _comparisonColumns;
 
         /// <summary>
-        /// Creates a new TableInfo for the specified type with the default table mapper.
+        ///     Creates a new TableInfo for the specified type with the default table mapper.
         /// </summary>
-        /// <param name="type">The entity <see cref="Type"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="type"/></exception>
+        /// <param name="type">The entity <see cref="Type" />.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="type" />
+        /// </exception>
         public TableInfo(Type type)
             : this(type, null)
         {
         }
 
         /// <summary>
-        /// Creates a new TableInfo for the specified type, with optional table mapper.
+        ///     Creates a new TableInfo for the specified type, with optional table mapper.
         /// </summary>
-        /// <param name="type">The entity <see cref="Type"/>.</param>
-        /// <param name="tableNameMapper">A delegate for how to generate the table name from the <paramref name="type"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="type"/></exception>
+        /// <param name="type">The entity <see cref="Type" />.</param>
+        /// <param name="tableNameMapper">A delegate for how to generate the table name from the <paramref name="type" />.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="type" />
+        /// </exception>
         public TableInfo(Type type, TableNameMapperDelegate tableNameMapper)
         {
             ClassType = type ?? throw new ArgumentNullException(nameof(type));
@@ -52,7 +56,7 @@ namespace Dapper.Database
             }
             else
             {
-                var tableAttr = type.GetCustomAttributes(false).SingleOrDefaultOfType("TableAttribute");
+                var tableAttr = type.GetCustomAttributes(false).SingleOrDefaultOfType(nameof(TableAttribute));
 
                 if (tableAttr != null)
                 {
@@ -66,6 +70,9 @@ namespace Dapper.Database
                         TableName = TableName.Substring(1);
                 }
             }
+
+            SqlServerSelectComputed = SqlDatabase.SqlServerSelectComputed || type.GetCustomAttributes(false)
+                .SingleOrDefaultOfType(nameof(SqlServerSelectComputedAttribute)) != null;
 
             Columns = type.GetProperties()
                 .Where(typeProperty => !typeProperty.GetCustomAttributes(false).AnyOfType<IgnoreAttribute>())
@@ -89,7 +96,7 @@ namespace Dapper.Database
                         IsKey = attributes.AnyOfType<KeyAttribute>(),
                         IsIdentity = genAtt?.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity
                                      || seqAtt != null,
-                        IsGenerated = genAtt != null && genAtt.DatabaseGeneratedOption != DatabaseGeneratedOption.None
+                        IsGenerated = (genAtt != null && genAtt.DatabaseGeneratedOption != DatabaseGeneratedOption.None)
                                       || seqAtt != null
                                       || hasTimestampAttribute,
                         IsConcurrencyToken = hasTimestampAttribute
@@ -98,11 +105,13 @@ namespace Dapper.Database
                         SequenceName = seqAtt?.Name
                     };
 
-                    ci.IsNullable = !ci.IsKey                               // do not allow Keys to be nullable
-                            && !attributes.AnyOfType<RequiredAttribute>()   // Required cannot be null. LATER: do we want to validate empty values? Using this for pre-C# 8 nullable enforcement
-                            && ci.Property.IsNullable();
+                    ci.IsNullable = !ci.IsKey // do not allow Keys to be nullable
+                                    && !attributes
+                                        .AnyOfType<
+                                            RequiredAttribute>() // Required cannot be null. LATER: do we want to validate empty values? Using this for pre-C# 8 nullable enforcement
+                                    && ci.Property.IsNullable();
 
-                    ci.ExcludeOnInsert = ci.IsGenerated && seqAtt == null
+                    ci.ExcludeOnInsert = (ci.IsGenerated && seqAtt == null)
                                          || attributes.AnyOfType<IgnoreInsertAttribute>()
                                          || hasReadOnlyAttribute;
 
@@ -140,8 +149,10 @@ namespace Dapper.Database
                 new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => !ci.ExcludeOnSelect), true);
             _keyColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsKey), true);
             _generatedColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsGenerated), true);
-            _concurrencyCheckColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsConcurrencyToken), true);
-            _comparisonColumns = new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsKey || ci.IsConcurrencyToken), true);
+            _concurrencyCheckColumns =
+                new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsConcurrencyToken), true);
+            _comparisonColumns =
+                new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsKey || ci.IsConcurrencyToken), true);
             _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => Columns.Select(ci => ci.Property), true);
         }
 
@@ -159,7 +170,8 @@ namespace Dapper.Database
 
         /// <summary>
         /// </summary>
-        internal IEnumerable<ColumnInfo> Columns { get; } // LATER: before making public maybe make this a list-dictionary hybrid?
+        internal IEnumerable<ColumnInfo>
+            Columns { get; } // LATER: before making public maybe make this a list-dictionary hybrid?
 
         /// <summary>
         /// </summary>
@@ -187,17 +199,24 @@ namespace Dapper.Database
         public IEnumerable<ColumnInfo> GeneratedColumns => _generatedColumns.Value;
 
         /// <summary>
-        /// Gets the set of columns to use in optimistic concurrency checks.
+        ///     Gets the set of columns to use in optimistic concurrency checks.
         /// </summary>
-        /// <value>A sequnce of zero or more columns.</value>
+        /// <value>A sequence of zero or more columns.</value>
         public IEnumerable<ColumnInfo> ConcurrencyCheckColumns => _concurrencyCheckColumns.Value;
 
         /// <summary>
-        /// Gets the set of columns to use in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement.
-        /// Columns should consist of key columns as well as those involved with optimistic concurrency checks.
+        ///     Gets the set of columns to use in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement.
+        ///     Columns should consist of key columns as well as those involved with optimistic concurrency checks.
         /// </summary>
-        /// <value>A sequnce of zero or more columns.</value>
+        /// <value>A sequence of zero or more columns.</value>
         public IEnumerable<ColumnInfo> ComparisonColumns => _comparisonColumns.Value;
+
+        /// <summary>
+        ///     Returns computed columns with select query vs. output clause.
+        ///     This corrects issues related to triggers applied and error "The target table '{Table}' of the DML statement cannot
+        ///     have any enabled triggers"
+        /// </summary>
+        public bool SqlServerSelectComputed { get; }
 
         /// <summary>
         /// </summary>
@@ -287,15 +306,16 @@ namespace Dapper.Database
         public LambdaExpression Output { get; set; }
 
         /// <summary>
-        /// Indicates whether this column can be set to a null value.
+        ///     Indicates whether this column can be set to a null value.
         /// </summary>
         public bool IsNullable { get; set; }
 
         /// <summary>
-        /// Indicates whether this column should be included in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c> statement as part of concurrency management.
+        ///     Indicates whether this column should be included in a <c>WHERE</c> clause in an <c>UPDATE</c> or <c>DELETE</c>
+        ///     statement as part of concurrency management.
         /// </summary>
-        /// <seealso cref="ConcurrencyCheckAttribute"/>
-        /// <seealso cref="TimestampAttribute"/>
+        /// <seealso cref="ConcurrencyCheckAttribute" />
+        /// <seealso cref="TimestampAttribute" />
         public bool IsConcurrencyToken { get; set; }
 
         /// <summary>

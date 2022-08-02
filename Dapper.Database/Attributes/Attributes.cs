@@ -64,4 +64,14 @@ namespace Dapper.Database.Attributes
         /// </summary>
         public string Name { get; }
     }
+
+    /// <summary>
+    ///     Specifies whether a field is read only (same as computed).
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
+    [AttributeUsage(AttributeTargets.Class)]
+    public class SqlServerSelectComputedAttribute : Attribute
+    {
+    }
+
 }

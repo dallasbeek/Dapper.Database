@@ -133,6 +133,7 @@ namespace Dapper.Database.Tests
 
 
     [Table("Account")]
+    [SqlServerSelectComputed]
     public class AccountModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

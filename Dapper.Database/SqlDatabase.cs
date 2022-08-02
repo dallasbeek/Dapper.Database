@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -12,6 +12,11 @@ namespace Dapper.Database
         ///     Globally turns off query caching
         /// </summary>
         public static bool CacheQueries = true;
+
+        /// <summary>
+        ///     When true computed columns are selected instead of returned in output clause
+        /// </summary>
+        public static bool SqlServerSelectComputed = false;
 
         private readonly IsolationLevel _isolationLevel;
 
