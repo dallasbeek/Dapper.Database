@@ -55,8 +55,8 @@ namespace Dapper.Database.Adapters
             if (!tableInfo.GeneratedColumns.Any())
                 return connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
 
-            command.Append(
-                $"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            command.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+
             command.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var gridReader = connection.QueryMultiple(command.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -94,10 +94,9 @@ namespace Dapper.Database.Adapters
                 ? $"where {EscapeColumn(tableInfo.KeyColumns.First(keyColumn => keyColumn.IsIdentity).ColumnName)} = last_insert_rowid();"
                 : $"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
-            var gridReader =
-                await connection.QueryMultipleAsync(command.ToString(), entityToInsert, transaction, commandTimeout);
+            var gridReader = await connection.QueryMultipleAsync(command.ToString(), entityToInsert, transaction, commandTimeout);
 
-            var values = gridReader.Read().ToList();
+            var values = (await gridReader.ReadAsync()).ToList();
 
             if (!values.Any()) return false;
 
@@ -122,7 +121,7 @@ namespace Dapper.Database.Adapters
             var gridReader =
                 await connection.QueryMultipleAsync(command.ToString(), entityToUpdate, transaction, commandTimeout);
 
-            var values = gridReader.Read().ToList();
+            var values = (await gridReader.ReadAsync()).ToList();
 
             if (!values.Any()) return false;
 

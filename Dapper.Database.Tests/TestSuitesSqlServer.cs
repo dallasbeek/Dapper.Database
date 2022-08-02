@@ -14,7 +14,7 @@ namespace Dapper.Database.Tests
         public static string ConnectionString =>
             IsAppVeyor
                 ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!"
-                : $"Data Source=localhost;Initial Catalog={DbName};Integrated Security=True";
+                : $"Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DbName};Integrated Security=True";
 
         protected override void CheckSkip()
         {

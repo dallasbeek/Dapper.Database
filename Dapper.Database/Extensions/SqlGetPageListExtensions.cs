@@ -429,7 +429,7 @@ namespace Dapper.Database.Extensions
                     commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
                 page,
                 pageSize,
-                connection.Count<T1>(sql, parameters, transaction, commandTimeout)
+                await connection.CountAsync<T1>(sql, parameters, transaction, commandTimeout)
             );
         }
 
@@ -478,7 +478,7 @@ namespace Dapper.Database.Extensions
                     splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
                 page,
                 pageSize,
-                connection.Count<T1>(sql, parameters, transaction, commandTimeout)
+                await connection.CountAsync(sql, parameters, transaction, commandTimeout)
             );
         }
 
@@ -530,7 +530,7 @@ namespace Dapper.Database.Extensions
                     splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
                 page,
                 pageSize,
-                connection.Count<T1>(sql, parameters, transaction, commandTimeout)
+                await connection.CountAsync(sql, parameters, transaction, commandTimeout)
             );
         }
 
@@ -580,7 +580,7 @@ namespace Dapper.Database.Extensions
                     commandTimeout: commandTimeout, splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2) })),
                 page,
                 pageSize,
-                connection.Count<T1>(sql, parameters, transaction, commandTimeout)
+                await connection.CountAsync<T1>(sql, parameters, transaction, commandTimeout)
             );
         }
 
@@ -632,7 +632,7 @@ namespace Dapper.Database.Extensions
                     splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3) })),
                 page,
                 pageSize,
-                connection.Count<T1>(sql, parameters, transaction, commandTimeout)
+                await connection.CountAsync<T1>(sql, parameters, transaction, commandTimeout)
             );
         }
 
@@ -685,7 +685,7 @@ namespace Dapper.Database.Extensions
                     splitOn: splitOn ?? SplitOnArgument(new[] { typeof(T2), typeof(T3), typeof(T4) })),
                 page,
                 pageSize,
-                connection.Count<T1>(sql, parameters, transaction, commandTimeout)
+                await connection.CountAsync<T1>(sql, parameters, transaction, commandTimeout)
             );
         }
 

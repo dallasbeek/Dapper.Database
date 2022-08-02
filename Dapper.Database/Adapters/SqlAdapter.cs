@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper.Database.Extensions;
 
 namespace Dapper.Database.Adapters
 {
@@ -292,7 +291,7 @@ namespace Dapper.Database.Adapters
         /// <returns>An update sql statement</returns>
         protected virtual string BuildUpdateQuery(TableInfo tableInfo, IEnumerable<string> columnsToUpdate)
         {
-            var updateColumns = columnsToUpdate?.ToArray() ?? new string[0];
+            var updateColumns = columnsToUpdate?.ToArray() ?? Array.Empty<string>();
             var updates =
                 tableInfo.UpdateColumns.Where(ci => !updateColumns.Any() || updateColumns.Contains(ci.PropertyName));
             return
@@ -499,12 +498,11 @@ namespace Dapper.Database.Adapters
             }
 
             // Update failed, check for optimistic concurrency failure
-            if (tableInfo.ConcurrencyCheckColumns.Any())
+            if (!tableInfo.ConcurrencyCheckColumns.Any()) return false;
+
+            if (Exists(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
             {
-                if (Exists(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
-                {
-                    throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
-                }
+                throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
             }
 
             return false;
@@ -564,12 +562,11 @@ namespace Dapper.Database.Adapters
             }
 
             // Update failed, check for optimistic concurrency failure
-            if (tableInfo.ConcurrencyCheckColumns.Any())
+            if (!tableInfo.ConcurrencyCheckColumns.Any()) return false;
+
+            if (await ExistsAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
             {
-                if (await ExistsAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
-                {
-                    throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
-                }
+                throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
             }
 
             return false;

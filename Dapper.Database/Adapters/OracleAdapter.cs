@@ -42,7 +42,7 @@ namespace Dapper.Database.Adapters
         /// <remarks>
         ///     PL/SQL blocks will automatically return -1 for rows affected.
         ///     The only way to get an accurate count is to bind an additional variable in PL/SQL and capture the builtin variable
-        ///     <c>SQL%rowcount</c>;
+        ///     <c>ROW_COUNT$$</c>;
         ///     this is the name of the bind variable containing the value.
         /// </remarks>
         protected int ResolveRowCount(int count, DynamicParameters parameters) =>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace Dapper.Database.Adapters
                 if (!(connection.Execute(command.ToString(), entityToInsert, transaction, commandTimeout) > 0))
                 {
                     return false;
-                };
+                }
 
                 r = connection.Query(selectCommand.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
             }
@@ -81,7 +81,7 @@ namespace Dapper.Database.Adapters
                 if (!(connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0))
                 {
                     return false;
-                };
+                }
 
                 r = connection.Query(selectCommand.ToString(), entityToUpdate, transaction, commandTimeout: commandTimeout);
             }

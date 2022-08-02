@@ -23,6 +23,6 @@ namespace Dapper.Database.Mapper
             Map = Expression.Lambda<Func<TFirst, TSecond, TThird, TFourth, TFirst>>(blockExpression, first, second, third, fourth).Compile();
         }
 
-        internal static Func<TFirst, TSecond, TThird, TFourth, TFirst> Map { get; private set; }
+        internal static Func<TFirst, TSecond, TThird, TFourth, TFirst> Map { get; }
     }
 }

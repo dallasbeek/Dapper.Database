@@ -22,7 +22,7 @@ namespace Dapper.Database
 
         private readonly Lazy<IEnumerable<ColumnInfo>> _insertColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _keyColumns;
-        private readonly Lazy<IEnumerable<PropertyInfo>> _propertyList;
+        //private readonly Lazy<IEnumerable<PropertyInfo>> _propertyList;
         private readonly Lazy<IEnumerable<ColumnInfo>> _selectColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _updateColumns;
 
@@ -153,7 +153,8 @@ namespace Dapper.Database
                 new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsConcurrencyToken), true);
             _comparisonColumns =
                 new Lazy<IEnumerable<ColumnInfo>>(() => Columns.Where(ci => ci.IsKey || ci.IsConcurrencyToken), true);
-            _propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => Columns.Select(ci => ci.Property), true);
+
+            //_propertyList = new Lazy<IEnumerable<PropertyInfo>>(() => Columns.Select(ci => ci.Property), true);
         }
 
         /// <summary>
@@ -243,18 +244,6 @@ namespace Dapper.Database
                 throw new DataException("<T> does not have a [Key]");
             return compositeKeys;
         }
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <returns></returns>
-        //public IEnumerable<PropertyInfo> PropertyList => _propertyList.Value;
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <returns></returns>
-        //public bool HasSequenceName => ColumnInfos.Any(ci => !string.IsNullOrWhiteSpace(ci.SequenceName));
     }
 
     /// <summary>

@@ -6,7 +6,7 @@ namespace Dapper.Database.Extensions
 {
     public static partial class SqlMapperExtensions
     {
-        private struct SqlQueryHelper
+        private readonly struct SqlQueryHelper
         {
             public SqlQueryHelper(Type type, IDbConnection connection) : this()
             {

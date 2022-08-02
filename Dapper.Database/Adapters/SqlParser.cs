@@ -44,6 +44,7 @@ namespace Dapper.Database.Adapters
             var orderLoc = -1;
             if (words.Count > 1)
                 for (var c = words.Count - 1; c != 0; c--)
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (orderLoc == -1 && words[c].Equals("BY", StringComparison.OrdinalIgnoreCase) &&
                         words[c - 1].Equals("ORDER", StringComparison.OrdinalIgnoreCase))
                     {

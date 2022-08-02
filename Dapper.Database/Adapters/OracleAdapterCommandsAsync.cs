@@ -18,7 +18,7 @@ namespace Dapper.Database.Adapters
             var sql = InsertQuery(tableInfo);
 
             if (!tableInfo.GeneratedColumns.Any())
-                return connection.Execute(sql, entityToInsert, transaction, commandTimeout) > 0;
+                return await connection.ExecuteAsync(sql, entityToInsert, transaction, commandTimeout) > 0;
 
             var parameters = BuildInsertParameters(tableInfo, entityToInsert);
 
@@ -50,7 +50,7 @@ namespace Dapper.Database.Adapters
 
             // Do a simple update if we have no outputs.
             if (!tableInfo.GeneratedColumns.Any())
-                return connection.Execute(sql, entityToUpdate, transaction, commandTimeout) > 0;
+                return await connection.ExecuteAsync(sql, entityToUpdate, transaction, commandTimeout) > 0;
 
             // We have outputs.
             var parameters = BuildUpdateParameters(tableInfo, entityToUpdate);

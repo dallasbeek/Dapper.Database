@@ -15,7 +15,7 @@ namespace Dapper.Database.Extensions
         /// <param name="source"></param>
         /// <param name="typeName"></param>
         /// <returns>The item (if found) as a <see langword="dynamic" />, or null if not found.</returns>
-        internal static dynamic SingleOrDefaultOfType<TSource>(this IEnumerable<TSource> source, string typeName) => source.SingleOrDefault(item => item.GetType().Name == typeName) as dynamic;
+        internal static dynamic SingleOrDefaultOfType<TSource>(this IEnumerable<TSource> source, string typeName) => source.SingleOrDefault(item => item.GetType().Name == typeName);
 
 
         /// <summary>
