@@ -3,41 +3,41 @@
     ViewData["Title"] = "Home Page";
 }
 
-  <div>
-    
-      @if (TempData["SuccessMessage"] != null)
-      {
-          <div class="alert alert-success" role="alert">
-              @TempData["SuccessMessage"]
-          </div>
-      }
-      
+<div>
 
-      <nav aria-label="Pager">
-      <ul class="pagination">
-        @for (var pg = 1; pg <= (int)Math.Ceiling((double)Model.Contacts.TotalCount / Model.Contacts.PageSize); pg++)
-        {
-          <li class="page-item @(pg == Model.Contacts.CurrentPage ? "active" : "") ">
-            <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@pg">@pg</a>
-          </li>
-        }
-      </ul>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+
+    <nav aria-label="Pager">
+        <ul class="pagination">
+            @for (var pg = 1; pg <= (int)Math.Ceiling((double)Model.Contacts.TotalCount / Model.Contacts.PageSize); pg++)
+            {
+                <li class="page-item @(pg == Model.Contacts.CurrentPage ? "active" : "") ">
+                    <a class="page-link" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@pg">@pg</a>
+                </li>
+            }
+        </ul>
     </nav>
 
 
     <form asp-action="Index" class="input-group mb-3" method="get">
-      <div class="input-group-prepend">
-        <a asp-action="Edit" class="btn btn-success">Create New Contact</a>
-      </div>
+        <div class="input-group-prepend">
+            <a asp-action="Edit" class="btn btn-success">Create New Contact</a>
+        </div>
 
-      <input type="text" asp-for="Search" class="form-control" placeholder="Search">
-      <div class="input-group-append">
-        <input type="submit" class="btn btn-outline-secondary" value="Search" />
-      </div>
+        <input type="text" asp-for="Search" class="form-control" placeholder="Search">
+        <div class="input-group-append">
+            <input type="submit" class="btn btn-outline-secondary" value="Search"/>
+        </div>
     </form>
 
 
     <div class="text-center">
-      @Html.DisplayFor(m => m.Contacts)
+        @Html.DisplayFor(m => m.Contacts)
     </div>
-  </div>
+</div>
