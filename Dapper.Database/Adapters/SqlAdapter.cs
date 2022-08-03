@@ -78,21 +78,6 @@ namespace Dapper.Database.Adapters
                 () => BuildUpdateQuery(tableInfo, columnsToUpdate));
 
         /// <summary>
-        ///     Default implementation of an exists object query
-        /// </summary>
-        /// <param name="tableInfo">table information about the entity</param>
-        /// <returns>An exists sql statement</returns>
-        /// <remarks>
-        ///     Statements are cached by type handle.
-        /// </remarks>
-        public virtual string ExistsQuery(TableInfo tableInfo) =>
-            ExistsQueries.Acquire(
-                tableInfo.ClassType.TypeHandle,
-                () => true,
-                () => BuildExistsQuery(tableInfo)
-            );
-
-        /// <summary>
         ///     Default implementation of a count query
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
@@ -245,6 +230,30 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
+        ///     Returns the format for a collection of columns in the <c>WHERE</c> clause.
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns>A <see cref="string" /> consisting of all column equality expression, joined by <c>AND</c>.</returns>
+        public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns)
+            =>
+                string.Join(" and ", columns.Select(EscapeWhereColumn));
+
+        /// <summary>
+        ///     Default implementation of an exists object query
+        /// </summary>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <returns>An exists sql statement</returns>
+        /// <remarks>
+        ///     Statements are cached by type handle.
+        /// </remarks>
+        public virtual string ExistsQuery(TableInfo tableInfo) =>
+            ExistsQueries.Acquire(
+                tableInfo.ClassType.TypeHandle,
+                () => true,
+                () => BuildExistsQuery(tableInfo)
+            );
+
+        /// <summary>
         ///     Returns the format for a single column in the <c>WHERE</c> clause.
         /// </summary>
         /// <param name="column"></param>
@@ -257,22 +266,11 @@ namespace Dapper.Database.Adapters
             var eqExpression = $"{escColumnName} = {escParameterName}";
 
             if (column.IsNullable)
-            {
                 // (x = :x or (x is null and :x is null))
                 return $"({eqExpression} or ({escColumnName} is null and {escParameterName} is null))";
-            }
 
             return eqExpression;
         }
-
-        /// <summary>
-        ///     Returns the format for a collection of columns in the <c>WHERE</c> clause.
-        /// </summary>
-        /// <param name="columns"></param>
-        /// <returns>A <see cref="string"/> consisting of all column equality expression, joined by <c>AND</c>.</returns>
-        public virtual string EscapeWhereList(IEnumerable<ColumnInfo> columns)
-            =>
-                string.Join(" and ", columns.Select(EscapeWhereColumn));
 
         /// <summary>
         ///     Default implementation of an insert query.
@@ -452,7 +450,7 @@ namespace Dapper.Database.Adapters
             var success = toInsert.Any();
             if (success && !tableInfo.GeneratedColumns.Any())
                 return await connection.ExecuteAsync(InsertQuery(tableInfo), entitiesToInsert, transaction,
-                           commandTimeout) >= toInsert.Length;
+                    commandTimeout) >= toInsert.Length;
 
             foreach (var e in toInsert)
                 success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
@@ -464,7 +462,7 @@ namespace Dapper.Database.Adapters
         #region Update Implementations
 
         /// <summary>
-        ///     Performs the SQL <c>UPDATE</c> statement for <see cref="Update{T}"/>.
+        ///     Performs the SQL <c>UPDATE</c> statement for <see cref="Update{T}" />.
         /// </summary>
         /// <typeparam name="T">the entity type</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -488,22 +486,21 @@ namespace Dapper.Database.Adapters
         /// <param name="entityToUpdate">Entity to update</param>
         /// <param name="columnsToUpdate">A list of columns to update</param>
         /// <returns>true if the entity was updated</returns>
-        /// <exception cref="OptimisticConcurrencyException">if <paramref name="entityToUpdate"/> was modified by a different connection</exception>
+        /// <exception cref="OptimisticConcurrencyException">
+        ///     if <paramref name="entityToUpdate" /> was modified by a different
+        ///     connection
+        /// </exception>
         public virtual bool Update<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
             TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            if (UpdateInternal(connection, transaction, commandTimeout, tableInfo, entityToUpdate, columnsToUpdate))
-            {
-                return true;
-            }
+            if (UpdateInternal(connection, transaction, commandTimeout, tableInfo, entityToUpdate,
+                    columnsToUpdate)) return true;
 
             // Update failed, check for optimistic concurrency failure
             if (!tableInfo.ConcurrencyCheckColumns.Any()) return false;
 
             if (Exists(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
-            {
                 throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
-            }
 
             return false;
         }
@@ -530,7 +527,7 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
-        ///     Performs the SQL <c>UPDATE</c> statement for <see cref="UpdateAsync{T}"/>.
+        ///     Performs the SQL <c>UPDATE</c> statement for <see cref="UpdateAsync{T}" />.
         /// </summary>
         /// <typeparam name="T">the entity type</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -556,18 +553,14 @@ namespace Dapper.Database.Adapters
         public virtual async Task<bool> UpdateAsync<T>(IDbConnection connection, IDbTransaction transaction,
             int? commandTimeout, TableInfo tableInfo, T entityToUpdate, IEnumerable<string> columnsToUpdate)
         {
-            if (await UpdateInternalAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate, columnsToUpdate))
-            {
-                return true;
-            }
+            if (await UpdateInternalAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate,
+                    columnsToUpdate)) return true;
 
             // Update failed, check for optimistic concurrency failure
             if (!tableInfo.ConcurrencyCheckColumns.Any()) return false;
 
             if (await ExistsAsync(connection, transaction, commandTimeout, tableInfo, entityToUpdate))
-            {
                 throw new OptimisticConcurrencyException(tableInfo, entityToUpdate);
-            }
 
             return false;
         }
@@ -591,7 +584,7 @@ namespace Dapper.Database.Adapters
             foreach (var e in toUpdate)
                 // ReSharper disable once PossibleMultipleEnumeration
                 success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e,
-                              columnsToUpdate);
+                    columnsToUpdate);
 
             return success;
         }
@@ -619,7 +612,7 @@ namespace Dapper.Database.Adapters
         {
             var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
             if (!connection.ExecuteScalar<bool>(ExistsQuery(tableInfo, qWhere), entityToUpsert, transaction,
-                commandTimeout))
+                    commandTimeout))
             {
                 insertAction?.Invoke(entityToUpsert);
                 return Insert(connection, transaction, commandTimeout, tableInfo, entityToUpsert);
@@ -685,7 +678,7 @@ namespace Dapper.Database.Adapters
         {
             var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
             if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), entityToUpsert, transaction,
-                commandTimeout))
+                    commandTimeout))
             {
                 insertAction?.Invoke(entityToUpsert);
                 return await InsertAsync(connection, transaction, commandTimeout, tableInfo, entityToUpsert);
@@ -718,7 +711,7 @@ namespace Dapper.Database.Adapters
             var qWhere = $" where {EscapeWhereList(tableInfo.KeyColumns)}";
             foreach (var e in toUpsert)
                 if (!await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo, qWhere), e, transaction,
-                    commandTimeout))
+                        commandTimeout))
                 {
                     insertAction?.Invoke(e);
                     success = success && await InsertAsync(connection, transaction, commandTimeout, tableInfo, e);
@@ -728,7 +721,7 @@ namespace Dapper.Database.Adapters
                     updateAction?.Invoke(e);
                     // ReSharper disable once PossibleMultipleEnumeration
                     success = success && await UpdateAsync(connection, transaction, commandTimeout, tableInfo, e,
-                                  columnsToUpdate);
+                        columnsToUpdate);
                 }
 
             return success;
@@ -748,10 +741,8 @@ namespace Dapper.Database.Adapters
         /// <param name="entity">Entity to check</param>
         /// <returns>true if the entity exists</returns>
         public virtual bool Exists<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
-            TableInfo tableInfo, T entity)
-        {
-            return connection.ExecuteScalar<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
-        }
+            TableInfo tableInfo, T entity) =>
+            connection.ExecuteScalar<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
 
         /// <summary>
         ///     Tests whether an entity exists in table "Ts"
@@ -763,10 +754,8 @@ namespace Dapper.Database.Adapters
         /// <param name="entity">Entity to check</param>
         /// <returns>true if the entity exists</returns>
         public virtual async Task<bool> ExistsAsync<T>(IDbConnection connection, IDbTransaction transaction,
-            int? commandTimeout, TableInfo tableInfo, T entity)
-        {
-            return await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
-        }
+            int? commandTimeout, TableInfo tableInfo, T entity) =>
+            await connection.ExecuteScalarAsync<bool>(ExistsQuery(tableInfo), entity, transaction, commandTimeout);
 
         #endregion
     }

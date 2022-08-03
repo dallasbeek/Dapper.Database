@@ -39,11 +39,9 @@ public abstract partial class TestSuite
     [Trait("Category", "Exists")]
     public void ExistsByIntegerId()
     {
-        using (var db = GetSqlDatabase())
-        {
-            Assert.True(db.Exists<Product>(806));
-            Assert.False(db.Exists<Product>(-1));
-        }
+        using var db = GetSqlDatabase();
+        Assert.True(db.Exists<Product>(806));
+        Assert.False(db.Exists<Product>(-1));
     }
 
     [Fact]
@@ -112,5 +110,25 @@ public abstract partial class TestSuite
 
         Assert.True(db.Exists<Product>(tsql));
         Assert.False(db.Exists<Product>(fsql));
+    }
+
+    [Fact]
+    [Trait("Category", "Exists")]
+    public void ExistsBySelectNoType()
+    {
+        using var db = GetSqlDatabase();
+        Assert.True(db.Exists("select 1 from Product p where p.ProductId = 806"));
+        Assert.False(db.Exists("select 1 from Product p where p.ProductId = -1"));
+    }
+
+    [Fact]
+    [Trait("Category", "Exists")]
+    public void ExistsBySelectNoTypeParameter()
+    {
+        using var db = GetSqlDatabase();
+        Assert.True(db.Exists($"select 1 from Product p where p.ProductId = {P}Id",
+            new { Id = 806 }));
+        Assert.False(db.Exists(
+            $"select 1 from Product p where p.ProductId = {P}Id", new { Id = -1 }));
     }
 }

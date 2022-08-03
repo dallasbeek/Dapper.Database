@@ -24,6 +24,6 @@ namespace Dapper.Database.Extensions
         ///     cref="DynamicParameters.Output{T}(T, System.Linq.Expressions.Expression{System.Func{T,object}}, System.Data.DbType?, int?)" />
         public static DynamicParameters Output<T>(this DynamicParameters parameters, T target, ColumnInfo column,
             DbType? dbType = null, int? size = null)
-            => parameters.Output(target, (Expression<Func<T, object>>) column.Output, dbType, size);
+            => parameters.Output(target, (Expression<Func<T, object>>)column.Output, dbType, size);
     }
 }

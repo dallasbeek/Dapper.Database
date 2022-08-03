@@ -18,9 +18,12 @@ namespace Dapper.Database.Mapper
             var thirdSetExpression = MappingCache.GetSetExpression(third, first, second);
             var fourthSetExpression = MappingCache.GetSetExpression(fourth, first, second, third);
 
-            var blockExpression = Expression.Block(first, second, third, fourth, secondSetExpression, thirdSetExpression, fourthSetExpression, first);
+            var blockExpression = Expression.Block(first, second, third, fourth, secondSetExpression,
+                thirdSetExpression, fourthSetExpression, first);
 
-            Map = Expression.Lambda<Func<TFirst, TSecond, TThird, TFourth, TFirst>>(blockExpression, first, second, third, fourth).Compile();
+            Map = Expression
+                .Lambda<Func<TFirst, TSecond, TThird, TFourth, TFirst>>(blockExpression, first, second, third, fourth)
+                .Compile();
         }
 
         internal static Func<TFirst, TSecond, TThird, TFourth, TFirst> Map { get; }

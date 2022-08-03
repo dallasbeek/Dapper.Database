@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-
 #if !NETSTANDARD
 using System.Configuration;
 #endif
@@ -32,7 +31,7 @@ namespace Dapper.Database
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public IDbConnection GetConnection() => (T) Activator.CreateInstance(typeof(T), _connectionString);
+        public IDbConnection GetConnection() => (T)Activator.CreateInstance(typeof(T), _connectionString);
     }
 
 #if !NETSTANDARD

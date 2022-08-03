@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net462'">
-      <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
 
   <ItemGroup>

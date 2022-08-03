@@ -70,7 +70,7 @@ namespace Dapper.Database.Extensions
 
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return connection.Execute(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, whereClause), null,
-                       transaction, commandTimeout) > 0;
+                transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Dapper.Database.Extensions
 
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return connection.Execute(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, whereClause), parameters,
-                       transaction, commandTimeout) > 0;
+                transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Dapper.Database.Extensions
         {
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return connection.Execute(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, null), null, transaction,
-                       commandTimeout) > 0;
+                commandTimeout) > 0;
         }
 
         #endregion
@@ -135,7 +135,7 @@ namespace Dapper.Database.Extensions
                 sqlHelper.GenerateCompositeKeyQuery(entityToDelete,
                     (ti, sql) => sqlHelper.Adapter.DeleteQuery(ti, sql));
             return await connection.ExecuteAsync(deleteQuery.SqlStatement, deleteQuery.Parameters, transaction,
-                       commandTimeout) > 0;
+                commandTimeout) > 0;
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Dapper.Database.Extensions
             var deleteQuery =
                 sqlHelper.GenerateSingleKeyQuery(primaryKeyValue, (ti, sql) => sqlHelper.Adapter.DeleteQuery(ti, sql));
             return await connection.ExecuteAsync(deleteQuery.SqlStatement, deleteQuery.Parameters, transaction,
-                       commandTimeout) > 0;
+                commandTimeout) > 0;
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Dapper.Database.Extensions
 
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return await connection.ExecuteAsync(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, whereClause), null,
-                       transaction, commandTimeout) > 0;
+                transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Dapper.Database.Extensions
 
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return await connection.ExecuteAsync(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, whereClause),
-                       parameters, transaction, commandTimeout) > 0;
+                parameters, transaction, commandTimeout) > 0;
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Dapper.Database.Extensions
         {
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return await connection.ExecuteAsync(sqlHelper.Adapter.DeleteQuery(sqlHelper.TableInfo, null), null,
-                       transaction, commandTimeout) > 0;
+                transaction, commandTimeout) > 0;
         }
 
         #endregion

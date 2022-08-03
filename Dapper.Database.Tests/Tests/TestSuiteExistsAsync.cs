@@ -112,4 +112,25 @@ public abstract partial class TestSuite
         Assert.True(await db.ExistsAsync<Product>(tsql));
         Assert.False(await db.ExistsAsync<Product>(fsql));
     }
+
+
+    [Fact]
+    [Trait("Category", "Exists")]
+    public async Task ExistsBySelectNoTypeAsync()
+    {
+        using var db = GetSqlDatabase();
+        Assert.True(await db.ExistsAsync("select 1 from Product p where p.ProductId = 806"));
+        Assert.False(await db.ExistsAsync("select 1 from Product p where p.ProductId = -1"));
+    }
+
+    [Fact]
+    [Trait("Category", "Exists")]
+    public async Task ExistsBySelectNoTypeParameterAsync()
+    {
+        using var db = GetSqlDatabase();
+        Assert.True(await db.ExistsAsync($"select 1 from Product p where p.ProductId = {P}Id",
+            new { Id = 806 }));
+        Assert.False(await db.ExistsAsync(
+            $"select 1 from Product p where p.ProductId = {P}Id", new { Id = -1 }));
+    }
 }

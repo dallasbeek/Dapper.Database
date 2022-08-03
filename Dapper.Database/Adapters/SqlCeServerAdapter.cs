@@ -28,19 +28,22 @@ namespace Dapper.Database.Adapters
             if (!tableInfo.GeneratedColumns.Any())
                 return connection.Execute(command.ToString(), entityToInsert, transaction, commandTimeout) > 0;
 
-            var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            var selectCommand =
+                new StringBuilder(
+                    $"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             selectCommand.Append(tableInfo.KeyColumns.Any(k => k.IsIdentity)
                 ? $"where {EscapeColumn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = @@IDENTITY;"
                 : $"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             var wasClosed = connection.State == ConnectionState.Closed;
-            
+
             if (wasClosed) connection.Open();
 
             connection.Execute(command.ToString(), entityToInsert, transaction, commandTimeout);
-            
-            var r = connection.Query(selectCommand.ToString(), entityToInsert, transaction, commandTimeout: commandTimeout);
+
+            var r = connection.Query(selectCommand.ToString(), entityToInsert, transaction,
+                commandTimeout: commandTimeout);
 
             if (wasClosed) connection.Close();
 
@@ -48,9 +51,8 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>)values[0]);
             return true;
-
         }
 
         /// <inheritdoc />
@@ -62,8 +64,10 @@ namespace Dapper.Database.Adapters
             if (!tableInfo.GeneratedColumns.Any())
                 return connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
 
-            var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
- 
+            var selectCommand =
+                new StringBuilder(
+                    $"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+
             selectCommand.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout);
@@ -74,10 +78,9 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
 
             return true;
-
         }
 
         /// <summary>
@@ -124,7 +127,9 @@ namespace Dapper.Database.Adapters
             if (!tableInfo.GeneratedColumns.Any())
                 return await connection.ExecuteAsync(command.ToString(), entityToInsert, transaction, commandTimeout) >
                        0;
-            var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            var selectCommand =
+                new StringBuilder(
+                    $"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             selectCommand.Append(tableInfo.KeyColumns.Any(k => k.IsIdentity)
                 ? $"where {EscapeColumn(tableInfo.KeyColumns.First(k => k.IsIdentity).ColumnName)} = @@IDENTITY;"
@@ -134,7 +139,7 @@ namespace Dapper.Database.Adapters
             if (wasClosed) connection.Open();
 
             await connection.ExecuteAsync(command.ToString(), entityToInsert, transaction, commandTimeout);
-        
+
             var result = await connection.QueryAsync(selectCommand.ToString(), entityToInsert, transaction,
                 commandTimeout);
 
@@ -144,9 +149,8 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>)values[0]);
             return true;
-
         }
 
         /// <inheritdoc />
@@ -158,12 +162,14 @@ namespace Dapper.Database.Adapters
             if (!tableInfo.GeneratedColumns.Any())
                 return await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout) >
                        0;
-            var selectCommand = new StringBuilder($"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
-         
+            var selectCommand =
+                new StringBuilder(
+                    $"select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+
             selectCommand.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
             await connection.ExecuteAsync(command.ToString(), entityToUpdate, transaction, commandTimeout);
-    
+
             var result = await connection.QueryAsync(selectCommand.ToString(), entityToUpdate, transaction,
                 commandTimeout);
 
@@ -171,10 +177,9 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
 
             return true;
-
         }
 
         /// <summary>

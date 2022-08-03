@@ -73,5 +73,4 @@ namespace Dapper.Database.Attributes
     public class SqlServerSelectComputedAttribute : Attribute
     {
     }
-
 }

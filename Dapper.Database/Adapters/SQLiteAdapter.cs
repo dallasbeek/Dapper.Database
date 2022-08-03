@@ -41,7 +41,7 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>)values[0]);
 
             return true;
         }
@@ -55,7 +55,8 @@ namespace Dapper.Database.Adapters
             if (!tableInfo.GeneratedColumns.Any())
                 return connection.Execute(command.ToString(), entityToUpdate, transaction, commandTimeout) > 0;
 
-            command.Append($"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
+            command.Append(
+                $"; select {EscapeColumnListWithAliases(tableInfo.GeneratedColumns, tableInfo.TableName)} from {EscapeTableName(tableInfo)} ");
 
             command.Append($"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
@@ -65,7 +66,7 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
 
             return true;
         }
@@ -94,13 +95,14 @@ namespace Dapper.Database.Adapters
                 ? $"where {EscapeColumn(tableInfo.KeyColumns.First(keyColumn => keyColumn.IsIdentity).ColumnName)} = last_insert_rowid();"
                 : $"where {EscapeWhereList(tableInfo.KeyColumns)};");
 
-            var gridReader = await connection.QueryMultipleAsync(command.ToString(), entityToInsert, transaction, commandTimeout);
+            var gridReader =
+                await connection.QueryMultipleAsync(command.ToString(), entityToInsert, transaction, commandTimeout);
 
             var values = (await gridReader.ReadAsync()).ToList();
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToInsert, (IDictionary<string, object>)values[0]);
 
             return true;
         }
@@ -125,7 +127,7 @@ namespace Dapper.Database.Adapters
 
             if (!values.Any()) return false;
 
-            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>) values[0]);
+            ApplyGeneratedValues(tableInfo, entityToUpdate, (IDictionary<string, object>)values[0]);
 
             return true;
         }

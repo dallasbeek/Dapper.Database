@@ -21,7 +21,9 @@ namespace Dapper.Database
         private readonly Lazy<IEnumerable<ColumnInfo>> _generatedColumns;
 
         private readonly Lazy<IEnumerable<ColumnInfo>> _insertColumns;
+
         private readonly Lazy<IEnumerable<ColumnInfo>> _keyColumns;
+
         //private readonly Lazy<IEnumerable<PropertyInfo>> _propertyList;
         private readonly Lazy<IEnumerable<ColumnInfo>> _selectColumns;
         private readonly Lazy<IEnumerable<ColumnInfo>> _updateColumns;

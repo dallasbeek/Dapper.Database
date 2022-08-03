@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+using System.Data.SqlClient;
 using System.IO;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;

@@ -43,7 +43,8 @@ namespace Dapper.Database.Extensions
                 }
             }
 
-            var context = property.DeclaringType?.CustomAttributes.FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableContextAttribute");
+            var context = property.DeclaringType?.CustomAttributes.FirstOrDefault(x =>
+                x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableContextAttribute");
 
             if (context != null &&
                 context.ConstructorArguments.Count == 1 &&
