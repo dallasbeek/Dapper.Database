@@ -1,107 +1,95 @@
 ﻿using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
-namespace Dapper.Database.Tests
+namespace Dapper.Database.Tests;
+
+public abstract partial class TestSuite
 {
-    public abstract partial class TestSuite
+    [Fact]
+    [Trait("Category", "Transaction")]
+    public void TransactionDispose()
     {
+        //if (GetProvider() == Provider.SQLite) return;
 
-        [Fact]
-        [Trait("Category", "Transaction")]
-        public void TransactionDispose()
+        using var db = GetSqlDatabase();
+        var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(db.Insert(p));
+
+        using (var tran = db.GetTransaction())
         {
-            //if (GetProvider() == Provider.SQLite) return;
-
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(db.Insert(p));
-
-                using (var tran = db.GetTransaction())
-                {
-                    var gp = db.Get<PersonIdentity>(p.IdentityId);
-                    gp.FirstName = "Sally";
-                    db.Update(gp);
-                    tran.Dispose();
-                }
-
-                var agp = db.Get<PersonIdentity>(p.IdentityId);  //updates should have been rolled back
-                Assert.Equal("Alice", agp.FirstName);
-
-            }
-        }
-        [Fact]
-        [Trait("Category", "Transaction")]
-        public void TransactionAutoDispose()
-        {
-            //if (GetProvider() == Provider.SQLite) return;
-
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(db.Insert(p));
-
-                using (var tran = db.GetTransaction())
-                {
-                    var gp = db.Get<PersonIdentity>(p.IdentityId);
-                    gp.FirstName = "Sally";
-                    db.Update(gp);
-                }
-
-                var agp = db.Get<PersonIdentity>(p.IdentityId);  //updates should have been rolled back
-                Assert.Equal("Alice", agp.FirstName);
-
-            }
+            var gp = db.Get<PersonIdentity>(p.IdentityId);
+            gp.FirstName = "Sally";
+            db.Update(gp);
+            tran.Dispose();
         }
 
-        [Fact]
-        [Trait("Category", "Transaction")]
-        public void TransactionCommit()
-        {
-            //if (GetProvider() == Provider.SQLite) return;
+        var agp = db.Get<PersonIdentity>(p.IdentityId); //updates should have been rolled back
+        Assert.Equal("Alice", agp.FirstName);
+    }
 
-            using (var db = GetSqlDatabase())
+    [Fact]
+    [Trait("Category", "Transaction")]
+    public void TransactionAutoDispose()
+    {
+        //if (GetProvider() == Provider.SQLite) return;
+
+        using var db = GetSqlDatabase();
+        var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(db.Insert(p));
+
+        using (var tran = db.GetTransaction())
+        {
+            var gp = db.Get<PersonIdentity>(p.IdentityId);
+            gp.FirstName = "Sally";
+            db.Update(gp);
+        }
+
+        var agp = db.Get<PersonIdentity>(p.IdentityId); //updates should have been rolled back
+        Assert.Equal("Alice", agp.FirstName);
+    }
+
+    [Fact]
+    [Trait("Category", "Transaction")]
+    public void TransactionCommit()
+    {
+        //if (GetProvider() == Provider.SQLite) return;
+
+        using var db = GetSqlDatabase();
+        var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(db.Insert(p));
+        using (var tran = db.GetTransaction())
+        {
+            var gp = db.Get<PersonIdentity>(p.IdentityId);
+            gp.FirstName = "Sally";
+            db.Update(gp);
+            tran.Complete();
+        }
+
+        var agp = db.Get<PersonIdentity>(p.IdentityId); //updates should have been rolled back
+        Assert.Equal("Sally", agp.FirstName);
+    }
+
+    [Fact]
+    [Trait("Category", "Transaction")]
+    public void NestedTransactionCommitInnerRollbackOuter()
+    {
+        //if (GetProvider() == Provider.SQLite) return;
+
+        using var db = GetSqlDatabase();
+        var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(db.Insert(p));
+        using (var tranOuter = db.GetTransaction())
+        {
+            using (var tran = db.GetTransaction())
             {
-                var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(db.Insert(p));
-                using (var tran = db.GetTransaction())
-                {
-                    var gp = db.Get<PersonIdentity>(p.IdentityId);
-                    gp.FirstName = "Sally";
-                    db.Update(gp);
-                    tran.Complete();
-                }
-                var agp = db.Get<PersonIdentity>(p.IdentityId);  //updates should have been rolled back
-                Assert.Equal("Sally", agp.FirstName);
+                var gp = db.Get<PersonIdentity>(p.IdentityId);
+                gp.FirstName = "Sally";
+                db.Update(gp);
+                tran.Complete();
             }
         }
 
-        [Fact]
-        [Trait("Category", "Transaction")]
-        public void NestedTransactionCommitInnerRollbackOuter()
-        {
-            //if (GetProvider() == Provider.SQLite) return;
-
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(db.Insert(p));
-                using (var tranOuter = db.GetTransaction())
-                {
-
-                    using (var tran = db.GetTransaction())
-                    {
-                        var gp = db.Get<PersonIdentity>(p.IdentityId);
-                        gp.FirstName = "Sally";
-                        db.Update(gp);
-                        tran.Complete();
-                    }
-                }
-
-                var agp = db.Get<PersonIdentity>(p.IdentityId);  //updates should have been rolled back
-                Assert.Equal("Alice", agp.FirstName);
-
-            }
-        }
+        var agp = db.Get<PersonIdentity>(p.IdentityId); //updates should have been rolled back
+        Assert.Equal("Alice", agp.FirstName);
     }
 }

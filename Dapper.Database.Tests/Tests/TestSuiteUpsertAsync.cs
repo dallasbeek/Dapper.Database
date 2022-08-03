@@ -1,229 +1,224 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dapper.Database;
-using Dapper.Database.Extensions;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
-namespace Dapper.Database.Tests
+namespace Dapper.Database.Tests;
+
+public abstract partial class TestSuite
 {
-    public abstract partial class TestSuite
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertIdentityAsync()
     {
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertIdentityAsync()
+        using var db = GetSqlDatabase();
+        var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(await db.UpsertAsync(p));
+        Assert.True(p.IdentityId > 0);
+
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        Assert.True(await db.UpsertAsync(p));
+
+        var gp = await db.GetAsync<PersonIdentity>(p.IdentityId);
+
+        Assert.Equal(p.IdentityId, gp.IdentityId);
+        Assert.Equal(p.FirstName, gp.FirstName);
+        Assert.Equal(p.LastName, gp.LastName);
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertUniqueIdentifierAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
+        Assert.True(await db.UpsertAsync(p));
+
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        Assert.True(await db.UpsertAsync(p));
+
+        var gp = await db.GetAsync<PersonUniqueIdentifier>(p.GuidId);
+
+        Assert.Equal(p.FirstName, gp.FirstName);
+        Assert.Equal(p.LastName, gp.LastName);
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertUniqueIdentifierWithAliasesAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
+        Assert.True(await db.UpsertAsync(p));
+
+        p.First = "Greg";
+        p.Last = "Smith";
+        Assert.True(await db.UpsertAsync(p));
+
+        var gp = await db.GetAsync<PersonUniqueIdentifierWithAliases>(p.GuidId);
+
+        Assert.Equal(p.First, gp.First);
+        Assert.Equal(p.Last, gp.Last);
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertPersonCompositeKeyAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = new PersonCompositeKey
         {
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await db.UpsertAsync(p));
-                Assert.True(p.IdentityId > 0);
+            GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones"
+        };
+        Assert.True(await db.UpsertAsync(p));
 
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                Assert.True(await db.UpsertAsync(p));
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        Assert.True(await db.UpsertAsync(p));
 
-                var gp = await db.GetAsync<PersonIdentity>(p.IdentityId);
+        var gp = await db.GetAsync<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
 
-                Assert.Equal(p.IdentityId, gp.IdentityId);
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-            }
-        }
+        Assert.Equal(p.StringId, gp.StringId);
+        Assert.Equal(p.FirstName, gp.FirstName);
+        Assert.Equal(p.LastName, gp.LastName);
+    }
 
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertUniqueIdentifierAsync()
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertComputedAsync()
+    {
+        var dnow = DateTime.UtcNow;
+        using var db = GetSqlDatabase();
+        var p = new PersonExcludedColumns
         {
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await db.UpsertAsync(p));
+            FirstName = "Alice",
+            LastName = "Jones",
+            Notes = "Hello",
+            CreatedOn = dnow,
+            UpdatedOn = dnow
+        };
+        Assert.True(await db.UpsertAsync(p));
 
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                Assert.True(await db.UpsertAsync(p));
+        if (p.FullName != null) Assert.Equal("Alice Jones", p.FullName);
 
-                var gp = await db.GetAsync<PersonUniqueIdentifier>(p.GuidId);
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        p.CreatedOn = DateTime.UtcNow;
+        Assert.True(await db.UpsertAsync(p));
+        if (p.FullName != null) Assert.Equal("Greg Smith", p.FullName);
 
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-            }
-        }
+        var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
 
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertUniqueIdentifierWithAliasesAsync()
+        Assert.Equal(p.IdentityId, gp.IdentityId);
+        Assert.Null(gp.Notes);
+        Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1),
+            dnow.AddSeconds(
+                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+        Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1),
+            dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
+        Assert.Equal(p.FirstName, gp.FirstName);
+        Assert.Equal(p.LastName, gp.LastName);
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertPartialAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(await db.UpsertAsync(p));
+        Assert.True(p.IdentityId > 0);
+
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        Assert.True(await db.UpsertAsync(p, new[] { "LastName" }));
+
+        var gp = await db.GetAsync<PersonIdentity>(p.IdentityId);
+
+        Assert.Equal(p.IdentityId, gp.IdentityId);
+        Assert.Equal("Alice", gp.FirstName);
+        Assert.Equal("Smith", gp.LastName);
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertPartialCallbacksAsync()
+    {
+        var dnow = DateTime.UtcNow;
+        using var db = GetSqlDatabase();
+        var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones" };
+        Assert.True(await db.UpsertAsync(p, i => i.CreatedOn = dnow, u => u.UpdatedOn = dnow));
+        Assert.True(p.IdentityId > 0);
+
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        p.CreatedOn = DateTime.UtcNow;
+        Assert.True(await db.UpsertAsync(p, new[] { "LastName", "CreatedOn", "UpdatedOn" }, i => i.CreatedOn = dnow,
+            u => u.UpdatedOn = dnow));
+
+        var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
+
+        Assert.Equal(p.IdentityId, gp.IdentityId);
+        Assert.Equal("Alice", gp.FirstName);
+        Assert.Equal("Smith", gp.LastName);
+        Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1),
+            dnow.AddSeconds(
+                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+        Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1),
+            dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertConcurrencyCheckNotModifiedAsync()
+    {
+        Skip.If(GetProvider() == Provider.SqlCE, "SqlCE doesn't handle null concurrency field");
+
+        using var db = GetSqlDatabase();
+        var p = new PersonConcurrencyCheck
         {
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "Alice", Last = "Jones" };
-                Assert.True(await db.UpsertAsync(p));
+            GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc"
+        };
+        Assert.True(await db.UpsertAsync(p));
 
-                p.First = "Greg";
-                p.Last = "Smith";
-                Assert.True(await db.UpsertAsync(p));
+        Assert.Equal("abc", p.StringId);
+        Assert.Null(p.UpdatedOn);
 
-                var gp = await db.GetAsync<PersonUniqueIdentifierWithAliases>(p.GuidId);
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        Assert.True(await db.UpsertAsync(p), "Concurrent fields unchanged");
 
-                Assert.Equal(p.First, gp.First);
-                Assert.Equal(p.Last, gp.Last);
-            }
-        }
+        var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
 
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertPersonCompositeKeyAsync()
+        Assert.Equal(p.FirstName, gp.FirstName);
+        Assert.Equal(p.LastName, gp.LastName);
+        Assert.Equal(p.StringId, gp.StringId);
+        Assert.Equal(p.UpdatedOn, gp.UpdatedOn);
+    }
+
+    [Fact]
+    [Trait("Category", "UpsertAsync")]
+    public async Task UpsertConcurrencyCheckModifiedAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = new PersonConcurrencyCheck
         {
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonCompositeKey { GuidId = Guid.NewGuid(), StringId = "test", FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await db.UpsertAsync(p));
+            GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc"
+        };
+        Assert.True(await db.UpsertAsync(p));
 
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                Assert.True(await db.UpsertAsync(p));
+        // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
+        await db.ExecuteAsync("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
 
-                var gp = await db.GetAsync<PersonCompositeKey>($"where GuidId = {P}GuidId and StringId = {P}StringId", p);
+        p.FirstName = "Greg";
+        p.LastName = "Smith";
+        await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpsertAsync(p));
 
-                Assert.Equal(p.StringId, gp.StringId);
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-            }
-        }
+        var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
 
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertComputedAsync()
-        {
-
-            var dnow = DateTime.UtcNow;
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones", Notes = "Hello", CreatedOn = dnow, UpdatedOn = dnow };
-                Assert.True(await db.UpsertAsync(p));
-
-                if (p.FullName != null)
-                {
-                    Assert.Equal("Alice Jones", p.FullName);
-                }
-
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                p.CreatedOn = DateTime.UtcNow;
-                Assert.True(await db.UpsertAsync(p));
-                if (p.FullName != null)
-                {
-                    Assert.Equal("Greg Smith", p.FullName);
-                }
-
-                var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
-
-                Assert.Equal(p.IdentityId, gp.IdentityId);
-                Assert.Null(gp.Notes);
-                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
-                Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-            }
-        }
-
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertPartialAsync()
-        {
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await db.UpsertAsync(p));
-                Assert.True(p.IdentityId > 0);
-
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                Assert.True(await db.UpsertAsync(p, new string[] { "LastName" }));
-
-                var gp = await db.GetAsync<PersonIdentity>(p.IdentityId);
-
-                Assert.Equal(p.IdentityId, gp.IdentityId);
-                Assert.Equal("Alice", gp.FirstName);
-                Assert.Equal("Smith", gp.LastName);
-            }
-        }
-
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertPartialCallbacksAsync()
-        {
-            var dnow = DateTime.UtcNow;
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonExcludedColumns { FirstName = "Alice", LastName = "Jones" };
-                Assert.True(await db.UpsertAsync(p, (i) => i.CreatedOn = dnow, (u) => u.UpdatedOn = dnow));
-                Assert.True(p.IdentityId > 0);
-
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                p.CreatedOn = DateTime.UtcNow;
-                Assert.True(await db.UpsertAsync(p, new[] { "LastName", "CreatedOn", "UpdatedOn" }, (i) => i.CreatedOn = dnow, (u) => u.UpdatedOn = dnow));
-
-                var gp = await db.GetAsync<PersonExcludedColumns>(p.IdentityId);
-
-                Assert.Equal(p.IdentityId, gp.IdentityId);
-                Assert.Equal("Alice", gp.FirstName);
-                Assert.Equal("Smith", gp.LastName);
-                Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1), dnow.AddSeconds(1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
-                Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1), dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
-            }
-        }
-
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertConcurrencyCheckNotModifiedAsync()
-        {
-            Skip.If(GetProvider() == Provider.SqlCE, "SqlCE doesn't handle null concurrency field");
-
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
-                Assert.True(await db.UpsertAsync(p));
-
-                Assert.Equal("abc", p.StringId);
-                Assert.Null(p.UpdatedOn);
-
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                Assert.True(await db.UpsertAsync(p), "Concurrent fields unchanged");
-
-                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
-
-                Assert.Equal(p.FirstName, gp.FirstName);
-                Assert.Equal(p.LastName, gp.LastName);
-                Assert.Equal(p.StringId, gp.StringId);
-                Assert.Equal(p.UpdatedOn, gp.UpdatedOn);
-            }
-        }
-
-        [Fact]
-        [Trait("Category", "UpsertAsync")]
-        public async Task UpsertConcurrencyCheckModifiedAsync()
-        {
-            using (var db = GetSqlDatabase())
-            {
-                var p = new PersonConcurrencyCheck { GuidId = Guid.NewGuid(), FirstName = "Alice", LastName = "Jones", StringId = "abc" };
-                Assert.True(await db.UpsertAsync(p));
-
-                // Modify one of the concurrency-check columns to simulate it changing out from underneath us.
-                await db.ExecuteAsync("update Person set StringId = 'xyz' where GuidId = @GuidId", p);
-
-                p.FirstName = "Greg";
-                p.LastName = "Smith";
-                await Assert.ThrowsAnyAsync<OptimisticConcurrencyException>(() => db.UpsertAsync(p));
-
-                var gp = await db.GetAsync<PersonConcurrencyCheck>(p.GuidId);
-
-                Assert.Equal("Alice", gp.FirstName);
-                Assert.Equal("Jones", gp.LastName);
-            }
-        }
+        Assert.Equal("Alice", gp.FirstName);
+        Assert.Equal("Jones", gp.LastName);
     }
 }

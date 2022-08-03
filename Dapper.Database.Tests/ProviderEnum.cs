@@ -1,13 +1,12 @@
-﻿namespace Dapper.Database.Tests
+﻿namespace Dapper.Database.Tests;
+
+public enum Provider
 {
-    public enum Provider
-    {
-        SqlServer,
-        SqlCE,
-        SQLite,
-        MySql,
-        Postgres,
-        Firebird,
-        Oracle,
-    }
+    SqlServer,
+    SqlCE,
+    SQLite,
+    MySql,
+    Postgres,
+    Firebird,
+    Oracle
 }
