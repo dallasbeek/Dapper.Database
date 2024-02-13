@@ -37,6 +37,15 @@ namespace Dapper.Database.Tests
                 {
                     connection.Open();
 
+                    try
+                    {
+                        connection.Execute("delete from Person");
+                    }
+                    catch (FbException)
+                    {
+                        init = true;
+                    }
+
                     if (init)
                     {
                         using (var file = File.OpenText(".\\Scripts\\firebirdawlite.sql"))
