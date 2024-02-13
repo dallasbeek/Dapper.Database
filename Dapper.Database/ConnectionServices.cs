@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-#if !NETSTANDARD
+#if NET462
 using System.Configuration;
 #endif
 
@@ -34,7 +34,7 @@ namespace Dapper.Database
         public IDbConnection GetConnection() => (T)Activator.CreateInstance(typeof(T), _connectionString);
     }
 
-#if !NETSTANDARD
+#if NET462
     /// <summary>
     /// 
     /// </summary>
