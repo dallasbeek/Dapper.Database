@@ -25,13 +25,13 @@ environment:
   MYSQL_ENV_MYSQL_DATABASE: test
 
 services:
-  - mysql
   - postgresql101
 
 init:
   - git config --global core.autocrlf input
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
   - net start MSSQL$SQL2019
+  - ps: Start-Service MySQL80
 
 nuget:
   disable_publish_on_pr: true
