@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite

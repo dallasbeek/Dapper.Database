@@ -14,8 +14,6 @@ public abstract partial class TestSuite
 
     public abstract ISqlDatabase GetSqlDatabase();
 
-    protected abstract void CheckSkip();
-
 
 #pragma warning disable xUnit1013 // Public method should be marked as test
     /// <summary>

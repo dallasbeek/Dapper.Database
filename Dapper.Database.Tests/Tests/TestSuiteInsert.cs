@@ -2,6 +2,7 @@
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -66,15 +67,15 @@ public abstract partial class TestSuite
     [Trait("Category", "Insert")]
     public void InsertComputed()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new PersonExcludedColumns
         {
             FirstName = "Alice",
             LastName = "Jones",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
         Assert.True(db.Insert(p));
 
@@ -84,11 +85,14 @@ public abstract partial class TestSuite
 
         Assert.Equal(p.IdentityId, gp.IdentityId);
         Assert.Null(gp.Notes);
+        Assert.Null(gp.NoDbColumn);
         Assert.Null(gp.UpdatedOn);
-        Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1),
-            dnow.AddSeconds(
-                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+        Assert.NotNull(gp.CreatedOn);
+        Assert.InRange(gp.CreatedOn.Value, now.AddSeconds(-1),
+            now.AddSeconds(
+                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most.)
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.LastName, gp.LastName);
+
     }
 }

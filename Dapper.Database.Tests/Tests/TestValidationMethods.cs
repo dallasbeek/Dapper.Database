@@ -1,6 +1,7 @@
 ﻿using System;
 using Xunit;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -19,6 +20,7 @@ public abstract partial class TestSuite
         Assert.Equal(15, p.ProductCategoryID);
         Assert.Equal(60, p.ProductModelID);
         Assert.Equal(new DateTime(2002, 7, 1), p.SellStartDate.Date);
+        Assert.NotNull(p.SellEndDate);
         Assert.Equal(new DateTime(2003, 6, 30), p.SellEndDate.Value.Date);
         Assert.Null(p.DiscontinuedDate);
         Assert.Equal("no_image_available_small.gif", p.ThumbnailPhotoFileName);
@@ -58,6 +60,7 @@ public abstract partial class TestSuite
         Assert.Null(p.Weight);
         Assert.Equal(45, p.ProductModelID);
         Assert.Equal(new DateTime(2002, 7, 1), p.SellStartDate.Date);
+        Assert.NotNull(p.SellEndDate);
         Assert.Equal(new DateTime(2003, 6, 30), p.SellEndDate.Value.Date);
         Assert.Null(p.DiscontinuedDate);
         Assert.Equal("wheel_small.gif", p.ThumbnailPhotoFileName);

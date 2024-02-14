@@ -2,6 +2,7 @@
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -94,22 +95,21 @@ public abstract partial class TestSuite
     public void ExistsShortCircuitSemiColon()
     {
         using var db = GetSqlDatabase();
-        var tsql = "; select 1 AS ProductId";
-        var fsql = "; select 0 AS ProductId";
-        switch (GetProvider())
+        var trueSql = "; select 1 AS ProductId";
+        var falseSql = "; select 0 AS ProductId";
+        if (GetProvider() == Provider.Firebird)
         {
-            case Provider.Firebird:
-                tsql += " from RDB$Database";
-                fsql += " from RDB$Database";
-                break;
-            case Provider.Oracle:
-                tsql += " from dual";
-                fsql += " from dual";
-                break;
+            trueSql += " from RDB$Database";
+            falseSql += " from RDB$Database";
+        }
+        else if (GetProvider() == Provider.Oracle)
+        {
+            trueSql += " from dual";
+            falseSql += " from dual";
         }
 
-        Assert.True(db.Exists<Product>(tsql));
-        Assert.False(db.Exists<Product>(fsql));
+        Assert.True(db.Exists<Product>(trueSql));
+        Assert.False(db.Exists<Product>(falseSql));
     }
 
     [Fact]

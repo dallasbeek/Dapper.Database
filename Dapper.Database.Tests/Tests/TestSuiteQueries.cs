@@ -1,5 +1,11 @@
-﻿namespace Dapper.Database.Tests;
+﻿// ReSharper disable once CheckNamespace
 
+using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable once CheckNamespace
+namespace Dapper.Database.Tests;
+
+[SuppressMessage("ReSharper", "UseRawString")]
 public abstract partial class TestSuite
 {
     private string GetMultiTwoParamQuery =>

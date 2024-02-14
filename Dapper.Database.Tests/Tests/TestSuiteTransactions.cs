@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -15,12 +16,11 @@ public abstract partial class TestSuite
         var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
         Assert.True(db.Insert(p));
 
-        using (var tran = db.GetTransaction())
+        using (db.GetTransaction())
         {
             var gp = db.Get<PersonIdentity>(p.IdentityId);
             gp.FirstName = "Sally";
             db.Update(gp);
-            tran.Dispose();
         }
 
         var agp = db.Get<PersonIdentity>(p.IdentityId); //updates should have been rolled back
@@ -37,7 +37,7 @@ public abstract partial class TestSuite
         var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
         Assert.True(db.Insert(p));
 
-        using (var tran = db.GetTransaction())
+        using (db.GetTransaction())
         {
             var gp = db.Get<PersonIdentity>(p.IdentityId);
             gp.FirstName = "Sally";
@@ -78,7 +78,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         var p = new PersonIdentity { FirstName = "Alice", LastName = "Jones" };
         Assert.True(db.Insert(p));
-        using (var tranOuter = db.GetTransaction())
+        using (db.GetTransaction())
         {
             using (var tran = db.GetTransaction())
             {

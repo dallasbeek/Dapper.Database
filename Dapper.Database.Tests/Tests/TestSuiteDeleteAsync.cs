@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -36,10 +37,7 @@ public abstract partial class TestSuite
         {
             GuidId = Guid.NewGuid(), FirstName = "OtherAliceAsync", LastName = "OtherJones"
         };
-        var p = new PersonUniqueIdentifier
-        {
-            GuidId = Guid.NewGuid(), FirstName = "AliceAsync", LastName = "Jones"
-        };
+        var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "AliceAsync", LastName = "Jones" };
         Assert.True(await db.InsertAsync(p));
         Assert.True(await db.InsertAsync(pOther));
         Assert.True(await db.DeleteAsync(p));
@@ -59,10 +57,7 @@ public abstract partial class TestSuite
         {
             GuidId = Guid.NewGuid(), First = "OtherAliceAsync", Last = "OtherJones"
         };
-        var p = new PersonUniqueIdentifierWithAliases
-        {
-            GuidId = Guid.NewGuid(), First = "AliceAsync", Last = "Jones"
-        };
+        var p = new PersonUniqueIdentifierWithAliases { GuidId = Guid.NewGuid(), First = "AliceAsync", Last = "Jones" };
         Assert.True(await db.InsertAsync(p));
         Assert.True(await db.InsertAsync(pOther));
         Assert.True(await db.DeleteAsync(p));
@@ -122,10 +117,7 @@ public abstract partial class TestSuite
         {
             GuidId = Guid.NewGuid(), FirstName = "OtherAliceAsync", LastName = "OtherJones"
         };
-        var p = new PersonUniqueIdentifier
-        {
-            GuidId = Guid.NewGuid(), FirstName = "AliceAsync", LastName = "Jones"
-        };
+        var p = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "AliceAsync", LastName = "Jones" };
         Assert.True(await db.InsertAsync(p));
         Assert.True(await db.InsertAsync(pOther));
         Assert.True(await db.DeleteAsync<PersonUniqueIdentifier>(p.GuidId));
@@ -143,10 +135,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         var pOther = new PersonCompositeKey
         {
-            GuidId = Guid.NewGuid(),
-            StringId = "testOther",
-            FirstName = "OtherAliceAsync",
-            LastName = "OtherJones"
+            GuidId = Guid.NewGuid(), StringId = "testOther", FirstName = "OtherAliceAsync", LastName = "OtherJones"
         };
         var p = new PersonCompositeKey
         {
@@ -194,10 +183,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         var pOther = new PersonCompositeKey
         {
-            GuidId = Guid.NewGuid(),
-            StringId = "testOther",
-            FirstName = "OtherAliceAsync",
-            LastName = "OtherJones"
+            GuidId = Guid.NewGuid(), StringId = "testOther", FirstName = "OtherAliceAsync", LastName = "OtherJones"
         };
         var p = new PersonCompositeKey
         {

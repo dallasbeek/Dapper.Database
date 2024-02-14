@@ -3,6 +3,7 @@ using System.Linq;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -12,8 +13,8 @@ public abstract partial class TestSuite
     public void GetListAll()
     {
         using var db = GetSqlDatabase();
-        var lst = db.GetList<Product>();
-        Assert.Equal(295, lst.Count());
+        var lst = db.GetList<Product>().ToList();
+        Assert.Equal(295, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -23,8 +24,8 @@ public abstract partial class TestSuite
     public void GetListWithWhereClause()
     {
         using var db = GetSqlDatabase();
-        var lst = db.GetList<Product>("where Color = 'Black'");
-        Assert.Equal(89, lst.Count());
+        var lst = db.GetList<Product>("where Color = 'Black'").ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -34,8 +35,8 @@ public abstract partial class TestSuite
     public void GetListWithWhereClauseParameter()
     {
         using var db = GetSqlDatabase();
-        var lst = db.GetList<Product>($"where Color = {P}Color", new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+        var lst = db.GetList<Product>($"where Color = {P}Color", new { Color = "Black" }).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -45,8 +46,8 @@ public abstract partial class TestSuite
     public void GetListWithSelectClause()
     {
         using var db = GetSqlDatabase();
-        var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'");
-        Assert.Equal(89, lst.Count());
+        var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'").ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -57,8 +58,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product>($"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color",
-            new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+            new { Color = "Black" }).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -69,8 +70,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product>($";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color",
-            new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+            new { Color = "Black" }).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -82,8 +83,8 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product>(
             $"select p.ProductId, p.rowguid AS GuidId, Name from Product p where p.Color = {P}Color",
-            new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+            new { Color = "Black" }).ToList();
+        Assert.Equal(89, lst.Count);
         var p = lst.Single(a => a.ProductID == 816);
         Assert.Equal(816, p.ProductID);
         Assert.Equal("ML Mountain Front Wheel", p.Name);
@@ -97,8 +98,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product, ProductCategory>(
-            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
-        Assert.Equal(89, lst.Count());
+            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId").ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -117,8 +118,8 @@ public abstract partial class TestSuite
                 pr.ProductCategory = pc;
                 return pr;
             },
-            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
-        Assert.Equal(89, lst.Count());
+            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId").ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -132,17 +133,16 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product, ProductCategory, ProductModel>(
-            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
-        Assert.Equal(89, lst.Count());
+            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId").ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
         //There must be a bug with mapping on SqlLite when fetching many records
-        if (GetProvider() != Provider.SQLite)
-        {
-            ValidateProductCategory21(item.ProductCategory);
-            ValidateProductModel45(item.ProductModel);
-        }
+        if (GetProvider() == Provider.SQLite) return;
+
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
     }
 
     [Fact]
@@ -157,16 +157,14 @@ public abstract partial class TestSuite
                 pr.ProductModel = pm;
                 return pr;
             },
-            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
-        Assert.Equal(89, lst.Count());
+            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId").ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
         //There must be a bug with mapping on SqlLite when fetching many records
-        if (GetProvider() != Provider.SQLite)
-        {
-            ValidateProductCategory21(item.ProductCategory);
-            ValidateProductModel45(item.ProductModel);
-        }
+        if (GetProvider() == Provider.SQLite) return;
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
     }
 }

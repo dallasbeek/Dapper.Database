@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -87,31 +88,31 @@ public abstract partial class TestSuite
     [Trait("Category", "InsertListAsync")]
     public async Task InsertListComputedAsync()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new PersonExcludedColumns
         {
             FirstName = "Alice",
             LastName = "Jones",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
         var q = new PersonExcludedColumns
         {
             FirstName = "Raj",
             LastName = "Padilla",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
         var r = new PersonExcludedColumns
         {
             FirstName = "Lidia",
             LastName = "Bain",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
 
         Assert.True(await db.InsertListAsync(new List<PersonExcludedColumns> { p, q, r }));
@@ -127,10 +128,12 @@ public abstract partial class TestSuite
 
         Assert.Equal(p.IdentityId, gp.IdentityId);
         Assert.Null(gp.Notes);
+        Assert.Null(gp.NoDbColumn);
         Assert.Null(gp.UpdatedOn);
-        Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1),
-            dnow.AddSeconds(
-                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+        Assert.NotNull(gp.CreatedOn);
+        Assert.InRange(gp.CreatedOn.Value, now.AddSeconds(-1),
+            now.AddSeconds(
+                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most). 
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.LastName, gp.LastName);
     }
@@ -165,10 +168,9 @@ public abstract partial class TestSuite
         var r = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Lidia", LastName = "Bain" };
 
         using var db = GetSqlDatabase();
-        using (var t = db.GetTransaction())
+        using (db.GetTransaction())
         {
             Assert.True(await db.InsertListAsync(new List<PersonUniqueIdentifier> { p, q, r }));
-            t.Dispose();
         }
 
         Assert.Null(await db.GetAsync<PersonUniqueIdentifier>(p.GuidId));
@@ -188,7 +190,7 @@ public abstract partial class TestSuite
         var r = new PersonUniqueIdentifier { GuidId = Guid.NewGuid(), FirstName = "Lidia", LastName = "Bain" };
 
         using var db = GetSqlDatabase();
-        using (var t = db.GetTransaction())
+        using (db.GetTransaction())
         {
             await Assert.ThrowsAnyAsync<Exception>(() =>
                 db.InsertListAsync(new List<PersonUniqueIdentifier> { p, q, r }));

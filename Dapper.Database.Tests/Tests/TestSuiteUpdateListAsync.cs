@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -151,31 +152,31 @@ public abstract partial class TestSuite
     [Trait("Category", "UpdateListAsync")]
     public async Task UpdateListComputedAsync()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new PersonExcludedColumns
         {
             FirstName = "Alice",
             LastName = "Jones",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
         var q = new PersonExcludedColumns
         {
             FirstName = "Raj",
             LastName = "Padilla",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
         var r = new PersonExcludedColumns
         {
             FirstName = "Lidia",
             LastName = "Bain",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
 
         var lst = new List<PersonExcludedColumns> { p, q, r };
@@ -199,11 +200,14 @@ public abstract partial class TestSuite
 
         Assert.Equal(p.IdentityId, gp.IdentityId);
         Assert.Null(gp.Notes);
-        Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1),
-            dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
-        Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1),
-            dnow.AddSeconds(
-                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
+        Assert.Null(gp.NoDbColumn);
+        Assert.NotNull(gp.UpdatedOn);
+        Assert.InRange(gp.UpdatedOn.Value, now.AddMinutes(-1),
+            now.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
+        Assert.NotNull(gp.CreatedOn);
+        Assert.InRange(gp.CreatedOn.Value, now.AddSeconds(-1),
+            now.AddSeconds(
+                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most). 
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.LastName, gp.LastName);
     }
@@ -251,14 +255,13 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         Assert.True(await db.InsertListAsync(lst));
 
-        using (var t = db.GetTransaction())
+        using (db.GetTransaction())
         {
             p.FirstName = "Emily";
             q.FirstName = "Jim";
             r.FirstName = "Laura";
 
             Assert.True(await db.UpdateListAsync(lst));
-            t.Dispose();
         }
 
         var gp = await db.GetAsync<PersonUniqueIdentifier>(p.GuidId);
@@ -282,7 +285,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         Assert.True(await db.InsertListAsync(lst));
 
-        using (var t = db.GetTransaction())
+        using (db.GetTransaction())
         {
             p.FirstName = "Emily";
             q.FirstName = "a".PadRight(101, 'a');

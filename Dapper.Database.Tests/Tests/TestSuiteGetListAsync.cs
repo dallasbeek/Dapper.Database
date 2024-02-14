@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -13,8 +14,8 @@ public abstract partial class TestSuite
     public async Task GetListAllAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>();
-        Assert.Equal(295, lst.Count());
+        var lst = (await db.GetListAsync<Product>()).ToList();
+        Assert.Equal(295, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -24,8 +25,8 @@ public abstract partial class TestSuite
     public async Task GetListWithWhereClauseAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>("where Color = 'Black'");
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product>("where Color = 'Black'")).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -35,8 +36,8 @@ public abstract partial class TestSuite
     public async Task GetListWithWhereClauseParameterAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>($"where Color = {P}Color", new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product>($"where Color = {P}Color", new { Color = "Black" })).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -46,9 +47,9 @@ public abstract partial class TestSuite
     public async Task GetListWithSelectClauseAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>(
-            "select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'");
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product>(
+            "select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'")).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -58,9 +59,9 @@ public abstract partial class TestSuite
     public async Task GetListWithSelectClauseParameterAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>(
-            $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product>(
+            $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" })).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -70,9 +71,9 @@ public abstract partial class TestSuite
     public async Task GetListShortCircuitAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>(
-            $";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product>(
+            $";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" })).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -82,10 +83,10 @@ public abstract partial class TestSuite
     public async Task GetListPartialBySelectAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product>(
+        var lst = (await db.GetListAsync<Product>(
             $"select ProductId, rowguid AS GuidId, Name from Product where Color = {P}Color",
-            new { Color = "Black" });
-        Assert.Equal(89, lst.Count());
+            new { Color = "Black" })).ToList();
+        Assert.Equal(89, lst.Count);
         var p = lst.Single(a => a.ProductID == 816);
         Assert.Equal(816, p.ProductID);
         Assert.Equal("ML Mountain Front Wheel", p.Name);
@@ -98,9 +99,9 @@ public abstract partial class TestSuite
     public async Task GetListOneJoinUnmappedAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product, ProductCategory>(
-            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product, ProductCategory>(
+            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId")).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -113,14 +114,14 @@ public abstract partial class TestSuite
     public async Task GetListOneJoinMappedAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product, ProductCategory, Product>(
+        var lst = (await db.GetListAsync<Product, ProductCategory, Product>(
             (pr, pc) =>
             {
                 pr.ProductCategory = pc;
                 return pr;
             },
-            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId");
-        Assert.Equal(89, lst.Count());
+            GetListMultiTwoParamQuery, new { Color = "Black" }, "ProductCategoryId")).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -133,9 +134,9 @@ public abstract partial class TestSuite
     public async Task GetListTwoJoinsUnmappedAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product, ProductCategory, ProductModel>(
-            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
-        Assert.Equal(89, lst.Count());
+        var lst = (await db.GetListAsync<Product, ProductCategory, ProductModel>(
+            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId")).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -152,15 +153,15 @@ public abstract partial class TestSuite
     public async Task GetListTwoJoinsMappedAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = await db.GetListAsync<Product, ProductCategory, ProductModel, Product>(
+        var lst = (await db.GetListAsync<Product, ProductCategory, ProductModel, Product>(
             (pr, pc, pm) =>
             {
                 pr.ProductCategory = pc;
                 pr.ProductModel = pm;
                 return pr;
             },
-            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId");
-        Assert.Equal(89, lst.Count());
+            GetListMultiThreeParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId")).ToList();
+        Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 

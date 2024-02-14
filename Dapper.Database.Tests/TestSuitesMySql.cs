@@ -6,11 +6,12 @@ using Xunit;
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "MySql")]
+// ReSharper disable once UnusedMember.Global
 public class MySqlTestSuite : TestSuite
 {
     private const string DbName = "test";
 
-    private static readonly bool _skip;
+    private static readonly bool Skip;
 
     static MySqlTestSuite()
     {
@@ -18,24 +19,22 @@ public class MySqlTestSuite : TestSuite
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
         try
         {
-            using (var connection =
-                   new MySqlConnection("Server=localhost;Port=3306;User Id=root;Password=Password12!;SSL Mode=None;"))
-            {
-                connection.Open();
+            using var connection =
+                new MySqlConnection("Server=localhost;Port=3306;User Id=root;Password=Password12!;SSL Mode=None;");
+            connection.Open();
 
-                var awfile = File.ReadAllText(".\\Scripts\\mysqlawlite.sql");
-                connection.Execute(awfile, commandTimeout: 600);
-                connection.Execute("delete from Person;");
-            }
+            var scriptSql = File.ReadAllText(@".\Scripts\mysqlawlite.sql");
+            connection.Execute(scriptSql, commandTimeout: 600);
+            connection.Execute("delete from Person;");
         }
         catch (SocketException e) when (e.Message.Contains(
                                             "No connection could be made because the target machine actively refused it"))
         {
-            _skip = true;
+            Skip = true;
         }
         catch (MySqlException e) when (e.Message == "Unable to connect to any of the specified MySQL hosts.")
         {
-            _skip = true;
+            Skip = true;
         }
     }
 
@@ -44,7 +43,7 @@ public class MySqlTestSuite : TestSuite
             ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;"
             : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 
-    protected override void CheckSkip() => Skip.If(_skip, "Skipping MySql Tests - no server.");
+    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping MySql Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {

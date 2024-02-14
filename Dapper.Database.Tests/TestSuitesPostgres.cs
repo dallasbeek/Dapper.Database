@@ -6,11 +6,12 @@ using Xunit;
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Postgres")]
+// ReSharper disable once UnusedMember.Global
 public class PostgresTestSuite : TestSuite
 {
     private const string DbName = "test";
 
-    private static readonly bool _skip;
+    private static readonly bool Skip;
 
     static PostgresTestSuite()
     {
@@ -24,6 +25,7 @@ public class PostgresTestSuite : TestSuite
         }
         catch (PostgresException e) when (e.Message.Contains($"database \"{DbName}\" does not exist"))
         {
+            // ReSharper disable once CommentTypo
             // PostgreSQL doesn't have a good way to detect if the "Test" database already exists:
             //  - Your connection string has to include the database you want
             //  - Their version of CREATE DATABASE does not have IF NOT EXISTS support
@@ -33,16 +35,14 @@ public class PostgresTestSuite : TestSuite
         catch (SocketException e) when (e.Message.Contains(
                                             "No connection could be made because the target machine actively refused it"))
         {
-            _skip = true;
+            Skip = true;
         }
     }
 
     public static string ConnectionString =>
-        IsAppVeyor
-            ? $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}"
-            : $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
+        $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
 
-    protected override void CheckSkip() => Skip.If(_skip, "Skipping Postgres Tests - no server.");
+    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping Postgres Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {
@@ -71,8 +71,8 @@ public class PostgresTestSuite : TestSuite
         using var connection = new NpgsqlConnection(ConnectionString);
         connection.Open();
 
-        var awfile = File.ReadAllText(".\\Scripts\\postgresawlite.sql");
-        connection.Execute(awfile);
+        var scriptSql = File.ReadAllText(@".\Scripts\postgresawlite.sql");
+        connection.Execute(scriptSql);
         connection.Execute("delete from Person;");
     }
 }
