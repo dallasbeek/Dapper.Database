@@ -12,7 +12,7 @@ namespace Dapper.Database.Attributes
     }
 
     /// <summary>
-    ///     Specifies whether a field is able to be inserted in the database.
+    ///     Specifies whether a field is to be inserted in the database.
     /// </summary>
     /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]
@@ -21,7 +21,7 @@ namespace Dapper.Database.Attributes
     }
 
     /// <summary>
-    ///     Specifies whether a field is able to be updated in the database.
+    ///     Specifies whether a field is to be updated in the database.
     /// </summary>
     /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Property)]

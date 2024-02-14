@@ -56,10 +56,10 @@ namespace Dapper.Database.Extensions
 
         /// <summary>
         ///     Delete entity in table "Ts" by an un-parameterized WHERE clause.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause used to bind delete, cannot be null, empty, or whitespace</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -75,10 +75,10 @@ namespace Dapper.Database.Extensions
 
         /// <summary>
         ///     Delete entity in table "Ts" by a parameterized WHERE clause, with Parameters passed in.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete data, call the DeleteAll() command
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
@@ -158,10 +158,10 @@ namespace Dapper.Database.Extensions
 
         /// <summary>
         ///     Delete entity in table "Ts" by an un-parameterized WHERE clause.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
         /// <returns>true if deleted, false if not found</returns>
@@ -177,10 +177,10 @@ namespace Dapper.Database.Extensions
 
         /// <summary>
         ///     Delete entity in table "Ts" by a parameterized WHERE clause, with Parameters passed in.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <param name="connection">Open SqlConnection</param>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <param name="parameters">The parameters of the where clause to delete</param>
         /// <param name="transaction">The transaction to run under, null (the default) if none</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout</param>

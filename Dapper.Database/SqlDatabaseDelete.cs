@@ -33,10 +33,10 @@ namespace Dapper.Database
 
         /// <summary>
         ///     Delete entity in table "Ts" by an un-parameterized WHERE clause.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <returns>
         ///     True if deleted, false if not found.
         /// </returns>
@@ -91,10 +91,10 @@ namespace Dapper.Database
 
         /// <summary>
         ///     Delete entity in table "Ts" by an un-parameterized WHERE clause.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <returns>
         ///     True if deleted, false if not found.
         /// </returns>
@@ -154,10 +154,10 @@ namespace Dapper.Database
 
         /// <summary>
         ///     Delete entity in table "Ts" by an un-parameterized WHERE clause.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <returns>
         ///     True if deleted, false if not found.
         /// </returns>
@@ -229,10 +229,10 @@ namespace Dapper.Database
 
         /// <summary>
         ///     Delete entity in table "Ts" by an un-parameterized WHERE clause.
-        ///     If you want to Delete All of the data, call the DeleteAll() command
+        ///     If you want to Delete all data, call the DeleteAll() command
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="whereClause">The where clause to use to bound a delete, cannot be null, empty, or whitespace</param>
+        /// <param name="whereClause">The where clause to use to bind delete, cannot be null, empty, or whitespace</param>
         /// <returns>
         ///     True if deleted, false if not found.
         /// </returns>

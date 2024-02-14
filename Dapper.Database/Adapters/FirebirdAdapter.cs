@@ -133,7 +133,7 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
-        ///     Default implementation of a a paged sql statement
+        ///     Default implementation of a paged sql statement
         /// </summary>
         /// <param name="tableInfo">table information about the entity</param>
         /// <param name="page">the page to request</param>

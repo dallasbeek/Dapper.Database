@@ -121,8 +121,7 @@ public class OracleCommand : DbCommand
     {
         get
         {
-            if (_parameters == null)
-                _parameters = new OracleParameterCollection(RealCommand.Parameters);
+            _parameters ??= new OracleParameterCollection(RealCommand.Parameters);
 
             return _parameters;
         }
