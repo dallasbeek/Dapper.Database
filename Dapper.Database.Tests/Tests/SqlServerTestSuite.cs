@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
+[SuppressMessage("ReSharper", "UseRawString")]
 public partial class SqlServerTestSuite
 {
     [Fact]
@@ -17,8 +20,8 @@ public partial class SqlServerTestSuite
         using var db = GetSqlDatabase();
         using var trans = db.GetTransaction();
         var dt = db.GetMultiple(@"
-                    select * from Product where Color = 'Black';
-                    select * from ProductCategory where productcategoryid = '21';");
+            select * from Product where Color = 'Black';
+            select * from ProductCategory where productcategoryid = '21';");
         Assert.Equal(89, dt.Read(typeof(Product)).Count());
 
         var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
@@ -45,7 +48,7 @@ public partial class SqlServerTestSuite
 
     [Fact]
     [Trait("Category", "GetList")]
-    public void GetListUsingTableValueParamter()
+    public void GetListUsingTableValueParameter()
     {
         using var db = GetSqlDatabase();
         var dataTable = new DataTable("DT");
@@ -53,12 +56,14 @@ public partial class SqlServerTestSuite
         dataTable.Rows.Add(816);
         dataTable.Rows.Add(731);
 
+        // ReSharper disable StringLiteralTypo
         var lst = db.GetList<Product>(@"
                     SELECT P.*, P.rowguid as GuidId FROM Product P
                     INNER JOIN @productIdTVP PTVP ON PTVP.ProductId = P.ProductId",
-            new { productIdTVP = dataTable.AsTableValuedParameter("[dbo].[ProductIdTable]") });
+            new { productIdTVP = dataTable.AsTableValuedParameter("[dbo].[ProductIdTable]") }).ToList();
+        // ReSharper restore StringLiteralTypo
 
-        Assert.Equal(2, lst.Count());
+        Assert.Equal(2, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -146,7 +151,7 @@ public partial class SqlServerTestSuite
     [Trait("Category", "Insert")]
     public void InsertHasTrigger()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new AccountModel { FirstName = "Jim", LastName = "Beam" };
 
@@ -156,14 +161,14 @@ public partial class SqlServerTestSuite
         Assert.True(p.AccountId > 0);
         Assert.NotNull(p.ConcurrencyToken);
         Assert.NotEqual(DateTime.MinValue, p.CreatedOn);
-        Assert.InRange(p.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        Assert.InRange(p.CreatedOn, now.AddSeconds(-1), now.AddSeconds(1));
 
         var gp = db.Get<AccountModel>(p.AccountId);
 
         Assert.Equal(p.AccountId, gp.AccountId);
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
-        Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        Assert.InRange(gp.CreatedOn, now.AddSeconds(-1), now.AddSeconds(1));
     }
 
 
@@ -171,7 +176,7 @@ public partial class SqlServerTestSuite
     [Trait("Category", "Insert")]
     public async Task InsertHasTriggerAsync()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new AccountModel { FirstName = "Jim", LastName = "Beam" };
 
@@ -181,21 +186,21 @@ public partial class SqlServerTestSuite
         Assert.True(p.AccountId > 0);
         Assert.NotNull(p.ConcurrencyToken);
         Assert.NotEqual(DateTime.MinValue, p.CreatedOn);
-        Assert.InRange(p.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        Assert.InRange(p.CreatedOn, now.AddSeconds(-1), now.AddSeconds(1));
 
         var gp = db.Get<AccountModel>(p.AccountId);
 
         Assert.Equal(p.AccountId, gp.AccountId);
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
-        Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        Assert.InRange(gp.CreatedOn, now.AddSeconds(-1), now.AddSeconds(1));
     }
 
     [Fact]
     [Trait("Category", "Update")]
     public void UpdateHasTrigger()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new AccountModel { FirstName = "Sally", LastName = "Walker" };
         Assert.True(db.Insert(p));
@@ -212,14 +217,14 @@ public partial class SqlServerTestSuite
         Assert.Equal(p.AccountId, gp.AccountId);
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
-        Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        Assert.InRange(gp.CreatedOn, now.AddSeconds(-1), now.AddSeconds(1));
     }
 
     [Fact]
     [Trait("Category", "UpdateAsync")]
     public async Task UpdateHasTriggerAsync()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new AccountModel { FirstName = "Sally", LastName = "Walker" };
         Assert.True(await db.InsertAsync(p));
@@ -236,6 +241,6 @@ public partial class SqlServerTestSuite
         Assert.Equal(p.AccountId, gp.AccountId);
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.FirstName + " " + p.LastName, gp.FirstName + " " + gp.LastName);
-        Assert.InRange(gp.CreatedOn, dnow.AddSeconds(-1), dnow.AddSeconds(1));
+        Assert.InRange(gp.CreatedOn, now.AddSeconds(-1), now.AddSeconds(1));
     }
 }

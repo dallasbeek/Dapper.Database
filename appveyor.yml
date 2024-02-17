@@ -1,6 +1,6 @@
 image: Visual Studio 2022
 
-version: 2.0.0.{build}
+version: 3.0.0.{build}
 
 skip_branch_with_pr: true
 skip_tags: true
@@ -18,20 +18,20 @@ environment:
   POSTGRES_ENV_POSTGRES_PASSWORD: Password12!
   POSTGRES_ENV_POSTGRES_DB: test
   # MySQL
-  MYSQL_PATH: C:\Program Files\MySql\MySQL Server 5.7
+  MYSQL_PATH: C:\Program Files\MySql\MySQL Server 8.0
   MYSQL_PWD: Password12!
   MYSQL_ENV_MYSQL_USER: root
   MYSQL_ENV_MYSQL_PASSWORD: Password12!
   MYSQL_ENV_MYSQL_DATABASE: test
 
 services:
-  - mysql
   - postgresql101
 
 init:
   - git config --global core.autocrlf input
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
   - net start MSSQL$SQL2019
+  - ps: Start-Service MySQL80
 
 nuget:
   disable_publish_on_pr: true

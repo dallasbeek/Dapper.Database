@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
+[SuppressMessage("ReSharper", "UseRawString")]
 public partial class SqlServerTestSuite
 {
     [Fact]
@@ -18,9 +21,9 @@ public partial class SqlServerTestSuite
         var dt = await db.GetMultipleAsync(@"
                     select * from Product where Color = 'Black';
                     select * from ProductCategory where productcategoryid = '21';");
-        Assert.Equal(89, dt.Read(typeof(Product)).Count());
+        Assert.Equal(89, (await dt.ReadAsync(typeof(Product))).Count());
 
-        var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
+        var pc = (ProductCategory)await dt.ReadSingleAsync(typeof(ProductCategory));
         ValidateProductCategory21(pc);
         trans.Complete();
     }
@@ -35,16 +38,16 @@ public partial class SqlServerTestSuite
                     select * from Product where Color = {P}Color;
                     select * from ProductCategory where productcategoryid = {P}ProductCategoryId;",
             new { Color = "Black", ProductCategoryId = 21 });
-        Assert.Equal(89, dt.Read(typeof(Product)).Count());
+        Assert.Equal(89, (await dt.ReadAsync(typeof(Product))).Count());
 
-        var pc = (ProductCategory)dt.ReadSingle(typeof(ProductCategory));
+        var pc = (ProductCategory)await dt.ReadSingleAsync(typeof(ProductCategory));
         ValidateProductCategory21(pc);
         trans.Complete();
     }
 
     [Fact]
     [Trait("Category", "GetListAsync")]
-    public async Task GetListUsingTableValueParamterAsync()
+    public async Task GetListUsingTableValueParameterAsync()
     {
         using var db = GetSqlDatabase();
         var dataTable = new DataTable("DT");
@@ -52,12 +55,14 @@ public partial class SqlServerTestSuite
         dataTable.Rows.Add(816);
         dataTable.Rows.Add(731);
 
-        var lst = await db.GetListAsync<Product>(@"
+        // ReSharper disable StringLiteralTypo
+        var lst = (await db.GetListAsync<Product>(@"
                     SELECT P.*, P.rowguid as GuidId FROM Product P
                     INNER JOIN @productIdTVP PTVP ON PTVP.ProductId = P.ProductId",
-            new { productIdTVP = dataTable.AsTableValuedParameter("[dbo].[ProductIdTable]") });
+            new { productIdTVP = dataTable.AsTableValuedParameter("[dbo].[ProductIdTable]") })).ToList();
+        // ReSharper restore StringLiteralTypo
 
-        Assert.Equal(2, lst.Count());
+        Assert.Equal(2, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
     }
@@ -78,7 +83,7 @@ public partial class SqlServerTestSuite
         Assert.NotEqual(token1, p.ConcurrencyToken);
 
         // Simulate an independent change
-        db.Execute("update Person set Age = 1 where GuidId = @GuidId", p);
+        await db.ExecuteAsync("update Person set Age = 1 where GuidId = @GuidId", p);
 
         p.FirstName = "Alice";
         p.LastName = "Jones";
@@ -107,7 +112,7 @@ public partial class SqlServerTestSuite
         Assert.NotEqual(token1, p.ConcurrencyToken);
 
         // Simulate an independent change
-        db.Execute("update Person set Age = 1 where GuidId = @GuidId", p);
+        await db.ExecuteAsync("update Person set Age = 1 where GuidId = @GuidId", p);
 
         p.FirstName = "Alice";
         p.LastName = "Jones";

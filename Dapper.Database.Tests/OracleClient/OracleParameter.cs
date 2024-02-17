@@ -26,18 +26,15 @@ public class OracleParameter : DbParameter
             if (_dbType == value) return;
 
             _dbType = value;
-            switch (_dbType)
+            RealParameter.DbType = _dbType switch
             {
-                case DbType.Guid:
+                DbType.Guid =>
                     // Oracle does not support DbType.Guid.
+                    // ReSharper disable once CommentTypo
                     // Convention is to use binary (endianness up to the TypeHandler).
-                    RealParameter.DbType = DbType.Binary;
-                    break;
-                default:
-                    // Let Oracle sort the rest out
-                    RealParameter.DbType = _dbType;
-                    break;
-            }
+                    DbType.Binary,
+                _ => _dbType
+            };
         }
     }
 
@@ -74,14 +71,13 @@ public class OracleParameter : DbParameter
             return RealParameter.Value switch
             {
                 null => null,
-                DBNull _ => null,
+                DBNull => null,
                 byte[] b => new Guid(b),
-                OracleBinary b => (b.IsNull ? null : new Guid(b.Value)),
+                OracleBinary b => b.IsNull ? null : new Guid(b.Value),
                 _ => RealParameter.Value
             };
         }
-        set
-        {
+        set =>
             RealParameter.Value = value switch
             {
                 Guid guid =>
@@ -89,7 +85,6 @@ public class OracleParameter : DbParameter
                     guid.ToByteArray(),
                 _ => value
             };
-        }
     }
 
     public override bool SourceColumnNullMapping

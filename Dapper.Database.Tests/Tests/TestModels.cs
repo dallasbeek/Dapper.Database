@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Dapper.Database.Attributes;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 [Table("Person")]

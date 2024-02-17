@@ -1,7 +1,7 @@
 ﻿@model Phone
 @using (var scope = Html.ModelItemScope("Phones", Model.Id.ToString()))
 {
-    <div class="row">
+    <div class="row mb-2">
         @Html.ModelItemScopeIndex(scope)
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input asp-for="Id" type="hidden"/>

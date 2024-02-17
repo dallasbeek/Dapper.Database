@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using ContactApp.Models;
@@ -9,16 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ContactApp.Controllers;
 
-public class HomeController : Controller
+public class HomeController(ILogger<HomeController> logger, ISqlDatabase repository) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly ISqlDatabase _repository;
-
-    public HomeController(ILogger<HomeController> logger, ISqlDatabase repository)
-    {
-        _logger = logger;
-        _repository = repository;
-    }
+    private readonly ILogger<HomeController> _logger = logger;
 
     /// <summary>
     ///     Method GetPagedList wraps the below sql with "OFFSET @__PageSkip rows fetch next @__PageSize rows only"
@@ -30,7 +22,7 @@ public class HomeController : Controller
     /// <returns></returns>
     public IActionResult Index(int page = 1, int pageSize = 25, string search = null)
     {
-        var contacts = _repository.GetPageList<ContactSummary>(
+        var contacts = repository.GetPageList<ContactSummary>(
             page,
             pageSize,
             @"
@@ -78,11 +70,11 @@ public class HomeController : Controller
     /// <returns></returns>
     public IActionResult Edit(Guid? id = null)
     {
-        var contact = id != null ? _repository.Get<Contact>(id) : new Contact { Id = Guid.NewGuid() };
+        var contact = id != null ? repository.Get<Contact>(id) : new Contact { Id = Guid.NewGuid() };
 
         if (contact != null)
             contact.Phones =
-                _repository.GetList<Phone>("WHERE [ContactId] = @id ORDER BY [Ordinal]", new { id });
+                repository.GetList<Phone>("WHERE [ContactId] = @id ORDER BY [Ordinal]", new { id });
 
         return View(contact);
     }
@@ -102,14 +94,14 @@ public class HomeController : Controller
         {
             // Always wrap multiple update/insert/delete with a transaction especially when doing Async calls
             // as this keeps the connection open and rolls back the transaction
-            using var transaction = _repository.GetTransaction(IsolationLevel.ReadCommitted);
-            _repository.Upsert(
+            using var transaction = repository.GetTransaction(IsolationLevel.ReadCommitted);
+            repository.Upsert(
                 model,
                 create => create.CreatedOn = DateTime.UtcNow,
                 update => update.UpdatedOn = DateTime.UtcNow
             );
 
-            var phoneList = model.Phones?.ToList() ?? new List<Phone>();
+            var phoneList = model.Phones?.ToList() ?? [];
 
             phoneList.ForEach(phone =>
             {
@@ -117,14 +109,14 @@ public class HomeController : Controller
                 phone.Ordinal = phoneList.IndexOf(phone) + 1;
             });
 
-            _repository.UpsertList(
+            repository.UpsertList(
                 phoneList,
                 create => create.CreatedOn = DateTime.UtcNow,
                 update => update.UpdatedOn = DateTime.UtcNow
             );
 
 
-            _repository.Execute(
+            repository.Execute(
                 @"DELETE FROM [dbo].[Phone] 
                             WHERE [ContactId] = @contactId 
                             AND [Id] NOT IN @ids",
@@ -155,11 +147,11 @@ public class HomeController : Controller
     /// <returns></returns>
     public IActionResult Delete(Guid id)
     {
-        using (var transaction = _repository.GetTransaction(IsolationLevel.ReadCommitted))
+        using (var transaction = repository.GetTransaction(IsolationLevel.ReadCommitted))
         {
-            _repository.Delete<Phone>("WHERE [ContactId] = @id", new { id });
+            repository.Delete<Phone>("WHERE [ContactId] = @id", new { id });
 
-            _repository.Delete<Contact>(id);
+            repository.Delete<Contact>(id);
 
             transaction.Complete();
         }

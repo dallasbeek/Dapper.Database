@@ -19,7 +19,6 @@ using Dapper.Database.Attributes;
 
 namespace ContactApp.Models
 {
-
     /// <summary>
     ///     A class which represents the Contact table.
     /// </summary>
@@ -27,14 +26,15 @@ namespace ContactApp.Models
     [Serializable]
     public partial class Contact
     {
-
         [Column] [Key] public virtual Guid Id { get; set; }
 
         [Column] [Required] [StringLength(64)] public virtual string FirstName { get; set; }
 
         [Column] [Required] [StringLength(64)] public virtual string LastName { get; set; }
 
-        [Column] [DatabaseGenerated(DatabaseGeneratedOption.Computed)] public virtual string FullName { get; set; }
+        [Column]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public virtual string FullName { get; set; }
 
         [Column] [StringLength(64)] public virtual string Company { get; set; }
 
@@ -58,7 +58,6 @@ namespace ContactApp.Models
     [Serializable]
     public partial class Phone
     {
-
         [Column] [Key] public virtual Guid Id { get; set; }
 
         [Column] public virtual Guid ContactId { get; set; }

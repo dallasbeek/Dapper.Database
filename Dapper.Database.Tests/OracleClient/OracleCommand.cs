@@ -50,18 +50,23 @@ public class OracleCommand : DbCommand
         }
     }
 
+    // ReSharper disable once UnusedMember.Global
     public bool BindByName
     {
         get => RealCommand.BindByName;
         set => RealCommand.BindByName = value;
     }
 
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once UnusedMember.Global
     public int InitialLOBFetchSize
     {
         get => RealCommand.InitialLOBFetchSize;
         set => RealCommand.InitialLOBFetchSize = value;
     }
 
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once UnusedMember.Global
     public int InitialLONGFetchSize
     {
         get => RealCommand.InitialLONGFetchSize;
@@ -121,8 +126,7 @@ public class OracleCommand : DbCommand
     {
         get
         {
-            if (_parameters == null)
-                _parameters = new OracleParameterCollection(RealCommand.Parameters);
+            _parameters ??= new OracleParameterCollection(RealCommand.Parameters);
 
             return _parameters;
         }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -83,18 +84,12 @@ public abstract partial class TestSuite
     public async Task GetShortCircuitSemiColonAsync()
     {
         using var db = GetSqlDatabase();
-        var tsql = "; select 23 AS ProductId";
-        switch (GetProvider())
-        {
-            case Provider.Firebird:
-                tsql += " from RDB$Database";
-                break;
-            case Provider.Oracle:
-                tsql += " from dual";
-                break;
-        }
+        var numberSql = "; select 23 AS ProductId";
+        if (GetProvider() == Provider.Firebird)
+            numberSql += " from RDB$Database";
+        else if (GetProvider() == Provider.Oracle) numberSql += " from dual";
 
-        var p = await db.GetAsync<Product>(tsql, new { });
+        var p = await db.GetAsync<Product>(numberSql, new { });
         Assert.Equal(23, p.ProductID);
     }
 

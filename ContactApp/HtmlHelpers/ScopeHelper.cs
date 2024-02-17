@@ -8,17 +8,13 @@ namespace Microsoft.AspNetCore.Mvc.Rendering;
 public static class ScopeHelpers
 {
     public static ModelScopeContext ModelScope(this IHtmlHelper html, string modelName) =>
-        new ModelScopeContext(html.ViewData.TemplateInfo, modelName);
+        new(html.ViewData.TemplateInfo, modelName);
 
-    public static ModelItemScopeContext ModelItemScope(this IHtmlHelper html, string modelName, string specificId)
-    {
-        var modelItemIndex = specificId;
-
-        return new ModelItemScopeContext(html.ViewData.TemplateInfo, modelName, modelItemIndex);
-    }
+    public static ModelItemScopeContext ModelItemScope(this IHtmlHelper html, string modelName, string specificId) =>
+        new(html.ViewData.TemplateInfo, modelName, specificId);
 
     public static HtmlString ModelItemScopeIndex(this IHtmlHelper html, ModelItemScopeContext scopeContext) =>
-        new HtmlString(
+        new(
             $@"<input type='hidden' name='{scopeContext.ModelName}.index' autocomplete='off' value='{scopeContext.ModelItemIndex}' />"
         );
 
@@ -42,17 +38,11 @@ public static class ScopeHelpers
         public void Dispose() => _templateInfo.HtmlFieldPrefix = _previousPrefix;
     }
 
-    public class ModelItemScopeContext : ModelScopeContext
+    public class ModelItemScopeContext(TemplateInfo templateInfo, string collectionName, string collectionId)
+        : ModelScopeContext(templateInfo, $"{collectionName}[{collectionId}]")
     {
-        public ModelItemScopeContext(TemplateInfo templateInfo, string collectionName, string collectionId)
-            : base(templateInfo, $"{collectionName}[{collectionId}]")
-        {
-            ModelName = collectionName;
-            ModelItemIndex = collectionId;
-        }
-
-        public string ModelItemIndex { get; }
-        public string ModelName { get; }
+        public string ModelItemIndex { get; } = collectionId;
+        public string ModelName { get; } = collectionName;
 
         public string ModelItemKey => $"{ModelName}[{ModelItemIndex}]";
     }

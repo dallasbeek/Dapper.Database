@@ -13,20 +13,20 @@ namespace Dapper.Database.Adapters
     public class Oracle11gAdapter : OracleAdapter
     {
         /// <summary>
-        ///     Simulates <c>INSERT..RETURNING</c> with a PL/SQL block that does an <c>INSERT</c> followed by a <c>SELECT</c>.
+        ///     Simulates <c>INSERT...RETURNING</c> with a PL/SQL block that does an <c>INSERT</c> followed by a <c>SELECT</c>.
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <returns>the PL/SQL block</returns>
         /// <remarks>
         ///     <para>
         ///         ORACRAP: The managed ODP.Net drivers do not properly handle variable-sized outputs when running an
-        ///         UPDATE..RETURNING against Oracle 11g.
+        ///         UPDATE...RETURNING against Oracle 11g.
         ///         I suspect this is the result of a difference in what is sent over the wire between 11.2 and 12.2, and the
         ///         managed driver not handling the difference.
         ///     </para>
         ///     <para>
-        ///         This holds true even if we run UPDATE..RETURNING in a PL/SQL block.
-        ///         However, it *does* properly work on INSERT..RETURNING and a PL/SQL block doing UPDATE, then SELECT.
+        ///         This holds true even if we run UPDATE...RETURNING in a PL/SQL block.
+        ///         However, it *does* properly work on INSERT...RETURNING and a PL/SQL block doing UPDATE, then SELECT.
         ///         There should be no risk of a race condition as the row should be locked for the duration of the execution.
         ///     </para>
         /// </remarks>
@@ -56,7 +56,7 @@ namespace Dapper.Database.Adapters
         }
 
         /// <summary>
-        ///     Simulates <c>UPDATE..RETURNING</c> with a PL/SQL block that does an <c>UPDATE</c> followed by a <c>SELECT</c>.
+        ///     Simulates <c>UPDATE...RETURNING</c> with a PL/SQL block that does an <c>UPDATE</c> followed by a <c>SELECT</c>.
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <param name="columnsToUpdate"></param>
@@ -64,13 +64,13 @@ namespace Dapper.Database.Adapters
         /// <remarks>
         ///     <para>
         ///         ORACRAP: The managed ODP.Net drivers do not properly handle variable-sized outputs when running an
-        ///         UPDATE..RETURNING against Oracle 11g.
+        ///         UPDATE...RETURNING against Oracle 11g.
         ///         I suspect this is the result of a difference in what is sent over the wire between 11.2 and 12.2, and the
         ///         managed driver not handling the difference.
         ///     </para>
         ///     <para>
-        ///         This holds true even if we run UPDATE..RETURNING in a PL/SQL block.
-        ///         However, it *does* properly work on INSERT..RETURNING and a PL/SQL block doing UPDATE, then SELECT.
+        ///         This holds true even if we run UPDATE...RETURNING in a PL/SQL block.
+        ///         However, it *does* properly work on INSERT...RETURNING and a PL/SQL block doing UPDATE, then SELECT.
         ///         There should be no risk of a race condition as the row should be locked for the duration of the execution.
         ///     </para>
         /// </remarks>

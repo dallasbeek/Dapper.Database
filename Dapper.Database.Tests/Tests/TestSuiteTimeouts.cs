@@ -2,6 +2,7 @@
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -103,6 +104,8 @@ public abstract partial class TestSuite
                 // Verified this is correct for ODP.NET 12.2.1100 and ODP.NET Core 2.12.0-beta3.
                 Assert.StartsWith("Value does not fall within the expected range.", ex.Message);
                 break;
+            case Provider.SqlServer:
+            case Provider.SQLite:
             default:
                 Assert.StartsWith("Invalid CommandTimeout value -1;", ex.Message);
                 break;

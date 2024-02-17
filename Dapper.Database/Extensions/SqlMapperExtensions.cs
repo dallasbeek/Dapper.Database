@@ -19,7 +19,7 @@ namespace Dapper.Database.Extensions
         public delegate string GetDatabaseTypeDelegate(IDbConnection connection);
 
         /// <summary>
-        ///     The function to get a a table name from a given <see cref="Type" />
+        ///     The function to get a table name from a given <see cref="Type" />
         /// </summary>
         /// <param name="type">The <see cref="Type" /> to get a table name for.</param>
         public delegate string TableNameMapperDelegate(Type type);

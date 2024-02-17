@@ -44,7 +44,7 @@ namespace Dapper.Database.Extensions
             }
         }
 
-        private struct GenQuery
+        private readonly struct GenQuery
         {
             public GenQuery(DynamicParameters parameters, string sqlStatement) : this()
             {

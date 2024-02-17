@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Dapper.Database.Adapters
 {
     /// <summary>
-    ///     The interface for all Dapper.Database database operations
+    ///     The interface for all Dapper.Database operations
     ///     Implementing this is each provider's model.
     /// </summary>
     public interface ISqlAdapter

@@ -1,4 +1,4 @@
-﻿#if NET472 || NET48
+﻿#if NET48
 
 using System;
 using System.Data.SqlServerCe;
@@ -8,11 +8,13 @@ using Xunit;
 namespace Dapper.Database.Tests
 {
     [Trait("Provider", "SqlCE")]
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once UnusedMember.Global
     public class SqlCETestSuite : TestSuite
     {
         private const string FileName = "DBFiles\\Test.DB.sdf";
 
-        private static readonly bool _skip;
+        private static readonly bool Skip;
 
         static SqlCETestSuite()
         {
@@ -25,11 +27,10 @@ namespace Dapper.Database.Tests
                 engine.CreateDatabase();
                 using var connection = new SqlCeConnection(ConnectionString);
                 connection.Open();
-                var line = string.Empty;
                 var commandText = string.Empty;
-                var file = new StreamReader(".\\Scripts\\sqlceawlite.sql");
+                var file = new StreamReader(@".\Scripts\sqlceawlite.sql");
 
-                while ((line = file.ReadLine()) != null)
+                while (file.ReadLine() is { } line)
                     if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
                     {
                         connection.Execute(commandText);
@@ -48,13 +49,13 @@ namespace Dapper.Database.Tests
             }
             catch (SqlCeException)
             {
-                _skip = true;
+                Skip = true;
             }
         }
 
         public static string ConnectionString => $"Data Source={FileName};";
 
-        protected override void CheckSkip() => Skip.If(_skip, "Skipping SqlCE Tests - no server or file.");
+        protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping SqlCE Tests - no server or file.");
 
         public override ISqlDatabase GetSqlDatabase()
         {

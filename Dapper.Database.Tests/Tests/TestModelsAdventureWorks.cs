@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Dapper.Database.Attributes;
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 /// <summary>

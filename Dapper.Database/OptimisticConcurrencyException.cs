@@ -35,7 +35,7 @@ namespace Dapper.Database
         public OptimisticConcurrencyException(string message, Exception inner) : base(message, inner)
         {
         }
-
+#if !NET6_0_OR_GREATER
         /// <summary>
         ///     Initializes a new instance of the <see cref="OptimisticConcurrencyException" /> class from serialization.
         /// </summary>
@@ -44,7 +44,7 @@ namespace Dapper.Database
         protected OptimisticConcurrencyException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-
+#endif
         /// <summary>
         ///     Initializes a new instance of the <see cref="OptimisticConcurrencyException" /> class with the specified entity in
         ///     conflict.

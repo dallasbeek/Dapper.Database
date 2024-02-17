@@ -2,6 +2,7 @@
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
+// ReSharper disable once CheckNamespace
 namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
@@ -88,15 +89,15 @@ public abstract partial class TestSuite
     [Trait("Category", "Update")]
     public void UpdateComputed()
     {
-        var dnow = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new PersonExcludedColumns
         {
             FirstName = "Alice",
             LastName = "Jones",
             Notes = "Hello",
-            CreatedOn = dnow,
-            UpdatedOn = dnow
+            CreatedOn = now,
+            UpdatedOn = now
         };
         Assert.True(db.Insert(p));
 
@@ -112,11 +113,14 @@ public abstract partial class TestSuite
 
         Assert.Equal(p.IdentityId, gp.IdentityId);
         Assert.Null(gp.Notes);
-        Assert.InRange(gp.CreatedOn.Value, dnow.AddSeconds(-1),
-            dnow.AddSeconds(
-                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most. )
-        Assert.InRange(gp.UpdatedOn.Value, dnow.AddMinutes(-1),
-            dnow.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
+        Assert.Null(gp.NoDbColumn);
+        Assert.NotNull(gp.CreatedOn);
+        Assert.InRange(gp.CreatedOn.Value, now.AddSeconds(-1),
+            now.AddSeconds(
+                1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most). 
+        Assert.NotNull(gp.UpdatedOn);
+        Assert.InRange(gp.UpdatedOn.Value, now.AddMinutes(-1),
+            now.AddMinutes(1)); // to cover clock skew, delay in DML, etc.
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.LastName, gp.LastName);
     }
@@ -125,7 +129,6 @@ public abstract partial class TestSuite
     [Trait("Category", "Update")]
     public void UpdateComputedAlias()
     {
-        var dnow = DateTime.UtcNow;
         using var db = GetSqlDatabase();
         var p = new PersonIdentityAlias { First = "Alice", Last = "Jones" };
         Assert.True(db.Insert(p));

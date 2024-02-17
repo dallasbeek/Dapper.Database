@@ -1,4 +1,4 @@
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.IO;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
@@ -7,11 +7,12 @@ using Xunit;
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "SqlServer")]
+// ReSharper disable once UnusedMember.Global
 public partial class SqlServerTestSuite : TestSuite
 {
     private const string DbName = "tempdb";
 
-    private static readonly bool _skip;
+    private static readonly bool Skip;
 
     static SqlServerTestSuite()
     {
@@ -33,25 +34,26 @@ public partial class SqlServerTestSuite : TestSuite
                 if (mv < 11) SqlMapperExtensions.AddSqlAdapter<SqlConnection>(new SqlServerPre2012Adapter());
             }
 
-            var awfile = File.ReadAllText(".\\Scripts\\sqlserverawlite.sql");
-            connection.Execute(awfile);
+            var scriptSql = File.ReadAllText(@".\Scripts\sqlserverawlite.sql");
+            connection.Execute(scriptSql);
             connection.Execute("delete from [Person]");
         }
         catch (SqlException e)
         {
             if (e.Message.Contains("The server was not found ") || e.Message.Contains("Cannot open database"))
-                _skip = true;
+                Skip = true;
             else
                 throw;
         }
     }
 
     public static string ConnectionString =>
+        // ReSharper disable once StringLiteralTypo
         IsAppVeyor
             ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!"
             : $"Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DbName};Integrated Security=True";
 
-    protected override void CheckSkip() => Skip.If(_skip, "Skipping Sql Server Tests - no server.");
+    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping Sql Server Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {

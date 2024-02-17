@@ -53,18 +53,13 @@ public class OracleParameterCollection : DbParameterCollection
     {
         if (value == null) throw new ArgumentNullException(nameof(value));
 
-        switch (value)
+        return value switch
         {
-            case OracleParameter parameter:
-                return AddInternal(parameter);
-
-            case RealOracleParameter realParameter:
-                return AddInternal(new OracleParameter(realParameter));
-
-            default:
-                throw new InvalidCastException(
-                    $"Cannot cast connection of type {value.GetType()} to {typeof(OracleParameter)}.");
-        }
+            OracleParameter parameter => AddInternal(parameter),
+            RealOracleParameter realParameter => AddInternal(new OracleParameter(realParameter)),
+            _ => throw new InvalidCastException(
+                $"Cannot cast connection of type {value.GetType()} to {typeof(OracleParameter)}.")
+        };
     }
 
     public override bool Contains(object value) => _parameters.Contains((OracleParameter)value);

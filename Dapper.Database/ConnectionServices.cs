@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-#if !NETSTANDARD
+#if NET462
 using System.Configuration;
 #endif
 
@@ -34,9 +34,8 @@ namespace Dapper.Database
         public IDbConnection GetConnection() => (T)Activator.CreateInstance(typeof(T), _connectionString);
     }
 
-#if !NETSTANDARD
+#if NET462
     /// <summary>
-    /// 
     /// </summary>
     // ReSharper disable once UnusedMember.Global
     public class ConfigConnectionService<T> : IConnectionService where T : IDbConnection
@@ -44,22 +43,15 @@ namespace Dapper.Database
         private readonly string _key;
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="key">the key in app.config or web.config</param>
-        public ConfigConnectionService(string key)
-        {
-            _key = key;
-        }
+        /// <param name="key">the key in the app.config or web.config</param>
+        public ConfigConnectionService(string key) => _key = key;
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
-        public IDbConnection GetConnection()
-        {
-            return (T)Activator.CreateInstance(typeof(T), ConfigurationManager.ConnectionStrings[_key].ConnectionString);
-        }
+        public IDbConnection GetConnection() => (T)Activator.CreateInstance(typeof(T),
+            ConfigurationManager.ConnectionStrings[_key].ConnectionString);
     }
 #endif
 }

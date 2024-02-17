@@ -21,11 +21,10 @@ namespace Dapper.Database.Mapper
                 })
                 .FirstOrDefault(parameter => parameter.Property != null);
 
-            if (destination == null)
-                throw new InvalidOperationException(
-                    $"No writable property of type {sourceExpression.Type.FullName} found in types {string.Join(", ", destinationExpressions.Select(parameter => parameter.Type.FullName))}.");
-
-            return Expression.IfThen(
+            return destination == null
+                ? throw new InvalidOperationException(
+                    $"No writable property of type {sourceExpression.Type.FullName} found in types {string.Join(", ", destinationExpressions.Select(parameter => parameter.Type.FullName))}.")
+                : (Expression)Expression.IfThen(
                 Expression.Not(Expression.Equal(destination.Parameter, Expression.Constant(null))),
                 Expression.Call(destination.Parameter, destination.Property.GetSetMethod(), sourceExpression));
         }

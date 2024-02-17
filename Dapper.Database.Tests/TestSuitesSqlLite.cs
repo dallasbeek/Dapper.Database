@@ -6,11 +6,13 @@ using Xunit;
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "SQLite")]
+// ReSharper disable once InconsistentNaming
+// ReSharper disable once UnusedMember.Global
 public class SQLiteTestSuite : TestSuite
 {
     private const string FileName = "DBFiles\\Test.DB.sqlite";
 
-    private static readonly bool _skip;
+    private static readonly bool Skip;
 
     static SQLiteTestSuite()
     {
@@ -27,21 +29,21 @@ public class SQLiteTestSuite : TestSuite
             {
                 connection.Open();
 
-                var awfile = File.ReadAllText(".\\Scripts\\sqliteawlite.sql");
-                connection.Execute(awfile);
+                var scriptSql = File.ReadAllText(@".\Scripts\sqliteawlite.sql");
+                connection.Execute(scriptSql);
             }
 
             connection.Execute("delete from [Person]");
         }
         catch (SqliteException ex) when (ex.Message.Contains("SQLite Error 1:"))
         {
-            _skip = true;
+            Skip = true;
         }
     }
 
     public static string ConnectionString => $"Filename=./{FileName};Mode=ReadWriteCreate;";
 
-    protected override void CheckSkip() => Skip.If(_skip, "Skipping SQLite Tests - no server.");
+    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping SQLite Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {
