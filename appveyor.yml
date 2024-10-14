@@ -11,7 +11,7 @@ skip_commits:
 environment:
   Appveyor: true
   # Postgres
-  PATH=C:\Program Files\PostgreSQL\16.3\bin\;%PATH%
+  POSTGRES_PATH: C:\Program Files\PostgreSQL\15
   PGUSER: postgres
   PGPASSWORD: Password12!
   POSTGRES_ENV_POSTGRES_USER: postgres
@@ -25,13 +25,14 @@ environment:
   MYSQL_ENV_MYSQL_DATABASE: test
 
 services:
-  - postgresql163
+  - postgresql15
 
 init:
   - git config --global core.autocrlf input
   - SET PATH=%POSTGRES_PATH%\bin;%MYSQL_PATH%\bin;%PATH%
   - net start MSSQL$SQL2019
   - ps: Start-Service MySQL80
+  - ps: Start-Service postgresql-x64-15
 
 nuget:
   disable_publish_on_pr: true
