@@ -11,7 +11,6 @@ skip_commits:
 environment:
   Appveyor: true
   # Postgres
-  POSTGRES_PATH: C:\Program Files\PostgreSQL\10
   PGUSER: postgres
   PGPASSWORD: Password12!
   POSTGRES_ENV_POSTGRES_USER: postgres
@@ -25,7 +24,7 @@ environment:
   MYSQL_ENV_MYSQL_DATABASE: test
 
 services:
-  - postgresql101
+  - postgresql163
 
 init:
   - git config --global core.autocrlf input
