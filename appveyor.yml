@@ -11,7 +11,6 @@ skip_commits:
 environment:
   Appveyor: true
   # Postgres
-  POSTGRES_PATH: C:\Program Files\PostgreSQL\16.3
   PATH=C:\Program Files\PostgreSQL\16.3\bin\;%PATH%
   PGUSER: postgres
   PGPASSWORD: Password12!
