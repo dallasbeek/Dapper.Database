@@ -39,7 +39,7 @@ public class Startup(IConfiguration configuration)
             .LogToConsole()
             .Build();
 
-        var result = dbUpgrade.PerformUpgrade();
+        dbUpgrade.PerformUpgrade();
 
         if (env.IsDevelopment())
             app.UseDeveloperExceptionPage();

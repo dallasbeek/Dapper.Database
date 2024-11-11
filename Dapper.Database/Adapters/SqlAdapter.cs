@@ -39,12 +39,12 @@ namespace Dapper.Database.Adapters
         /// <summary>
         ///     Parameter name for page size in <see cref="GetPageListQuery" />.
         /// </summary>
-        protected virtual string PageSizeParamName { get; } = "__PageSize";
+        protected virtual string PageSizeParamName => "__PageSize";
 
         /// <summary>
         ///     Parameter name for page skip in <see cref="GetPageListQuery" />.
         /// </summary>
-        protected virtual string PageSkipParamName { get; } = "__PageSkip";
+        protected virtual string PageSkipParamName => "__PageSkip";
 
 
         /// <summary>
@@ -94,9 +94,7 @@ namespace Dapper.Database.Adapters
 
             if (!q.IsSelect)
             {
-                if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select count(*) from {EscapeTableName(tableInfo)} {q.Sql}";
-                return $"select count(*) {q.Sql}";
+                return string.IsNullOrEmpty(q.FromClause) ? $"select count(*) from {EscapeTableName(tableInfo)} {q.Sql}" : $"select count(*) {q.Sql}";
             }
 
             return $"select count(*) from ({q.Sql}) count_inner";
@@ -265,11 +263,9 @@ namespace Dapper.Database.Adapters
 
             var eqExpression = $"{escColumnName} = {escParameterName}";
 
-            if (column.IsNullable)
+            return column.IsNullable ?
                 // (x = :x or (x is null and :x is null))
-                return $"({eqExpression} or ({escColumnName} is null and {escParameterName} is null))";
-
-            return eqExpression;
+                $"({eqExpression} or ({escColumnName} is null and {escParameterName} is null))" : eqExpression;
         }
 
         /// <summary>

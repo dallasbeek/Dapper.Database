@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 
 // ReSharper disable once CheckNamespace

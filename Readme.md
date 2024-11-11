@@ -7,46 +7,90 @@ Features
 Dapper.Database contains a number of helper methods for inserting, getting,
 updating and deleting records.
 
-The full list of extension methods in Dapper.Database right now are:
+The full list of extension methods in Dapper.Database:
 
 ```csharp
+// Insert
 bool Insert<T>(T entityToInsert);
+Task<bool> InsertAsync<T>(T entityToInsert);
 
+bool InsertList<T>(IEnumerable<T> entitiesToInsert);
+Task<bool> InsertListAsync<T>(IEnumerable<T> entitiesToInsert);
+
+// Update
 bool Update<T>(T entityToUpdate);
 bool Update<T>(T entityToUpdate, IEnumerable<string> columnsToUpdate);
 
+Task<bool> UpdateAsync<T>(T entityToUpdate);
+Task<bool> UpdateAsync<T>(T entityToUpdate, IEnumerable<string> columnsToUpdate);
+
+bool UpdateList<T>(IEnumerable<T> entitiesToUpdate);
+bool UpdateList<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate);
+
+Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate);
+Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate);
+
+int UpdateMany<T>(string whereClause, IEnumerable<string> columnsToUpdate, object parameters);
+Task<int> UpdateManyAsync<T>(string whereClause, IEnumerable<string> columnsToUpdate, object parameters);
+
+// Update Or Insert
 bool Upsert<T>(T entityToUpsert);
 bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate);
 bool Upsert<T>(T entityToUpsert, Action<T> insertAction, Action<T> updateAction);
 bool Upsert<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
-bool InsertList<T>(IEnumerable<T> entitiesToInsert);
+Task<bool> UpsertAsync<T>(T entityToUpsert);
+Task<bool> UpsertAsync<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate);
+Task<bool> UpsertAsync<T>(T entityToUpsert, Action<T> insertAction, Action<T> updateAction);
+Task<bool> UpsertAsync<T>(T entityToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
-bool UpdateList<T>(IEnumerable<T> entitiesToUpdate);
-bool UpdateList<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate);
-
-bool UpsertList<T>(IEnumerable<T> entitiesToUpsert) where T : class;
+bool UpsertList<T>(IEnumerable<T> entitiesToUpsert);
 bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate);
 bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction);
 bool UpsertList<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
+Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert);
+Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate);
+Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert, Action<T> insertAction, Action<T> updateAction);
+Task<bool> UpsertListAsync<T>(IEnumerable<T> entitiesToUpsert, IEnumerable<string> columnsToUpdate, Action<T> insertAction, Action<T> updateAction);
 
+// Delete
 bool Delete<T>(T entityToDelete);
-bool Delete<T>(object primaryKey);
-bool Delete<T>(string sql = null);
-bool Delete<T>(string sql, object parameters);
+bool Delete<T>(object primaryKeyValue);
+bool Delete<T>(string whereClause);
+bool Delete<T>(string whereClause, object parameters);
+bool DeleteAll<T>();
 
-int Count(string sql);
-int Count(string sql, object parameters);
+Task<bool> DeleteAsync<T>(T entityToDelete);
+Task<bool> DeleteAsync<T>(object primaryKeyValue);
+Task<bool> DeleteAsync<T>(string whereClause);
+Task<bool> DeleteAsync<T>(string whereClause, object parameters);
+Task<bool> DeleteAllAsync<T>();
+
+// Query
+int Count(string fullSql);
+int Count(string fullSql, object parameters);
 int Count<T>(string sql = null);
 int Count<T>(string sql, object parameters);
 
-bool Exists(string sql = null);
-bool Exists(string sql, object parameters);
-bool Exists<T>(T entityToExists);
+Task<int> CountAsync(string fullSql);
+Task<int> CountAsync(string fullSql, object parameters);
+Task<int> CountAsync<T>(string sql = null);
+Task<int> CountAsync<T>(string sql, object parameters);
+
+bool Exists(string fullSql = null);
+bool Exists(string fullSql, object parameters);
+bool Exists<T>(T entityToCheck);
 bool Exists<T>(object primaryKey);
 bool Exists<T>(string sql = null);
 bool Exists<T>(string sql, object parameters);
+
+Task<bool> ExistsAsync(string fullSql = null);
+Task<bool> ExistsAsync(string fullSql, object parameters);
+Task<bool> ExistsAsync<T>(T entityToCheck);
+Task<bool> ExistsAsync<T>(object primaryKey);
+Task<bool> ExistsAsync<T>(string sql = null);
+Task<bool> ExistsAsync<T>(string sql, object parameters);
 
 T Get<T>(T entityToGet);
 T Get<T>(object primaryKey);
@@ -63,6 +107,21 @@ TRet Get<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object par
 TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
 TRet Get<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
 
+Task<T> GetAsync<T>(T entityToGet);
+Task<T> GetAsync<T>(object primaryKey);
+Task<T> GetAsync<T>(string sql, object parameters);
+Task<T1> GetAsync<T1, T2>(string sql, object parameters, string splitOn = null);
+Task<T1> GetAsync<T1, T2, T3>(string sql, string splitOn = null);
+Task<T1> GetAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null);
+Task<T1> GetAsync<T1, T2, T3, T4>(string sql, string splitOn = null);
+Task<T1> GetAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null);
+Task<TRet> GetAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null);
+Task<TRet> GetAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<TRet> GetAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null);
+Task<TRet> GetAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<TRet> GetAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
+Task<TRet> GetAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
+
 T GetFirst<T>(string sql = null);
 T GetFirst<T>(string sql, object parameters);
 T1 GetFirst<T1, T2>(string sql, string splitOn = null);
@@ -77,6 +136,21 @@ TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, strin
 TRet GetFirst<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null);
 TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
 TRet GetFirst<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
+
+Task<T> GetFirstAsync<T>(string sql = null);
+Task<T> GetFirstAsync<T>(string sql, object parameters);
+Task<T1> GetFirstAsync<T1, T2>(string sql, string splitOn = null);
+Task<T1> GetFirstAsync<T1, T2>(string sql, object parameters, string splitOn = null);
+Task<T1> GetFirstAsync<T1, T2, T3>(string sql, string splitOn = null);
+Task<T1> GetFirstAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null);
+Task<T1> GetFirstAsync<T1, T2, T3, T4>(string sql, string splitOn = null);
+Task<T1> GetFirstAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null);
+Task<TRet> GetFirstAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null);
+Task<TRet> GetFirstAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<TRet> GetFirstAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null);
+Task<TRet> GetFirstAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<TRet> GetFirstAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
+Task<TRet> GetFirstAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
 
 IEnumerable<T> GetList<T>(string sql = null);
 IEnumerable<T> GetList<T>(string sql, object parameters);
@@ -93,6 +167,21 @@ IEnumerable<TRet> GetList<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, strin
 IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
 IEnumerable<TRet> GetList<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
 
+Task<IEnumerable<T>> GetListAsync<T>(string sql = null);
+Task<IEnumerable<T>> GetListAsync<T>(string sql, object parameters);
+Task<IEnumerable<T1>> GetListAsync<T1, T2>(string sql, string splitOn = null);
+Task<IEnumerable<T1>> GetListAsync<T1, T2>(string sql, object parameters, string splitOn = null);
+Task<IEnumerable<T1>> GetListAsync<T1, T2, T3>(string sql, string splitOn = null);
+Task<IEnumerable<T1>> GetListAsync<T1, T2, T3>(string sql, object parameters, string splitOn = null);
+Task<IEnumerable<T1>> GetListAsync<T1, T2, T3, T4>(string sql, string splitOn = null);
+Task<IEnumerable<T1>> GetListAsync<T1, T2, T3, T4>(string sql, object parameters, string splitOn = null);
+Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, string splitOn = null);
+Task<IEnumerable<TRet>> GetListAsync<T1, T2, TRet>(Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null);
+Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, TRet>(Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
+Task<IEnumerable<TRet>> GetListAsync<T1, T2, T3, T4, TRet>(Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
+
 IPagedEnumerable<T> GetPageList<T>(int page, int pageSize, string sql = null);
 IPagedEnumerable<T> GetPageList<T>(int page, int pageSize, string sql, object parameters);
 IPagedEnumerable<T1> GetPageList<T1, T2>(int page, int pageSize, string sql, string splitOn = null);
@@ -107,11 +196,43 @@ IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Fun
 IPagedEnumerable<TRet> GetPageList<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null);
 IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
 IPagedEnumerable<TRet> GetPageList<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
-```
 
-All the above methods are also available as async Methods
-``` csharp
-Task<bool> InsertAsync<T>(T entityToInsert);
+Task<IPagedEnumerable<T>> GetPageListAsync<T>(int page, int pageSize, string sql, object parameters);
+Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2>(int page, int pageSize, string sql, string splitOn = null);
+Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2>(int page, int pageSize, string sql, object parameters, string splitOn = null);
+Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(int page, int pageSize, string sql, string splitOn = null);
+Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3>(int page, int pageSize, string sql, object parameters, string splitOn = null);
+Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(int page, int pageSize, string sql, string splitOn = null);
+Task<IPagedEnumerable<T1>> GetPageListAsync<T1, T2, T3, T4>(int page, int pageSize, string sql, object parameters, string splitOn = null);
+Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, string splitOn = null);
+Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, TRet>(int page, int pageSize, Func<T1, T2, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, string splitOn = null);
+Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, TRet>(int page, int pageSize, Func<T1, T2, T3, TRet> mapper, string sql, object parameters, string splitOn = null);
+Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, string splitOn = null);
+Task<IPagedEnumerable<TRet>> GetPageListAsync<T1, T2, T3, T4, TRet>(int page, int pageSize, Func<T1, T2, T3, T4, TRet> mapper, string sql, object parameters, string splitOn = null);
+
+DataTable GetDataTable(string fullSql);
+DataTable GetDataTable(string fullSql, object parameters);
+
+GridReader GetMultiple(string fullSql);
+GridReader GetMultiple(string fullSql, object parameters);
+
+Task<GridReader> GetMultipleAsync(string fullSql);
+Task<GridReader> GetMultipleAsync(string fullSql, object parameters);
+
+// Execute Methods
+int Execute(string fullSql);
+int Execute(string fullSql, object parameters);
+
+Task<int> ExecuteAsync(string fullSql);
+Task<int> ExecuteAsync(string fullSql, object parameters);
+
+T ExecuteScalar<T>(string fullSql);
+T ExecuteScalar<T>(string fullSql, object parameters);
+
+Task<T> ExecuteScalarAsync<T>(string fullSql);
+Task<T> ExecuteScalarAsync<T>(string fullSql, object parameters);
+
 ```
 
 There is also a SqlDatabase implementation that will handle opening and closing connections and transaction management.
@@ -422,5 +543,12 @@ connection.Upsert(
     , (insert) => insert.CreatedOn = DateTime.Now()
     , (update) => update.UpdatedOn = DateTime.Now()
 );
+```
+
+`Execute` methods
+-------
+Execute is used to execute a stored procedure. Use first char ';' short circuits query builder logic.
+```
+connection.Execute("; EXEC stored_procedure @a, new {a = 'param'});
 ```
 

@@ -84,9 +84,9 @@ namespace Dapper.Database.Extensions
         {
             var name = GetSqlAdapterName(connection);
 
-            return !AdapterDictionary.ContainsKey(name)
+            return !AdapterDictionary.TryGetValue(name, out var value)
                 ? DefaultAdapter
-                : AdapterDictionary[name];
+                : value;
         }
 
         /// <summary>
