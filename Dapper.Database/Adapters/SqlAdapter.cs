@@ -39,12 +39,12 @@ namespace Dapper.Database.Adapters
         /// <summary>
         ///     Parameter name for page size in <see cref="GetPageListQuery" />.
         /// </summary>
-        protected virtual string PageSizeParamName { get; } = "__PageSize";
+        protected virtual string PageSizeParamName => "__PageSize";
 
         /// <summary>
         ///     Parameter name for page skip in <see cref="GetPageListQuery" />.
         /// </summary>
-        protected virtual string PageSkipParamName { get; } = "__PageSkip";
+        protected virtual string PageSkipParamName => "__PageSkip";
 
 
         /// <summary>
@@ -94,9 +94,7 @@ namespace Dapper.Database.Adapters
 
             if (!q.IsSelect)
             {
-                if (string.IsNullOrEmpty(q.FromClause))
-                    return $"select count(*) from {EscapeTableName(tableInfo)} {q.Sql}";
-                return $"select count(*) {q.Sql}";
+                return string.IsNullOrEmpty(q.FromClause) ? $"select count(*) from {EscapeTableName(tableInfo)} {q.Sql}" : $"select count(*) {q.Sql}";
             }
 
             return $"select count(*) from ({q.Sql}) count_inner";
@@ -265,11 +263,9 @@ namespace Dapper.Database.Adapters
 
             var eqExpression = $"{escColumnName} = {escParameterName}";
 
-            if (column.IsNullable)
+            return column.IsNullable ?
                 // (x = :x or (x is null and :x is null))
-                return $"({eqExpression} or ({escColumnName} is null and {escParameterName} is null))";
-
-            return eqExpression;
+                $"({eqExpression} or ({escColumnName} is null and {escParameterName} is null))" : eqExpression;
         }
 
         /// <summary>
@@ -587,6 +583,52 @@ namespace Dapper.Database.Adapters
                     columnsToUpdate);
 
             return success;
+        }
+
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        public virtual int UpdateMany<T>(IDbConnection connection, IDbTransaction transaction,
+     int? commandTimeout, TableInfo tableInfo, string whereClause, IEnumerable<string> columnsToUpdate, object parameters)
+        {
+            var updateColumns = columnsToUpdate?.ToArray() ?? Array.Empty<string>();
+            var updates =
+                tableInfo.UpdateColumns.Where(ci => !updateColumns.Any() || updateColumns.Contains(ci.PropertyName));
+            var query = $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} {whereClause}";
+
+            return connection.Execute(query, new DynamicParameters(parameters), transaction, commandTimeout);
+        }
+
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        public virtual async Task<int> UpdateManyAsync<T>(IDbConnection connection, IDbTransaction transaction,
+     int? commandTimeout, TableInfo tableInfo, string whereClause, IEnumerable<string> columnsToUpdate, object parameters)
+        {
+            var updateColumns = columnsToUpdate?.ToArray() ?? Array.Empty<string>();
+            var updates =
+                tableInfo.UpdateColumns.Where(ci => !updateColumns.Any() || updateColumns.Contains(ci.PropertyName));
+            var query = $"update {EscapeTableName(tableInfo)} set {EscapeAssignmentList(updates)} {whereClause}";
+
+            return await connection.ExecuteAsync(query, new DynamicParameters(parameters), transaction, commandTimeout);
         }
 
         #endregion
