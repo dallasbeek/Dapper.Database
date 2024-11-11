@@ -273,6 +273,36 @@ namespace Dapper.Database.Adapters
             Action<T> insertAction, Action<T> updateAction);
 
         /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        int UpdateMany<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, string whereClause, IEnumerable<string> columnsToUpdate, object parameters);
+
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="tableInfo">table information about the entity</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        Task<int> UpdateManyAsync<T>(IDbConnection connection, IDbTransaction transaction, int? commandTimeout,
+            TableInfo tableInfo, string whereClause, IEnumerable<string> columnsToUpdate, object parameters);
+
+        /// <summary>
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>

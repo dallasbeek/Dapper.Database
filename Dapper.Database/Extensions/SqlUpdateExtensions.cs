@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -149,6 +150,50 @@ namespace Dapper.Database.Extensions
             var sqlHelper = new SqlQueryHelper(typeof(T), connection);
             return await sqlHelper.Adapter.UpdateListAsync(connection, transaction, commandTimeout, sqlHelper.TableInfo,
                 entitiesToUpdate, columnsToUpdate);
+        }
+
+        #endregion
+
+        #region UpdateMany Queries
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>Count of records updated</returns>
+        public static int UpdateMany<T>(this IDbConnection connection, string whereClause, IEnumerable<string> columnsToUpdate, object parameters, IDbTransaction transaction = null, int? commandTimeout = null)
+            where T : class
+        {
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return sqlHelper.Adapter.UpdateMany<T>(connection, transaction, commandTimeout, sqlHelper.TableInfo,
+                whereClause, columnsToUpdate, parameters);
+        }
+
+        #endregion
+
+        #region UpdateManyAsync Queries
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="connection">Open SqlConnection</param>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
+        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
+        /// <returns>Count of records updated</returns>
+        public static async Task<int> UpdateManyAsync<T>(this IDbConnection connection, string whereClause, IEnumerable<string> columnsToUpdate, object parameters, IDbTransaction transaction = null, int? commandTimeout = null)
+            where T : class
+        {
+            var sqlHelper = new SqlQueryHelper(typeof(T), connection);
+            return await sqlHelper.Adapter.UpdateManyAsync<T>(connection, transaction, commandTimeout, sqlHelper.TableInfo,
+                whereClause, columnsToUpdate, parameters);
         }
 
         #endregion

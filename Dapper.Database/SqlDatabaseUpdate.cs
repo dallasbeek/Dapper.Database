@@ -98,12 +98,40 @@ namespace Dapper.Database
         /// </summary>
         /// <typeparam name="T">The type of entity to update.</typeparam>
         /// <param name="entitiesToUpdate">The IEnumerable list of Entity to update.</param>
-        /// <param name="columnsToUpdate">The list of columns to updates.</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
         /// <returns>
         ///     True if records are updated.
         /// </returns>
         Task<bool> UpdateListAsync<T>(IEnumerable<T> entitiesToUpdate, IEnumerable<string> columnsToUpdate)
             where T : class;
+
+        #endregion
+
+        #region UpdateMany Methods
+
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        int UpdateMany<T>(string whereClause, IEnumerable<string> columnsToUpdate, object parameters) where T : class;
+
+        #endregion
+
+        #region UpdateManyAsync Methods
+
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        Task<int> UpdateManyAsync<T>(string whereClause, IEnumerable<string> columnsToUpdate, object parameters) where T : class;
 
         #endregion
     }
@@ -227,6 +255,35 @@ namespace Dapper.Database
                 () => SharedConnection.UpdateListAsync(entitiesToUpdate, columnsToUpdate, _transaction,
                     OneTimeCommandTimeout ?? CommandTimeout), true);
 
+        #endregion
+
+        #region UpdateMany
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        public int UpdateMany<T>(string whereClause, IEnumerable<string> columnsToUpdate, object parameters) where T : class
+            => ExecuteInternal(
+            () => SharedConnection.UpdateMany<T>(whereClause, columnsToUpdate, parameters, _transaction,
+                OneTimeCommandTimeout ?? CommandTimeout));
+        #endregion
+
+        #region UpdateManyAsync
+        /// <summary>
+        /// Bulk updates many records based on the where clause
+        /// </summary>
+        /// <typeparam name="T">The type of entity to update.</typeparam>
+        /// <param name="whereClause">The where clause to use to bind update, pass null or whitespace to update all records</param>
+        /// <param name="columnsToUpdate">The list of columns to update.</param>
+        /// <param name="parameters">The parameters to use for this update.</param>
+        /// <returns>Count of records updated</returns>
+        public async Task<int> UpdateManyAsync<T>(string whereClause, IEnumerable<string> columnsToUpdate, object parameters) where T : class =>
+            await ExecuteInternalAsync(() => SharedConnection.UpdateManyAsync<T>(whereClause, columnsToUpdate, parameters, _transaction,
+                OneTimeCommandTimeout ?? CommandTimeout));
         #endregion
     }
 }
