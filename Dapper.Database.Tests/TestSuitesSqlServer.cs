@@ -50,7 +50,7 @@ public partial class SqlServerTestSuite : TestSuite
     public static string ConnectionString =>
         // ReSharper disable once StringLiteralTypo
         IsAppVeyor
-            ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!"
+            ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!;TrustServerCertificate=True"
             : $"Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DbName};Integrated Security=True;TrustServerCertificate=True";
 
     protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping Sql Server Tests - no server.");
