@@ -1,5 +1,5 @@
-﻿using System.Data.SqlClient;
-using System.IO;
+﻿using System.IO;
+using Microsoft.Data.SqlClient;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
 using Xunit;
