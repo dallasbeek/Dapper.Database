@@ -20,7 +20,6 @@
   <ItemGroup>
     <PackageReference Include="dbup-sqlserver" Version="6.0.0" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
