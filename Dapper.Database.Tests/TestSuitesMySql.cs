@@ -1,34 +1,63 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using MySql.Data.MySqlClient;
+using Testcontainers.MySql;
 using Xunit;
 
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "MySql")]
 // ReSharper disable once UnusedMember.Global
-public class MySqlTestSuite : TestSuite
+public class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
+{
+    private readonly MySqlDatabaseFixture _fixture;
+
+    public MySqlTestSuite(MySqlDatabaseFixture fixture)
+    {
+        _fixture = fixture;
+
+        ResetDapperTypes();
+        SqlMapper.AddTypeHandler(new GuidTypeHandler());
+    }
+
+
+    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MySql Tests - no server.");
+
+    public override ISqlDatabase GetSqlDatabase()
+    {
+        CheckSkip();
+        return new SqlDatabase(new StringConnectionService<MySqlConnection>(_fixture.ConnectionString));
+    }
+
+    public override Provider GetProvider() => Provider.MySql;
+}
+
+public class MySqlDatabaseFixture : IDisposable
 {
     private const string DbName = "test";
 
-    private static readonly bool Skip;
+#if !CI_Build
+    private readonly MySqlContainer _sqlContainer;
+#endif
 
-    static MySqlTestSuite()
+    public MySqlDatabaseFixture()
     {
-        ResetDapperTypes();
-        SqlMapper.AddTypeHandler(new GuidTypeHandler());
         try
         {
-            using var connection =
-                new MySqlConnection("Server=localhost;Port=3306;User Id=root;Password=Password12!;SSL Mode=None;");
-            connection.Open();
+#if !CI_Build
+            _sqlContainer = new MySqlBuilder()
+                .WithDatabase(DbName)
+                .WithImage("mysql:latest")
+                .Build();
 
-            var scriptSql = File.ReadAllText(@".\Scripts\mysqlawlite.sql");
-            connection.Execute(scriptSql, commandTimeout: 600);
-            connection.Execute("delete from Person;");
+            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            ConnectionString = _sqlContainer.GetConnectionString();
+#endif
+            PopulateDatabase();
         }
-        catch (SocketException e) when (e.Message.Contains(
-                                            "No connection could be made because the target machine actively refused it"))
+        catch (SocketException e) when (
+            e.Message.Contains("No connection could be made because the target machine actively refused it"))
         {
             Skip = true;
         }
@@ -38,18 +67,33 @@ public class MySqlTestSuite : TestSuite
         }
     }
 
-    public static string ConnectionString =>
-        IsAppVeyor
-            ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;"
-            : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
+    public bool Skip { get; }
 
-    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping MySql Tests - no server.");
+    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("MySqlConnectionString") 
+                                              ?? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;";
 
-    public override ISqlDatabase GetSqlDatabase()
+    public void Dispose()
     {
-        CheckSkip();
-        return new SqlDatabase(new StringConnectionService<MySqlConnection>(ConnectionString));
+#if !CI_Build
+        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#endif
     }
 
-    public override Provider GetProvider() => Provider.MySql;
+    private void PopulateDatabase()
+    {
+        using var connection =
+            new MySqlConnection(ConnectionString);
+        connection.Open();
+
+        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "mysqlawlite.sql");
+        var scriptSql = File.ReadAllText(scriptPath);
+
+        connection.Execute(scriptSql, commandTimeout: 1200);
+        connection.Execute("delete from Person;");
+    }
+
+    //public static string ConnectionString =>
+    //    IsAppVeyor
+    //        ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;"
+    //        : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 }

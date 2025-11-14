@@ -2,32 +2,69 @@
 using System;
 using System.IO;
 using FirebirdSql.Data.FirebirdClient;
+using Testcontainers.FirebirdSql;
 using Xunit;
+using File = System.IO.File;
 
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Firebird")]
 // ReSharper disable once UnusedMember.Global
-public class FirebirdTestSuite : TestSuite
+public class FirebirdTestSuite : TestSuite, IClassFixture<FirebirdDatabaseFixture>
 {
-    private const string DbName = @"\DBFiles\Test.DB.fdb";
-    private static readonly string DbFile;
+    private readonly FirebirdDatabaseFixture _fixture;
 
-    private static readonly bool Skip;
-
-    static FirebirdTestSuite()
+    public FirebirdTestSuite(FirebirdDatabaseFixture fixture)
     {
-        DbFile = Directory.GetCurrentDirectory() + DbName;
+        _fixture = fixture;
         SqlDatabase.CacheQueries = false;
 
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
+    }
+
+    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Firebird Tests - no server.");
+
+    public override ISqlDatabase GetSqlDatabase()
+    {
+        CheckSkip();
+        return new SqlDatabase(new StringConnectionService<FbConnection>(_fixture.ConnectionString));
+    }
+
+    public override Provider GetProvider() => Provider.Firebird;
+}
+
+public class FirebirdDatabaseFixture : IDisposable
+{
+    private const string DbFile = "Test.DB.fdb";
+
+    private readonly FirebirdSqlContainer _sqlContainer;
+
+    public FirebirdDatabaseFixture()
+    {
+        // $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={_dbFile};";
+        // DataSource=127.0.0.1;Port=51295;Database=test;User=test;Password=test
+
+        //var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "DBFiles", DbFile);
+        //var containerDbPath = $"/firebird/data/{DbFile}";
+
+        _sqlContainer = new FirebirdSqlBuilder()
+            //.WithBindMount(dbPath, containerDbPath, AccessMode.ReadWrite)
+            //.WithUsername("SYSDBA")
+            //.WithPassword("Password12!")
+            //.WithDatabase(DbFile)
+            .WithImage("jacobalberty/firebird:v4.0")
+            .Build();
+
+        _sqlContainer.StartAsync().GetAwaiter().GetResult();
+
+        ConnectionString = _sqlContainer.GetConnectionString();
 
         var init = false;
 
-        //if (File.Exists(DbFile))
+        //if (File.Exists(dbPath))
         //{
-        //    File.Delete(DbFile);
+        //    File.Delete(dbPath);
         //}
 
         var commandText = string.Empty;
@@ -48,7 +85,9 @@ public class FirebirdTestSuite : TestSuite
 
             if (!init) return;
 
-            using (var file = File.OpenText(@".\Scripts\firebirdawlite.sql"))
+            var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "firebirdawlite.sql");
+
+            using (var file = File.OpenText(scriptPath))
             {
                 while (file.ReadLine() is { } line)
                     if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
@@ -71,17 +110,11 @@ public class FirebirdTestSuite : TestSuite
         }
     }
 
-    public static string ConnectionString =>
-        $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={DbFile};";
+    public bool Skip { get; }
 
-    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping Firebird Tests - no server.");
+    public string ConnectionString { get; }
 
-    public override ISqlDatabase GetSqlDatabase()
-    {
-        CheckSkip();
-        return new SqlDatabase(new StringConnectionService<FbConnection>(ConnectionString));
-    }
-
-    public override Provider GetProvider() => Provider.Firebird;
+    public void Dispose() => _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
 }
+
 #endif

@@ -1,26 +1,60 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using Npgsql;
+using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Postgres")]
 // ReSharper disable once UnusedMember.Global
-public class PostgresTestSuite : TestSuite
+public class PostgresTestSuite : TestSuite, IClassFixture<PostgresDatabaseFixture>
 {
-    private const string DbName = "test";
+    private readonly PostgresDatabaseFixture _fixture;
 
-    private static readonly bool Skip;
-
-    static PostgresTestSuite()
+    public PostgresTestSuite(PostgresDatabaseFixture fixture)
     {
+        _fixture = fixture;
+
         SqlDatabase.CacheQueries = false;
 
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
+    }
+
+    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Postgres Tests - no server.");
+
+    public override ISqlDatabase GetSqlDatabase()
+    {
+        CheckSkip();
+        return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(_fixture.ConnectionString));
+    }
+
+    public override Provider GetProvider() => Provider.Postgres;
+}
+
+public class PostgresDatabaseFixture : IDisposable
+{
+    private const string DbName = "test";
+
+#if !CI_Build
+    private readonly PostgreSqlContainer _sqlContainer;
+#endif
+
+    public PostgresDatabaseFixture()
+    {
         try
         {
+#if !CI_Build
+            _sqlContainer = new PostgreSqlBuilder()
+                .WithImage("postgres:18-alpine")
+                .Build();
+
+            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            ConnectionString = _sqlContainer.GetConnectionString();
+#endif
+
             PopulateDatabase();
         }
         catch (PostgresException e) when (e.Message.Contains($"database \"{DbName}\" does not exist"))
@@ -37,26 +71,26 @@ public class PostgresTestSuite : TestSuite
         {
             Skip = true;
         }
+        catch (PostgresException)
+        {
+            Skip = true;
+        }
     }
 
-    public static string ConnectionString =>
-        $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
+    public bool Skip { get; }
 
-    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping Postgres Tests - no server.");
+    public string ConnectionString { get; } =
+        Environment.GetEnvironmentVariable("PostgresConnectionString")
+        ?? $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
 
-    public override ISqlDatabase GetSqlDatabase()
+    public void Dispose()
     {
-        CheckSkip();
-        return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(ConnectionString));
+#if !CI_Build
+        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#endif
     }
 
-
-    public override Provider GetProvider() => Provider.Postgres;
-
-    /// <summary>
-    ///     Connects to the default database and creates the test database.
-    /// </summary>
-    private static void CreateTestDatabase()
+    private void CreateTestDatabase()
     {
         var cs = new NpgsqlConnectionStringBuilder(ConnectionString);
         var database = cs.Database;
@@ -66,12 +100,14 @@ public class PostgresTestSuite : TestSuite
         connection.Execute($"create database \"{database}\"");
     }
 
-    private static void PopulateDatabase()
+    private void PopulateDatabase()
     {
         using var connection = new NpgsqlConnection(ConnectionString);
         connection.Open();
 
-        var scriptSql = File.ReadAllText(@".\Scripts\postgresawlite.sql");
+        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "postgresawlite.sql");
+        var scriptSql = File.ReadAllText(scriptPath);
+       
         connection.Execute(scriptSql);
         connection.Execute("delete from Person;");
     }

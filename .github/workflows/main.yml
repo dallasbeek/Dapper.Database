@@ -1,0 +1,64 @@
+name: Main Build
+
+on:
+  pull_request:
+    branches: ["master"]
+  push:
+    branches: ["master"]
+
+jobs:
+  vm-job:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        framework: [net9.0] # Define the .NET versions to test against
+    services:
+      postgres:
+        image: postgres:18-alpine
+        ports:
+          - 5432:5432/tcp
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Password12!
+          POSTGRES_DB: test
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+          - 1433:1433/tcp
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Password12!
+      mysql:
+        image: mysql:latest
+        ports:
+          - 3306:3306/tcp
+        env:
+          MYSQL_ROOT_PASSWORD: Password12!
+          MYSQL_DATABASE: test
+      oracle:
+        image: gvenzl/oracle-free:slim
+        env:
+          ORACLE_PASSWORD: Password12!
+          APP_USER: testuser
+          APP_USER_PASSWORD: Password12!
+        ports:
+          - 1521:1521/tcp # Expose the default Oracle port
+        options: --health-cmd healthcheck.sh --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup .NET ${{ matrix.framework }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: .NET Build
+        run: dotnet build Dapper.Database/Dapper.Database.csproj -c Release -f ${{ matrix.framework }} /p:GITHUB=true
+      - name: Dapper Database net9.0 Tests
+        run: dotnet test Dapper.Database.Tests/Dapper.Database.Tests.csproj -c Release -f ${{ matrix.framework }} -p:GITHUB=true -p:TestTfmsInParallel=false
+        env:
+          MySqlConnectionString: Server=localhost;Port=3306;Uid=root;Pwd=Password12!;Database=test;Allow User Variables=true
+          PostgresConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
+          MsSqlServerConnectionString: Server=tcp:localhost,1433;Database=tempdb;User Id=sa;Password=Password12!;TrustServerCertificate=True;
+          OracleConnectionString: Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.2.15)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;
