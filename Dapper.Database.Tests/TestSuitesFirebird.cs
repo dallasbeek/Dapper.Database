@@ -1,4 +1,4 @@
-﻿#if !CI_Build
+﻿#if !(AV_Build || GH_Build)
 using System;
 using System.IO;
 using FirebirdSql.Data.FirebirdClient;

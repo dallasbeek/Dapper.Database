@@ -97,8 +97,12 @@
     <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(APPVEYOR)' == 'True' OR '$(GITHUB)' == 'True' ">
-    <DefineConstants>$(DefineConstants);CI_Build</DefineConstants>
+  <PropertyGroup Condition=" '$(APPVEYOR)' == 'True' ">
+    <DefineConstants>$(DefineConstants);AV_Build</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(GITHUB)' == 'True' ">
+    <DefineConstants>$(DefineConstants);GH_Build</DefineConstants>
+  </PropertyGroup>
+  
 </Project>

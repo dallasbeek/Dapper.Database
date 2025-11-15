@@ -37,7 +37,7 @@ public class MySqlDatabaseFixture : IDisposable
 {
     private const string DbName = "test";
 
-#if !CI_Build
+#if !(AV_Build || GH_Build)
     private readonly MySqlContainer _sqlContainer;
 #endif
 
@@ -45,7 +45,7 @@ public class MySqlDatabaseFixture : IDisposable
     {
         try
         {
-#if !CI_Build
+#if !(AV_Build || GH_Build)
             _sqlContainer = new MySqlBuilder()
                 .WithDatabase(DbName)
                 .WithImage("mysql:latest")
@@ -74,7 +74,7 @@ public class MySqlDatabaseFixture : IDisposable
 
     public void Dispose()
     {
-#if !CI_Build
+#if !(AV_Build || GH_Build)
         _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
 #endif
     }

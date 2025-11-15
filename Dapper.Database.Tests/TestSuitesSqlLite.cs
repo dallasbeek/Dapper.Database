@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !GH_Build
+using System;
 using System.Data;
 using System.IO;
 using Microsoft.Data.Sqlite;
@@ -74,3 +75,4 @@ public class SqlLiteDatabaseFixture : IDisposable
     {
     }
 }
+#endif

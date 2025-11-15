@@ -9,11 +9,11 @@ on:
 
 jobs:
   vm-job:
-    name: RunTests
-    runs-on: windows-latest
+    name: Ubuntu
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        framework: [net48, net9.0] # Define the .NET versions to test against
+        framework: [net9.0] # Define the .NET versions to test against
     services:
       postgres:
         image: postgres:18-alpine
@@ -25,12 +25,13 @@ jobs:
           POSTGRES_DB: test
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       sqlserver:
-        image: mcr.microsoft.com/mssql/server:2019-latest
+        image: mcr.microsoft.com/mssql/server:2022-latest
         ports:
           - 1433:1433/tcp
         env:
           ACCEPT_EULA: Y
           SA_PASSWORD: Password12!
+        options: --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Password12!' -Q 'SELECT 1' || exit 1" --health-interval 10s --health-timeout 5s --health-retries 5
       mysql:
         image: mysql:latest
         ports:
@@ -38,15 +39,16 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: Password12!
           MYSQL_DATABASE: test
-      oracle:
-        image: gvenzl/oracle-free:slim
-        env:
-          ORACLE_PASSWORD: Password12!
-          APP_USER: testuser
-          APP_USER_PASSWORD: Password12!
-        ports:
-          - 1521:1521/tcp # Expose the default Oracle port
-        options: --health-cmd healthcheck.sh --health-interval 10s --health-timeout 5s --health-retries 5
+        options: --health-cmd "mysqladmin ping -ppassword" --health-interval 10s --health-timeout 5s --health-retries 5
+    #      oracle:
+    #        image: gvenzl/oracle-xe:slim-faststart
+    #        env:
+    #          ORACLE_RANDOM_PASSWORD: true
+    #          APP_USER: testuser
+    #          APP_USER_PASSWORD: Password12!
+    #        ports:
+    #          - 1521:1521 # Expose the default Oracle port
+    #        options: --health-cmd healthcheck.sh --health-interval 10s --health-timeout 5s --health-retries 20
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -62,4 +64,4 @@ jobs:
           MySqlConnectionString: Server=localhost;Port=3306;Uid=root;Pwd=Password12!;Database=test;Allow User Variables=true
           PostgresConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
           MsSqlServerConnectionString: Server=tcp:localhost,1433;Database=tempdb;User Id=sa;Password=Password12!;TrustServerCertificate=True;
-          OracleConnectionString: Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.2.15)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;
+          OracleConnectionString: Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;

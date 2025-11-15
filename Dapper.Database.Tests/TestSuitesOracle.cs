@@ -1,4 +1,4 @@
-﻿#if !CI_Build
+﻿#if !(AV_Build || GH_Build)
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -70,11 +70,9 @@ public class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFixture>
 
 public class OracleDatabaseFixture : IDisposable
 {
-    private const string DbName = "tempdb";
-
     private static readonly Regex CommandSeparator = new("^/\r?\n", RegexOptions.Multiline);
 
-#if !CI_Build
+#if !GH_Build
     private readonly OracleContainer _sqlContainer;
 #endif
 
@@ -82,12 +80,14 @@ public class OracleDatabaseFixture : IDisposable
     {
         try
         {
+#if !GH_Build
             _sqlContainer = new OracleBuilder()
                 .WithImage("gvenzl/oracle-xe:21.3.0-slim-faststart")
                 .Build();
 
             _sqlContainer.StartAsync().GetAwaiter().GetResult();
             ConnectionString = _sqlContainer.GetConnectionString();
+#endif
 
             PopulateDatabase();
         }
@@ -115,7 +115,7 @@ public class OracleDatabaseFixture : IDisposable
 
     public void Dispose()
     {
-#if !CI_Build
+#if !GH_Build
         _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
 #endif
     }

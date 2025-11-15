@@ -40,7 +40,7 @@ public class MsSqlDatabaseFixture : IDisposable
 {
     private const string DbName = "tempdb";
 
-#if !CI_Build
+#if !(AV_Build || GH_Build)
     private readonly MsSqlContainer _sqlContainer;
 #endif
 
@@ -48,7 +48,7 @@ public class MsSqlDatabaseFixture : IDisposable
     {
         try
         {
-#if !CI_Build
+#if !(AV_Build || GH_Build)
             _sqlContainer = new MsSqlBuilder()
                 .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
                 .Build();
@@ -77,7 +77,7 @@ public class MsSqlDatabaseFixture : IDisposable
 
     public void Dispose()
     {
-#if !CI_Build
+#if !(AV_Build || GH_Build)
         _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
 #endif
     }

@@ -38,7 +38,7 @@ public class PostgresDatabaseFixture : IDisposable
 {
     private const string DbName = "test";
 
-#if !CI_Build
+#if !(AV_Build || GH_Build)
     private readonly PostgreSqlContainer _sqlContainer;
 #endif
 
@@ -46,7 +46,7 @@ public class PostgresDatabaseFixture : IDisposable
     {
         try
         {
-#if !CI_Build
+#if !(AV_Build || GH_Build)
             _sqlContainer = new PostgreSqlBuilder()
                 .WithImage("postgres:18-alpine")
                 .Build();
@@ -85,7 +85,7 @@ public class PostgresDatabaseFixture : IDisposable
 
     public void Dispose()
     {
-#if !CI_Build
+#if !(AV_Build || GH_Build)
         _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
 #endif
     }
