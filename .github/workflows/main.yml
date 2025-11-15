@@ -9,11 +9,11 @@ on:
 
 jobs:
   vm-job:
-    name: Ubuntu
-    runs-on: ubuntu-latest
+    name: RunTests
+    runs-on: windows-latest
     strategy:
       matrix:
-        framework: [net9.0] # Define the .NET versions to test against
+        framework: [net48, net9.0] # Define the .NET versions to test against
     services:
       postgres:
         image: postgres:18-alpine
