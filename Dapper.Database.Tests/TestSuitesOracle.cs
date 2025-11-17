@@ -1,4 +1,4 @@
-﻿#if !(AV_Build || GH_Build)
+﻿#if !AV_Build
 using System;
 using System.IO;
 using System.Net.Sockets;

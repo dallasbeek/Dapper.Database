@@ -40,15 +40,15 @@ jobs:
           MYSQL_ROOT_PASSWORD: Password12!
           MYSQL_DATABASE: test
         options: --health-cmd "mysqladmin ping -ppassword" --health-interval 10s --health-timeout 5s --health-retries 5
-    #      oracle:
-    #        image: gvenzl/oracle-xe:slim-faststart
-    #        env:
-    #          ORACLE_RANDOM_PASSWORD: true
-    #          APP_USER: testuser
-    #          APP_USER_PASSWORD: Password12!
-    #        ports:
-    #          - 1521:1521 # Expose the default Oracle port
-    #        options: --health-cmd healthcheck.sh --health-interval 10s --health-timeout 5s --health-retries 20
+      oracle:
+        image: gvenzl/oracle-free:slim-faststart
+        env:
+          ORACLE_RANDOM_PASSWORD: true
+          APP_USER: testuser
+          APP_USER_PASSWORD: Password12!
+        ports:
+          - 1521:1521 # Expose the default Oracle port
+        options: --health-cmd healthcheck.sh --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,4 +64,4 @@ jobs:
           MySqlConnectionString: Server=localhost;Port=3306;Uid=root;Pwd=Password12!;Database=test;Allow User Variables=true
           PostgresConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
           MsSqlServerConnectionString: Server=tcp:localhost,1433;Database=tempdb;User Id=sa;Password=Password12!;TrustServerCertificate=True;
-          OracleConnectionString: Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;
+          OracleConnectionString: Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=FREEPDB1)));User Id=testuser;Password=Password12!;

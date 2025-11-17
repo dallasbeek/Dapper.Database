@@ -58,7 +58,7 @@ if ($RunTests) {
         Write-Host "Running tests: $project (all frameworks)" -ForegroundColor "Magenta"
         Push-Location ".\$project"
 
-        dotnet test -c Release
+        dotnet test -c Release -p:TestTfmsInParallel=false
         if ($LastExitCode -ne 0) {
             Write-Host "Error with tests, aborting build." -Foreground "Red"
             Pop-Location
