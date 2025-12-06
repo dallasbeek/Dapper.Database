@@ -24,6 +24,16 @@ jobs:
           POSTGRES_PASSWORD: Password12!
           POSTGRES_DB: test
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      cockroachdb:
+        image: cockroachdb/cockroach:latest
+        ports:
+          - 26257:26257/tcp
+        env:
+          COCKROACH_ARGS: "start-single-node"
+          COCKROACH_USER: postgres
+          COCKROACH_PASSWORD: Password12!
+          COCKROACH_DATABASE: test
+        options: --health-cmd "curl -f http://localhost:8080/health?ready=1" --health-interval 10s --health-timeout 5s --health-retries 5
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
         ports:
@@ -63,5 +73,6 @@ jobs:
         env:
           MySqlConnectionString: Server=localhost;Port=3306;Uid=root;Pwd=Password12!;Database=test;Allow User Variables=true
           PostgresConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
+          CockroachDbConnectionString: Server=localhost;Port=26257;Database=test;User Id=postgres;Password=Password12!;
           MsSqlServerConnectionString: Server=tcp:localhost,1433;Database=tempdb;User Id=sa;Password=Password12!;TrustServerCertificate=True;
           OracleConnectionString: Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=FREEPDB1)));User Id=testuser;Password=Password12!;

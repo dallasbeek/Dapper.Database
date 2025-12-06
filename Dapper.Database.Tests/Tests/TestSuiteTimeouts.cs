@@ -16,7 +16,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         //can't force it to timeout since it's in seconds so verify it's set invalid
         db.CommandTimeout = -1;
-        if (GetProvider() == Provider.Postgres)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -37,7 +37,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         //can't force it to timeout since it's in seconds so verify it's set invalid
         db.OneTimeCommandTimeout = -1;
-        if (GetProvider() == Provider.Postgres)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -58,7 +58,7 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         //can't force it to timeout since it's in seconds so verify it's set invalid
         db.CommandTimeout = -1;
-        if (GetProvider() == Provider.Postgres)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -72,7 +72,7 @@ public abstract partial class TestSuite
         db.OneTimeCommandTimeout = 0;
         Assert.Equal(295, db.Count<Product>());
 
-        if (GetProvider() == Provider.Postgres)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -95,6 +95,7 @@ public abstract partial class TestSuite
                 Assert.StartsWith("Command timeout must not be negative", ex.Message);
                 break;
             case Provider.Postgres:
+            case Provider.CockroachDb:
                 Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
                 break;
             case Provider.Firebird:

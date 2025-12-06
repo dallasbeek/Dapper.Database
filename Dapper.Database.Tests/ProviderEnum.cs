@@ -9,6 +9,7 @@ public enum Provider
     SQLite,
     MySql,
     Postgres,
+    CockroachDb,
     Firebird,
     Oracle
 }
