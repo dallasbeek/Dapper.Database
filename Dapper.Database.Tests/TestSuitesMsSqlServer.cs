@@ -49,14 +49,12 @@ public class MsSqlDatabaseFixture : IDisposable
         try
         {
 #if !(AV_Build || GH_Build)
-            _sqlContainer = new MsSqlBuilder()
-                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            _sqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2025-latest")
                 .Build();
 
             _sqlContainer.StartAsync().GetAwaiter().GetResult();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
-
 
             PopulateDatabase();
         }
@@ -87,7 +85,6 @@ public class MsSqlDatabaseFixture : IDisposable
         using var connection = new SqlConnection(ConnectionString);
         connection.Open();
 
-        // For paginated queries prior to 2012 sql server uses row_number over
         var sqlVersion = connection.ServerVersion;
         if (!string.IsNullOrEmpty(sqlVersion) && sqlVersion.Length > 2)
         {
@@ -102,9 +99,3 @@ public class MsSqlDatabaseFixture : IDisposable
         connection.Execute("delete from [Person]");
     }
 }
-
-//public static string ConnectionString =>
-//// ReSharper disable once StringLiteralTypo
-//IsAppVeyor
-//    ? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!;TrustServerCertificate=True"
-//    : $"Data Source=(localdb)\\mssqllocaldb;Initial Catalog={DbName};Integrated Security=True;TrustServerCertificate=True";

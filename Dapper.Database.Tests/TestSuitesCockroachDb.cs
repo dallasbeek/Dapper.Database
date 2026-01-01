@@ -48,8 +48,7 @@ public class CockroachDbDatabaseFixture : IDisposable
         try
         {
 #if !GH_Build
-            _sqlContainer = new CockroachDbBuilder()
-                .WithImage("cockroachdb/cockroach:latest")
+            _sqlContainer = new CockroachDbBuilder("cockroachdb/cockroach:latest")
                 .Build();
 
             _sqlContainer.StartAsync().GetAwaiter().GetResult();
@@ -60,10 +59,6 @@ public class CockroachDbDatabaseFixture : IDisposable
         }
         catch (PostgresException e) when (e.Message.Contains($"database \"{DbName}\" does not exist"))
         {
-            // ReSharper disable once CommentTypo
-            // PostgreSQL doesn't have a good way to detect if the "Test" database already exists:
-            //  - Your connection string has to include the database you want
-            //  - Their version of CREATE DATABASE does not have IF NOT EXISTS support
             CreateTestDatabase();
             PopulateDatabase();
         }
@@ -72,10 +67,6 @@ public class CockroachDbDatabaseFixture : IDisposable
         {
             Skip = true;
         }
-        //catch (PostgresException)
-        //{
-        //    Skip = true;
-        //}
     }
 
     public bool Skip { get; }

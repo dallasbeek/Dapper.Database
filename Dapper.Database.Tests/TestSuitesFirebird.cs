@@ -42,18 +42,8 @@ public class FirebirdDatabaseFixture : IDisposable
 
     public FirebirdDatabaseFixture()
     {
-        // $"DataSource=localhost;User=SYSDBA;Password=Password12!;Database={_dbFile};";
-        // DataSource=127.0.0.1;Port=51295;Database=test;User=test;Password=test
 
-        //var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "DBFiles", DbFile);
-        //var containerDbPath = $"/firebird/data/{DbFile}";
-
-        _sqlContainer = new FirebirdSqlBuilder()
-            //.WithBindMount(dbPath, containerDbPath, AccessMode.ReadWrite)
-            //.WithUsername("SYSDBA")
-            //.WithPassword("Password12!")
-            //.WithDatabase(DbFile)
-            .WithImage("jacobalberty/firebird:v4.0")
+        _sqlContainer = new FirebirdSqlBuilder("jacobalberty/firebird:v4.0")
             .Build();
 
         _sqlContainer.StartAsync().GetAwaiter().GetResult();

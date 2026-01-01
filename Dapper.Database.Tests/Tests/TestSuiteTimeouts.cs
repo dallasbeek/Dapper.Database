@@ -95,6 +95,11 @@ public abstract partial class TestSuite
                 Assert.StartsWith("Command timeout must not be negative", ex.Message);
                 break;
             case Provider.Postgres:
+                Assert.True(
+                    ex.Message.StartsWith("value ('-1') must be a non-negative value. (Parameter 'value')") ||
+                    ex.Message.StartsWith("CommandTimeout can't be less than zero.")
+                );
+                break;
             case Provider.CockroachDb:
                 Assert.StartsWith("CommandTimeout can't be less than zero.", ex.Message);
                 break;

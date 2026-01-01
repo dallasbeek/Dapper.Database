@@ -1,4 +1,4 @@
-﻿#if !AV_Build
+#if !AV_Build
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -64,7 +64,7 @@ public class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFixture>
         Assert.Equal(p.LastName, gp.LastName);
         Assert.Equal("Person Identity", gp.FullName);
     }
-
+        
     #endregion
 }
 
@@ -78,11 +78,11 @@ public class OracleDatabaseFixture : IDisposable
 
     public OracleDatabaseFixture()
     {
+        //
         try
         {
 #if !GH_Build
-            _sqlContainer = new OracleBuilder()
-                .WithImage("gvenzl/oracle-xe:21.3.0-slim-faststart")
+            _sqlContainer = new OracleBuilder("gvenzl/oracle-xe:21.3.0-slim-faststart")
                 .Build();
 
             _sqlContainer.StartAsync().GetAwaiter().GetResult();
@@ -118,6 +118,7 @@ public class OracleDatabaseFixture : IDisposable
 #if !GH_Build
         _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
 #endif
+        GC.SuppressFinalize(this);
     }
 
     private void PopulateDatabase()

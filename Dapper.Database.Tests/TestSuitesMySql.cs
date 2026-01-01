@@ -46,9 +46,8 @@ public class MySqlDatabaseFixture : IDisposable
         try
         {
 #if !(AV_Build || GH_Build)
-            _sqlContainer = new MySqlBuilder()
+            _sqlContainer = new MySqlBuilder("mysql:latest")
                 .WithDatabase(DbName)
-                .WithImage("mysql:latest")
                 .Build();
 
             _sqlContainer.StartAsync().GetAwaiter().GetResult();
