@@ -24,7 +24,7 @@ public class CockroachDbTestSuite : TestSuite, IClassFixture<CockroachDbDatabase
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Postgres Tests - no server.");
+    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping CockroachDb Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {
