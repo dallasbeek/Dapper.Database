@@ -1,0 +1,1 @@
+﻿Alternative database first framework to Entity Framework using Dapper
