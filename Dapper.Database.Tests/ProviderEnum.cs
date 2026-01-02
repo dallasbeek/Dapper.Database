@@ -2,14 +2,15 @@
 
 public enum Provider
 {
-    SqlServer,
-    // ReSharper disable once InconsistentNaming
-    SqlCE,
-    // ReSharper disable once InconsistentNaming
-    SQLite,
-    MySql,
-    Postgres,
     CockroachDb,
     Firebird,
-    Oracle
+    MySql,
+    MariaDb,
+    Oracle,
+    Postgres,
+    // ReSharper disable once InconsistentNaming
+    SQLite,
+    // ReSharper disable once InconsistentNaming
+    SqlCE,
+    SqlServer,
 }
