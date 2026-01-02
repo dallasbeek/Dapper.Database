@@ -18,6 +18,19 @@ public abstract partial class TestSuite
     }
 
     [Fact]
+    [Trait("Category", "Get")]
+    public async Task GetMultikeyByEntityAsync()
+    {
+        using var db = GetSqlDatabase();
+        var addressOne = new CustomerAddress { CustomerID = 29503, AddressID = 541 };
+        addressOne = db.Get(addressOne);
+        ValidateCustomerAddress541(await db.GetAsync(addressOne));
+
+        var addressTwo = new CustomerAddress { CustomerID = 29503, AddressID = 32 };
+        ValidateCustomerAddress32(await db.GetAsync(addressTwo));
+    }
+
+    [Fact]
     [Trait("Category", "GetAsync")]
     public async Task GetByIntegerIdAsync()
     {

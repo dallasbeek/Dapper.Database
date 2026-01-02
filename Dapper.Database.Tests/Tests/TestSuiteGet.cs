@@ -18,6 +18,19 @@ public abstract partial class TestSuite
 
     [Fact]
     [Trait("Category", "Get")]
+    public void GetMultikeyByEntity()
+    {
+        using var db = GetSqlDatabase();
+        var addressOne = new CustomerAddress { CustomerID = 29503, AddressID = 541 };
+        addressOne = db.Get(addressOne);
+        ValidateCustomerAddress541(db.Get(addressOne));
+
+        var addressTwo = new CustomerAddress { CustomerID = 29503, AddressID = 32 };
+        ValidateCustomerAddress32(db.Get(addressTwo));
+    }
+
+    [Fact]
+    [Trait("Category", "Get")]
     public void GetByIntegerId()
     {
         using var db = GetSqlDatabase();

@@ -90,7 +90,7 @@ public class CustomerAddress
 {
     [Column] [Key] public virtual int CustomerID { get; set; }
 
-    [Column] public virtual int AddressID { get; set; }
+    [Column] [Key] public virtual int AddressID { get; set; }
 
     [Column] [Required] [StringLength(50)] public virtual string AddressType { get; set; }
 

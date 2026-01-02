@@ -1,4 +1,5 @@
 ﻿using System;
+using System.DirectoryServices.Protocols;
 using Xunit;
 
 // ReSharper disable once CheckNamespace
@@ -86,4 +87,23 @@ public abstract partial class TestSuite
         Assert.Equal(new DateTime(2002, 6, 1), p.ModifiedDate.Date);
         //Assert.Equal(new Guid("6BA9F3B6-E08B-4AC2-A725-B41114C2A283"), p.GuidId);
     }
+
+    protected void ValidateCustomerAddress541(CustomerAddress p)
+    {
+        Assert.NotNull(p);
+        Assert.Equal(29503, p.CustomerID);
+        Assert.Equal(541, p.AddressID);
+        Assert.Equal(new Guid("6811dbe3-1f02-440c-932e-a54f403b3e51"), p.GuidId);
+        Assert.Equal("Main Office", p.AddressType);
+    }
+
+    protected void ValidateCustomerAddress32(CustomerAddress p)
+    {
+        Assert.NotNull(p);
+        Assert.Equal(29503, p.CustomerID);
+        Assert.Equal(32, p.AddressID);
+        Assert.Equal(new Guid("be00ffc6-194b-44e9-a129-dfbeb8f1301f"), p.GuidId);
+        Assert.Equal("Shipping", p.AddressType);
+    }
+
 }
