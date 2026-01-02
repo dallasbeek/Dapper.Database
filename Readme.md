@@ -1,6 +1,5 @@
 ﻿Dapper.Database - more extensions for dapper and SqlDatabase connection manager
 ========================================
-[![Build status](https://ci.appveyor.com/api/projects/status/t7ajnmavtjdpkw0a?svg=true)](https://ci.appveyor.com/project/dallasbeek/dapper-database)
 
 Features
 --------
