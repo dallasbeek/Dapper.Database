@@ -1,4 +1,4 @@
-﻿#if !CI_Build
+#if !AV_Build
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
 using Oracle.ManagedDataAccess.Client;
+using Testcontainers.Oracle;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
 using OracleConnection = Dapper.Database.Tests.OracleClient.OracleConnection;
@@ -14,90 +15,31 @@ using OracleConnection = Dapper.Database.Tests.OracleClient.OracleConnection;
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Oracle")]
-public class OracleTestSuite : TestSuite
+public class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFixture>
 {
-    private static readonly bool Skip;
+    private readonly OracleDatabaseFixture _fixture;
 
-    private static readonly Regex CommandSeparator = new("^/\r?\n", RegexOptions.Multiline);
 
-    static OracleTestSuite()
+    public OracleTestSuite(OracleDatabaseFixture fixture)
     {
+        _fixture = fixture;
+
         SqlDatabase.CacheQueries = false;
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
-        try
-        {
-            using var connection = new OracleConnection(ConnectionString);
-            connection.Open();
-
-            if (connection.ServerVersion != null &&
-                connection.ServerVersion.StartsWith("11.", StringComparison.OrdinalIgnoreCase))
-                // We have to override the Oracle adapter with the 11g adapter because:
-                //  - The managed Oracle drivers (which are 12.1 and later) have some bugs when run against 11.2, which the 11g adapter works around
-                //  - Oracle's "free" edition (XE) never had a 12.x release (latest is still 11.2)
-                SqlMapperExtensions.AddSqlAdapter<OracleConnection>(new Oracle11gAdapter());
-
-            var scriptSql = File.ReadAllText(@".\Scripts\oracleawlite.sql");
-
-            // Because the Oracle driver does not support multiple statements in a single IDbCommand, we have to manually split the file.
-            // The file is marked with lines with just forward slashes ("/"), which is the way SQL*Plus and other tools recognize the end of a command in such situations, so just use that.
-            // (It also helps the ability to debug the script in SQL*Plus or another tool.)
-            foreach (var command in CommandSeparator.Split(scriptSql))
-            {
-                // don't execute blank commands (e.g. last line)
-                if (string.IsNullOrWhiteSpace(command))
-                    continue;
-                // don't execute anything starting with a comment indicating use of SQL*Plus
-                // ReSharper disable once StringLiteralTypo
-                if (command.StartsWith("/*SQLPLUS*/", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                try
-                {
-                    connection.Execute(command);
-                }
-                catch (OracleException e)
-                {
-                    var sb = new StringBuilder();
-                    sb.AppendLine(e.Message);
-                    sb.AppendLine("For command:");
-                    sb.Append(command);
-
-                    // can't throw new OracleException or DbException...
-                    throw new InvalidOperationException(sb.ToString(), e);
-                }
-            }
-
-            connection.Execute("delete from Person");
-        }
-        catch (OracleException e)
-        {
-            // ReSharper disable once GrammarMistakeInComment
-            // All ORA- errors (12500-12599) are TNS errors indicating connectivity.
-            Skip = e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
-                    || e.Message.Contains(
-                        "No connection could be made because the target machine actively refused it")
-                    || e.Message.Contains("Unable to resolve connect hostname")
-                    || e.Message.Contains("Connection request timed out");
-        }
-        catch (SocketException e) when (e.Message.Contains(
-                                            "No connection could be made because the target machine actively refused it"))
-        {
-            Skip = true;
-        }
     }
 
-    public static string ConnectionString =>
-        "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.2.15)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
+    protected override string P
+    {
+        get => ":";
+    }
 
-    protected override string P => ":";
-
-    protected virtual void CheckSkip() => Xunit.Skip.If(Skip, "Skipping Oracle Tests - no server.");
+    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Oracle Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
-        return new SqlDatabase(new StringConnectionService<OracleConnection>(ConnectionString));
+        return new SqlDatabase(new StringConnectionService<OracleConnection>(_fixture.ConnectionString));
     }
 
     public override Provider GetProvider() => Provider.Oracle;
@@ -122,7 +64,108 @@ public class OracleTestSuite : TestSuite
         Assert.Equal(p.LastName, gp.LastName);
         Assert.Equal("Person Identity", gp.FullName);
     }
-
+        
     #endregion
+}
+
+public class OracleDatabaseFixture : IDisposable
+{
+    private static readonly Regex CommandSeparator = new("^/\r?\n", RegexOptions.Multiline);
+
+#if !GH_Build
+    private readonly OracleContainer _sqlContainer;
+#endif
+
+    public OracleDatabaseFixture()
+    {
+        //
+        try
+        {
+#if !GH_Build
+            _sqlContainer = new OracleBuilder("gvenzl/oracle-xe:21.3.0-slim-faststart")
+                .Build();
+
+            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            ConnectionString = _sqlContainer.GetConnectionString();
+#endif
+
+            PopulateDatabase();
+        }
+        catch (OracleException e)
+        {
+            // ReSharper disable once GrammarMistakeInComment
+            // All ORA- errors (12500-12599) are TNS errors indicating connectivity.
+            Skip = e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
+                   || e.Message.Contains(
+                       "No connection could be made because the target machine actively refused it")
+                   || e.Message.Contains("Unable to resolve connect hostname")
+                   || e.Message.Contains("Connection request timed out");
+        }
+        catch (SocketException e) when (e.Message.Contains(
+                                            "No connection could be made because the target machine actively refused it"))
+        {
+            Skip = true;
+        }
+    }
+
+    public bool Skip { get; }
+
+    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("OracleConnectionString")
+                                              ?? "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.2.15)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
+
+    public void Dispose()
+    {
+#if !GH_Build
+        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#endif
+        GC.SuppressFinalize(this);
+    }
+
+    private void PopulateDatabase()
+    {
+        using var connection = new OracleConnection(ConnectionString);
+        connection.Open();
+
+        if (connection.ServerVersion != null &&
+            connection.ServerVersion.StartsWith("11.", StringComparison.OrdinalIgnoreCase))
+            // We have to override the Oracle adapter with the 11g adapter because:
+            //  - The managed Oracle drivers (which are 12.1 and later) have some bugs when run against 11.2, which the 11g adapter works around
+            //  - Oracle's "free" edition (XE) never had a 12.x release (latest is still 11.2)
+            SqlMapperExtensions.AddSqlAdapter<OracleConnection>(new Oracle11gAdapter());
+
+        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "oracleawlite.sql");
+        var scriptSql = File.ReadAllText(scriptPath);
+
+        // Because the Oracle driver does not support multiple statements in a single IDbCommand, we have to manually split the file.
+        // The file is marked with lines with just forward slashes ("/"), which is the way SQL*Plus and other tools recognize the end of a command in such situations, so just use that.
+        // (It also helps the ability to debug the script in SQL*Plus or another tool.)
+        foreach (var command in CommandSeparator.Split(scriptSql))
+        {
+            // don't execute blank commands (e.g. last line)
+            if (string.IsNullOrWhiteSpace(command))
+                continue;
+            // don't execute anything starting with a comment indicating use of SQL*Plus
+            // ReSharper disable once StringLiteralTypo
+            if (command.StartsWith("/*SQLPLUS*/", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            try
+            {
+                connection.Execute(command);
+            }
+            catch (OracleException e)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine(e.Message);
+                sb.AppendLine("For command:");
+                sb.Append(command);
+
+                // can't throw new OracleException or DbException...
+                throw new InvalidOperationException(sb.ToString(), e);
+            }
+        }
+
+        connection.Execute("delete from Person");
+    }
 }
 #endif

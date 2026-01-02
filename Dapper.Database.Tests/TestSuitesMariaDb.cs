@@ -1,19 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
-using MySql.Data.MySqlClient;
-using Testcontainers.MySql;
+using MySqlConnector;
+using Testcontainers.MariaDb;
 using Xunit;
 
 namespace Dapper.Database.Tests;
 
-[Trait("Provider", "MySql")]
+[Trait("Provider", "MariaDb")]
 // ReSharper disable once UnusedMember.Global
-public class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
+public class MariaDbTestSuite : TestSuite, IClassFixture<MariaDbDatabaseFixture>
 {
-    private readonly MySqlDatabaseFixture _fixture;
+    private readonly MariaDbDatabaseFixture _fixture;
 
-    public MySqlTestSuite(MySqlDatabaseFixture fixture)
+    public MariaDbTestSuite(MariaDbDatabaseFixture fixture)
     {
         _fixture = fixture;
 
@@ -22,7 +22,7 @@ public class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
     }
 
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MySql Tests - no server.");
+    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MariaDb Tests - no server.");
 
     public override ISqlDatabase GetSqlDatabase()
     {
@@ -30,23 +30,23 @@ public class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
         return new SqlDatabase(new StringConnectionService<MySqlConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.MySql;
+    public override Provider GetProvider() => Provider.MariaDb;
 }
 
-public class MySqlDatabaseFixture : IDisposable
+public class MariaDbDatabaseFixture : IDisposable
 {
     private const string DbName = "test";
 
 #if !(AV_Build || GH_Build)
-    private readonly MySqlContainer _sqlContainer;
+    private readonly MariaDbContainer _sqlContainer;
 #endif
 
-    public MySqlDatabaseFixture()
+    public MariaDbDatabaseFixture()
     {
         try
         {
 #if !(AV_Build || GH_Build)
-            _sqlContainer = new MySqlBuilder("mysql:latest")
+            _sqlContainer = new MariaDbBuilder("mariadb:latest")
                 .WithDatabase(DbName)
                 .Build();
 
@@ -60,15 +60,15 @@ public class MySqlDatabaseFixture : IDisposable
         {
             Skip = true;
         }
-        catch (MySqlException e) when (e.Message == "Unable to connect to any of the specified MySQL hosts.")
-        {
-            Skip = true;
-        }
+        //catch (MariaDbException e) when (e.Message == "Unable to connect to any of the specified MariaDb hosts.")
+        //{
+        //    Skip = true;
+        //}
     }
 
     public bool Skip { get; }
 
-    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("MySqlConnectionString") 
+    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("MariaDbConnectionString") 
                                               ?? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;";
 
     public void Dispose()

@@ -28,6 +28,19 @@ public abstract partial class TestSuite
     }
 
     [Fact]
+    [Trait("Category", "Get")]
+    public void ExistsMultikeyByEntity()
+    {
+        using var db = GetSqlDatabase();
+        var p = new CustomerAddress { CustomerID = 29503, AddressID = 541 };
+
+        Assert.True(db.Exists(p));
+
+        p.AddressID = -1;
+        Assert.False(db.Exists(p));
+    }
+
+    [Fact]
     [Trait("Category", "Exists")]
     public void ExistsByAliasIntegerId()
     {

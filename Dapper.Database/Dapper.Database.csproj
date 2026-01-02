@@ -3,22 +3,23 @@
   <PropertyGroup>
     <AssemblyName>Dapper.Database</AssemblyName>
     <PackageTags>orm;sql;micro-orm;dapper</PackageTags>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Title>Dapper.Database</Title>
     <Description>Alternative database first framework to Entity Framework using Dapper</Description>
     <Authors>Dallas Beek</Authors>
-    <TargetFrameworks>netstandard2.0;net462;net6.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net462;net8.0;net9.0;net10.0</TargetFrameworks>
     <Copyright>2022 Dallas Beek</Copyright>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <Version>1.0.0.1</Version>
-    <FileVersion>1.0.0.1</FileVersion>
+    <Version>6.0.0.0</Version>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Include="Readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net462'">
     <Reference Include="System.Configuration" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />

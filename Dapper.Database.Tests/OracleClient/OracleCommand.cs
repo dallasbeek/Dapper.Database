@@ -46,7 +46,7 @@ public class OracleCommand : DbCommand
             if (_rawCommandText == value) return;
 
             _rawCommandText = value;
-            RealCommand.CommandText = value?.Replace('@', ':'); // FIXME more granular
+            RealCommand.CommandText = value?.Replace('@', ':');
         }
     }
 
@@ -181,7 +181,4 @@ public class OracleCommand : DbCommand
 
     public override Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken) =>
         RealCommand.ExecuteNonQueryAsync(cancellationToken);
-
-    protected override Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior,
-        CancellationToken cancellationToken) => RealCommand.ExecuteReaderAsync(behavior, cancellationToken);
 }

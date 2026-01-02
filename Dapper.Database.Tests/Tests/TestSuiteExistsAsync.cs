@@ -28,6 +28,20 @@ public abstract partial class TestSuite
         Assert.False(await db.ExistsAsync(p));
     }
 
+
+    [Fact]
+    [Trait("Category", "Get")]
+    public async Task ExistsMultikeyByEntityAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = new CustomerAddress { CustomerID = 29503, AddressID = 541 };
+
+        Assert.True(await db.ExistsAsync(p));
+
+        p.AddressID = -1;
+        Assert.False(await db.ExistsAsync(p));
+    }
+
     [Fact]
     [Trait("Category", "ExistsAsync")]
     public async Task ExistsByIntegerIdAsync()
