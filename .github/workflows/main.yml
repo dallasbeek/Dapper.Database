@@ -1,4 +1,4 @@
-name: Main Build
+name: Build & Test
 
 on:
   workflow_dispatch:
@@ -59,21 +59,21 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v5
-      - name: Set Dapper.Database Version
+      - name: Set Version
         id: update
         uses: Thundernerd/dotnet-project-version-updater@v1.2
         with:
           file: Dapper.Database/Dapper.Database.csproj
           version: 6.0.0.${{ github.run_number }}
-      - name: Setup .NET 10.0
+      - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - name: Restore Dependencies
+      - name: Restore
         run: dotnet restore
-      - name: Build Dapper.Database
+      - name: Build
         run: dotnet build Dapper.Database/Dapper.Database.csproj -c Release --no-restore /p:GITHUB=true
-      - name: Test Dapper.Database
+      - name: Test
         run: dotnet test Dapper.Database.Tests/Dapper.Database.Tests.csproj -c Release -f net10.0 -p:GITHUB=true -p:TestTfmsInParallel=false  --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
         env:
           MySqlConnectionString: Server=localhost;Port=3306;Uid=root;Pwd=Password12!;Database=test;Allow User Variables=true
@@ -88,8 +88,5 @@ jobs:
           path: TestResults/test-results.trx
           reporter: dotnet-trx
           list-tests: "all"
-      - name: Pack Artifacts
+      - name: Pack
         run: dotnet pack Dapper.Database/Dapper.Database.csproj -c Release --no-build --output ./artifacts
-      - name: Publish to MyGet
-        run: |
-          dotnet nuget push ./artifacts/*.nupkg --source https://www.myget.org/F/dapper-database/api/v2 --api-key ${{ secrets.MYGET_API_KEY }} --skip-duplicate

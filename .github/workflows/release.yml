@@ -1,0 +1,27 @@
+name: Release to MyGet
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download NuGet Package
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-packages
+          path: artifacts
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish to MyGet
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg --source https://www.myget.org/F/dapper-database/api/v2 --api-key ${{ secrets.MYGET_API_KEY }} --skip-duplicate
