@@ -90,6 +90,3 @@ jobs:
           list-tests: "all"
       - name: Pack
         run: dotnet pack Dapper.Database/Dapper.Database.csproj -c Release --no-build --output ./artifacts
-      - name: Publish to MyGet
-        run: |
-          dotnet nuget push ./artifacts/*.nupkg --source https://www.myget.org/F/dapper-database/api/v2 --api-key ${{ secrets.MYGET_API_KEY }} --skip-duplicate
