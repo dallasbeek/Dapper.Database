@@ -10,7 +10,7 @@ namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Firebird")]
 // ReSharper disable once UnusedMember.Global
-public class FirebirdTestSuite : TestSuite, IClassFixture<FirebirdDatabaseFixture>
+public sealed class FirebirdTestSuite : TestSuite, IClassFixture<FirebirdDatabaseFixture>
 {
     private readonly FirebirdDatabaseFixture _fixture;
 
@@ -23,15 +23,15 @@ public class FirebirdTestSuite : TestSuite, IClassFixture<FirebirdDatabaseFixtur
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Firebird Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Firebird Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<FbConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.Firebird;
+    protected override Provider GetProvider() => Provider.Firebird;
 }
 
 public class FirebirdDatabaseFixture : IDisposable

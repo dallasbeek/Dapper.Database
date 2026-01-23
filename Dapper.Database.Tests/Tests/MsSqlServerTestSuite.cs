@@ -11,7 +11,7 @@ using FactAttribute = Xunit.SkippableFactAttribute;
 namespace Dapper.Database.Tests;
 
 [SuppressMessage("ReSharper", "UseRawString")]
-public partial class MsSqlServerTestSuite
+public sealed partial class MsSqlServerTestSuite
 {
     [Fact]
     [Trait("Category", "GetMultiple")]

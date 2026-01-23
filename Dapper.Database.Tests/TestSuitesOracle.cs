@@ -1,4 +1,4 @@
-#if !AV_Build
+﻿#if !AV_Build
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -15,7 +15,7 @@ using OracleConnection = Dapper.Database.Tests.OracleClient.OracleConnection;
 namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Oracle")]
-public class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFixture>
+public sealed class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFixture>
 {
     private readonly OracleDatabaseFixture _fixture;
 
@@ -34,15 +34,15 @@ public class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFixture>
         get => ":";
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Oracle Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Oracle Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<OracleConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.Oracle;
+    protected override Provider GetProvider() => Provider.Oracle;
 
     #region Oracle Specific Tests
 

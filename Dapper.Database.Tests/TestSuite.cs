@@ -10,16 +10,16 @@ public abstract partial class TestSuite
 
     protected virtual string P => "@";
 
-    public abstract Provider GetProvider();
+    protected abstract Provider GetProvider();
 
-    public abstract ISqlDatabase GetSqlDatabase();
+    protected abstract ISqlDatabase GetSqlDatabase();
 
 
 #pragma warning disable xUnit1013 // Public method should be marked as test
     /// <summary>
     ///     Resets Dapper type map and type handlers.
     /// </summary>
-    public static void ResetDapperTypes()
+    protected static void ResetDapperTypes()
     {
         // Because each database requires a slightly different type map, we have to reset it back to "normal" each time.
         // As the only DbType we modify is DbType.Guid, we only need to re-add it to fix it.

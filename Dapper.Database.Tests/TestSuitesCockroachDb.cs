@@ -10,7 +10,7 @@ namespace Dapper.Database.Tests;
 
 [Trait("Provider", "CockroachDb")]
 // ReSharper disable once UnusedMember.Global
-public class CockroachDbTestSuite : TestSuite, IClassFixture<CockroachDbDatabaseFixture>
+public sealed class CockroachDbTestSuite : TestSuite, IClassFixture<CockroachDbDatabaseFixture>
 {
     private readonly CockroachDbDatabaseFixture _fixture;
 
@@ -24,15 +24,15 @@ public class CockroachDbTestSuite : TestSuite, IClassFixture<CockroachDbDatabase
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping CockroachDb Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping CockroachDb Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.CockroachDb;
+    protected override Provider GetProvider() => Provider.CockroachDb;
 }
 
 public class CockroachDbDatabaseFixture : IDisposable

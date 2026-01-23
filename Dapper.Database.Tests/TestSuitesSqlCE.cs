@@ -11,7 +11,7 @@ namespace Dapper.Database.Tests
     [Trait("Provider", "SqlCE")]
     // ReSharper disable once InconsistentNaming
     // ReSharper disable once UnusedMember.Global
-    public class SqlCETestSuite : TestSuite, IClassFixture<SqlCEDatabaseFixture>
+    public sealed class SqlCETestSuite : TestSuite, IClassFixture<SqlCEDatabaseFixture>
     {
         private readonly SqlCEDatabaseFixture _fixture;
 
@@ -22,15 +22,15 @@ namespace Dapper.Database.Tests
             ResetDapperTypes();
         }
 
-        protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SqlCE Tests - no server or file.");
+        private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SqlCE Tests - no server or file.");
 
-        public override ISqlDatabase GetSqlDatabase()
+        protected override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
             return new SqlDatabase(new StringConnectionService<SqlCeConnection>(_fixture.ConnectionString));
         }
 
-        public override Provider GetProvider() => Provider.SqlCE;
+        protected override Provider GetProvider() => Provider.SqlCE;
     }
 }
 

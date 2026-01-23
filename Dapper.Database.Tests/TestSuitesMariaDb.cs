@@ -9,7 +9,7 @@ namespace Dapper.Database.Tests;
 
 [Trait("Provider", "MariaDb")]
 // ReSharper disable once UnusedMember.Global
-public class MariaDbTestSuite : TestSuite, IClassFixture<MariaDbDatabaseFixture>
+public sealed class MariaDbTestSuite : TestSuite, IClassFixture<MariaDbDatabaseFixture>
 {
     private readonly MariaDbDatabaseFixture _fixture;
 
@@ -22,15 +22,15 @@ public class MariaDbTestSuite : TestSuite, IClassFixture<MariaDbDatabaseFixture>
     }
 
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MariaDb Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MariaDb Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<MySqlConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.MariaDb;
+    protected override Provider GetProvider() => Provider.MariaDb;
 }
 
 public class MariaDbDatabaseFixture : IDisposable

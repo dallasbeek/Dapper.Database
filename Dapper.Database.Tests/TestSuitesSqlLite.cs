@@ -10,7 +10,7 @@ namespace Dapper.Database.Tests;
 [Trait("Provider", "SQLite")]
 // ReSharper disable once InconsistentNaming
 // ReSharper disable once UnusedMember.Global
-public class SQLiteTestSuite : TestSuite, IClassFixture<SqlLiteDatabaseFixture>
+public sealed class SQLiteTestSuite : TestSuite, IClassFixture<SqlLiteDatabaseFixture>
 {
     private readonly SqlLiteDatabaseFixture _fixture;
 
@@ -25,16 +25,16 @@ public class SQLiteTestSuite : TestSuite, IClassFixture<SqlLiteDatabaseFixture>
         SqlMapper.AddTypeHandler(new NumericTypeHandler());
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SQLite Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SQLite Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<SqliteConnection>(_fixture.ConnectionString),
             IsolationLevel.Serializable);
     }
 
-    public override Provider GetProvider() => Provider.SQLite;
+    protected override Provider GetProvider() => Provider.SQLite;
 }
 
 public class SqlLiteDatabaseFixture : IDisposable

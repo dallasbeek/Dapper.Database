@@ -9,7 +9,7 @@ namespace Dapper.Database.Tests;
 
 [Trait("Provider", "MySql")]
 // ReSharper disable once UnusedMember.Global
-public class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
+public sealed class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
 {
     private readonly MySqlDatabaseFixture _fixture;
 
@@ -22,15 +22,15 @@ public class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixture>
     }
 
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MySql Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MySql Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<MySqlConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.MySql;
+    protected override Provider GetProvider() => Provider.MySql;
 }
 
 public class MySqlDatabaseFixture : IDisposable
