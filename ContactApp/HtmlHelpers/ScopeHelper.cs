@@ -7,16 +7,19 @@ namespace Microsoft.AspNetCore.Mvc.Rendering;
 
 public static class ScopeHelpers
 {
-    public static ModelScopeContext ModelScope(this IHtmlHelper html, string modelName) =>
-        new(html.ViewData.TemplateInfo, modelName);
+    extension(IHtmlHelper html)
+    {
+        public ModelScopeContext ModelScope(string modelName) =>
+            new(html.ViewData.TemplateInfo, modelName);
 
-    public static ModelItemScopeContext ModelItemScope(this IHtmlHelper html, string modelName, string specificId) =>
-        new(html.ViewData.TemplateInfo, modelName, specificId);
+        public ModelItemScopeContext ModelItemScope(string modelName, string specificId) =>
+            new(html.ViewData.TemplateInfo, modelName, specificId);
 
-    public static HtmlString ModelItemScopeIndex(this IHtmlHelper html, ModelItemScopeContext scopeContext) =>
-        new(
-            $@"<input type='hidden' name='{scopeContext.ModelName}.index' autocomplete='off' value='{scopeContext.ModelItemIndex}' />"
-        );
+        public HtmlString ModelItemScopeIndex(ModelItemScopeContext scopeContext) =>
+            new(
+                $@"<input type='hidden' name='{scopeContext.ModelName}.index' autocomplete='off' value='{scopeContext.ModelItemIndex}' />"
+            );
+    }
 
 
     public class ModelScopeContext : IDisposable

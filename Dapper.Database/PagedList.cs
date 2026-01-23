@@ -53,16 +53,16 @@ namespace Dapper.Database
         /// <summary>
         ///     Current Page
         /// </summary>
-        public int CurrentPage { get; set; }
+        public int CurrentPage { get; }
 
         /// <summary>
         ///     Page Size Requested
         /// </summary>
-        public int PageSize { get; set; }
+        public int PageSize { get; }
 
         /// <summary>
         ///     Total count of matching records
         /// </summary>
-        public int TotalCount { get; set; }
+        public int TotalCount { get; }
     }
 }

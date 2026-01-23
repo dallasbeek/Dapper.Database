@@ -9,7 +9,7 @@ namespace Dapper.Database.Tests;
 
 [Trait("Provider", "Postgres")]
 // ReSharper disable once UnusedMember.Global
-public class PostgresTestSuite : TestSuite, IClassFixture<PostgresDatabaseFixture>
+public sealed class PostgresTestSuite : TestSuite, IClassFixture<PostgresDatabaseFixture>
 {
     private readonly PostgresDatabaseFixture _fixture;
 
@@ -23,15 +23,15 @@ public class PostgresTestSuite : TestSuite, IClassFixture<PostgresDatabaseFixtur
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Postgres Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Postgres Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<NpgsqlConnection>(_fixture.ConnectionString));
     }
 
-    public override Provider GetProvider() => Provider.Postgres;
+    protected override Provider GetProvider() => Provider.Postgres;
 }
 
 public class PostgresDatabaseFixture : IDisposable

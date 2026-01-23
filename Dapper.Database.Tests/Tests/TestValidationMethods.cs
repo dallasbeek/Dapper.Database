@@ -1,5 +1,4 @@
 ﻿using System;
-using System.DirectoryServices.Protocols;
 using Xunit;
 
 // ReSharper disable once CheckNamespace

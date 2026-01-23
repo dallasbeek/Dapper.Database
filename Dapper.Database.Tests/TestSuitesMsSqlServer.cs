@@ -10,7 +10,7 @@ namespace Dapper.Database.Tests;
 
 [Trait("Provider", "SqlServer")]
 // ReSharper disable once UnusedMember.Global
-public partial class MsSqlServerTestSuite : TestSuite, IClassFixture<MsSqlDatabaseFixture>
+public sealed partial class MsSqlServerTestSuite : TestSuite, IClassFixture<MsSqlDatabaseFixture>
 {
     private readonly MsSqlDatabaseFixture _fixture;
 
@@ -24,16 +24,16 @@ public partial class MsSqlServerTestSuite : TestSuite, IClassFixture<MsSqlDataba
         ResetDapperTypes();
     }
 
-    protected virtual void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Sql Server Tests - no server.");
+    private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Sql Server Tests - no server.");
 
-    public override ISqlDatabase GetSqlDatabase()
+    protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
         return new SqlDatabase(new StringConnectionService<SqlConnection>(_fixture.ConnectionString));
     }
 
 
-    public override Provider GetProvider() => Provider.SqlServer;
+    protected override Provider GetProvider() => Provider.SqlServer;
 }
 
 public class MsSqlDatabaseFixture : IDisposable
