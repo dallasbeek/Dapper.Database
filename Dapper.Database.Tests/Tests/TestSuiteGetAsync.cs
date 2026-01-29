@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using FactAttribute = Xunit.SkippableFactAttribute;
@@ -146,7 +147,7 @@ public abstract partial class TestSuite
     }
 
     [Fact]
-    [Trait("Category", "Get")]
+    [Trait("Category", "GetAsync")]
     public async Task GetTwoJoinsMappedAsync()
     {
         using var db = GetSqlDatabase();
@@ -162,4 +163,19 @@ public abstract partial class TestSuite
         ValidateProductCategory15(p.ProductCategory);
         ValidateProductModel60(p.ProductModel);
     }
+
+
+    [Fact]
+    [Trait("Category", "GetAsync")]
+    public async Task GetTasksWaitAllAsync()
+    {
+        using var db = GetSqlDatabase();
+
+        var tasks = Enumerable.Range(0, 25)
+            .Select(x => db.GetAsync<Product>(33))
+            .ToArray();
+
+        await Task.WhenAll(tasks);
+    }
+
 }
