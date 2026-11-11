@@ -97,11 +97,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="11.0.100" Condition="'$(TargetFramework)'=='net10.0'" />
-    <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />
-  </ItemGroup>
-
   <PropertyGroup Condition=" '$(APPVEYOR)' == 'True' ">
     <DefineConstants>$(DefineConstants);AV_Build</DefineConstants>
   </PropertyGroup>
