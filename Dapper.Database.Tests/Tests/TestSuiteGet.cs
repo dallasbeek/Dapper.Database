@@ -140,6 +140,18 @@ public abstract partial class TestSuite
 
     [Fact]
     [Trait("Category", "Get")]
+    public void GetTwoJoinsUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var p = db.Get<Product, ProductCategory, ProductModel>(
+            GetMultiThreeNoParamQuery, "ProductCategoryId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+    }
+
+    [Fact]
+    [Trait("Category", "Get")]
     public void GetTwoJoinsMapped()
     {
         using var db = GetSqlDatabase();
@@ -154,5 +166,73 @@ public abstract partial class TestSuite
         ValidateProduct806(p);
         ValidateProductCategory15(p.ProductCategory);
         ValidateProductModel60(p.ProductModel);
+    }
+
+    [Fact]
+    [Trait("Category", "Get")]
+    public void GetThreeJoinsUnmapped()
+    {
+        using var db = GetSqlDatabase();
+        var p = db.Get<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetMultiFourParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(p.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "Get")]
+    public void GetThreeJoinsUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var p = db.Get<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(p.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "Get")]
+    public void GetThreeJoinsMapped()
+    {
+        using var db = GetSqlDatabase();
+        ProductModelProductDescription pmpd = null;
+        var p = db.Get<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pmpd = d;
+                return pr;
+            },
+            GetMultiFourParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(pmpd);
+    }
+
+    [Fact]
+    [Trait("Category", "Get")]
+    public void GetThreeJoinsMappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        ProductModelProductDescription pmpd = null;
+        var p = db.Get<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pmpd = d;
+                return pr;
+            },
+            GetMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(pmpd);
     }
 }

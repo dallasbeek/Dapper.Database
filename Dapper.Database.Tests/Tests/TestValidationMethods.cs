@@ -105,4 +105,21 @@ public abstract partial class TestSuite
         Assert.Equal("Shipping", p.AddressType);
     }
 
+    protected void ValidateProductModelProductDescription60(ProductModelProductDescription p)
+    {
+        Assert.NotNull(p);
+        Assert.Equal(60, p.ProductModelID);
+        Assert.Equal(745, p.ProductDescriptionID);
+        Assert.StartsWith("en", p.Culture);
+    }
+
+    protected void ValidateProductModelProductDescription45(ProductModelProductDescription p)
+    {
+        Assert.NotNull(p);
+        Assert.Equal(45, p.ProductModelID);
+        Assert.Equal(687, p.ProductDescriptionID);
+        Assert.StartsWith("en", p.Culture);
+    }
+
+
 }

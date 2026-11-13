@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
@@ -17,10 +17,6 @@ public sealed partial class MsSqlServerTestSuite : TestSuite, IClassFixture<MsSq
     public MsSqlServerTestSuite(MsSqlDatabaseFixture fixture)
     {
         _fixture = fixture;
-
-        SqlDatabase.CacheQueries = false;
-        SqlDatabase.SqlServerSelectComputed = false;
-
         ResetDapperTypes();
     }
 
@@ -95,7 +91,7 @@ public class MsSqlDatabaseFixture : IDisposable
         var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "sqlserverawlite.sql");
 
         var scriptSql = File.ReadAllText(scriptPath);
-        connection.Execute(scriptSql);
-        connection.Execute("delete from [Person]");
+        connection.Execute(scriptSql, commandTimeout: 120);
+        connection.Execute("delete from [Person]", commandTimeout: 120);
     }
 }

@@ -5,9 +5,6 @@ namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
 {
-    protected static readonly bool IsAppVeyor =
-        Environment.GetEnvironmentVariable("Appveyor")?.ToUpperInvariant() == "TRUE";
-
     protected virtual string P => "@";
 
     protected abstract Provider GetProvider();

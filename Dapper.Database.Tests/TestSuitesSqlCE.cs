@@ -38,7 +38,6 @@ namespace Dapper.Database.Tests
 // ReSharper disable once InconsistentNaming
 public class SqlCEDatabaseFixture : IDisposable
 {
-    private const string DbName = "test";
     private const string FileName = "DBFiles\\Test.DB.sdf";
 
     public SqlCEDatabaseFixture()

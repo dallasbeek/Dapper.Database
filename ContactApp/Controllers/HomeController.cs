@@ -4,14 +4,11 @@ using System.Linq;
 using ContactApp.Models;
 using Dapper.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ContactApp.Controllers;
 
-public class HomeController(ILogger<HomeController> logger, ISqlDatabase repository) : Controller
+public class HomeController(ISqlDatabase repository) : Controller
 {
-    private readonly ILogger<HomeController> _logger = logger;
-
     /// <summary>
     ///     Method GetPagedList wraps the below sql with "OFFSET @__PageSkip rows fetch next @__PageSize rows only"
     ///     and performs a count query to return TotalCount of matching records
@@ -72,9 +69,7 @@ public class HomeController(ILogger<HomeController> logger, ISqlDatabase reposit
     {
         var contact = id != null ? repository.Get<Contact>(id) : new Contact { Id = Guid.NewGuid() };
 
-        if (contact != null)
-            contact.Phones =
-                repository.GetList<Phone>("WHERE [ContactId] = @id ORDER BY [Ordinal]", new { id });
+        contact?.Phones = repository.GetList<Phone>("WHERE [ContactId] = @id ORDER BY [Ordinal]", new { id });
 
         return View(contact);
     }

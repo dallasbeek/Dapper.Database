@@ -145,6 +145,8 @@ public class Product
     [Ignore] public ProductCategory ProductCategory { get; set; }
 
     [Ignore] public ProductModel ProductModel { get; set; }
+
+    [Ignore] public ProductModelProductDescription ProductModelProductDescription { get; set; }
 }
 
 /// <summary>

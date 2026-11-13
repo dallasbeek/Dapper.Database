@@ -17,7 +17,7 @@ public static class ScopeHelpers
 
         public HtmlString ModelItemScopeIndex(ModelItemScopeContext scopeContext) =>
             new(
-                $@"<input type='hidden' name='{scopeContext.ModelName}.index' autocomplete='off' value='{scopeContext.ModelItemIndex}' />"
+                $"<input type='hidden' name='{scopeContext.ModelName}.index' autocomplete='off' value='{scopeContext.ModelItemIndex}' />"
             );
     }
 

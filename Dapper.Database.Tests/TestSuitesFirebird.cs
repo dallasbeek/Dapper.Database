@@ -1,6 +1,8 @@
 ﻿#if !(AV_Build || GH_Build)
 using System;
+using System.Data;
 using System.IO;
+using System.Text;
 using FirebirdSql.Data.FirebirdClient;
 using Testcontainers.FirebirdSql;
 using Xunit;
@@ -57,7 +59,7 @@ public class FirebirdDatabaseFixture : IDisposable
         //    File.Delete(dbPath);
         //}
 
-        var commandText = string.Empty;
+        var commandText = new StringBuilder();
 
         try
         {
@@ -82,13 +84,13 @@ public class FirebirdDatabaseFixture : IDisposable
                 while (file.ReadLine() is { } line)
                     if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (!string.IsNullOrEmpty(commandText))
-                            connection.Execute(commandText);
-                        commandText = string.Empty;
+                        if (commandText.Length > 0)
+                            connection.Execute(commandText.ToString(), commandType: CommandType.Text);
+                        commandText.Clear();
                     }
                     else
                     {
-                        commandText += "\r\n" + line;
+                        commandText.Append("\r\n").Append(line);
                     }
             }
 
