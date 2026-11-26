@@ -1,9 +1,9 @@
-﻿#if !AV_Build
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
 using Oracle.ManagedDataAccess.Client;
@@ -27,6 +27,9 @@ public sealed class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFix
         SqlDatabase.CacheQueries = false;
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
+#if NET11_0
+        SqlMapper.AddTypeHandler(new SafeDecimalTypeHandler());
+#endif
     }
 
     protected override string P
@@ -47,6 +50,19 @@ public sealed class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFix
     #region Oracle Specific Tests
 
     [Fact]
+    [Trait("Category", "Fixture")]
+    public async Task OracleFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        using var connection = new OracleConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address");
+        Assert.True(addressCount > 0);
+    }
+
+    [Fact]
     [Trait("Category", "Insert")]
     public void InsertSequenceComputed()
     {
@@ -64,67 +80,74 @@ public sealed class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFix
         Assert.Equal(p.LastName, gp.LastName);
         Assert.Equal("Person Identity", gp.FullName);
     }
-        
+
     #endregion
 }
 
-public class OracleDatabaseFixture : IDisposable
+public class OracleDatabaseFixture : IAsyncLifetime
 {
     private static readonly Regex CommandSeparator = new("^/\r?\n", RegexOptions.Multiline);
 
 #if !GH_Build
-    private readonly OracleContainer _sqlContainer;
+    private OracleContainer _sqlContainer;
 #endif
 
-    public OracleDatabaseFixture()
+    public bool Skip { get; private set; }
+
+    public string ConnectionString { get; private set; } = Environment.GetEnvironmentVariable("OracleConnectionString");
+
+    public async ValueTask InitializeAsync()
     {
-        //
+#if GH_Build
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("OracleConnectionString")))
+        {
+            Skip = true;
+            return;
+        }
+#endif
+
         try
         {
 #if !GH_Build
             _sqlContainer = new OracleBuilder("gvenzl/oracle-xe:21.3.0-slim-faststart")
                 .Build();
 
-            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            await _sqlContainer.StartAsync();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
 
-            PopulateDatabase();
+            await PopulateDatabaseAsync();
         }
-        catch (OracleException e)
+        catch (OracleException e) when (IsConnectivityFailure(e))
         {
-            // ReSharper disable once GrammarMistakeInComment
-            // All ORA- errors (12500-12599) are TNS errors indicating connectivity.
-            Skip = e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
-                   || e.Message.Contains(
-                       "No connection could be made because the target machine actively refused it")
-                   || e.Message.Contains("Unable to resolve connect hostname")
-                   || e.Message.Contains("Connection request timed out");
+            Skip = true;
         }
-        catch (SocketException e) when (e.Message.Contains(
-                                            "No connection could be made because the target machine actively refused it"))
+        catch (SocketException)
         {
             Skip = true;
         }
     }
 
-    public bool Skip { get; }
-
-    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("OracleConnectionString")
-                                              ?? "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.2.15)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=testuser;Password=Password12!;";
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
 #if !GH_Build
-        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
 #endif
-        GC.SuppressFinalize(this);
+        await Task.CompletedTask;
     }
 
-    private void PopulateDatabase()
+    // ReSharper disable once GrammarMistakeInComment
+    // All ORA- errors (12500-12599) are TNS errors indicating connectivity.
+    private static bool IsConnectivityFailure(OracleException e) =>
+        e.Message.StartsWith("ORA-125", StringComparison.OrdinalIgnoreCase)
+        || e.Message.Contains("No connection could be made because the target machine actively refused it")
+        || e.Message.Contains("Unable to resolve connect hostname")
+        || e.Message.Contains("Connection request timed out");
+
+    private async Task PopulateDatabaseAsync()
     {
         using var connection = new OracleConnection(ConnectionString);
-        connection.Open();
+        await connection.OpenAsync();
 
         if (connection.ServerVersion != null &&
             connection.ServerVersion.StartsWith("11.", StringComparison.OrdinalIgnoreCase))
@@ -133,8 +156,8 @@ public class OracleDatabaseFixture : IDisposable
             //  - Oracle's "free" edition (XE) never had a 12.x release (latest is still 11.2)
             SqlMapperExtensions.AddSqlAdapter<OracleConnection>(new Oracle11gAdapter());
 
-        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "oracleawlite.sql");
-        var scriptSql = File.ReadAllText(scriptPath);
+        var scriptSql = await Task.Run(() =>
+            File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.OracleScript)));
 
         // Because the Oracle driver does not support multiple statements in a single IDbCommand, we have to manually split the file.
         // The file is marked with lines with just forward slashes ("/"), which is the way SQL*Plus and other tools recognize the end of a command in such situations, so just use that.
@@ -151,7 +174,7 @@ public class OracleDatabaseFixture : IDisposable
 
             try
             {
-                connection.Execute(command);
+                await connection.ExecuteAsync(command);
             }
             catch (OracleException e)
             {
@@ -165,7 +188,6 @@ public class OracleDatabaseFixture : IDisposable
             }
         }
 
-        connection.Execute("delete from Person");
+        await connection.ExecuteAsync("delete from Person");
     }
 }
-#endif

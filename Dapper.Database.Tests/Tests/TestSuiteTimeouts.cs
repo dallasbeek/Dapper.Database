@@ -16,7 +16,8 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         //can't force it to timeout since it's in seconds so verify it's set invalid
         db.CommandTimeout = -1;
-        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb || GetProvider() == Provider.MariaDb)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb ||
+            GetProvider() == Provider.MariaDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -37,7 +38,8 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         //can't force it to timeout since it's in seconds so verify it's set invalid
         db.OneTimeCommandTimeout = -1;
-        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb || GetProvider() == Provider.MariaDb)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb ||
+            GetProvider() == Provider.MariaDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -58,7 +60,8 @@ public abstract partial class TestSuite
         using var db = GetSqlDatabase();
         //can't force it to timeout since it's in seconds so verify it's set invalid
         db.CommandTimeout = -1;
-        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb || GetProvider() == Provider.MariaDb)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb ||
+            GetProvider() == Provider.MariaDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);
@@ -72,7 +75,8 @@ public abstract partial class TestSuite
         db.OneTimeCommandTimeout = 0;
         Assert.Equal(295, db.Count<Product>());
 
-        if (  GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb || GetProvider() == Provider.MariaDb)
+        if (GetProvider() == Provider.Postgres || GetProvider() == Provider.CockroachDb ||
+            GetProvider() == Provider.MariaDb)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => db.Count<Product>());
             AssertTimeoutExceptionMessage(ex);

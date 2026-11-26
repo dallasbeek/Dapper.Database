@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 using Dapper.Database.Adapters;
 using Dapper.Database.Extensions;
 using Microsoft.Data.SqlClient;
@@ -17,14 +19,23 @@ public sealed partial class MsSqlServerTestSuite : TestSuite, IClassFixture<MsSq
     public MsSqlServerTestSuite(MsSqlDatabaseFixture fixture)
     {
         _fixture = fixture;
-
-        SqlDatabase.CacheQueries = false;
-        SqlDatabase.SqlServerSelectComputed = false;
-
         ResetDapperTypes();
     }
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Sql Server Tests - no server.");
+
+    [SkippableFact]
+    [Trait("Category", "Fixture")]
+    public async Task MsSqlFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        using var connection = new SqlConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address");
+        Assert.True(addressCount > 0);
+    }
 
     protected override ISqlDatabase GetSqlDatabase()
     {
@@ -36,66 +47,85 @@ public sealed partial class MsSqlServerTestSuite : TestSuite, IClassFixture<MsSq
     protected override Provider GetProvider() => Provider.SqlServer;
 }
 
-public class MsSqlDatabaseFixture : IDisposable
+public class MsSqlDatabaseFixture : IAsyncLifetime
 {
-    private const string DbName = "tempdb";
+    // Connection failures: timeouts, server not found, refused/reset connections, and unavailable database.
+    private static readonly int[] ConnectivityErrorNumbers =
+    {
+        -2, 2, 40, 53, 258, 1225, 4060, 10053, 10054, 10060, 10061, 11001
+    };
 
-#if !(AV_Build || GH_Build)
-    private readonly MsSqlContainer _sqlContainer;
+#if !GH_Build
+    private MsSqlContainer _sqlContainer;
 #endif
 
-    public MsSqlDatabaseFixture()
+    public bool Skip { get; private set; }
+
+    public string ConnectionString { get; private set; } =
+        Environment.GetEnvironmentVariable("MsSqlServerConnectionString");
+
+    public async ValueTask InitializeAsync()
     {
+#if GH_Build
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MsSqlServerConnectionString")))
+        {
+            Skip = true;
+            return;
+        }
+#endif
+
         try
         {
-#if !(AV_Build || GH_Build)
+#if !GH_Build
             _sqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2025-latest")
                 .Build();
 
-            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            await _sqlContainer.StartAsync();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
 
-            PopulateDatabase();
+            await PopulateDatabaseAsync();
         }
-        catch (SqlException e)
+        catch (SqlException e) when (IsConnectivityFailure(e))
         {
-            if (e.Message.Contains("The server was not found ") || e.Message.Contains("Cannot open database"))
-                Skip = true;
-            else
-                throw;
+            Skip = true;
+        }
+        catch (SocketException)
+        {
+            Skip = true;
         }
     }
 
-    public bool Skip { get; }
-
-    public string ConnectionString { get; } =
-        Environment.GetEnvironmentVariable("MsSqlServerConnectionString")
-        ?? $"Server=(local)\\SQL2019;Database={DbName};User ID=sa;Password=Password12!;TrustServerCertificate=True";
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-#if !(AV_Build || GH_Build)
-        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#if !GH_Build
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
 #endif
+        await Task.CompletedTask;
     }
 
-    private void PopulateDatabase()
+    private static bool IsConnectivityFailure(SqlException e) =>
+        Array.IndexOf(ConnectivityErrorNumbers, e.Number) >= 0 || e.InnerException is SocketException;
+
+    private static void RegisterAdapterForServerVersion(string serverVersion)
+    {
+        var dot = serverVersion?.IndexOf('.') ?? -1;
+        if (dot > 0 && serverVersion != null && int.TryParse(serverVersion.Substring(0, dot), out var majorVersion) &&
+            majorVersion < 11)
+            SqlMapperExtensions.AddSqlAdapter<SqlConnection>(new SqlServerPre2012Adapter());
+    }
+
+    private async Task PopulateDatabaseAsync()
     {
         using var connection = new SqlConnection(ConnectionString);
-        connection.Open();
+        await connection.OpenAsync();
 
-        var sqlVersion = connection.ServerVersion;
-        if (!string.IsNullOrEmpty(sqlVersion) && sqlVersion.Length > 2)
-        {
-            var mv = int.Parse(sqlVersion.Substring(0, 2));
-            if (mv < 11) SqlMapperExtensions.AddSqlAdapter<SqlConnection>(new SqlServerPre2012Adapter());
-        }
+        RegisterAdapterForServerVersion(connection.ServerVersion);
 
-        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "sqlserverawlite.sql");
+        var scriptSql = await Task.Run(() =>
+            File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.SqlServerScript)));
 
-        var scriptSql = File.ReadAllText(scriptPath);
-        connection.Execute(scriptSql);
-        connection.Execute("delete from [Person]");
+        await connection.ExecuteAsync(scriptSql, commandTimeout: 120);
+        await connection.ExecuteAsync("delete from [Person]", commandTimeout: 120);
     }
 }

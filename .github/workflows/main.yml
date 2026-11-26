@@ -11,6 +11,8 @@ jobs:
   vm-job:
     name: Ubuntu
     runs-on: ubuntu-latest
+    env:
+      GITHUB: "True"
     services:
       postgres:
         image: postgres:18-alpine
@@ -68,13 +70,17 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            10.0.x
+            11.0.x
       - name: Restore
         run: dotnet restore
       - name: Build
         run: dotnet build Dapper.Database/Dapper.Database.csproj -c Release --no-restore /p:GITHUB=true
       - name: Test
-        run: dotnet test Dapper.Database.Tests/Dapper.Database.Tests.csproj -c Release -f net10.0 -p:GITHUB=true -p:TestTfmsInParallel=false  --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
+        run: |
+          dotnet test Dapper.Database.Tests/Dapper.Database.Tests.csproj -c Release -f net10.0 --results-directory TestResults --report-xunit-trx --report-xunit-trx-filename test-results-net10.trx
+          dotnet test Dapper.Database.Tests/Dapper.Database.Tests.csproj -c Release -f net11.0 --results-directory TestResults --report-xunit-trx --report-xunit-trx-filename test-results-net11.trx
         env:
           MySqlConnectionString: Server=localhost;Port=3306;Uid=root;Pwd=Password12!;Database=test;Allow User Variables=true
           PostgresConnectionString: Server=localhost;Port=5432;Database=test;User Id=postgres;Password=Password12!;
@@ -85,7 +91,7 @@ jobs:
         uses: dorny/test-reporter@v2
         with:
           name: xUnit Test Results
-          path: TestResults/test-results.trx
+          path: TestResults/*.trx
           reporter: dotnet-trx
           list-tests: "all"
       - name: Pack

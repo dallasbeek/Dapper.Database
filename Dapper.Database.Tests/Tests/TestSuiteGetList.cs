@@ -46,7 +46,8 @@ public abstract partial class TestSuite
     public void GetListWithSelectClause()
     {
         using var db = GetSqlDatabase();
-        var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'").ToList();
+        var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'")
+            .ToList();
         Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
@@ -166,5 +167,149 @@ public abstract partial class TestSuite
         if (GetProvider() == Provider.SQLite) return;
         ValidateProductCategory21(item.ProductCategory);
         ValidateProductModel45(item.ProductModel);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListOneJoinUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory>(
+            GetListMultiTwoNoParamQuery, "ProductCategoryId").ToList();
+        Assert.Equal(89, lst.Count);
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() != Provider.SQLite) ValidateProductCategory21(item.ProductCategory);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListTwoJoinsUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory, ProductModel>(
+            GetListMultiThreeNoParamQuery, "ProductCategoryId,ProductModelId").ToList();
+        Assert.Equal(89, lst.Count);
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() == Provider.SQLite) return;
+
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListTwoJoinsMappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory, ProductModel, Product>(
+            (pr, pc, pm) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                return pr;
+            },
+            GetListMultiThreeNoParamQuery, "ProductCategoryId,ProductModelId").ToList();
+        Assert.Equal(89, lst.Count);
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() == Provider.SQLite) return;
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListThreeJoinsUnmapped()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+                GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId")
+            .ToList();
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() == Provider.SQLite) return;
+
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListThreeJoinsUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetListMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId").ToList();
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() == Provider.SQLite) return;
+
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListThreeJoinsMapped()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pr.ProductModelProductDescription = d;
+                    return pr;
+                },
+                GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId")
+            .ToList();
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() == Provider.SQLite) return;
+
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "GetList")]
+    public void GetListThreeJoinsMappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var lst = db.GetList<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pr.ProductModelProductDescription = d;
+                return pr;
+            },
+            GetListMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId").ToList();
+        var item = lst.Single(p => p.ProductID == 816);
+        ValidateProduct816(item);
+
+        //There must be a bug with mapping on SqlLite when fetching many records
+        if (GetProvider() == Provider.SQLite) return;
+
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
     }
 }

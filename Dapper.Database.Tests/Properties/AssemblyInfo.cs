@@ -1,4 +1,4 @@
 ﻿using Xunit;
 
 // Test suites cannot be parallelized.
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]

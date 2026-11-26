@@ -1,0 +1,65 @@
+name: Publish to NuGet
+
+# Manual trigger only - no automatic publishing on push/PR/release.
+on:
+  workflow_dispatch:
+    inputs:
+      version-suffix:
+        description: 'Optional version suffix (e.g. preview1). Leave blank for a stable release.'
+        required: false
+        default: ''
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CI: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Restore
+        run: dotnet restore Dapper.Database\Dapper.Database.csproj
+
+      - name: Build
+        run: dotnet build Dapper.Database\Dapper.Database.csproj --configuration Release --no-restore
+
+      - name: Pack
+        run: >
+          dotnet pack Dapper.Database\Dapper.Database.csproj
+          --configuration Release
+          --no-build
+          --output ${{ github.workspace }}\artifacts
+          ${{ github.event.inputs.version-suffix != '' && format('--version-suffix {0}', github.event.inputs.version-suffix) || '' }}
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ${{ github.workspace }}\artifacts\*.nupkg
+
+      - name: Login to NuGet.org (Trusted Publishing)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: dallasbeek
+
+      - name: Push to NuGet.org
+        run: dotnet nuget push "${{ github.workspace }}\artifacts\*.nupkg" --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

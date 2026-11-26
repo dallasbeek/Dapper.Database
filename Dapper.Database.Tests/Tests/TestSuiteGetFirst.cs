@@ -88,6 +88,19 @@ public abstract partial class TestSuite
 
     [Fact]
     [Trait("Category", "GetFirst")]
+    public void GetFirstOneJoinUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var item = db.GetFirst<Product, ProductCategory>(GetFirstTwoNoParamQuery, "ProductCategoryId");
+        ValidateProduct816(item);
+        //if (GetProvider() != Provider.SQLite)
+        //{
+        //    ValidateProductCategory21(item.ProductCategory);
+        //}
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirst")]
     public void GetFirstOneJoinMapped()
     {
         using var db = GetSqlDatabase();
@@ -139,5 +152,87 @@ public abstract partial class TestSuite
         //    ValidateProductCategory21(item.ProductCategory);
         //    ValidateProductModel45(item.ProductModel);
         //}
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirst")]
+    public void GetFirstTwoJoinsUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var item = db.GetFirst<Product, ProductCategory, ProductModel>(
+            GetFirstThreeNoParamQuery, "ProductCategoryId,ProductModelId");
+        ValidateProduct816(item);
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirst")]
+    public void GetFirstThreeJoinsUnmapped()
+    {
+        using var db = GetSqlDatabase();
+        var item = db.GetFirst<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetFirstFourParamQuery, new { ProductId = 816 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        if (GetProvider() != Provider.SQLite)
+        {
+            ValidateProductCategory21(item.ProductCategory);
+            ValidateProductModel45(item.ProductModel);
+            ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirst")]
+    public void GetFirstThreeJoinsUnmappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var item = db.GetFirst<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetFirstFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        if (GetProvider() != Provider.SQLite)
+        {
+            ValidateProductCategory21(item.ProductCategory);
+            ValidateProductModel45(item.ProductModel);
+            ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirst")]
+    public void GetFirstThreeJoinsMapped()
+    {
+        using var db = GetSqlDatabase();
+        var item = db.GetFirst<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pr.ProductModelProductDescription = d;
+                return pr;
+            },
+            GetFirstFourParamQuery, new { ProductId = 816 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirst")]
+    public void GetFirstThreeJoinsMappedNoParameters()
+    {
+        using var db = GetSqlDatabase();
+        var item = db.GetFirst<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pr.ProductModelProductDescription = d;
+                return pr;
+            },
+            GetFirstFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
     }
 }

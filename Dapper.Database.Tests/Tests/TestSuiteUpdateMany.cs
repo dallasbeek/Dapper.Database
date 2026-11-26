@@ -6,7 +6,6 @@ namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
 {
-
     [Fact]
     [Trait("Category", "UpdateManyAsync")]
     public void UpdateManyAll()
@@ -37,7 +36,7 @@ public abstract partial class TestSuite
     public void UpdateManySqlWithSplitParameter()
     {
         using var db = GetSqlDatabase();
-        Assert.Equal(89, db.UpdateMany<Product>($"WHERE color = {P}Filter", ["Color"], new { Color = "Black", Filter = "Black" }));
+        Assert.Equal(89,
+            db.UpdateMany<Product>($"WHERE color = {P}Filter", ["Color"], new { Color = "Black", Filter = "Black" }));
     }
-
 }

@@ -6106,111 +6106,111 @@ CREATE TABLE ProductModelProductDescription(
 /
 
 BEGIN
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1199, 'en	  ', hextoraw('BFCCCB9FCC56E5489BF942FC99AF0968'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1199, 'en    ', hextoraw('BFCCCB9FCC56E5489BF942FC99AF0968'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1467, 'ar	  ', hextoraw('26DB09D28D91C54C9792DF7C92BE6FD7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1467, 'ar    ', hextoraw('26DB09D28D91C54C9792DF7C92BE6FD7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1589, 'fr	  ', hextoraw('1EDFBAD884DA1B4E9CF43ED16E128628'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1589, 'fr    ', hextoraw('1EDFBAD884DA1B4E9CF43ED16E128628'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1712, 'th	  ', hextoraw('4A9114B48BB1464CBEBB01A1D741B34E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1712, 'th    ', hextoraw('4A9114B48BB1464CBEBB01A1D741B34E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1838, 'he	  ', hextoraw('B9647DE7FC9F384492C1A539262B5B00'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1838, 'he    ', hextoraw('B9647DE7FC9F384492C1A539262B5B00'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (1, 1965, 'zh-cht', hextoraw('A2B06B99E27F2D4B9ADB6DD10ACE0C30'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1210, 'en	  ', hextoraw('F017CCC6E8AF124898B53F200121F513'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1210, 'en    ', hextoraw('F017CCC6E8AF124898B53F200121F513'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1476, 'ar	  ', hextoraw('40BCA68C370CB849AE756727ADC17BFA'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1476, 'ar    ', hextoraw('40BCA68C370CB849AE756727ADC17BFA'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1598, 'fr	  ', hextoraw('6410DB30009B89458FFD3163A6ED9C9D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1598, 'fr    ', hextoraw('6410DB30009B89458FFD3163A6ED9C9D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1721, 'th	  ', hextoraw('B010EA569384294F85DC4B70E2D720D1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1721, 'th    ', hextoraw('B010EA569384294F85DC4B70E2D720D1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1847, 'he	  ', hextoraw('FC8AAE6CC8ECE746B1E4710A06178363'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1847, 'he    ', hextoraw('FC8AAE6CC8ECE746B1E4710A06178363'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (2, 1974, 'zh-cht', hextoraw('A15E7FBA81E2184688220FD9ECFD8077'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1195, 'en	  ', hextoraw('9BE20F6C3C0C4444A03FC24FA619EC47'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1195, 'en    ', hextoraw('9BE20F6C3C0C4444A03FC24FA619EC47'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1464, 'ar	  ', hextoraw('DF4059D74C5F3243BB2C43DF83F0AA3D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1464, 'ar    ', hextoraw('DF4059D74C5F3243BB2C43DF83F0AA3D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1586, 'fr	  ', hextoraw('DBF6F7766B356D48ADBF1CFFF4D80FC6'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1586, 'fr    ', hextoraw('DBF6F7766B356D48ADBF1CFFF4D80FC6'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1709, 'th	  ', hextoraw('92C197CAB8022B47B4C2F4E808C4FEED'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1709, 'th    ', hextoraw('92C197CAB8022B47B4C2F4E808C4FEED'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1835, 'he	  ', hextoraw('71F06FCF539D9D4AB0EF04DBA4AF2E76'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1835, 'he    ', hextoraw('71F06FCF539D9D4AB0EF04DBA4AF2E76'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (3, 1961, 'zh-cht', hextoraw('C63E7A7D4C6D9848AE9FDFF32FEF5E93'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1194, 'en	  ', hextoraw('B75010F8486685429FACE668D43F2D5D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1194, 'en    ', hextoraw('B75010F8486685429FACE668D43F2D5D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1463, 'ar	  ', hextoraw('03BF0196BDDCC54DB41894DEFD16B56D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1463, 'ar    ', hextoraw('03BF0196BDDCC54DB41894DEFD16B56D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1585, 'fr	  ', hextoraw('CFC96BB3D7B14542ABB3E4BB259A2D0E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1585, 'fr    ', hextoraw('CFC96BB3D7B14542ABB3E4BB259A2D0E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1708, 'th	  ', hextoraw('B262E80E7E1FB6408D87A564F0FBE5F8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1708, 'th    ', hextoraw('B262E80E7E1FB6408D87A564F0FBE5F8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1834, 'he	  ', hextoraw('7A693F44A3414E49AE7DCE30EB2F19A8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1834, 'he    ', hextoraw('7A693F44A3414E49AE7DCE30EB2F19A8'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (4, 1960, 'zh-cht', hextoraw('D3E021017C3A184798F7D85FB107B21D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 647, 'en	 ', hextoraw('FF71CB8C717FA841A29BC4B13009AECD'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 647, 'en    ', hextoraw('FF71CB8C717FA841A29BC4B13009AECD'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1400, 'ar	  ', hextoraw('3359B7D20BA87F4AA1135239B9EABE33'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1400, 'ar    ', hextoraw('3359B7D20BA87F4AA1135239B9EABE33'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1605, 'fr	  ', hextoraw('226230B3EF308B459A32DCDEE71F92A5'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1605, 'fr    ', hextoraw('226230B3EF308B459A32DCDEE71F92A5'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1639, 'th	  ', hextoraw('7F836638BA18104390508B78126037D6'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1639, 'th    ', hextoraw('7F836638BA18104390508B78126037D6'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1768, 'he	  ', hextoraw('7802D11CB9717B4E80A8E23BF5160225'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1768, 'he    ', hextoraw('7802D11CB9717B4E80A8E23BF5160225'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (5, 1889, 'zh-cht', hextoraw('5396BA6871452F479008BFD47150B453'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1090, 'en	  ', hextoraw('DC9439BA5ED0B1499A3EB1AC45625713'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1090, 'en    ', hextoraw('DC9439BA5ED0B1499A3EB1AC45625713'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1451, 'ar	  ', hextoraw('366283E7292912468697BF8D48079881'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1451, 'ar    ', hextoraw('366283E7292912468697BF8D48079881'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1573, 'fr	  ', hextoraw('47DCCC4D2FB51542BE4B0D423FF94901'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1573, 'fr    ', hextoraw('47DCCC4D2FB51542BE4B0D423FF94901'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1696, 'th	  ', hextoraw('A55C3549C9595141A59C30BABB72D5D9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1696, 'th    ', hextoraw('A55C3549C9595141A59C30BABB72D5D9'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1827, 'he	  ', hextoraw('AEFC0B935DA2B14694FE46CCC43A3AA6'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1827, 'he    ', hextoraw('AEFC0B935DA2B14694FE46CCC43A3AA6'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (6, 1948, 'zh-cht', hextoraw('A1F235EE3A23C84096DB9A9D1DA522AC'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1182, 'en	  ', hextoraw('9AF9E8CB45683243A37E9BE77FBCC2EC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1182, 'en    ', hextoraw('9AF9E8CB45683243A37E9BE77FBCC2EC'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1453, 'ar	  ', hextoraw('66A08E90299A3D44AA6FF13B6D0EE991'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1453, 'ar    ', hextoraw('66A08E90299A3D44AA6FF13B6D0EE991'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1575, 'fr	  ', hextoraw('356C7879CB3A3643B00F651F62DAE0D3'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1575, 'fr    ', hextoraw('356C7879CB3A3643B00F651F62DAE0D3'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1698, 'th	  ', hextoraw('FD43443844CB4F4AB77AFD6191D18F72'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1698, 'th    ', hextoraw('FD43443844CB4F4AB77AFD6191D18F72'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1829, 'he	  ', hextoraw('FD0DE35A94C69B4EB7C1C09B2BD29BFD'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1829, 'he    ', hextoraw('FD0DE35A94C69B4EB7C1C09B2BD29BFD'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (7, 1950, 'zh-cht', hextoraw('F1D616A219804948ABFB7ED9AAD423A1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 637, 'en	 ', hextoraw('F6F361A0A837F54CBF6EB3A87134DD75'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 637, 'en    ', hextoraw('F6F361A0A837F54CBF6EB3A87134DD75'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1397, 'ar	  ', hextoraw('8227BFBF9FFEBE4FB2E1B3336EF4F78D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1397, 'ar    ', hextoraw('8227BFBF9FFEBE4FB2E1B3336EF4F78D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1514, 'fr	  ', hextoraw('E58C36193B3F16439D60E665B3131972'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1514, 'fr    ', hextoraw('E58C36193B3F16439D60E665B3131972'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1636, 'th	  ', hextoraw('F3DEF0D6769CC44CB87AF42263A0EA72'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1636, 'th    ', hextoraw('F3DEF0D6769CC44CB87AF42263A0EA72'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1759, 'he	  ', hextoraw('EB19DFA6EA9D3540A3D9A625990B9F79'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1759, 'he    ', hextoraw('EB19DFA6EA9D3540A3D9A625990B9F79'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (8, 1886, 'zh-cht', hextoraw('CD6ECF29E305F241A4E8741A1FB49AA4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1020, 'en	  ', hextoraw('C4B83A1C292D41499CD86446BE228705'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1020, 'en    ', hextoraw('C4B83A1C292D41499CD86446BE228705'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1449, 'ar	  ', hextoraw('9E698BB5BB1BE74EB5B4D6CEF4DB2092'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1449, 'ar    ', hextoraw('9E698BB5BB1BE74EB5B4D6CEF4DB2092'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1571, 'fr	  ', hextoraw('26B837A8AC7B4F47B604B13C97F3B9C4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1571, 'fr    ', hextoraw('26B837A8AC7B4F47B604B13C97F3B9C4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1694, 'th	  ', hextoraw('173E2C0E0EE38D43854CF14599A84A76'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1694, 'th    ', hextoraw('173E2C0E0EE38D43854CF14599A84A76'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1825, 'he	  ', hextoraw('4B52EF29F5D5424C996A4EB28490BD86'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1825, 'he    ', hextoraw('4B52EF29F5D5424C996A4EB28490BD86'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (9, 1946, 'zh-cht', hextoraw('F2CA35332179CD40B44486277FDF6800'), timestamp '2003-06-01 00:00:00');
 
@@ -6262,7 +6262,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (13, 1966, 'zh-cht', hextoraw('A9ECC21287438E4E8FB766FB078422D8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (14, 644, 'en	  ', hextoraw('5D248E9233B8554389C994C81B184235'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (14, 644, 'en    ', hextoraw('5D248E9233B8554389C994C81B184235'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (14, 1399, 'ar    ', hextoraw('8CDE59A269E5714589B7E12917EB6C2E'), timestamp '2003-06-01 00:00:00');
 
@@ -6274,7 +6274,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (14, 1888, 'zh-cht', hextoraw('45DC3296CF8FCE42845EFC0A5ED88ED0'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (15, 642, 'en	  ', hextoraw('80524C817C6C6F4B8FB7AF8453ADAB80'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (15, 642, 'en    ', hextoraw('80524C817C6C6F4B8FB7AF8453ADAB80'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (15, 1398, 'ar    ', hextoraw('A8C171A18F91A14FA10DEA6E7B3BDDEF'), timestamp '2003-06-01 00:00:00');
 
@@ -6298,7 +6298,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (16, 1947, 'zh-cht', hextoraw('FC1D67CB84B9EF4089FA0DF3607E8A26'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (17, 661, 'en	  ', hextoraw('B772F74E2A27E04F8C9E9C575253080C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (17, 661, 'en    ', hextoraw('B772F74E2A27E04F8C9E9C575253080C'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (17, 1401, 'ar    ', hextoraw('29C7BBE3AF3E8349B3A61EA8553D111F'), timestamp '2003-06-01 00:00:00');
 
@@ -6322,7 +6322,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (18, 1956, 'zh-cht', hextoraw('80E0B12CA975A0428D8C4794385BFEF5'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (19, 168, 'en	  ', hextoraw('AF1268B357867942A4D2B9E4EE581AD9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (19, 168, 'en    ', hextoraw('AF1268B357867942A4D2B9E4EE581AD9'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (19, 1367, 'ar    ', hextoraw('90359E7323646B4F9538FC0ECA4F8205'), timestamp '2003-06-01 00:00:00');
 
@@ -6334,7 +6334,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (19, 1862, 'zh-cht', hextoraw('5B2C76F1CC79184F8DE2DBB0A882D7E2'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (20, 128, 'en	  ', hextoraw('7B4F6233F0836848AFC77E1B54E5AF30'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (20, 128, 'en    ', hextoraw('7B4F6233F0836848AFC77E1B54E5AF30'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (20, 1366, 'ar    ', hextoraw('A0438008B607494A8C25207498AD0F8D'), timestamp '2003-06-01 00:00:00');
 
@@ -6346,7 +6346,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (20, 1861, 'zh-cht', hextoraw('D42625655589334AA5D0B566DC1F1434'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (21, 88, 'en	 ', hextoraw('3FF95B39C7266C409CF9DC5E587150BC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (21, 88, 'en    ', hextoraw('3FF95B39C7266C409CF9DC5E587150BC'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (21, 1365, 'ar    ', hextoraw('F7F34E19B96F204D85F4DD20F303F972'), timestamp '2003-06-01 00:00:00');
 
@@ -6358,7 +6358,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (21, 1860, 'zh-cht', hextoraw('B09572EF3B701B4CB0F39FD333C4F07C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (22, 64, 'en	 ', hextoraw('4850CECCA214DF4BBEEFDF0EC36CC54F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (22, 64, 'en    ', hextoraw('4850CECCA214DF4BBEEFDF0EC36CC54F'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (22, 1364, 'ar    ', hextoraw('D6DE2DE049E6A7458ED6F27EA8159056'), timestamp '2003-06-01 00:00:00');
 
@@ -6370,7 +6370,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (22, 1859, 'zh-cht', hextoraw('3FF0EAE62C332B48895618B14E688129'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (23, 8, 'en	', hextoraw('D90BD9295F50BF45ABE7ACAF1DCD1A88'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (23, 8, 'en    ', hextoraw('D90BD9295F50BF45ABE7ACAF1DCD1A88'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (23, 1363, 'ar    ', hextoraw('BA22BF955730EE4AAB4967444137604B'), timestamp '2003-06-01 00:00:00');
 
@@ -6394,7 +6394,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (24, 1972, 'zh-cht', hextoraw('4B354C3F231A6744A2CA383B47DF1A36'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (25, 457, 'en	  ', hextoraw('A093B7AC36886743ADF9C4E75A80D05E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (25, 457, 'en    ', hextoraw('A093B7AC36886743ADF9C4E75A80D05E'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (25, 1377, 'ar    ', hextoraw('DC34BAEA8D389940B9571EC9C7755613'), timestamp '2003-06-01 00:00:00');
 
@@ -6406,7 +6406,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (25, 1872, 'zh-cht', hextoraw('C52A21A527470E408FB00C2D3B032583'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (26, 409, 'en	  ', hextoraw('2CED9A5099904F4B82046005B2B8C4B7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (26, 409, 'en    ', hextoraw('2CED9A5099904F4B82046005B2B8C4B7'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (26, 1376, 'ar    ', hextoraw('D1DCBDA2E8678B45975EF56FDD03F96F'), timestamp '2003-06-01 00:00:00');
 
@@ -6418,7 +6418,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (26, 1871, 'zh-cht', hextoraw('A48848582C6BCD43B8031450488C2C1C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (27, 376, 'en	  ', hextoraw('3073F33196FEE94FB6368B15AAB9E0F6'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (27, 376, 'en    ', hextoraw('3073F33196FEE94FB6368B15AAB9E0F6'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (27, 1375, 'ar    ', hextoraw('335411E988574D43BD1C34336A4DB6AA'), timestamp '2003-06-01 00:00:00');
 
@@ -6430,7 +6430,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (27, 1870, 'zh-cht', hextoraw('1D4A97D4C2BAF948A28D520B33D02965'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (28, 337, 'en	  ', hextoraw('03A1CAB27B919E4E9C621AEC313DD28E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (28, 337, 'en    ', hextoraw('03A1CAB27B919E4E9C621AEC313DD28E'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (28, 1373, 'ar    ', hextoraw('AC28A3531D664E45BD67ABB63CC8111F'), timestamp '2003-06-01 00:00:00');
 
@@ -6442,7 +6442,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (28, 1868, 'zh-cht', hextoraw('FEC65D9AA84E444FB483CE724721DB15'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (29, 320, 'en	  ', hextoraw('88FDD68B227F084BB72E2817D5C3B761'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (29, 320, 'en    ', hextoraw('88FDD68B227F084BB72E2817D5C3B761'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (29, 1371, 'ar    ', hextoraw('23A229AB1854114FA8D263504BBEA61A'), timestamp '2003-06-01 00:00:00');
 
@@ -6454,7 +6454,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (29, 1866, 'zh-cht', hextoraw('13A83C677E928C4091A51AD1EB143B83'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (30, 249, 'en	  ', hextoraw('2A69C12A84F4D54F86A1758DF15A4EF4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (30, 249, 'en    ', hextoraw('2A69C12A84F4D54F86A1758DF15A4EF4'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (30, 1370, 'ar    ', hextoraw('35E0F050564C5E4692EF1A1562191C89'), timestamp '2003-06-01 00:00:00');
 
@@ -6466,7 +6466,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (30, 1865, 'zh-cht', hextoraw('1C86C77CFC0F7241A073F187B4C10450'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (31, 209, 'en	  ', hextoraw('246BC5D219669343A20EBC43CD882CBD'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (31, 209, 'en    ', hextoraw('246BC5D219669343A20EBC43CD882CBD'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (31, 1369, 'ar    ', hextoraw('1B057E58D1115343BCF426E03A76870B'), timestamp '2003-06-01 00:00:00');
 
@@ -6502,7 +6502,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (33, 1976, 'zh-cht', hextoraw('494F938276C7164DB6A30C0737D15B56'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (34, 594, 'en	  ', hextoraw('1F649D26EF452941A47092D125EF6FB5'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (34, 594, 'en    ', hextoraw('1F649D26EF452941A47092D125EF6FB5'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (34, 1387, 'ar    ', hextoraw('E3818DDC633EBB4CB5358CFD421FAF35'), timestamp '2003-06-01 00:00:00');
 
@@ -6514,7 +6514,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (34, 1875, 'zh-cht', hextoraw('20E1B7C1E7F28E4F908F4BC3D44EA7C9'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (35, 554, 'en	  ', hextoraw('8019D991804A6F47A7E2C3A6DE6FCD74'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (35, 554, 'en    ', hextoraw('8019D991804A6F47A7E2C3A6DE6FCD74'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (35, 1379, 'ar    ', hextoraw('FC4A02A286689647B4DB3C5E68B3DE8C'), timestamp '2003-06-01 00:00:00');
 
@@ -6526,7 +6526,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (35, 1874, 'zh-cht', hextoraw('F2AA8FCB72B30A4BACEF832A4F92FCDA'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (36, 513, 'en	  ', hextoraw('A3F1A6F2E4AC7D458567C2590BEA0BE3'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (36, 513, 'en    ', hextoraw('A3F1A6F2E4AC7D458567C2590BEA0BE3'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (36, 1378, 'ar    ', hextoraw('C6DD5ED8F00A4D4B839C0C7850A52832'), timestamp '2003-06-01 00:00:00');
 
@@ -6562,7 +6562,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (38, 1978, 'zh-cht', hextoraw('751261A88D009648AF8186A47154988F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (39, 170, 'en	  ', hextoraw('F6A36E9D171D024C9129947A9E72446F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (39, 170, 'en    ', hextoraw('F6A36E9D171D024C9129947A9E72446F'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (39, 1368, 'ar    ', hextoraw('8EA0C2884969A54C87843F81A6089D25'), timestamp '2003-06-01 00:00:00');
 
@@ -6574,7 +6574,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (39, 1863, 'zh-cht', hextoraw('86F889DA5A1F144CB115CBD0646F2317'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (40, 321, 'en	  ', hextoraw('BDD5AF82C5D15E4685619A74DF3D32CE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (40, 321, 'en    ', hextoraw('BDD5AF82C5D15E4685619A74DF3D32CE'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (40, 1372, 'ar    ', hextoraw('489693F62A14FA47A3F771BDA8EA487A'), timestamp '2003-06-01 00:00:00');
 
@@ -6586,7 +6586,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (40, 1867, 'zh-cht', hextoraw('9D513ABCC2608842B66B31A67B87C535'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (41, 375, 'en	  ', hextoraw('05FF9374D2FF9148A153F796B4EDB04F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (41, 375, 'en    ', hextoraw('05FF9374D2FF9148A153F796B4EDB04F'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (41, 1374, 'ar    ', hextoraw('ABE2AD1AD9B4434AAE4172A804C503D5'), timestamp '2003-06-01 00:00:00');
 
@@ -6598,7 +6598,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (41, 1869, 'zh-cht', hextoraw('BD5F540393B0CD4E8C9088DFC9AB3EB7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (42, 686, 'en	  ', hextoraw('7DE1A48A7FA048438BF03B7778818947'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (42, 686, 'en    ', hextoraw('7DE1A48A7FA048438BF03B7778818947'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (42, 1402, 'ar    ', hextoraw('1201C82144A2274EB90769B96A29C4C4'), timestamp '2003-06-01 00:00:00');
 
@@ -6610,7 +6610,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (42, 1891, 'zh-cht', hextoraw('C41EAF6EA7BF9341BCE5BBE9CC748423'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (43, 873, 'en	  ', hextoraw('F60D3CAE49A9A94D88D98F56C004D962'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (43, 873, 'en    ', hextoraw('F60D3CAE49A9A94D88D98F56C004D962'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (43, 1385, 'ar    ', hextoraw('FA22981CE5D7BF4FA1FBD7CC8E1DC5A6'), timestamp '2003-06-01 00:00:00');
 
@@ -6622,7 +6622,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (43, 1926, 'zh-cht', hextoraw('A173139E99BA2D47A05F00E0187EC19E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (44, 692, 'en	  ', hextoraw('5F4B5590B76DA94E8AD26C3594C06607'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (44, 692, 'en    ', hextoraw('5F4B5590B76DA94E8AD26C3594C06607'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (44, 1408, 'ar    ', hextoraw('0F549390B82E6748A445D74022C36C6A'), timestamp '2003-06-01 00:00:00');
 
@@ -6634,7 +6634,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (44, 1897, 'zh-cht', hextoraw('83CFADCD019ED74F82E5B041445FD728'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (45, 687, 'en	  ', hextoraw('2C2BC195B272494DB38D5036FD5FA00F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (45, 687, 'en    ', hextoraw('2C2BC195B272494DB38D5036FD5FA00F'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (45, 1403, 'ar    ', hextoraw('511C97FB0B9D75469CE3B9F7E651050B'), timestamp '2003-06-01 00:00:00');
 
@@ -6646,7 +6646,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (45, 1892, 'zh-cht', hextoraw('4FD2D6EF7702B642A4D52D67F449B4B9'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (46, 688, 'en	  ', hextoraw('420656327B69034CB7E9F693F9BD4A17'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (46, 688, 'en    ', hextoraw('420656327B69034CB7E9F693F9BD4A17'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (46, 1404, 'ar    ', hextoraw('5884EA749A6E5941A736BC66A5948F16'), timestamp '2003-06-01 00:00:00');
 
@@ -6658,7 +6658,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (46, 1893, 'zh-cht', hextoraw('29140737EC72104DBA5158EC3AB0A7B2'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (47, 703, 'en	  ', hextoraw('B2B21EFCD5974743B484AB424D0A51E9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (47, 703, 'en    ', hextoraw('B2B21EFCD5974743B484AB424D0A51E9'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (47, 1415, 'ar    ', hextoraw('456E8D6EF352AA4A9CE6EFF8C59B95E5'), timestamp '2003-06-01 00:00:00');
 
@@ -6670,7 +6670,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (47, 1905, 'zh-cht', hextoraw('3BDD95D598A19B43A9F3C0F9676B8D06'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (48, 704, 'en	  ', hextoraw('ACDFD82532E86346B489D45D9436BD6B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (48, 704, 'en    ', hextoraw('ACDFD82532E86346B489D45D9436BD6B'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (48, 1416, 'ar    ', hextoraw('2FB6257A0607B0409C44DC49653EADF4'), timestamp '2003-06-01 00:00:00');
 
@@ -6682,7 +6682,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (48, 1906, 'zh-cht', hextoraw('CD75011E43F03F42949C99357C825A90'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (49, 689, 'en	  ', hextoraw('A6CA97EF56547C46B2E44F33C27B9DE7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (49, 689, 'en    ', hextoraw('A6CA97EF56547C46B2E44F33C27B9DE7'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (49, 1405, 'ar    ', hextoraw('2A981EF778E3EF4EB4487432C1C7062E'), timestamp '2003-06-01 00:00:00');
 
@@ -6694,7 +6694,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (49, 1894, 'zh-cht', hextoraw('9E1F7374D69D7C45B330F14FB9015AEF'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (50, 690, 'en	  ', hextoraw('BB21F791CE59434A8C88CEF618863AF2'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (50, 690, 'en    ', hextoraw('BB21F791CE59434A8C88CEF618863AF2'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (50, 1406, 'ar    ', hextoraw('DD52A9BB345FDB43BF5D144F2909F9F6'), timestamp '2003-06-01 00:00:00');
 
@@ -6706,7 +6706,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (50, 1895, 'zh-cht', hextoraw('04A85A3EA975324DB765CC001269B83B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (51, 691, 'en	  ', hextoraw('6734801C111A2745944762F79BBC055C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (51, 691, 'en    ', hextoraw('6734801C111A2745944762F79BBC055C'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (51, 1407, 'ar    ', hextoraw('66592B6A8AE63B479E90353FE3A630B1'), timestamp '2003-06-01 00:00:00');
 
@@ -6718,7 +6718,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (51, 1896, 'zh-cht', hextoraw('8854EE53F7593142A6E7DBA6EE1E02A6'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (52, 697, 'en	  ', hextoraw('A9128A269C94414581664623DB405760'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (52, 697, 'en    ', hextoraw('A9128A269C94414581664623DB405760'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (52, 1409, 'ar    ', hextoraw('877989F0AFF3EC4C965E419AA162DA3E'), timestamp '2003-06-01 00:00:00');
 
@@ -6730,7 +6730,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (52, 1898, 'zh-cht', hextoraw('6632339B91172441A7BB80D293E2D831'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (53, 853, 'en	  ', hextoraw('C45A0CE1611BD84FAA15DFFF773965A3'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (53, 853, 'en    ', hextoraw('C45A0CE1611BD84FAA15DFFF773965A3'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (53, 1426, 'ar    ', hextoraw('87FDBD0E9456744B9AFA2756C5E23092'), timestamp '2003-06-01 00:00:00');
 
@@ -6742,7 +6742,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (53, 1916, 'zh-cht', hextoraw('62805378C0ED9B4F87BFABA1822355EE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (54, 698, 'en	  ', hextoraw('4864907CCF8B874C8438FF09187837F7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (54, 698, 'en    ', hextoraw('4864907CCF8B874C8438FF09187837F7'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (54, 1410, 'ar    ', hextoraw('DC4C7D0F24AC0447B4DDBEF2855F7197'), timestamp '2003-06-01 00:00:00');
 
@@ -6754,7 +6754,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (54, 1899, 'zh-cht', hextoraw('89B07B789C68FF4CA07EFE292BBED35F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (55, 699, 'en	  ', hextoraw('10517CF617F2DE4E923897657CE1C9CB'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (55, 699, 'en    ', hextoraw('10517CF617F2DE4E923897657CE1C9CB'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (55, 1411, 'ar    ', hextoraw('ED48D07B371D7C4B8B9B3B4FA46739F3'), timestamp '2003-06-01 00:00:00');
 
@@ -6766,7 +6766,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (55, 1900, 'zh-cht', hextoraw('215F9CED11F19043AC676AFD0E71EBBB'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (56, 700, 'en	  ', hextoraw('A5C462FDB86AC54A92FFDDB3B5DC27D1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (56, 700, 'en    ', hextoraw('A5C462FDB86AC54A92FFDDB3B5DC27D1'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (56, 1412, 'ar    ', hextoraw('24BE547E6DB69C4AA4AA2BB577641DEA'), timestamp '2003-06-01 00:00:00');
 
@@ -6778,7 +6778,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (56, 1901, 'zh-cht', hextoraw('38483FBA19317E42A58AA4E55610B01E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (57, 701, 'en	  ', hextoraw('E2197C026696794C8BDF3D383865AC91'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (57, 701, 'en    ', hextoraw('E2197C026696794C8BDF3D383865AC91'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (57, 1413, 'ar    ', hextoraw('452895BD838B8249992C9866290214BD'), timestamp '2003-06-01 00:00:00');
 
@@ -6790,7 +6790,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (57, 1903, 'zh-cht', hextoraw('7A733D86C5B7DD45BBA4D7EB8293FA57'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (58, 702, 'en	  ', hextoraw('FE7845D97EBB5C4BA6E0AF942559503C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (58, 702, 'en    ', hextoraw('FE7845D97EBB5C4BA6E0AF942559503C'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (58, 1414, 'ar    ', hextoraw('90076AC4F714EF4F8B7150928E23A03A'), timestamp '2003-06-01 00:00:00');
 
@@ -6802,7 +6802,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (58, 1904, 'zh-cht', hextoraw('8E632C1A57562C4A974B3DDA972CB9ED'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (59, 744, 'en	  ', hextoraw('E728EBFDD608F24CB418DB1C5F313DDC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (59, 744, 'en    ', hextoraw('E728EBFDD608F24CB418DB1C5F313DDC'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (59, 1417, 'ar    ', hextoraw('FBB11C1A56E32C49A6AB291172922C13'), timestamp '2003-06-01 00:00:00');
 
@@ -6814,7 +6814,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (59, 1907, 'zh-cht', hextoraw('70CE99FB6CD58E49A9FFFDEB922C184C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (60, 745, 'en	  ', hextoraw('C7AE763B93D50942B68DE10A5DC862ED'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (60, 745, 'en    ', hextoraw('C7AE763B93D50942B68DE10A5DC862ED'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (60, 1418, 'ar    ', hextoraw('2832D336C85E7E488B51383BFC1F8776'), timestamp '2003-06-01 00:00:00');
 
@@ -6826,7 +6826,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (60, 1908, 'zh-cht', hextoraw('B19DC4621AD205438EC12FED0395BD36'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (61, 746, 'en	  ', hextoraw('129977F6BB9DD448BF7087D6C6D7FE9A'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (61, 746, 'en    ', hextoraw('129977F6BB9DD448BF7087D6C6D7FE9A'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (61, 1419, 'ar    ', hextoraw('61E0AB3CC922E745876D89A70B298D52'), timestamp '2003-06-01 00:00:00');
 
@@ -6838,7 +6838,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (61, 1909, 'zh-cht', hextoraw('095C6F103E68E24B81AFFB9171C928A9'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (62, 847, 'en	  ', hextoraw('84504FDE8C633E41982CBDF855EEBF73'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (62, 847, 'en    ', hextoraw('84504FDE8C633E41982CBDF855EEBF73'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (62, 1420, 'ar    ', hextoraw('6456A7E315179842A527E243DD87B1AC'), timestamp '2003-06-01 00:00:00');
 
@@ -6850,7 +6850,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (62, 1910, 'zh-cht', hextoraw('FCF01DA3AAC8454F96921C7BC48D57E2'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (63, 848, 'en	  ', hextoraw('E5A92DA29B2F6149B77A84A4BBBECA1F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (63, 848, 'en    ', hextoraw('E5A92DA29B2F6149B77A84A4BBBECA1F'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (63, 1421, 'ar    ', hextoraw('F88C2B106A7CEE4AB22647B578AE8A44'), timestamp '2003-06-01 00:00:00');
 
@@ -6862,7 +6862,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (63, 1911, 'zh-cht', hextoraw('4C0AA6739C75E04FAD37A574545015D0'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (64, 849, 'en	  ', hextoraw('84A371560CC25C46AE2C02B662B08D2C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (64, 849, 'en    ', hextoraw('84A371560CC25C46AE2C02B662B08D2C'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (64, 1422, 'ar    ', hextoraw('F7E4444E85370A4BA49EB2F42A4FC91B'), timestamp '2003-06-01 00:00:00');
 
@@ -6874,7 +6874,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (64, 1912, 'zh-cht', hextoraw('518002FB8A6A8B46AB819DBF676AF615'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (65, 892, 'en	  ', hextoraw('55EED52FDD89B345809A14294701F233'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (65, 892, 'en    ', hextoraw('55EED52FDD89B345809A14294701F233'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (65, 1437, 'ar    ', hextoraw('FD71B449ADDE954B9073BBB71939415D'), timestamp '2003-06-01 00:00:00');
 
@@ -6886,7 +6886,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (65, 1934, 'zh-cht', hextoraw('F760FBD8698AEC4B80C91B8FAC7B4090'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (66, 891, 'en	  ', hextoraw('5E2C5DB562325C4FAC6CFAB293278900'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (66, 891, 'en    ', hextoraw('5E2C5DB562325C4FAC6CFAB293278900'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (66, 1436, 'ar    ', hextoraw('E5EBC3CA4970AF49ADEC81DCAED6B42A'), timestamp '2003-06-01 00:00:00');
 
@@ -6898,7 +6898,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (66, 1933, 'zh-cht', hextoraw('58325F8A8CCF92438C992A10EF56336C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (67, 893, 'en	  ', hextoraw('0CB725BBC079A449B093F9DF319743DF'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (67, 893, 'en    ', hextoraw('0CB725BBC079A449B093F9DF319743DF'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (67, 1438, 'ar    ', hextoraw('E73A5D6243508849A15B0DFB18303DA9'), timestamp '2003-06-01 00:00:00');
 
@@ -6910,7 +6910,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (67, 1935, 'zh-cht', hextoraw('2CC359E4C9CA9A4C8971E97F6EA1F471'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (68, 850, 'en	  ', hextoraw('035536A7F65B064A949265CF13986DB4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (68, 850, 'en    ', hextoraw('035536A7F65B064A949265CF13986DB4'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (68, 1423, 'ar    ', hextoraw('BAD5F9943860F54CA2E0FB9CF884344F'), timestamp '2003-06-01 00:00:00');
 
@@ -6922,7 +6922,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (68, 1913, 'zh-cht', hextoraw('35481E946525134B88D3D86DFEFBD8E4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (69, 851, 'en	  ', hextoraw('363F291D0D4CDC43AF1CFDBD1283B88D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (69, 851, 'en    ', hextoraw('363F291D0D4CDC43AF1CFDBD1283B88D'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (69, 1424, 'ar    ', hextoraw('6EDC4F4A25A53449B07CDEC8DA30554D'), timestamp '2003-06-01 00:00:00');
 
@@ -6934,7 +6934,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (69, 1914, 'zh-cht', hextoraw('73BC1CC8F558ED40A6DA7FD03D79D789'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (70, 852, 'en	  ', hextoraw('47CD559A84CAD84F964202F9AFE2E3A5'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (70, 852, 'en    ', hextoraw('47CD559A84CAD84F964202F9AFE2E3A5'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (70, 1425, 'ar    ', hextoraw('04EDA7A4291D9F4B998DE4F156E826AD'), timestamp '2003-06-01 00:00:00');
 
@@ -6946,7 +6946,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (70, 1915, 'zh-cht', hextoraw('E7A9C18DD0990F44819A106CEC093ACC'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (71, 856, 'en	  ', hextoraw('05B2F984D14BA64987234E4779024B5D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (71, 856, 'en    ', hextoraw('05B2F984D14BA64987234E4779024B5D'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (71, 1427, 'ar    ', hextoraw('A5E8A7035CD1014890764D13F04A82D4'), timestamp '2003-06-01 00:00:00');
 
@@ -6958,7 +6958,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (71, 1918, 'zh-cht', hextoraw('542C2C32E143914E8DAAB1160340A6D8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (72, 858, 'en	  ', hextoraw('0E4D9C5C252EB246B8879830533FF740'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (72, 858, 'en    ', hextoraw('0E4D9C5C252EB246B8879830533FF740'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (72, 1429, 'ar    ', hextoraw('35DCEDE7F9C7A44286F9A743EBEE438C'), timestamp '2003-06-01 00:00:00');
 
@@ -6970,7 +6970,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (72, 1919, 'zh-cht', hextoraw('6EE462773AC4CA4D97C768DC42C9421D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (73, 867, 'en	  ', hextoraw('7E82CF0C938F364B80C547C5C3F32065'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (73, 867, 'en    ', hextoraw('7E82CF0C938F364B80C547C5C3F32065'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (73, 1430, 'ar    ', hextoraw('836915D2A3986148A1F5501952953570'), timestamp '2003-06-01 00:00:00');
 
@@ -6982,7 +6982,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (73, 1920, 'zh-cht', hextoraw('4DBA929EDA1F214D82723CC5EDB9F221'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (74, 868, 'en	  ', hextoraw('E8076E792365894888DA4F47F9705A36'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (74, 868, 'en    ', hextoraw('E8076E792365894888DA4F47F9705A36'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (74, 1380, 'ar    ', hextoraw('B27EFB736C4ADC41B87B7C63DF8D30A1'), timestamp '2003-06-01 00:00:00');
 
@@ -6994,7 +6994,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (74, 1921, 'zh-cht', hextoraw('1B9D3755E219AA4A9473946A1D70B295'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (75, 869, 'en	  ', hextoraw('788C75ED03A5224596A17E372191F67D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (75, 869, 'en    ', hextoraw('788C75ED03A5224596A17E372191F67D'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (75, 1381, 'ar    ', hextoraw('FE3AB4F7B179F442A37612B0CFA3B7D4'), timestamp '2003-06-01 00:00:00');
 
@@ -7006,7 +7006,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (75, 1922, 'zh-cht', hextoraw('0222E040E4C0404B91B32ED2C7349F50'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (76, 870, 'en	  ', hextoraw('3F3D4B7A3B08CB45B8D280B4983AF5BB'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (76, 870, 'en    ', hextoraw('3F3D4B7A3B08CB45B8D280B4983AF5BB'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (76, 1382, 'ar    ', hextoraw('DCECD775DFFF704D9FC58F9622D91AAB'), timestamp '2003-06-01 00:00:00');
 
@@ -7018,7 +7018,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (76, 1923, 'zh-cht', hextoraw('339A6B8B54048C4F924E249F49D38BD4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (77, 871, 'en	  ', hextoraw('EB5B51FA9FD8CB4EBD8176AD70BF3CD0'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (77, 871, 'en    ', hextoraw('EB5B51FA9FD8CB4EBD8176AD70BF3CD0'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (77, 1383, 'ar    ', hextoraw('3FBE73C3D20A0840804B0AB474CA6B97'), timestamp '2003-06-01 00:00:00');
 
@@ -7030,7 +7030,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (77, 1924, 'zh-cht', hextoraw('45DEB54F6123904A976AB216442230F0'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (78, 872, 'en	  ', hextoraw('8DF85BAFF3F6274AAE01F3BBA38C5F91'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (78, 872, 'en    ', hextoraw('8DF85BAFF3F6274AAE01F3BBA38C5F91'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (78, 1384, 'ar    ', hextoraw('318954E3881C894D80FE654E8B3DDFB5'), timestamp '2003-06-01 00:00:00');
 
@@ -7042,7 +7042,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (78, 1925, 'zh-cht', hextoraw('CACA7166B647E440A1EB6BE89BEFE20F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (79, 885, 'en	  ', hextoraw('13C67016F98D7F4995754D00545DE277'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (79, 885, 'en    ', hextoraw('13C67016F98D7F4995754D00545DE277'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (79, 1386, 'ar    ', hextoraw('28423D97908975409879EC3DBCA10DC9'), timestamp '2003-06-01 00:00:00');
 
@@ -7054,7 +7054,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (79, 1927, 'zh-cht', hextoraw('D1BF406BB4B8414D931025EF1660673C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (80, 886, 'en	  ', hextoraw('58D9DA5244BC2943BD5AD9AA956A34DE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (80, 886, 'en    ', hextoraw('58D9DA5244BC2943BD5AD9AA956A34DE'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (80, 1431, 'ar    ', hextoraw('595BEE6B4C914C478F46D383EECFEF10'), timestamp '2003-06-01 00:00:00');
 
@@ -7066,7 +7066,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (80, 1928, 'zh-cht', hextoraw('0390A8E3860DF94BB5DA13BE576FB37D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (81, 887, 'en	  ', hextoraw('59442E0CC80D184A9E7FEE2E32CFF8D7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (81, 887, 'en    ', hextoraw('59442E0CC80D184A9E7FEE2E32CFF8D7'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (81, 1432, 'ar    ', hextoraw('69D093E3BD3992428B16D3BF011918B1'), timestamp '2003-06-01 00:00:00');
 
@@ -7078,7 +7078,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (81, 1929, 'zh-cht', hextoraw('ECB9B721C6E15B4AB592D52D381B980C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (82, 888, 'en	  ', hextoraw('854842544DD7E0459112673A7D45EF66'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (82, 888, 'en    ', hextoraw('854842544DD7E0459112673A7D45EF66'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (82, 1433, 'ar    ', hextoraw('7ECF1FD443503148B787E7CD92DDC10D'), timestamp '2003-06-01 00:00:00');
 
@@ -7090,7 +7090,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (82, 1930, 'zh-cht', hextoraw('0D5B3CCD8ED0D34B8F337A9FB28DD27C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (83, 889, 'en	  ', hextoraw('0E7B0BAC26B08E438A99E6EE78D3180D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (83, 889, 'en    ', hextoraw('0E7B0BAC26B08E438A99E6EE78D3180D'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (83, 1434, 'ar    ', hextoraw('E17453B797E17F438BA7A221EDF97D09'), timestamp '2003-06-01 00:00:00');
 
@@ -7102,7 +7102,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (83, 1931, 'zh-cht', hextoraw('D5AA2324C3AD92438EC219A0D4B5CCF1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (84, 890, 'en	  ', hextoraw('182D9A8C6EF63641A15D234D53902E8B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (84, 890, 'en    ', hextoraw('182D9A8C6EF63641A15D234D53902E8B'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (84, 1435, 'ar    ', hextoraw('41249A3F66A2564AAF262950A5FC00B5'), timestamp '2003-06-01 00:00:00');
 
@@ -7114,7 +7114,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (84, 1932, 'zh-cht', hextoraw('D89314450F9A6B4D93D9CF6AB2384243'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (85, 903, 'en	  ', hextoraw('887495A4BA799D42AE8A0FE162B74A24'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (85, 903, 'en    ', hextoraw('887495A4BA799D42AE8A0FE162B74A24'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (85, 1439, 'ar    ', hextoraw('5B1ADD79AE197C4DA549D3839269C09D'), timestamp '2003-06-01 00:00:00');
 
@@ -7126,7 +7126,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (85, 1936, 'zh-cht', hextoraw('2BE5BAEEBEBD4D42A28DB5CF3F6B3E09'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (86, 904, 'en	  ', hextoraw('EE1A943B87AD784CA196D422F1E3A316'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (86, 904, 'en    ', hextoraw('EE1A943B87AD784CA196D422F1E3A316'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (86, 1440, 'ar    ', hextoraw('2A2E2F1A4FBEDA4C92913922C889DCC2'), timestamp '2003-06-01 00:00:00');
 
@@ -7138,7 +7138,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (86, 1937, 'zh-cht', hextoraw('58224C2814439C4480502A8D00A7C38C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (87, 905, 'en	  ', hextoraw('23318B43ED75EC4AA10D5FCC69960053'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (87, 905, 'en    ', hextoraw('23318B43ED75EC4AA10D5FCC69960053'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (87, 1441, 'ar    ', hextoraw('2B759051C2C2274EA6D2D4D07F30DB24'), timestamp '2003-06-01 00:00:00');
 
@@ -7150,7 +7150,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (87, 1938, 'zh-cht', hextoraw('07337597647C8D45A3067C8072778171'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (88, 906, 'en	  ', hextoraw('236A8F955A041C4C9D49D6997B72BB6E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (88, 906, 'en    ', hextoraw('236A8F955A041C4C9D49D6997B72BB6E'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (88, 1442, 'ar    ', hextoraw('67500595C9535C479C3CC2B66A288DA3'), timestamp '2003-06-01 00:00:00');
 
@@ -7162,7 +7162,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (88, 1939, 'zh-cht', hextoraw('1756312694EC734B9621A2070DB42902'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (89, 907, 'en	  ', hextoraw('29FDD22A20FCF34986C8432E860F5FAF'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (89, 907, 'en    ', hextoraw('29FDD22A20FCF34986C8432E860F5FAF'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (89, 1443, 'ar    ', hextoraw('B4A4093D9403694EA5DE76ECDB75CE13'), timestamp '2003-06-01 00:00:00');
 
@@ -7174,7 +7174,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (89, 1940, 'zh-cht', hextoraw('F55C6D8DBD1D2243B0AC67D3260FBDCE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (90, 908, 'en	  ', hextoraw('D7FCD333140F24419847387CB1DE5148'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (90, 908, 'en    ', hextoraw('D7FCD333140F24419847387CB1DE5148'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (90, 1444, 'ar    ', hextoraw('95C4DC570BFF1C42BF7E7BD231A0D8C4'), timestamp '2003-06-01 00:00:00');
 
@@ -7186,7 +7186,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (90, 1941, 'zh-cht', hextoraw('73D4975D964A774C8CA1CE290E0FF813'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (91, 909, 'en	  ', hextoraw('B89C1A072ED7EF42AAF5A9B260DE8E3D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (91, 909, 'en    ', hextoraw('B89C1A072ED7EF42AAF5A9B260DE8E3D'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (91, 1445, 'ar    ', hextoraw('80307564EE1CDA40B26D053D12F96CFD'), timestamp '2003-06-01 00:00:00');
 
@@ -7198,7 +7198,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (91, 1942, 'zh-cht', hextoraw('9424B887FF313E488F2D25B0BD36BF12'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (92, 912, 'en	  ', hextoraw('24F4EE6B3B367B40BE4462937ADFB8FE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (92, 912, 'en    ', hextoraw('24F4EE6B3B367B40BE4462937ADFB8FE'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (92, 1446, 'ar    ', hextoraw('77A0E2E5FE0D94479681385D043B27FC'), timestamp '2003-06-01 00:00:00');
 
@@ -7210,7 +7210,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (92, 1943, 'zh-cht', hextoraw('FD36792D999A3F4F9CFA3D9DE45216F5'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (93, 913, 'en	  ', hextoraw('DC3B90F19048294089D077FB6F531C93'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (93, 913, 'en    ', hextoraw('DC3B90F19048294089D077FB6F531C93'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (93, 1447, 'ar    ', hextoraw('CE234C60969CC54C977FED88D85BEF83'), timestamp '2003-06-01 00:00:00');
 
@@ -7222,7 +7222,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (93, 1944, 'zh-cht', hextoraw('193C5D1D415F5046827E51E7E324BBDC'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (94, 914, 'en	  ', hextoraw('C17A32989981D44C8A04C35A28CA381F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (94, 914, 'en    ', hextoraw('C17A32989981D44C8A04C35A28CA381F'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (94, 1448, 'ar    ', hextoraw('5D58C93A42CD9843B214A430AD092AFE'), timestamp '2003-06-01 00:00:00');
 
@@ -7234,7 +7234,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (94, 1945, 'zh-cht', hextoraw('3B80AB6BE820F7409B9F09B528EF4114'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (95, 3, 'en	', hextoraw('AF132E27A87F3744A8A5D9280359F647'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (95, 3, 'en    ', hextoraw('AF132E27A87F3744A8A5D9280359F647'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (95, 1360, 'ar    ', hextoraw('83683A5463ABBB409E08B5695AF0AA8A'), timestamp '2003-06-01 00:00:00');
 
@@ -7246,7 +7246,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (95, 1855, 'zh-cht', hextoraw('3413454D9B53F540BD50B1A24421560D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (96, 4, 'en	', hextoraw('2D6C258E9349FD45B43D1CE14BB45A15'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (96, 4, 'en    ', hextoraw('2D6C258E9349FD45B43D1CE14BB45A15'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (96, 1361, 'ar    ', hextoraw('653856B758537149B740DB4CAE63C0C2'), timestamp '2003-06-01 00:00:00');
 
@@ -7258,7 +7258,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (96, 1856, 'zh-cht', hextoraw('A925FCF5D06FE246AF48EA56B0B668A4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (97, 5, 'en	', hextoraw('AEFFA912684BDA45A3BC59854ECF10F1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (97, 5, 'en    ', hextoraw('AEFFA912684BDA45A3BC59854ECF10F1'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (97, 1362, 'ar    ', hextoraw('A6F43B4996BFA74C9C53F6E741D2FC37'), timestamp '2003-06-01 00:00:00');
 
@@ -7270,7 +7270,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (97, 1857, 'zh-cht', hextoraw('91606CDE0CBFBF4BB6C2F89F27449625'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (98, 613, 'en	  ', hextoraw('D952BC03ACE09F468A1355EC1B406CD5'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (98, 613, 'en    ', hextoraw('D952BC03ACE09F468A1355EC1B406CD5'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (98, 1388, 'ar    ', hextoraw('C3CF078406685E41AD952C84E7FA55FA'), timestamp '2003-06-01 00:00:00');
 
@@ -7282,7 +7282,7 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (98, 1876, 'zh-cht', hextoraw('FFD5A7ED5A330144A94B0E679843E22A'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (99, 618, 'en	  ', hextoraw('F476B184E8E168478FC1B560D169646D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (99, 618, 'en    ', hextoraw('F476B184E8E168478FC1B560D169646D'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (99, 1389, 'ar    ', hextoraw('41AD89DD989E80439679C7FF2FACEA7E'), timestamp '2003-06-01 00:00:00');
 
@@ -7296,337 +7296,337 @@ BEGIN
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 619, 'en    ', hextoraw('57FD691F4C15154BAA4075394E34B3E7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1390, 'ar	', hextoraw('3D2E33A01BDD314C8596E3FC54ED763B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1390, 'ar    ', hextoraw('3D2E33A01BDD314C8596E3FC54ED763B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1507, 'fr	', hextoraw('18FCA7BAD784694DBECF09139DAEB492'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1507, 'fr    ', hextoraw('18FCA7BAD784694DBECF09139DAEB492'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1629, 'th	', hextoraw('495F224070993F4BA8F670082A7BFF23'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1629, 'th    ', hextoraw('495F224070993F4BA8F670082A7BFF23'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1752, 'he	', hextoraw('95EAD05E39A87443A728A36B7E0F2CDF'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1752, 'he    ', hextoraw('95EAD05E39A87443A728A36B7E0F2CDF'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (100, 1878, 'zh-cht', hextoraw('1B246DBCC03AC249B964FA161976B5C0'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 620, 'en    ', hextoraw('07A089FBDB340641BD6B184826E14B68'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1391, 'ar	', hextoraw('EA5BB7373D3A10478D7BE250D14FB1CF'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1391, 'ar    ', hextoraw('EA5BB7373D3A10478D7BE250D14FB1CF'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1508, 'fr	', hextoraw('51923F8EADE2344FB4B12D0E78C66707'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1508, 'fr    ', hextoraw('51923F8EADE2344FB4B12D0E78C66707'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1630, 'th	', hextoraw('5EC8A7E9212E6B4A863783084E839C00'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1630, 'th    ', hextoraw('5EC8A7E9212E6B4A863783084E839C00'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1753, 'he	', hextoraw('FC458ACF236BC1499814B19C2E7619F9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1753, 'he    ', hextoraw('FC458ACF236BC1499814B19C2E7619F9'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (101, 1879, 'zh-cht', hextoraw('A0C6F6C9893DFB4AA6F05E753F3EEC7B'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 627, 'en    ', hextoraw('871448C158146247B78FB08D84DD3B15'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1392, 'ar	', hextoraw('32DD1CD20243EF46A719156633E3787D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1392, 'ar    ', hextoraw('32DD1CD20243EF46A719156633E3787D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1509, 'fr	', hextoraw('B479D8FE79FED64DA0166805913DCB91'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1509, 'fr    ', hextoraw('B479D8FE79FED64DA0166805913DCB91'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1631, 'th	', hextoraw('79346D3F8223A04C9DD5FCA9B488A839'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1631, 'th    ', hextoraw('79346D3F8223A04C9DD5FCA9B488A839'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1754, 'he	', hextoraw('4496565EE4139744BE4F8133B4A6B6B1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1754, 'he    ', hextoraw('4496565EE4139744BE4F8133B4A6B6B1'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (102, 1880, 'zh-cht', hextoraw('D9C7DE37A6917545B8F1FDF6D448EA03'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 630, 'en    ', hextoraw('3D56E0AFDFFBB84D985FBB6232CA372D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1393, 'ar	', hextoraw('A0487A44B531FB438E6574EF2ED18ACD'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1393, 'ar    ', hextoraw('A0487A44B531FB438E6574EF2ED18ACD'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1510, 'fr	', hextoraw('DC5BE15F5D2530499A4EDAD834AFFF9A'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1510, 'fr    ', hextoraw('DC5BE15F5D2530499A4EDAD834AFFF9A'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1632, 'th	', hextoraw('C1952BFB23BE38488EA7C91E9A205463'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1632, 'th    ', hextoraw('C1952BFB23BE38488EA7C91E9A205463'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1755, 'he	', hextoraw('ED148BD5D30335459DAB506A100A5F27'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1755, 'he    ', hextoraw('ED148BD5D30335459DAB506A100A5F27'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (103, 1882, 'zh-cht', hextoraw('0A90EF2A39C23F439466704979FB54FB'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 633, 'en    ', hextoraw('C7A323D399EC67438821B435F88FC720'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1394, 'ar	', hextoraw('939E41B341A3584C8732FA4E6A47F27C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1394, 'ar    ', hextoraw('939E41B341A3584C8732FA4E6A47F27C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1511, 'fr	', hextoraw('CC4A3BFAFF9A4B4B89AB7ABB8EDB0E49'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1511, 'fr    ', hextoraw('CC4A3BFAFF9A4B4B89AB7ABB8EDB0E49'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1633, 'th	', hextoraw('D9BAEDAB57796F4DA78CD4182085B939'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1633, 'th    ', hextoraw('D9BAEDAB57796F4DA78CD4182085B939'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1756, 'he	', hextoraw('A045EE387C02854F80E2086A54B191CA'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1756, 'he    ', hextoraw('A045EE387C02854F80E2086A54B191CA'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (104, 1883, 'zh-cht', hextoraw('9224AACD01050542B1401107777AC301'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 634, 'en    ', hextoraw('4B75B4E478FA3A499AD19505BC2A522D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1395, 'ar	', hextoraw('E4488422CAD5AC4AAF0D9E032F6861B7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1395, 'ar    ', hextoraw('E4488422CAD5AC4AAF0D9E032F6861B7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1512, 'fr	', hextoraw('7F59AB2BCFA01A42A605E6D6BE0086EE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1512, 'fr    ', hextoraw('7F59AB2BCFA01A42A605E6D6BE0086EE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1634, 'th	', hextoraw('86741A963707894197B72A27451984B8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1634, 'th    ', hextoraw('86741A963707894197B72A27451984B8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1757, 'he	', hextoraw('EB1F7D87B2054E438B66B8CB2B90519C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1757, 'he    ', hextoraw('EB1F7D87B2054E438B66B8CB2B90519C'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (105, 1884, 'zh-cht', hextoraw('A2B6DA8C10A9A749B04A3294EAB44356'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 635, 'en    ', hextoraw('CA72886900799A4B9F94C0D7B462192B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1396, 'ar	', hextoraw('5125F84A78991847B301D52DD1FD53B1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1396, 'ar    ', hextoraw('5125F84A78991847B301D52DD1FD53B1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1513, 'fr	', hextoraw('60BF90F9B0960447A302D172EB4DE902'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1513, 'fr    ', hextoraw('60BF90F9B0960447A302D172EB4DE902'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1635, 'th	', hextoraw('561F14220AE4054EB8478AD43AF8AD2C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1635, 'th    ', hextoraw('561F14220AE4054EB8478AD43AF8AD2C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1758, 'he	', hextoraw('7A51197A6C7A184991B4EA71F4DB7AFC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1758, 'he    ', hextoraw('7A51197A6C7A184991B4EA71F4DB7AFC'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (106, 1885, 'zh-cht', hextoraw('4F1CDDD4699E574E88100FA68BE70C0E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1213, 'en	', hextoraw('16661BFC1506814DAB11BC68C98155AE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1213, 'en    ', hextoraw('16661BFC1506814DAB11BC68C98155AE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1479, 'ar	', hextoraw('3791E376FFB7C846B442AC6C6AEF5D82'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1479, 'ar    ', hextoraw('3791E376FFB7C846B442AC6C6AEF5D82'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1601, 'fr	', hextoraw('3FBC14603F09B946AF2B75014C08DE72'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1601, 'fr    ', hextoraw('3FBC14603F09B946AF2B75014C08DE72'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1724, 'th	', hextoraw('A484ED28C706BA43B033BC3E8DAB812A'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1724, 'th    ', hextoraw('A484ED28C706BA43B033BC3E8DAB812A'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1851, 'he	', hextoraw('D8F3CAFDE503A84F932FF7AEA405B0FC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1851, 'he    ', hextoraw('D8F3CAFDE503A84F932FF7AEA405B0FC'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (107, 1977, 'zh-cht', hextoraw('700E8288FE3FB14FB9D02044C2ECE0F3'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1183, 'en	', hextoraw('F0107CC512CE1340A2DB169CE967BE2A'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1183, 'en    ', hextoraw('F0107CC512CE1340A2DB169CE967BE2A'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1454, 'ar	', hextoraw('1D7A3EDF2F4B974BB98837A6B5D8F6AF'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1454, 'ar    ', hextoraw('1D7A3EDF2F4B974BB98837A6B5D8F6AF'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1576, 'fr	', hextoraw('478F067DEA39FE44A64A3F7C660B17FA'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1576, 'fr    ', hextoraw('478F067DEA39FE44A64A3F7C660B17FA'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1699, 'th	', hextoraw('4A984BB84DF9B24090E81E405FE7F0C1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1699, 'th    ', hextoraw('4A984BB84DF9B24090E81E405FE7F0C1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1763, 'he	', hextoraw('E28B8C721A5BA941A246B55897E050EA'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1763, 'he    ', hextoraw('E28B8C721A5BA941A246B55897E050EA'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (108, 1951, 'zh-cht', hextoraw('F12A3995FFEF6741A5D7BE0EC3ED3087'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1202, 'en	', hextoraw('473E9AEE5864A045BB73A07A3B01354D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1202, 'en    ', hextoraw('473E9AEE5864A045BB73A07A3B01354D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1470, 'ar	', hextoraw('4D01EEB9A4F2C54DAC6A91671B9855D8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1470, 'ar    ', hextoraw('4D01EEB9A4F2C54DAC6A91671B9855D8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1592, 'fr	', hextoraw('F782CC751C8D3E4CBC799E7639359CC5'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1592, 'fr    ', hextoraw('F782CC751C8D3E4CBC799E7639359CC5'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1715, 'th	', hextoraw('95E613E613F25D4B975AB8777016894B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1715, 'th    ', hextoraw('95E613E613F25D4B975AB8777016894B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1841, 'he	', hextoraw('07E62CCB7E3BA14BB24E4B869DF23328'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1841, 'he    ', hextoraw('07E62CCB7E3BA14BB24E4B869DF23328'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (109, 1968, 'zh-cht', hextoraw('B284174FCF76BB4C85A5370346F94070'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1203, 'en	', hextoraw('6AD3CDE70F1FA64386F0D09CF508BB25'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1203, 'en    ', hextoraw('6AD3CDE70F1FA64386F0D09CF508BB25'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1471, 'ar	', hextoraw('4EA2083A46CC86449D1AE1FCF498A95E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1471, 'ar    ', hextoraw('4EA2083A46CC86449D1AE1FCF498A95E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1593, 'fr	', hextoraw('37D450D971CCB641A70BEFD8765FC605'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1593, 'fr    ', hextoraw('37D450D971CCB641A70BEFD8765FC605'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1716, 'th	', hextoraw('21212B7C39EE604CB98418BE2828D3B6'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1716, 'th    ', hextoraw('21212B7C39EE604CB98418BE2828D3B6'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1842, 'he	', hextoraw('1A090EEBE6DADD4BA9F6DD056CCB6A75'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1842, 'he    ', hextoraw('1A090EEBE6DADD4BA9F6DD056CCB6A75'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (110, 1969, 'zh-cht', hextoraw('D7834240B4A0C043A10D609ACCE98888'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1186, 'en	', hextoraw('F46E291795D5D944939D13CE0075B932'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1186, 'en    ', hextoraw('F46E291795D5D944939D13CE0075B932'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1456, 'ar	', hextoraw('6F4D020B431EAE46A66FB8D1113918C4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1456, 'ar    ', hextoraw('6F4D020B431EAE46A66FB8D1113918C4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1578, 'fr	', hextoraw('26D4EF8952916F40956239F331AC0685'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1578, 'fr    ', hextoraw('26D4EF8952916F40956239F331AC0685'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1701, 'th	', hextoraw('B56C1FED283F15478E49D467642A1B0B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1701, 'th    ', hextoraw('B56C1FED283F15478E49D467642A1B0B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1765, 'he	', hextoraw('2B35FA8A07F5954089CDC5265BC8D2C9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1765, 'he    ', hextoraw('2B35FA8A07F5954089CDC5265BC8D2C9'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (111, 1953, 'zh-cht', hextoraw('058FAC09FB3303489FDAFD1785028C7E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1209, 'en	', hextoraw('030FBE3FD0DA4047A79425B5B49FD9E7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1209, 'en    ', hextoraw('030FBE3FD0DA4047A79425B5B49FD9E7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1475, 'ar	', hextoraw('78FFC05CB74BA247A23687C34B164F99'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1475, 'ar    ', hextoraw('78FFC05CB74BA247A23687C34B164F99'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1597, 'fr	', hextoraw('A99B8F5550691249956FCA866CA3853C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1597, 'fr    ', hextoraw('A99B8F5550691249956FCA866CA3853C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1720, 'th	', hextoraw('84DA4A2037EE1A45A7F3ECDF7761AE24'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1720, 'th    ', hextoraw('84DA4A2037EE1A45A7F3ECDF7761AE24'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1846, 'he	', hextoraw('6F29EE95671A7D458A3C8DC4F6E15303'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1846, 'he    ', hextoraw('6F29EE95671A7D458A3C8DC4F6E15303'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (112, 1973, 'zh-cht', hextoraw('3E8A8187FD3F45458FF37EC8300DE864'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1185, 'en	', hextoraw('D0261DF25BA17C498A903D35B44EFB68'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1185, 'en    ', hextoraw('D0261DF25BA17C498A903D35B44EFB68'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1455, 'ar	', hextoraw('54E96327DDEF66439143E7F74060D40F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1455, 'ar    ', hextoraw('54E96327DDEF66439143E7F74060D40F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1577, 'fr	', hextoraw('7F298AFAEB7A75498BA17C947E138067'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1577, 'fr    ', hextoraw('7F298AFAEB7A75498BA17C947E138067'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1700, 'th	', hextoraw('49417BFC0710B044943E2FCE42F09320'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1700, 'th    ', hextoraw('49417BFC0710B044943E2FCE42F09320'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1764, 'he	', hextoraw('DDC4C428F2FCCB4CA05088BA19646B90'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1764, 'he    ', hextoraw('DDC4C428F2FCCB4CA05088BA19646B90'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (113, 1952, 'zh-cht', hextoraw('D23F04AAB6EC074AA0FCE76ADA7A7DF3'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1197, 'en	', hextoraw('D48F5AA5EEE65C48BC1E01CF45DDFB44'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1197, 'en    ', hextoraw('D48F5AA5EEE65C48BC1E01CF45DDFB44'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1466, 'ar	', hextoraw('4582C3E2EA1EC744BE76A1896D74DC23'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1466, 'ar    ', hextoraw('4582C3E2EA1EC744BE76A1896D74DC23'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1588, 'fr	', hextoraw('0A3D487E1AC8A743AF400783886916F7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1588, 'fr    ', hextoraw('0A3D487E1AC8A743AF400783886916F7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1711, 'th	', hextoraw('68C184639323E842B5567F526C9A6FEE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1711, 'th    ', hextoraw('68C184639323E842B5567F526C9A6FEE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1837, 'he	', hextoraw('95D6F5E85A8F9B45A2B49E24EEA0BB7E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1837, 'he    ', hextoraw('95D6F5E85A8F9B45A2B49E24EEA0BB7E'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (114, 1964, 'zh-cht', hextoraw('87C9C4360AA6054AB7BC05BB36F6F9B0'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1216, 'en	', hextoraw('E0D45A4616CEC8419CFE7ED0E79D1284'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1216, 'en    ', hextoraw('E0D45A4616CEC8419CFE7ED0E79D1284'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1482, 'ar	', hextoraw('228EF9FAEBCF4A4498EFBC0F51209414'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1482, 'ar    ', hextoraw('228EF9FAEBCF4A4498EFBC0F51209414'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1604, 'fr	', hextoraw('1550CF36BB4DE24091EC9AF151E600D4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1604, 'fr    ', hextoraw('1550CF36BB4DE24091EC9AF151E600D4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1727, 'th	', hextoraw('16BCC32CFEC87241BEDF2574330535EC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1727, 'th    ', hextoraw('16BCC32CFEC87241BEDF2574330535EC'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1854, 'he	', hextoraw('7FED1F0D4DE4C34D85BD9C69E066C518'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1854, 'he    ', hextoraw('7FED1F0D4DE4C34D85BD9C69E066C518'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (115, 1980, 'zh-cht', hextoraw('326B227BBAFFBE4A87FECEF6DE1965D0'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1191, 'en	', hextoraw('EE41A8C6BA9DE441A2CD177867C85DC7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1191, 'en    ', hextoraw('EE41A8C6BA9DE441A2CD177867C85DC7'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1460, 'ar	', hextoraw('63B7ECE77F34704CB9BA5B1B825E75C1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1460, 'ar    ', hextoraw('63B7ECE77F34704CB9BA5B1B825E75C1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1582, 'fr	', hextoraw('F1DEAEE1D4F55E48976E09B4B942EE62'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1582, 'fr    ', hextoraw('F1DEAEE1D4F55E48976E09B4B942EE62'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1705, 'th	', hextoraw('2ADD101DDD30FE429186DCD71FD2DEAA'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1705, 'th    ', hextoraw('2ADD101DDD30FE429186DCD71FD2DEAA'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1831, 'he	', hextoraw('60E45B7C48758846A4302F7037E819F4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1831, 'he    ', hextoraw('60E45B7C48758846A4302F7037E819F4'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (116, 1957, 'zh-cht', hextoraw('364ED08C832AFB4385B21107656F2DC1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1206, 'en	', hextoraw('6B6331E2B3429B4C84223A78553679CF'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1206, 'en    ', hextoraw('6B6331E2B3429B4C84223A78553679CF'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1473, 'ar	', hextoraw('27157AE18CAF3C44B2B3771E7618F184'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1473, 'ar    ', hextoraw('27157AE18CAF3C44B2B3771E7618F184'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1595, 'fr	', hextoraw('D0EEA2B30D9D9449871BDDB1A4929AC5'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1595, 'fr    ', hextoraw('D0EEA2B30D9D9449871BDDB1A4929AC5'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1718, 'th	', hextoraw('AA08B7F7E9E25E47BAE98D0936868C2E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1718, 'th    ', hextoraw('AA08B7F7E9E25E47BAE98D0936868C2E'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1844, 'he	', hextoraw('5F6100635B31CA419A9F50F3071221E7'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1844, 'he    ', hextoraw('5F6100635B31CA419A9F50F3071221E7'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (117, 1971, 'zh-cht', hextoraw('2940B4FB121A024CA595B269EDAEB01D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1187, 'en	', hextoraw('87D1DC32D35F85419EB9ECC9B87B1BA1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1187, 'en    ', hextoraw('87D1DC32D35F85419EB9ECC9B87B1BA1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1457, 'ar	', hextoraw('D2A5442B889FD54D97663686A56A5A8C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1457, 'ar    ', hextoraw('D2A5442B889FD54D97663686A56A5A8C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1579, 'fr	', hextoraw('041304FD29E8CE408068269B2F3CFCBE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1579, 'fr    ', hextoraw('041304FD29E8CE408068269B2F3CFCBE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1702, 'th	', hextoraw('B166FEFC810BEB4EB0826AD90DF24BAE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1702, 'th    ', hextoraw('B166FEFC810BEB4EB0826AD90DF24BAE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1766, 'he	', hextoraw('D23A6DCF9E1E8A4B9505C03DDA725803'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1766, 'he    ', hextoraw('D23A6DCF9E1E8A4B9505C03DDA725803'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (118, 1954, 'zh-cht', hextoraw('5A486ABB5D503C4FAA36EB386FC55591'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1215, 'en	', hextoraw('1445B6213C86B84AAE601EC86FE57765'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1215, 'en    ', hextoraw('1445B6213C86B84AAE601EC86FE57765'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1481, 'ar	', hextoraw('956D341A17F9314CBDCBBFB73E9FB1C2'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1481, 'ar    ', hextoraw('956D341A17F9314CBDCBBFB73E9FB1C2'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1603, 'fr	', hextoraw('D09E969E270D274B869017437D694AB6'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1603, 'fr    ', hextoraw('D09E969E270D274B869017437D694AB6'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1726, 'th	', hextoraw('9E4DBE684A91254682213511F7344134'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1726, 'th    ', hextoraw('9E4DBE684A91254682213511F7344134'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1853, 'he	', hextoraw('E296AAA8EE482A4E9F807A39F0C34310'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1853, 'he    ', hextoraw('E296AAA8EE482A4E9F807A39F0C34310'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (119, 1979, 'zh-cht', hextoraw('8DAF42CF5BC34D43B38DE7B6401BB85F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1193, 'en	', hextoraw('27A91FF2A49157478E866E9E647FC745'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1193, 'en    ', hextoraw('27A91FF2A49157478E866E9E647FC745'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1462, 'ar	', hextoraw('8B55C1A14A1BCB40B3D27AE1478646D9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1462, 'ar    ', hextoraw('8B55C1A14A1BCB40B3D27AE1478646D9'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1584, 'fr	', hextoraw('F6740A3C28D1D64CB978A6BC7286B1CA'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1584, 'fr    ', hextoraw('F6740A3C28D1D64CB978A6BC7286B1CA'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1707, 'th	', hextoraw('77E18C3632B6774E8A6AA2BBBC60806D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1707, 'th    ', hextoraw('77E18C3632B6774E8A6AA2BBBC60806D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1833, 'he	', hextoraw('4C70A43CE6F1B446AA4ABBF0AFF1D648'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1833, 'he    ', hextoraw('4C70A43CE6F1B446AA4ABBF0AFF1D648'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (120, 1959, 'zh-cht', hextoraw('35943C64000B4C4CA8D4E60BB227E543'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1188, 'en	', hextoraw('CF088B9461FEA341B5CFC0F3852D00EE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1188, 'en    ', hextoraw('CF088B9461FEA341B5CFC0F3852D00EE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1458, 'ar	', hextoraw('A533DE7C2211A54E9E87135F975CB0D2'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1458, 'ar    ', hextoraw('A533DE7C2211A54E9E87135F975CB0D2'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1580, 'fr	', hextoraw('CFB002351CFE204D9730661848619359'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1580, 'fr    ', hextoraw('CFB002351CFE204D9730661848619359'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1703, 'th	', hextoraw('52500F158330614881AD9ECCEA2C15D9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1703, 'th    ', hextoraw('52500F158330614881AD9ECCEA2C15D9'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1767, 'he	', hextoraw('1B9F42098F20524BAC1D4B5AED097AF9'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1767, 'he    ', hextoraw('1B9F42098F20524BAC1D4B5AED097AF9'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (121, 1955, 'zh-cht', hextoraw('1B6CE1D86A4BB34C85511957D0E29A74'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1201, 'en	', hextoraw('9FDE70E631EB7844985578352A5DE4C2'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1201, 'en    ', hextoraw('9FDE70E631EB7844985578352A5DE4C2'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1469, 'ar	', hextoraw('9BC1E9B003463740A465AF38E78181EE'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1469, 'ar    ', hextoraw('9BC1E9B003463740A465AF38E78181EE'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1591, 'fr	', hextoraw('7DCE84D0509F6848896B794EF6B9D35B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1591, 'fr    ', hextoraw('7DCE84D0509F6848896B794EF6B9D35B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1714, 'th	', hextoraw('397D4C597FB84C409B0F3B7B354D2D7B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1714, 'th    ', hextoraw('397D4C597FB84C409B0F3B7B354D2D7B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1840, 'he	', hextoraw('0C04609356B7074C8B292EFF4D090D4C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1840, 'he    ', hextoraw('0C04609356B7074C8B292EFF4D090D4C'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (122, 1967, 'zh-cht', hextoraw('18B50E8F8CF527428A5A8C85F2462E25'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1981, 'en	', hextoraw('FC4183780DAD2345B52A81613B97AD0C'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1981, 'en    ', hextoraw('FC4183780DAD2345B52A81613B97AD0C'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1982, 'ar	', hextoraw('D62491798B2C174699C3D88164EADBD4'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1982, 'ar    ', hextoraw('D62491798B2C174699C3D88164EADBD4'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1983, 'fr	', hextoraw('1760A70C2443EC49ACEE0B4CBA42DE7B'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1983, 'fr    ', hextoraw('1760A70C2443EC49ACEE0B4CBA42DE7B'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1984, 'th	', hextoraw('D9A9E374BBF22E4E81C5FFC718955D2D'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1984, 'th    ', hextoraw('D9A9E374BBF22E4E81C5FFC718955D2D'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1985, 'he	', hextoraw('A4ADA6796E4A7D4EA7C5B33028A5EB4E'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1985, 'he    ', hextoraw('A4ADA6796E4A7D4EA7C5B33028A5EB4E'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (123, 1986, 'zh-cht', hextoraw('EB86E781E5BC4E488382C65F7EAA2DEF'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1987, 'en	', hextoraw('E11B4C57C65DBD47882C8DDFD63B58E1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1987, 'en    ', hextoraw('E11B4C57C65DBD47882C8DDFD63B58E1'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1988, 'ar	', hextoraw('3507257487D5A840BC3D73EEA5450EE8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1988, 'ar    ', hextoraw('3507257487D5A840BC3D73EEA5450EE8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1989, 'fr	', hextoraw('0DC851BE9BABA642A8034C716EE74E96'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1989, 'fr    ', hextoraw('0DC851BE9BABA642A8034C716EE74E96'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1990, 'th	', hextoraw('132F16DAC1C55446B9764167EFECB167'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1990, 'th    ', hextoraw('132F16DAC1C55446B9764167EFECB167'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1991, 'he	', hextoraw('B234DD720CA73347A49341491C4F3E07'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1991, 'he    ', hextoraw('B234DD720CA73347A49341491C4F3E07'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (124, 1992, 'zh-cht', hextoraw('2DBA9491FD3CEA40B94F429A9005EC67'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1993, 'en	', hextoraw('F602F34F266776458BA71079D5FA69EC'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1993, 'en    ', hextoraw('F602F34F266776458BA71079D5FA69EC'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1994, 'ar	', hextoraw('991E1805DEB7164D8F71CC91DB956641'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1994, 'ar    ', hextoraw('991E1805DEB7164D8F71CC91DB956641'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1995, 'fr	', hextoraw('D2C5BF1FB1D3D94B8E9828AC30A07318'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1995, 'fr    ', hextoraw('D2C5BF1FB1D3D94B8E9828AC30A07318'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1996, 'th	', hextoraw('1226886D653C504A838171B86368B1C8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1996, 'th    ', hextoraw('1226886D653C504A838171B86368B1C8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1997, 'he	', hextoraw('4FCCA0F8DBA4FE44A1A5BAFE531327D1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1997, 'he    ', hextoraw('4FCCA0F8DBA4FE44A1A5BAFE531327D1'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (125, 1998, 'zh-cht', hextoraw('95AA06205705364F9F75168AA87724CD'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 1999, 'en	', hextoraw('54F48F779844E44691B8FCF8CD476256'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 1999, 'en    ', hextoraw('54F48F779844E44691B8FCF8CD476256'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2000, 'ar	', hextoraw('420798239FCA4D4E9FAA54DBBC1CF22F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2000, 'ar    ', hextoraw('420798239FCA4D4E9FAA54DBBC1CF22F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2001, 'fr	', hextoraw('A941F9BC3821C24C8810CC710E4EFA60'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2001, 'fr    ', hextoraw('A941F9BC3821C24C8810CC710E4EFA60'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2002, 'th	', hextoraw('AA87B7165CB0B449B62F2A3456721A26'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2002, 'th    ', hextoraw('AA87B7165CB0B449B62F2A3456721A26'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2003, 'he	', hextoraw('94D42BF5B8222B47B0FC3B53DF2BF5F1'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2003, 'he    ', hextoraw('94D42BF5B8222B47B0FC3B53DF2BF5F1'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (126, 2004, 'zh-cht', hextoraw('851F97865730054C8085AA62EEC73376'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2005, 'en	', hextoraw('106B67B00A3303478118A1313999117F'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2005, 'en    ', hextoraw('106B67B00A3303478118A1313999117F'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2006, 'ar	', hextoraw('1BBF1A766EBDD143BFCEA7E2F05DEDA8'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2006, 'ar    ', hextoraw('1BBF1A766EBDD143BFCEA7E2F05DEDA8'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2007, 'fr	', hextoraw('21B68F72B9AEAD428E97248CDFE72818'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2007, 'fr    ', hextoraw('21B68F72B9AEAD428E97248CDFE72818'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2008, 'th	', hextoraw('DA41D5E11324B04DAB91CEE8BA1A3440'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2008, 'th    ', hextoraw('DA41D5E11324B04DAB91CEE8BA1A3440'), timestamp '2003-06-01 00:00:00');
 
-	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2009, 'he	', hextoraw('5E35C2C912770043A1927AB4555DF346'), timestamp '2003-06-01 00:00:00');
+	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2009, 'he    ', hextoraw('5E35C2C912770043A1927AB4555DF346'), timestamp '2003-06-01 00:00:00');
 
 	INSERT INTO ProductModelProductDescription (ProductModelID, ProductDescriptionID, Culture, rowguid, ModifiedDate) VALUES (127, 2010, 'zh-cht', hextoraw('04B778AF1949114F84C202699C1D5E36'), timestamp '2003-06-01 00:00:00');
 

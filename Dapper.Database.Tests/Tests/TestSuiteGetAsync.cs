@@ -164,6 +164,74 @@ public abstract partial class TestSuite
         ValidateProductModel60(p.ProductModel);
     }
 
+    [Fact]
+    [Trait("Category", "GetAsync")]
+    public async Task GetThreeJoinsUnmappedAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = await db.GetAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetMultiFourParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(p.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "GetAsync")]
+    public async Task GetThreeJoinsUnmappedNoParametersAsync()
+    {
+        using var db = GetSqlDatabase();
+        var p = await db.GetAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(p.ProductModelProductDescription);
+    }
+
+    [Fact]
+    [Trait("Category", "GetAsync")]
+    public async Task GetThreeJoinsMappedAsync()
+    {
+        using var db = GetSqlDatabase();
+        ProductModelProductDescription pmpd = null;
+        var p = await db.GetAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pmpd = d;
+                return pr;
+            },
+            GetMultiFourParamQuery, new { ProductId = 806 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(pmpd);
+    }
+
+    [Fact]
+    [Trait("Category", "GetAsync")]
+    public async Task GetThreeJoinsMappedNoParametersAsync()
+    {
+        using var db = GetSqlDatabase();
+        ProductModelProductDescription pmpd = null;
+        var p = await db.GetAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+            (pr, pc, pm, d) =>
+            {
+                pr.ProductCategory = pc;
+                pr.ProductModel = pm;
+                pmpd = d;
+                return pr;
+            },
+            GetMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct806(p);
+        ValidateProductCategory15(p.ProductCategory);
+        ValidateProductModel60(p.ProductModel);
+        ValidateProductModelProductDescription60(pmpd);
+    }
+
 
     [Fact]
     [Trait("Category", "GetAsync")]
@@ -177,5 +245,4 @@ public abstract partial class TestSuite
 
         await Task.WhenAll(tasks);
     }
-
 }

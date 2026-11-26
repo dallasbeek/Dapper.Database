@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Dapper.Database.Attributes;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 
@@ -145,6 +146,8 @@ public class Product
     [Ignore] public ProductCategory ProductCategory { get; set; }
 
     [Ignore] public ProductModel ProductModel { get; set; }
+
+    [Ignore] public ProductModelProductDescription ProductModelProductDescription { get; set; }
 }
 
 /// <summary>

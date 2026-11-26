@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Testcontainers.MySql;
 using Xunit;
@@ -24,6 +25,19 @@ public sealed class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixtu
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MySql Tests - no server.");
 
+    [SkippableFact]
+    [Trait("Category", "Fixture")]
+    public async Task MySqlFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        using var connection = new MySqlConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address;");
+        Assert.True(addressCount > 0);
+    }
+
     protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
@@ -33,66 +47,59 @@ public sealed class MySqlTestSuite : TestSuite, IClassFixture<MySqlDatabaseFixtu
     protected override Provider GetProvider() => Provider.MySql;
 }
 
-public class MySqlDatabaseFixture : IDisposable
+public class MySqlDatabaseFixture : IAsyncLifetime
 {
     private const string DbName = "test";
 
-#if !(AV_Build || GH_Build)
-    private readonly MySqlContainer _sqlContainer;
+#if !GH_Build
+    private MySqlContainer _sqlContainer;
 #endif
 
-    public MySqlDatabaseFixture()
+    public bool Skip { get; private set; }
+
+    public string ConnectionString { get; private set; } = Environment.GetEnvironmentVariable("MySqlConnectionString");
+
+    public async ValueTask InitializeAsync()
     {
         try
         {
-#if !(AV_Build || GH_Build)
+#if !GH_Build
             _sqlContainer = new MySqlBuilder("mysql:latest")
                 .WithDatabase(DbName)
                 .Build();
 
-            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            await _sqlContainer.StartAsync();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
-            PopulateDatabase();
+            await PopulateDatabaseAsync();
         }
-        catch (SocketException e) when (
-            e.Message.Contains("No connection could be made because the target machine actively refused it"))
+        catch (SocketException)
         {
             Skip = true;
         }
-        catch (MySqlException e) when (e.Message == "Unable to connect to any of the specified MySQL hosts.")
+        catch (MySqlException)
         {
             Skip = true;
         }
     }
 
-    public bool Skip { get; }
-
-    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("MySqlConnectionString") 
-                                              ?? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;";
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-#if !(AV_Build || GH_Build)
-        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#if !GH_Build
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
 #endif
+        await Task.CompletedTask;
     }
 
-    private void PopulateDatabase()
+    private async Task PopulateDatabaseAsync()
     {
-        using var connection =
-            new MySqlConnection(ConnectionString);
-        connection.Open();
+        using var connection = new MySqlConnection(ConnectionString);
+        await connection.OpenAsync();
 
-        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "mysqlawlite.sql");
-        var scriptSql = File.ReadAllText(scriptPath);
+        var scriptSql = await Task.Run(() =>
+            File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.MySqlScript)));
 
-        connection.Execute(scriptSql, commandTimeout: 1200);
-        connection.Execute("delete from Person;");
+        await connection.ExecuteAsync(scriptSql, commandTimeout: 1200);
+        await connection.ExecuteAsync("delete from Person;");
     }
-
-    //public static string ConnectionString =>
-    //    IsAppVeyor
-    //        ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;"
-    //        : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 }

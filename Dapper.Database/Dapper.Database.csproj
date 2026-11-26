@@ -7,22 +7,25 @@
     <Title>Dapper.Database</Title>
     <Description>Alternative database first framework to Entity Framework using Dapper</Description>
     <Authors>Dallas Beek</Authors>
-    <TargetFrameworks>netstandard2.0;net462;net8.0;net9.0;net10.0</TargetFrameworks>
-    <Copyright>2022 Dallas Beek</Copyright>
-    <Version>6.0.0.0</Version>
+    <TargetFrameworks>netstandard2.0;net462;net8.0;net10.0;net11.0</TargetFrameworks>
+    <Copyright>2026 Dallas Beek</Copyright>
+    <Version>7.0.0</Version>
+    <AssemblyVersion>7.0.0.0</AssemblyVersion>
+    <FileVersion>7.0.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Readme.md" Pack="true" PackagePath="\"/>
+    <None Include="Readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net462'">
     <Reference Include="System.Configuration" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Dapper" Version="2.1.100" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net462'">
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Update="SourceLink.Create.GitHub" Version="2.8.3" />
   </ItemGroup>
 
 </Project>

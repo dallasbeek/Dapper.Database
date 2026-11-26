@@ -87,6 +87,16 @@ public abstract partial class TestSuite
 
     [Fact]
     [Trait("Category", "GetFirstAsync")]
+    public async Task GetFirstOneJoinUnmappedNoParametersAsync()
+    {
+        using var db = GetSqlDatabase();
+        var item = await db.GetFirstAsync<Product, ProductCategory>(GetFirstTwoNoParamQuery, "ProductCategoryId");
+        ValidateProduct816(item);
+        if (GetProvider() != Provider.SQLite) ValidateProductCategory21(item.ProductCategory);
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirstAsync")]
     public async Task GetFirstOneJoinMappedAsync()
     {
         using var db = GetSqlDatabase();
@@ -135,5 +145,96 @@ public abstract partial class TestSuite
             ValidateProductCategory21(item.ProductCategory);
             ValidateProductModel45(item.ProductModel);
         }
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirstAsync")]
+    public async Task GetFirstTwoJoinsUnmappedNoParametersAsync()
+    {
+        using var db = GetSqlDatabase();
+        var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel>(
+            GetFirstThreeNoParamQuery, "ProductCategoryId,ProductModelId");
+        ValidateProduct816(item);
+        if (GetProvider() != Provider.SQLite)
+        {
+            ValidateProductCategory21(item.ProductCategory);
+            ValidateProductModel45(item.ProductModel);
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirstAsync")]
+    public async Task GetFirstThreeJoinsUnmappedAsync()
+    {
+        using var db = GetSqlDatabase();
+        var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetFirstFourParamQuery, new { ProductId = 816 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        if (GetProvider() != Provider.SQLite)
+        {
+            ValidateProductCategory21(item.ProductCategory);
+            ValidateProductModel45(item.ProductModel);
+            ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirstAsync")]
+    public async Task GetFirstThreeJoinsUnmappedNoParametersAsync()
+    {
+        using var db = GetSqlDatabase();
+        var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
+            GetFirstFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        if (GetProvider() != Provider.SQLite)
+        {
+            ValidateProductCategory21(item.ProductCategory);
+            ValidateProductModel45(item.ProductModel);
+            ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirstAsync")]
+    public async Task GetFirstThreeJoinsMappedAsync()
+    {
+        using var db = GetSqlDatabase();
+        ProductModelProductDescription pmpd = null;
+        var item = await db
+            .GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pmpd = d;
+                    return pr;
+                },
+                GetFirstFourParamQuery, new { ProductId = 816 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(pmpd);
+    }
+
+    [Fact]
+    [Trait("Category", "GetFirstAsync")]
+    public async Task GetFirstThreeJoinsMappedNoParametersAsync()
+    {
+        using var db = GetSqlDatabase();
+        ProductModelProductDescription pmpd = null;
+        var item = await db
+            .GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pmpd = d;
+                    return pr;
+                },
+                GetFirstFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        ValidateProduct816(item);
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(pmpd);
     }
 }
