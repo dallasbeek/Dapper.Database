@@ -245,5 +245,4 @@ public abstract partial class TestSuite
 
         await Task.WhenAll(tasks);
     }
-
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Npgsql;
 using Testcontainers.PostgreSql;
 using Xunit;
@@ -25,6 +26,19 @@ public sealed class PostgresTestSuite : TestSuite, IClassFixture<PostgresDatabas
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping Postgres Tests - no server.");
 
+    [SkippableFact]
+    [Trait("Category", "Fixture")]
+    public async Task PostgresFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        await using var connection = new NpgsqlConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address");
+        Assert.True(addressCount > 0);
+    }
+
     protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
@@ -34,80 +48,104 @@ public sealed class PostgresTestSuite : TestSuite, IClassFixture<PostgresDatabas
     protected override Provider GetProvider() => Provider.Postgres;
 }
 
-public class PostgresDatabaseFixture : IDisposable
+public class PostgresDatabaseFixture : IAsyncLifetime
 {
-    private const string DbName = "test";
-
-#if !(AV_Build || GH_Build)
-    private readonly PostgreSqlContainer _sqlContainer;
+#if !GH_Build
+    private PostgreSqlContainer _sqlContainer;
 #endif
 
-    public PostgresDatabaseFixture()
+    public bool Skip { get; private set; }
+
+    public string ConnectionString { get; private set; } =
+        Environment.GetEnvironmentVariable("PostgresConnectionString");
+
+    public async ValueTask InitializeAsync()
     {
+#if GH_Build
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PostgresConnectionString")))
+        {
+            Skip = true;
+            return;
+        }
+#endif
+
         try
         {
-#if !(AV_Build || GH_Build)
-            _sqlContainer = new PostgreSqlBuilder("postgres:18-alpine")
+#if !GH_Build
+            _sqlContainer = new PostgreSqlBuilder("postgres:latest")
                 .Build();
 
-            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            await _sqlContainer.StartAsync();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
 
-            PopulateDatabase();
+            await PopulateDatabaseAsync();
         }
-        catch (PostgresException e) when (e.Message.Contains($"database \"{DbName}\" does not exist"))
+        catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.InvalidCatalogName)
         {
             // ReSharper disable once CommentTypo
             // PostgreSQL doesn't have a good way to detect if the "Test" database already exists:
             //  - Your connection string has to include the database you want
             //  - Their version of CREATE DATABASE does not have IF NOT EXISTS support
-            CreateTestDatabase();
-            PopulateDatabase();
+            try
+            {
+                await CreateDatabaseAsync();
+                await PopulateDatabaseAsync();
+            }
+            catch (Exception retryException) when (IsConnectivityFailure(retryException))
+            {
+                Skip = true;
+            }
         }
-        catch (SocketException e) when (e.Message.Contains(
-                                            "No connection could be made because the target machine actively refused it"))
-        {
-            Skip = true;
-        }
-        catch (PostgresException)
+        catch (Exception e) when (IsConnectivityFailure(e))
         {
             Skip = true;
         }
     }
 
-    public bool Skip { get; }
-
-    public string ConnectionString { get; } =
-        Environment.GetEnvironmentVariable("PostgresConnectionString")
-        ?? $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-#if !(AV_Build || GH_Build)
-        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#if !GH_Build
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
 #endif
+        await Task.CompletedTask;
     }
 
-    private void CreateTestDatabase()
+    // Connection failures: socket/timeout errors anywhere in the chain, SQLSTATE class 08, or server starting up (57P03).
+    private static bool IsConnectivityFailure(Exception e)
+    {
+        for (var ex = e; ex != null; ex = ex.InnerException)
+        {
+            if (ex is SocketException or TimeoutException)
+                return true;
+
+            if (ex is PostgresException pe && (pe.SqlState.StartsWith("08", StringComparison.Ordinal) ||
+                                               pe.SqlState == PostgresErrorCodes.CannotConnectNow))
+                return true;
+        }
+
+        return false;
+    }
+
+    private async Task CreateDatabaseAsync()
     {
         var cs = new NpgsqlConnectionStringBuilder(ConnectionString);
         var database = cs.Database;
         cs.Database = null;
-        using var connection = new NpgsqlConnection(cs.ToString());
-        connection.Open();
-        connection.Execute($"create database \"{database}\"");
+        await using var connection = new NpgsqlConnection(cs.ToString());
+        await connection.OpenAsync();
+        await connection.ExecuteAsync($"create database \"{database}\"");
     }
 
-    private void PopulateDatabase()
+    private async Task PopulateDatabaseAsync()
     {
-        using var connection = new NpgsqlConnection(ConnectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
 
-        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "postgresawlite.sql");
-        var scriptSql = File.ReadAllText(scriptPath);
-       
-        connection.Execute(scriptSql);
-        connection.Execute("delete from Person;");
+        var scriptSql = await Task.Run(() =>
+            File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.PostgresScript)));
+
+        await connection.ExecuteAsync(scriptSql);
+        await connection.ExecuteAsync("delete from Person;");
     }
 }

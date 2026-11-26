@@ -1,9 +1,10 @@
-﻿#if NET48
-
+﻿#if NET48 && !GH_Build
 using System;
 using System.Data.SqlServerCe;
 using System.IO;
+using System.Threading.Tasks;
 using Dapper;
+using Dapper.Database.Tests;
 using Xunit;
 
 namespace Dapper.Database.Tests
@@ -24,6 +25,19 @@ namespace Dapper.Database.Tests
 
         private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SqlCE Tests - no server or file.");
 
+        [SkippableFact]
+        [Trait("Category", "Fixture")]
+        public async Task SqlCeFixtureCanConnectAndPopulateDatabaseAsync()
+        {
+            CheckSkip();
+
+            using var connection = new SqlCeConnection(_fixture.ConnectionString);
+            await connection.OpenAsync();
+
+            var addressCount = await connection.ExecuteScalarAsync<int>("select count(*) from Address");
+            Assert.True(addressCount > 0);
+        }
+
         protected override ISqlDatabase GetSqlDatabase()
         {
             CheckSkip();
@@ -36,52 +50,71 @@ namespace Dapper.Database.Tests
 
 
 // ReSharper disable once InconsistentNaming
-public class SqlCEDatabaseFixture : IDisposable
+public class SqlCEDatabaseFixture : IAsyncLifetime
 {
     private const string FileName = "DBFiles\\Test.DB.sdf";
 
-    public SqlCEDatabaseFixture()
-    {
-        if (!File.Exists(FileName))
-        {
-            var engine = new SqlCeEngine(ConnectionString);
-            engine.CreateDatabase();
-            using var connection = new SqlCeConnection(ConnectionString);
-            connection.Open();
-            var commandText = string.Empty;
-            var file = new StreamReader(@".\Scripts\sqlceawlite.sql");
+    public bool Skip { get; private set; }
 
-            while (file.ReadLine() is { } line)
+    public string ConnectionString { get; } =
+        $"Data Source={FileName};";
+
+    public async ValueTask InitializeAsync()
+    {
+        var populate = false;
+
+        try
+        {
+            if (!File.Exists(FileName))
+            {
+                await Task.Run(() =>
+                {
+                    using var engine = new SqlCeEngine(ConnectionString);
+                    engine.CreateDatabase();
+                });
+                populate = true;
+            }
+
+            using var probe = new SqlCeConnection(ConnectionString);
+            await probe.OpenAsync();
+        }
+        catch (Exception e) when (IsUnavailable(e))
+        {
+            Skip = true;
+            return;
+        }
+
+        using var connection = new SqlCeConnection(ConnectionString);
+        await connection.OpenAsync();
+
+        if (populate)
+        {
+            var commandText = string.Empty;
+            using var file = new StreamReader(ScriptConstants.GetScriptFile(ScriptConstants.SqlCEScript));
+
+            while (await file.ReadLineAsync() is { } line)
                 if (line.Equals("GO", StringComparison.OrdinalIgnoreCase))
                 {
-                    connection.Execute(commandText);
+                    await connection.ExecuteAsync(commandText);
                     commandText = string.Empty;
                 }
                 else
                 {
                     commandText += "\r\n" + line;
                 }
+
+            if (!string.IsNullOrWhiteSpace(commandText))
+                await connection.ExecuteAsync(commandText);
         }
 
-        try
-        {
-            using var connection = new SqlCeConnection(ConnectionString);
-            connection.Execute("delete from [Person]");
-        }
-        catch (SqlCeException)
-        {
-            Skip = true;
-        }
+        await connection.ExecuteAsync("delete from [Person]");
     }
 
-    public bool Skip { get; }
+    public ValueTask DisposeAsync() => default;
 
-    public string ConnectionString { get; } =
-        $"Data Source={FileName};";
-
-    public void Dispose()
-    {
-    }
+    // The engine is unavailable when the native runtime is missing or the database file can't be created or opened.
+    private static bool IsUnavailable(Exception e) =>
+        e is SqlCeException or DllNotFoundException or BadImageFormatException or IOException;
 }
 
 #endif

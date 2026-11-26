@@ -1,7 +1,7 @@
-﻿#if !AV_Build
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Npgsql;
 using Testcontainers.CockroachDb;
 using Xunit;
@@ -17,14 +17,24 @@ public sealed class CockroachDbTestSuite : TestSuite, IClassFixture<CockroachDbD
     public CockroachDbTestSuite(CockroachDbDatabaseFixture fixture)
     {
         _fixture = fixture;
-
-        SqlDatabase.CacheQueries = false;
-
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
     }
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping CockroachDb Tests - no server.");
+
+    [SkippableFact]
+    [Trait("Category", "Fixture")]
+    public async Task CockroachDbFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        await using var connection = new NpgsqlConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address;");
+        Assert.True(addressCount > 0);
+    }
 
     protected override ISqlDatabase GetSqlDatabase()
     {
@@ -35,15 +45,20 @@ public sealed class CockroachDbTestSuite : TestSuite, IClassFixture<CockroachDbD
     protected override Provider GetProvider() => Provider.CockroachDb;
 }
 
-public class CockroachDbDatabaseFixture : IDisposable
+public class CockroachDbDatabaseFixture : IAsyncLifetime
 {
     private const string DbName = "test";
 
 #if !GH_Build
-    private readonly CockroachDbContainer _sqlContainer;
+    private CockroachDbContainer _sqlContainer;
 #endif
 
-    public CockroachDbDatabaseFixture()
+    public bool Skip { get; private set; }
+
+    public string ConnectionString { get; private set; } =
+        Environment.GetEnvironmentVariable("CockroachDbConnectionString");
+
+    public async ValueTask InitializeAsync()
     {
         try
         {
@@ -51,57 +66,54 @@ public class CockroachDbDatabaseFixture : IDisposable
             _sqlContainer = new CockroachDbBuilder("cockroachdb/cockroach:latest")
                 .Build();
 
-            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            await _sqlContainer.StartAsync();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
 
-            PopulateDatabase();
+            await PopulateDatabaseAsync();
         }
         catch (PostgresException e) when (e.Message.Contains($"database \"{DbName}\" does not exist"))
         {
-            CreateTestDatabase();
-            PopulateDatabase();
+            await CreateDatabaseAsync();
+            await PopulateDatabaseAsync();
         }
-        catch (SocketException e) when (e.Message.Contains(
-                                            "No connection could be made because the target machine actively refused it"))
+        catch (SocketException)
+        {
+            Skip = true;
+        }
+        catch (PostgresException)
         {
             Skip = true;
         }
     }
 
-    public bool Skip { get; }
-
-    public string ConnectionString { get; } =
-        Environment.GetEnvironmentVariable("CockroachDbConnectionString")
-        ?? $"Server=localhost;Port=5432;User Id=postgres;Password=Password12!;Database={DbName}";
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
 #if !GH_Build
-        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
 #endif
+        await Task.CompletedTask;
     }
 
-    private void CreateTestDatabase()
+    private async Task CreateDatabaseAsync()
     {
         var cs = new NpgsqlConnectionStringBuilder(ConnectionString);
         var database = cs.Database;
         cs.Database = null;
-        using var connection = new NpgsqlConnection(cs.ToString());
-        connection.Open();
-        connection.Execute($"create database \"{database}\"");
+        await using var connection = new NpgsqlConnection(cs.ToString());
+        await connection.OpenAsync();
+        await connection.ExecuteAsync($"create database \"{database}\"");
     }
 
-    private void PopulateDatabase()
+    private async Task PopulateDatabaseAsync()
     {
-        using var connection = new NpgsqlConnection(ConnectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
 
-        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "cockroachdbawlite.sql");
-        var scriptSql = File.ReadAllText(scriptPath);
-       
-        connection.Execute(scriptSql);
-        connection.Execute("delete from Person;");
+        var scriptSql = await Task.Run(() =>
+            File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.CockroachScript)));
+
+        await connection.ExecuteAsync(scriptSql);
+        await connection.ExecuteAsync("delete from Person;");
     }
 }
-#endif

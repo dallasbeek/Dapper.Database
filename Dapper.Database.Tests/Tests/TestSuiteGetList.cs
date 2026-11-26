@@ -46,7 +46,8 @@ public abstract partial class TestSuite
     public void GetListWithSelectClause()
     {
         using var db = GetSqlDatabase();
-        var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'").ToList();
+        var lst = db.GetList<Product>("select p.*, p.rowguid as GuidId from Product p where p.Color = 'Black'")
+            .ToList();
         Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
@@ -230,7 +231,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
-            GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId").ToList();
+                GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId")
+            .ToList();
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -266,14 +268,15 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = db.GetList<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
-            (pr, pc, pm, d) =>
-            {
-                pr.ProductCategory = pc;
-                pr.ProductModel = pm;
-                pr.ProductModelProductDescription = d;
-                return pr;
-            },
-            GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId").ToList();
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pr.ProductModelProductDescription = d;
+                    return pr;
+                },
+                GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId")
+            .ToList();
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 

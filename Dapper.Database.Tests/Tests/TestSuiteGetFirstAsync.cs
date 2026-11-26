@@ -200,15 +200,16 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         ProductModelProductDescription pmpd = null;
-        var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
-            (pr, pc, pm, d) =>
-            {
-                pr.ProductCategory = pc;
-                pr.ProductModel = pm;
-                pmpd = d;
-                return pr;
-            },
-            GetFirstFourParamQuery, new { ProductId = 816 }, "ProductCategoryId,ProductModelId,ProductModelId");
+        var item = await db
+            .GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pmpd = d;
+                    return pr;
+                },
+                GetFirstFourParamQuery, new { ProductId = 816 }, "ProductCategoryId,ProductModelId,ProductModelId");
         ValidateProduct816(item);
         ValidateProductCategory21(item.ProductCategory);
         ValidateProductModel45(item.ProductModel);
@@ -221,15 +222,16 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         ProductModelProductDescription pmpd = null;
-        var item = await db.GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
-            (pr, pc, pm, d) =>
-            {
-                pr.ProductCategory = pc;
-                pr.ProductModel = pm;
-                pmpd = d;
-                return pr;
-            },
-            GetFirstFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
+        var item = await db
+            .GetFirstAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pmpd = d;
+                    return pr;
+                },
+                GetFirstFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId");
         ValidateProduct816(item);
         ValidateProductCategory21(item.ProductCategory);
         ValidateProductModel45(item.ProductModel);

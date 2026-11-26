@@ -60,7 +60,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = (await db.GetListAsync<Product>(
-            $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" })).ToList();
+                $"select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" }))
+            .ToList();
         Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
@@ -72,7 +73,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = (await db.GetListAsync<Product>(
-            $";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" })).ToList();
+                $";select p.*, p.rowguid as GuidId from Product p where p.Color = {P}Color", new { Color = "Black" }))
+            .ToList();
         Assert.Equal(89, lst.Count);
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
@@ -238,7 +240,8 @@ public abstract partial class TestSuite
     {
         using var db = GetSqlDatabase();
         var lst = (await db.GetListAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription>(
-            GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId")).ToList();
+                GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId"))
+            .ToList();
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -275,15 +278,18 @@ public abstract partial class TestSuite
     public async Task GetListThreeJoinsMappedAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = (await db.GetListAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
-            (pr, pc, pm, d) =>
-            {
-                pr.ProductCategory = pc;
-                pr.ProductModel = pm;
-                pr.ProductModelProductDescription = d;
-                return pr;
-            },
-            GetListMultiFourParamQuery, new { Color = "Black" }, "ProductCategoryId,ProductModelId,ProductModelId")).ToList();
+        var lst = (await db
+                .GetListAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                    (pr, pc, pm, d) =>
+                    {
+                        pr.ProductCategory = pc;
+                        pr.ProductModel = pm;
+                        pr.ProductModelProductDescription = d;
+                        return pr;
+                    },
+                    GetListMultiFourParamQuery, new { Color = "Black" },
+                    "ProductCategoryId,ProductModelId,ProductModelId"))
+            .ToList();
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
@@ -301,24 +307,25 @@ public abstract partial class TestSuite
     public async Task GetListThreeJoinsMappedNoParametersAsync()
     {
         using var db = GetSqlDatabase();
-        var lst = (await db.GetListAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
-            (pr, pc, pm, d) =>
-            {
-                pr.ProductCategory = pc;
-                pr.ProductModel = pm;
-                pr.ProductModelProductDescription = d;
-                return pr;
-            },
-            GetListMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId")).ToList();
+        var lst = (await db
+            .GetListAsync<Product, ProductCategory, ProductModel, ProductModelProductDescription, Product>(
+                (pr, pc, pm, d) =>
+                {
+                    pr.ProductCategory = pc;
+                    pr.ProductModel = pm;
+                    pr.ProductModelProductDescription = d;
+                    return pr;
+                },
+                GetListMultiFourNoParamQuery, "ProductCategoryId,ProductModelId,ProductModelId")).ToList();
         var item = lst.Single(p => p.ProductID == 816);
         ValidateProduct816(item);
 
         //There must be a bug with mapping on SqlLite when fetching many records
         //if (GetProvider() != Provider.SQLite)
         //{
-            ValidateProductCategory21(item.ProductCategory);
-            ValidateProductModel45(item.ProductModel);
-            ValidateProductModelProductDescription45(item.ProductModelProductDescription);
+        ValidateProductCategory21(item.ProductCategory);
+        ValidateProductModel45(item.ProductModel);
+        ValidateProductModelProductDescription45(item.ProductModelProductDescription);
         //}
     }
 }

@@ -8,9 +8,11 @@ public enum Provider
     MariaDb,
     Oracle,
     Postgres,
+
     // ReSharper disable once InconsistentNaming
     SQLite,
+
     // ReSharper disable once InconsistentNaming
     SqlCE,
-    SqlServer,
+    SqlServer
 }

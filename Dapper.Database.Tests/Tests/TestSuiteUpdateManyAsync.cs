@@ -7,7 +7,6 @@ namespace Dapper.Database.Tests;
 
 public abstract partial class TestSuite
 {
-
     [Fact]
     [Trait("Category", "UpdateManyAsync")]
     public async Task UpdateManyAllAsync()
@@ -21,7 +20,8 @@ public abstract partial class TestSuite
     public async Task UpdateManySqlAsync()
     {
         using var db = GetSqlDatabase();
-        Assert.Equal(89, await db.UpdateManyAsync<Product>("WHERE color = 'Black'", new[] { "Color" }, new { Color = "Black" }));
+        Assert.Equal(89,
+            await db.UpdateManyAsync<Product>("WHERE color = 'Black'", new[] { "Color" }, new { Color = "Black" }));
     }
 
     [Fact]
@@ -29,7 +29,8 @@ public abstract partial class TestSuite
     public async Task UpdateManySqlWithParameterAsync()
     {
         using var db = GetSqlDatabase();
-        Assert.Equal(89, await db.UpdateManyAsync<Product>($"WHERE color = {P}Color", ["Color"], new { Color = "Black" }));
+        Assert.Equal(89,
+            await db.UpdateManyAsync<Product>($"WHERE color = {P}Color", ["Color"], new { Color = "Black" }));
     }
 
     [Fact]
@@ -37,7 +38,8 @@ public abstract partial class TestSuite
     public async Task UpdateManySqlWithSplitParameterAsync()
     {
         using var db = GetSqlDatabase();
-        Assert.Equal(89, await db.UpdateManyAsync<Product>($"WHERE color = {P}Filter", ["Color"], new { Color = "Black", Filter = "Black" }));
+        Assert.Equal(89,
+            await db.UpdateManyAsync<Product>($"WHERE color = {P}Filter", ["Color"],
+                new { Color = "Black", Filter = "Black" }));
     }
-
 }

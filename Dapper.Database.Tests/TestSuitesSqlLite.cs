@@ -1,9 +1,14 @@
-﻿#if !GH_Build
-using System;
+﻿using System;
 using System.Data;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Xunit;
+#if !GH_Build
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
+#endif
 
 namespace Dapper.Database.Tests;
 
@@ -27,6 +32,19 @@ public sealed class SQLiteTestSuite : TestSuite, IClassFixture<SqlLiteDatabaseFi
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SQLite Tests - no server.");
 
+    [SkippableFact]
+    [Trait("Category", "Fixture")]
+    public async Task SqliteFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        using var connection = new SqliteConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address");
+        Assert.True(addressCount > 0);
+    }
+
     protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
@@ -37,42 +55,75 @@ public sealed class SQLiteTestSuite : TestSuite, IClassFixture<SqlLiteDatabaseFi
     protected override Provider GetProvider() => Provider.SQLite;
 }
 
-public class SqlLiteDatabaseFixture : IDisposable
+public class SqlLiteDatabaseFixture : IAsyncLifetime
 {
-    private const string FileName = "DBFiles\\Test.DB.sqlite";
+    // Connection failures: busy, locked, read-only, I/O error and can't-open.
+    private static readonly int[] ConnectivityErrorCodes = { 5, 6, 8, 10, 14 };
 
-    public SqlLiteDatabaseFixture()
+#if !GH_Build
+    // Absolute path to the DB file on the host. This is the same file that gets
+    // bind-mounted into the container, so both the host test process (via
+    // Microsoft.Data.Sqlite) and the container (via the sqlite3 CLI, if needed)
+    // operate on the exact same bytes on disk.
+    private static readonly string FileName =
+        Path.Combine(Directory.GetCurrentDirectory(), "DBFiles", "Test.DB.sqlite");
+
+    private IContainer _sqlContainer;
+#else
+    // No Docker/server needed in CI - SQLite is just a local file.
+    private const string FileName = "DBFiles/Test.DB.sqlite";
+#endif
+
+    public async ValueTask InitializeAsync()
     {
-        // ... initialize data in the test database ...
         try
         {
+#if !GH_Build
+            Directory.CreateDirectory(Path.GetDirectoryName(FileName)!);
+
+            _sqlContainer = new ContainerBuilder("alpine/sqlite:latest")
+                .WithBindMount(FileName, "/app/Test.DB.sqlite", AccessMode.ReadWrite)
+                // sqlite3 has no long-running server process, so give the
+                // container something to keep running while tests execute.
+                .WithEntrypoint("sleep", "infinity")
+                .Build();
+
+            await _sqlContainer.StartAsync();
+#endif
+
+            var populate = !File.Exists(FileName);
+
             using var connection = new SqliteConnection(ConnectionString);
-            if (!File.Exists(FileName))
+            await connection.OpenAsync();
+
+            if (populate)
             {
-                connection.Open();
+                var scriptSql = await Task.Run(() =>
+                    File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.SqlLiteScript)));
 
-                var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "sqliteawlite.sql");
-
-                connection.Execute(scriptPath);
+                await connection.ExecuteAsync(scriptSql);
             }
 
-            connection.Execute("delete from [Person]");
+            await connection.ExecuteAsync("delete from [Person]");
         }
-        catch (SqliteException ex) when (ex.Message.Contains("SQLite Error 1:"))
+        catch (SqliteException ex) when (Array.IndexOf(ConnectivityErrorCodes, ex.SqliteErrorCode) >= 0)
         {
             Skip = true;
         }
     }
 
-    public bool Skip { get; }
+    public bool Skip { get; private set; }
 
     public string ConnectionString
     {
-        get => $"Filename=./{FileName};Mode=ReadWriteCreate;";
+        get => $"Filename={FileName};Mode=ReadWriteCreate;";
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
+#if !GH_Build
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
+#endif
+        await Task.CompletedTask;
     }
 }
-#endif

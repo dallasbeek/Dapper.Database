@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using MySqlConnector;
 using Testcontainers.MariaDb;
 using Xunit;
@@ -24,6 +25,19 @@ public sealed class MariaDbTestSuite : TestSuite, IClassFixture<MariaDbDatabaseF
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping MariaDb Tests - no server.");
 
+    [SkippableFact]
+    [Trait("Category", "Fixture")]
+    public async Task MariaDbFixtureCanConnectAndPopulateDatabaseAsync()
+    {
+        CheckSkip();
+
+        await using var connection = new MySqlConnection(_fixture.ConnectionString);
+        await connection.OpenAsync();
+
+        var addressCount = await connection.ExecuteScalarAsync<long>("select count(*) from Address;");
+        Assert.True(addressCount > 0);
+    }
+
     protected override ISqlDatabase GetSqlDatabase()
     {
         CheckSkip();
@@ -33,66 +47,60 @@ public sealed class MariaDbTestSuite : TestSuite, IClassFixture<MariaDbDatabaseF
     protected override Provider GetProvider() => Provider.MariaDb;
 }
 
-public class MariaDbDatabaseFixture : IDisposable
+public class MariaDbDatabaseFixture : IAsyncLifetime
 {
     private const string DbName = "test";
 
-#if !(AV_Build || GH_Build)
-    private readonly MariaDbContainer _sqlContainer;
+#if !GH_Build
+    private MariaDbContainer _sqlContainer;
 #endif
 
-    public MariaDbDatabaseFixture()
+    public bool Skip { get; private set; }
+
+    public string ConnectionString { get; private set; } =
+        Environment.GetEnvironmentVariable("MariaDbConnectionString");
+
+    public async ValueTask InitializeAsync()
     {
         try
         {
-#if !(AV_Build || GH_Build)
+#if !GH_Build
             _sqlContainer = new MariaDbBuilder("mariadb:latest")
                 .WithDatabase(DbName)
                 .Build();
 
-            _sqlContainer.StartAsync().GetAwaiter().GetResult();
+            await _sqlContainer.StartAsync();
             ConnectionString = _sqlContainer.GetConnectionString();
 #endif
-            PopulateDatabase();
+            await PopulateDatabaseAsync();
         }
-        catch (SocketException e) when (
-            e.Message.Contains("No connection could be made because the target machine actively refused it"))
+        catch (SocketException)
         {
             Skip = true;
         }
-        //catch (MariaDbException e) when (e.Message == "Unable to connect to any of the specified MariaDb hosts.")
-        //{
-        //    Skip = true;
-        //}
+        catch (MySqlException)
+        {
+            Skip = true;
+        }
     }
 
-    public bool Skip { get; }
-
-    public string ConnectionString { get; } = Environment.GetEnvironmentVariable("MariaDbConnectionString") 
-                                              ?? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;";
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-#if !(AV_Build || GH_Build)
-        _sqlContainer.DisposeAsync().GetAwaiter().GetResult();
+#if !GH_Build
+        if (_sqlContainer != null) await _sqlContainer.DisposeAsync();
 #endif
+        await Task.CompletedTask;
     }
 
-    private void PopulateDatabase()
+    private async Task PopulateDatabaseAsync()
     {
-        using var connection =
-            new MySqlConnection(ConnectionString);
-        connection.Open();
+        await using var connection = new MySqlConnection(ConnectionString);
+        await connection.OpenAsync();
 
-        var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "Scripts", "mysqlawlite.sql");
-        var scriptSql = File.ReadAllText(scriptPath);
+        var scriptSql = await Task.Run(() =>
+            File.ReadAllText(ScriptConstants.GetScriptFile(ScriptConstants.MariaDbScript)));
 
-        connection.Execute(scriptSql, commandTimeout: 1200);
-        connection.Execute("delete from Person;");
+        await connection.ExecuteAsync(scriptSql, commandTimeout: 1200);
+        await connection.ExecuteAsync("delete from Person;");
     }
-
-    //public static string ConnectionString =>
-    //    IsAppVeyor
-    //        ? $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};SSL Mode=None;"
-    //        : $"Server=localhost;Port=3306;User Id=root;Password=Password12!;Database={DbName};";
 }

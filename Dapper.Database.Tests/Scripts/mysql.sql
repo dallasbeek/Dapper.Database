@@ -1,6 +1,8 @@
-CREATE DATABASE IF NOT EXISTS `test`;
+CREATE
+DATABASE IF NOT EXISTS `test`;
 
-USE `test`;
+USE
+`test`;
 
 
 DROP TABLE IF EXISTS `Person`;
@@ -15,34 +17,100 @@ DROP TABLE IF EXISTS `ProductModelProductDescription`;
 DROP TABLE IF EXISTS `SalesOrderDetail`;
 DROP TABLE IF EXISTS `SalesOrderHeader`;
 
-CREATE TABLE IF NOT EXISTS  `Person` (
-	`IdentityId` int(11) NOT NULL AUTO_INCREMENT,
-	`GuidId` varbinary(38) NULL,
-	`StringId` varchar(100) NULL,
-	`FirstName` varchar(100) NULL,
-	`LastName` varchar(100) NULL,
-	`FullName` varchar(200) AS (CONCAT(`FirstName`, ' ' , `LastName`)),
-	`Notes` varchar(100) NULL,
-	`Age` int(11) NULL,
+CREATE TABLE IF NOT EXISTS `Person`
+(
+	`IdentityId`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
+	`GuidId` varbinary
+(
+	38
+) NULL,
+	`StringId` varchar
+(
+	100
+) NULL,
+	`FirstName` varchar
+(
+	100
+) NULL,
+	`LastName` varchar
+(
+	100
+) NULL,
+	`FullName` varchar
+(
+	200
+) AS
+(
+	CONCAT
+(
+	`FirstName`,
+	' ',
+	`LastName`
+)),
+	`Notes` varchar
+(
+	100
+) NULL,
+	`Age` int
+(
+	11
+) NULL,
 	`UpdatedOn` timestamp NULL,
 	`CreatedOn` timestamp NULL,
-    PRIMARY KEY (`IdentityId`)
-);
+	PRIMARY KEY
+(
+	`IdentityId`
+)
+	);
 
-CREATE TABLE IF NOT EXISTS `Address`(
-	`AddressID` int(11) NOT NULL AUTO_INCREMENT,
-	`AddressLine1` varchar(60) NOT NULL,
-	`AddressLine2` varchar(60) NULL,
-	`City` varchar(30) NOT NULL,
-	`StateProvince` varchar(50) NOT NULL,
-	`CountryRegion` varchar(50) NOT NULL,
-	`PostalCode` varchar(15) NOT NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` timestamp  NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-    PRIMARY KEY (`AddressID`)
-);
+CREATE TABLE IF NOT EXISTS `Address`
+(
+	`AddressID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
+	`AddressLine1` varchar
+(
+	60
+) NOT NULL,
+	`AddressLine2` varchar
+(
+	60
+) NULL,
+	`City` varchar
+(
+	30
+) NOT NULL,
+	`StateProvince` varchar
+(
+	50
+) NOT NULL,
+	`CountryRegion` varchar
+(
+	50
+) NOT NULL,
+	`PostalCode` varchar
+(
+	15
+) NOT NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`AddressID`
+)
+	);
 
-INSERT IGNORE `Address` (`AddressID`, `AddressLine1`, `AddressLine2`, `City`, `StateProvince`, `CountryRegion`, `PostalCode`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `Address` (`AddressID`, `AddressLine1`, `AddressLine2`, `City`, `StateProvince`, `CountryRegion`, `PostalCode`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (9, '8713 Yosemite Ct.', NULL, 'Bothell', 'Washington', 'United States', '98011', '268AF621-76D7-4C78-9441-144FD139821A', '2002-07-01 00:00:01'),
 (11, '1318 Lasalle Street', NULL, 'Bothell', 'Washington', 'United States', '98011', '981B3303-ACA2-49C7-9A96-FB670785B269', '2003-04-01 00:00:01'),
@@ -495,26 +563,71 @@ VALUES
 (11381, '2000 300th Street', NULL, 'Denver', 'Colorado', 'United States', '80203', 'A9DBB460-A624-4E6A-AA22-311EE18F6746', '2001-09-01 00:00:01'),
 (11382, '99 Front Street', NULL, 'Minneapolis', 'Minnesota', 'United States', '55402', '878660A8-A9FE-4EF8-8D2D-53C614C6F042', '2001-08-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `Customer`(
-	`CustomerID` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `Customer`
+(
+	`CustomerID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
 	`NameStyle` BOOLEAN NOT NULL,
-	`Title` varchar(8) NULL,
-	`FirstName` varchar(50) NOT NULL,
-	`MiddleName` varchar(50) NULL,
-	`LastName` varchar(50) NOT NULL,
-	`Suffix` varchar(10) NULL,
-	`CompanyName` varchar(128) NULL,
-	`SalesPerson` varchar(256) NULL,
-	`EmailAddress` varchar(50) NULL,
-	`Phone` varchar(25) NULL,
-	`PasswordHash` varchar(128) NOT NULL,
-	`PasswordSalt` varchar(10) NOT NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP  NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`CustomerID`)
-);
+	`Title` varchar
+(
+	8
+) NULL,
+	`FirstName` varchar
+(
+	50
+) NOT NULL,
+	`MiddleName` varchar
+(
+	50
+) NULL,
+	`LastName` varchar
+(
+	50
+) NOT NULL,
+	`Suffix` varchar
+(
+	10
+) NULL,
+	`CompanyName` varchar
+(
+	128
+) NULL,
+	`SalesPerson` varchar
+(
+	256
+) NULL,
+	`EmailAddress` varchar
+(
+	50
+) NULL,
+	`Phone` varchar
+(
+	25
+) NULL,
+	`PasswordHash` varchar
+(
+	128
+) NOT NULL,
+	`PasswordSalt` varchar
+(
+	10
+) NOT NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`CustomerID`
+)
+	);
 
-INSERT IGNORE `Customer` (`CustomerID`, `NameStyle`, `Title`, `FirstName`, `MiddleName`, `LastName`, `Suffix`, `CompanyName`, `SalesPerson`, `EmailAddress`, `Phone`, `PasswordHash`, `PasswordSalt`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `Customer` (`CustomerID`, `NameStyle`, `Title`, `FirstName`, `MiddleName`, `LastName`, `Suffix`, `CompanyName`, `SalesPerson`, `EmailAddress`, `Phone`, `PasswordHash`, `PasswordSalt`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (1, '0', 'Mr.', 'Orlando', 'N.', 'Gee', NULL, 'A Bike Store', 'adventure-works\pamela0', 'orlando0@adventure-works.com', '245-555-0173', 'L/Rlwxzp4w7RWmEgXX+/A7cXaePEPcp+KwQhl2fJL7w=', '1KjXYs4=', '3F5AE95E-B87D-4AED-95B4-C3797AFCB74F', '2001-08-01 00:00:01'),
 (2, '0', 'Mr.', 'Keith', NULL, 'Harris', NULL, 'Progressive Sports', 'adventure-works\david8', 'keith0@adventure-works.com', '170-555-0127', 'YPdtRdvqeAhj6wyxEsFdshBDNXxkCXn+CRgbvJItknw=', 'fs1ZGhY=', 'E552F657-A9AF-4A7D-A645-C429D6E02491', '2002-08-01 00:00:01'),
@@ -1364,15 +1477,30 @@ VALUES
 (30117, '0', 'Mr.', 'Robert', 'R.', 'Vessa', NULL, 'Totes & Baskets Company', 'adventure-works\jillian0', 'robert13@adventure-works.com', '560-555-0171', 'UWGC2U8F7AUNA2FuiT4agrBoxAFskHGQSxqP39B7zLQ=', 'iES3IZA=', '6F08E2FB-1CD3-4F6E-A2E6-385669598B19', '2001-08-01 00:00:01'),
 (30118, '0', 'Ms.', 'Caroline', 'A.', 'Vicknair', NULL, 'World of Bikes', 'adventure-works\jillian0', 'caroline0@adventure-works.com', '695-555-0158', 'U1/CrPqSzwLTtwgBehfpIl7f1LHSFpZw1qnG1sMzFjo=', 'QhHP+y8=', '2495B4EB-FE8B-459E-A1B6-DBA25C04E626', '2002-09-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `CustomerAddress`(
-	`CustomerID` int NOT NULL,
-	`AddressID` int NOT NULL,
-	`AddressType` varchar(50) NOT NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP
-);
+CREATE TABLE IF NOT EXISTS `CustomerAddress`
+(
+	`CustomerID`
+	int
+	NOT
+	NULL,
+	`AddressID`
+	int
+	NOT
+	NULL,
+	`AddressType`
+	varchar
+(
+	50
+) NOT NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);
 
-INSERT IGNORE `CustomerAddress` (`CustomerID`, `AddressID`, `AddressType`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `CustomerAddress` (`CustomerID`, `AddressID`, `AddressType`, `rowguid`, `ModifiedDate`) 
 VALUES  
 (29485, 1086, 'Main Office', '16765338-DBE4-4421-B5E9-3836B9278E63', '2003-09-01 00:00:01'),
 (29486, 621, 'Main Office', '22B3E910-14AF-4ED5-8B4D-23BBE757414D', '2001-09-01 00:00:01'),
@@ -1792,28 +1920,67 @@ VALUES
 (30117, 596, 'Main Office', '5D215B08-8954-48D2-8254-447D2415FC8B', '2001-08-01 00:00:01'),
 (30118, 595, 'Main Office', '4ACAF1C5-6E59-43D6-8421-76C9A22FF457', '2002-09-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `Product`(
-	`ProductID` int(11) NOT NULL AUTO_INCREMENT,
-	`Name` varchar(50) NOT NULL,
-	`ProductNumber` varchar(25) NOT NULL,
-	`Color` varchar(15) NULL,
-	`StandardCost` numeric(14,4) NOT NULL,
-	`ListPrice` numeric(14,4) NOT NULL,
-	`Size` varchar(5) NULL,
-	`Weight` decimal(8, 2) NULL,
+CREATE TABLE IF NOT EXISTS `Product`
+(
+	`ProductID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
+	`Name` varchar
+(
+	50
+) NOT NULL,
+	`ProductNumber` varchar
+(
+	25
+) NOT NULL,
+	`Color` varchar
+(
+	15
+) NULL,
+	`StandardCost` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`ListPrice` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`Size` varchar
+(
+	5
+) NULL,
+	`Weight` decimal
+(
+	8,
+	2
+) NULL,
 	`ProductCategoryID` int NULL,
 	`ProductModelID` int NULL,
-	`SellStartDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
+	`SellStartDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`SellEndDate` TIMESTAMP NULL,
 	`DiscontinuedDate` TIMESTAMP NULL,
 	`ThumbNailPhoto` LONGBLOB NULL,
-	`ThumbnailPhotoFileName` varchar(50) NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`ProductID`)
-);
+	`ThumbnailPhotoFileName` varchar
+(
+	50
+) NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`ProductID`
+)
+	);
 
-INSERT IGNORE `Product` (`ProductID`, `Name`, `ProductNumber`, `Color`, `StandardCost`, `ListPrice`, `Size`, `Weight`, `ProductCategoryID`, `ProductModelID`, `SellStartDate`, `SellEndDate`, `DiscontinuedDate`, `ThumbNailPhoto`, `ThumbnailPhotoFileName`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `Product` (`ProductID`, `Name`, `ProductNumber`, `Color`, `StandardCost`, `ListPrice`, `Size`, `Weight`, `ProductCategoryID`, `ProductModelID`, `SellStartDate`, `SellEndDate`, `DiscontinuedDate`, `ThumbNailPhoto`, `ThumbnailPhotoFileName`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (680, 'HL Road Frame - Black, 58', 'FR-R92B-58', 'Black', 1059.3100, 1431.5000, '58', 1016.04, 18, 6, '1998-06-01 00:00:01', NULL, NULL, NULL, 'no_image_available_small.gif', '43DD68D6-14A4-461F-9069-55309D90EA7E', '2004-03-11T10:01:36.827'),
 (706, 'HL Road Frame - Red, 58', 'FR-R92R-58', 'Red', 1059.3100, 1431.5000, '58', 1016.04, 18, 6, '1998-06-01 00:00:01', NULL, NULL, NULL, 'no_image_available_small.gif', '9540FF17-2712-4C90-A3D1-8CE5568B2462', '2004-03-11T10:01:36.827'),
@@ -2111,16 +2278,25 @@ VALUES
 (998, 'Road-750 Black, 48', 'BK-R19B-48', 'Black', 343.6496, 539.9900, '48', 9130.77, 6, 31, '2003-07-01 00:00:01', NULL, NULL, NULL, 'roadster_black_small.gif', '3DE9A212-1D49-40B6-B10A-F564D981DBDE', '2004-03-11T10:01:36.827'),
 (999, 'Road-750 Black, 52', 'BK-R19B-52', 'Black', 343.6496, 539.9900, '52', 9262.31, 6, 31, '2003-07-01 00:00:01', NULL, NULL, NULL, 'roadster_black_small.gif', 'AE638923-2B67-4679-B90E-ABBAB17DCA31', '2004-03-11T10:01:36.827');
 
-CREATE TABLE IF NOT EXISTS `ProductCategory`(
-	`ProductCategoryID` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `ProductCategory`
+(
+	`ProductCategoryID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
 	`ParentProductCategoryID` integer NULL,
 	`Name` text NOT NULL,
-	`rowguid` text  NOT NULL,
-	`ModifiedDate` timestamp NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`ProductCategoryID`)
-);
+	`rowguid` text NOT NULL,
+	`ModifiedDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`ProductCategoryID`
+)
+	);
 
-INSERT IGNORE `ProductCategory` (`ProductCategoryID`, `ParentProductCategoryID`, `Name`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `ProductCategory` (`ProductCategoryID`, `ParentProductCategoryID`, `Name`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (1, 1, 'Bikes', 'CFBDA25C-DF71-47A7-B81B-64EE161AA37C', '1998-06-01 00:00:01'),
 (2, 2, 'Components', 'C657828D-D808-4ABA-91A3-AF2CE02300E9', '1998-06-01 00:00:01'),
@@ -2164,15 +2340,30 @@ VALUES
 (40, 40, 'Pumps', 'FE4D46F2-C87C-48C5-A4A1-3F55712D80B1', '1998-06-01 00:00:01'),
 (41, 41, 'Tires and Tubes', '3C17C9AE-E906-48B4-BDD3-60E28D47DCDF', '1998-06-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `ProductDescription`(
-	`ProductDescriptionID` int(11) NOT NULL AUTO_INCREMENT,
-	`Description` varchar(400) NOT NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`ProductDescriptionID`)
-);
+CREATE TABLE IF NOT EXISTS `ProductDescription`
+(
+	`ProductDescriptionID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
+	`Description` varchar
+(
+	400
+) NOT NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`ProductDescriptionID`
+)
+	);
 
-INSERT IGNORE `ProductDescription` (`ProductDescriptionID`, `Description`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `ProductDescription` (`ProductDescriptionID`, `Description`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (3, 'Chromoly steel.', '301EED3A-1A82-4855-99CB-2AFE8290D641', '2003-06-01 00:00:01'),
 (4, 'Aluminum alloy cups; large diameter spindle.', 'DFEBA528-DA11-4650-9D86-CAFDA7294EB0', '2003-06-01 00:00:01'),
@@ -2937,16 +3128,31 @@ VALUES
 (2009, 'עיצוב רחב-חוליות.', 'A2131096-7E81-40DC-9AA3-1CDEBABF7BC0', '2003-06-01 00:00:01'),
 (2010, '宽连杆设计。', '46541761-9053-4B6F-80F0-69AAE2695A8D', '2003-06-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `ProductModel`(
-	`ProductModelID` int(11) NOT NULL AUTO_INCREMENT,
-	`Name` varchar(50) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ProductModel`
+(
+	`ProductModelID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
+	`Name` varchar
+(
+	50
+) NOT NULL,
 	`CatalogDescription` text NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`ProductModelID`)
-);
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`ProductModelID`
+)
+	);
 
-INSERT IGNORE `ProductModel` (`ProductModelID`, `Name`, `CatalogDescription`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `ProductModel` (`ProductModelID`, `Name`, `CatalogDescription`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (1, 'Classic Vest', NULL, '29321D47-1E4C-4AAC-887C-19634328C25E', '2003-06-01 00:00:01'),
 (2, 'Cycling Cap', NULL, '474FB654-3C96-4CB9-82DF-2152EEFFBDB0', '2001-06-01 00:00:01'),
@@ -3114,15 +3320,30 @@ VALUES
 				it will withstand the most rirous challenges of daily riding.</wf:BikeFrame></p1:Features><!-- add one or more of these elements... one for each specific product in this product model --><p1:Picture><p1:Angle>front</p1:Angle><p1:Size>small</p1:Size><p1:ProductPhotoID>87</p1:ProductPhotoID></p1:Picture><!-- add any tags in <specifications> --><p1:Specifications> These are the product specifications.
                    <Material>Aluminum</Material><Color>Available in all colors except metallic.</Color><ProductLine>Touring bike</ProductLine><Style>Men''s</Style><FrameMaterial>Aluminium alloy</FrameMaterial><RiderExperience>Intermediate to Advanced riders</RiderExperience></p1:Specifications></p1:ProductDescription>', 'AA10D9E6-E33F-4DA8-ACE1-992FCD6BB171', '2002-11-20T09:56:38.273');
 
-CREATE TABLE IF NOT EXISTS `ProductModelProductDescription`(
-	`ProductModelID` int NOT NULL,
-	`ProductDescriptionID` int NOT NULL,
-	`Culture` nchar(6) NOT NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP
-);
+CREATE TABLE IF NOT EXISTS `ProductModelProductDescription`
+(
+	`ProductModelID`
+	int
+	NOT
+	NULL,
+	`ProductDescriptionID`
+	int
+	NOT
+	NULL,
+	`Culture`
+	nchar
+(
+	6
+) NOT NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);
 
-INSERT IGNORE `ProductModelProductDescription` (`ProductModelID`, `ProductDescriptionID`, `Culture`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `ProductModelProductDescription` (`ProductModelID`, `ProductDescriptionID`, `Culture`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (1, 1199, 'en    ', '9FCBCCBF-56CC-48E5-9BF9-42FC99AF0968', '2003-06-01 00:00:01'),
 (1, 1467, 'ar    ', 'D209DB26-918D-4CC5-9792-DF7C92BE6FD7', '2003-06-01 00:00:01'),
@@ -3887,20 +4108,55 @@ VALUES
 (127, 2009, 'he    ', 'C9C2355E-7712-4300-A192-7AB4555DF346', '2003-06-01 00:00:01'),
 (127, 2010, 'zh-cht', 'AF78B704-4919-4F11-84C2-02699C1D5E36', '2003-06-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `SalesOrderDetail`(
-	`SalesOrderID` int NOT NULL,
-	`SalesOrderDetailID` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `SalesOrderDetail`
+(
+	`SalesOrderID`
+	int
+	NOT
+	NULL,
+	`SalesOrderDetailID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
 	`OrderQty` smallint NOT NULL,
 	`ProductID` int NOT NULL,
-	`UnitPrice` numeric(14,4) NOT NULL,
-	`UnitPriceDiscount` numeric(14,4) NOT NULL,
-	`LineTotal` numeric(14,4) AS (`UnitPrice` * (1.0 - `UnitPriceDiscount`) * `OrderQty`),
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`SalesOrderDetailID`)
-);
+	`UnitPrice` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`UnitPriceDiscount` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`LineTotal` numeric
+(
+	14,
+	4
+) AS
+(
+	`UnitPrice`
+	*
+(
+	1.0
+	-
+	`UnitPriceDiscount`
+) * `OrderQty`),
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`SalesOrderDetailID`
+)
+	);
 
-INSERT IGNORE `SalesOrderDetail` (`SalesOrderID`, `SalesOrderDetailID`, `OrderQty`, `ProductID`, `UnitPrice`, `UnitPriceDiscount`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `SalesOrderDetail` (`SalesOrderID`, `SalesOrderDetailID`, `OrderQty`, `ProductID`, `UnitPrice`, `UnitPriceDiscount`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (71774, 110562, 1, 836, 356.8980, 0.0000, 'E3A1994C-7A68-4CE8-96A3-77FDD3BBD730', '2004-06-01 00:00:01'),
 (71774, 110563, 1, 822, 356.8980, 0.0000, '5C77F557-FDB6-43BA-90B9-9A7AEC55CA32', '2004-06-01 00:00:01'),
@@ -4445,33 +4701,92 @@ VALUES
 (71938, 113315, 3, 800, 672.2940, 0.0000, '78F73142-E566-453F-A2B9-88A0FCAF4552', '2004-06-01 00:00:01'),
 (71946, 113406, 1, 916, 31.5840, 0.0000, 'B571CEE0-A90A-4E76-9796-379B55352A28', '2004-06-01 00:00:01');
 
-CREATE TABLE IF NOT EXISTS `SalesOrderHeader`(
-	`SalesOrderID` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `SalesOrderHeader`
+(
+	`SalesOrderID`
+	int
+(
+	11
+) NOT NULL AUTO_INCREMENT,
 	`RevisionNumber` smallint NOT NULL,
-	`OrderDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	`DueDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
+	`OrderDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`DueDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`ShipDate` TIMESTAMP NULL,
 	`Status` smallint NOT NULL,
 	`OnlineOrderFlag` BOOLEAN NOT NULL,
-	#`SalesOrderNumber` varchar(20) AS (CONCAT('SO', `SalesOrderID`)),
-	`PurchaseOrderNumber` varchar(25) NULL,
-	`AccountNumber` varchar(15) NULL,
+	#`SalesOrderNumber` varchar
+(
+	20
+) AS
+(
+	CONCAT
+(
+	'SO',
+	`SalesOrderID`
+)),
+	`PurchaseOrderNumber` varchar
+(
+	25
+) NULL,
+	`AccountNumber` varchar
+(
+	15
+) NULL,
 	`CustomerID` int NOT NULL,
 	`ShipToAddressID` int NULL,
 	`BillToAddressID` int NULL,
-	`ShipMethod` varchar(50) NOT NULL,
-	`CreditCardApprovalCode` varchar(15) NULL,
-	`SubTotal` numeric(14,4) NOT NULL,
-	`TaxAmt` numeric(14,4) NOT NULL,
-	`Freight` numeric(14,4) NOT NULL,
-	`TotalDue` numeric(14,4) AS (`SubTotal`+`TaxAmt`+`Freight`),
-	`Comment` varchar(4000) NULL,
-	`rowguid` char(38) NOT NULL,
-	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT  CURRENT_TIMESTAMP,
-	PRIMARY KEY (`SalesOrderID`)
-);
+	`ShipMethod` varchar
+(
+	50
+) NOT NULL,
+	`CreditCardApprovalCode` varchar
+(
+	15
+) NULL,
+	`SubTotal` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`TaxAmt` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`Freight` numeric
+(
+	14,
+	4
+) NOT NULL,
+	`TotalDue` numeric
+(
+	14,
+	4
+) AS
+(
+	`SubTotal`
+	+
+	`TaxAmt`
+	+
+	`Freight`
+),
+	`Comment` varchar
+(
+	4000
+) NULL,
+	`rowguid` char
+(
+	38
+) NOT NULL,
+	`ModifiedDate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY
+(
+	`SalesOrderID`
+)
+	);
 
-INSERT IGNORE `SalesOrderHeader` (`SalesOrderID`, `RevisionNumber`, `OrderDate`, `DueDate`, `ShipDate`, `Status`, `OnlineOrderFlag`, `PurchaseOrderNumber`, `AccountNumber`, `CustomerID`, `ShipToAddressID`, `BillToAddressID`, `ShipMethod`, `CreditCardApprovalCode`, `SubTotal`, `TaxAmt`, `Freight`, `Comment`, `rowguid`, `ModifiedDate`) 
+INSERT
+IGNORE `SalesOrderHeader` (`SalesOrderID`, `RevisionNumber`, `OrderDate`, `DueDate`, `ShipDate`, `Status`, `OnlineOrderFlag`, `PurchaseOrderNumber`, `AccountNumber`, `CustomerID`, `ShipToAddressID`, `BillToAddressID`, `ShipMethod`, `CreditCardApprovalCode`, `SubTotal`, `TaxAmt`, `Freight`, `Comment`, `rowguid`, `ModifiedDate`) 
 VALUES 
 (71774, 1, '2004-06-01 00:00:01', '2004-06-13 00:00:01', '2004-06-08 00:00:01', 5, '0', 'PO348186287', '10-4020-000609', 29847, 1092, 1092, 'CAR TRANSPORT 5', NULL, 880.3484, 70.4279, 22.0087, NULL, '89E42CDC-8506-48A2-B89B-EB3E64E3554E', '2004-06-08 00:00:01'),
 (71776, 1, '2004-06-01 00:00:01', '2004-06-13 00:00:01', '2004-06-08 00:00:01', 5, '0', 'PO19952192051', '10-4020-000106', 30072, 640, 640, 'CAR TRANSPORT 5', NULL, 78.8100, 6.3048, 1.9703, NULL, '8A3448C5-E677-4158-A29B-DD33069BE0B0', '2004-06-08 00:00:01'),

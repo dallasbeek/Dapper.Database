@@ -93,6 +93,5 @@ public abstract partial class TestSuite
                 1)); // to cover fractional seconds rounded up/down (amounts supported between databases vary, but should all be ±1 second at most.)
         Assert.Equal(p.FirstName, gp.FirstName);
         Assert.Equal(p.LastName, gp.LastName);
-
     }
 }

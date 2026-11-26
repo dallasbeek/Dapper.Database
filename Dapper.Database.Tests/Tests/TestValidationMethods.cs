@@ -120,6 +120,4 @@ public abstract partial class TestSuite
         Assert.Equal(687, p.ProductDescriptionID);
         Assert.StartsWith("en", p.Culture);
     }
-
-
 }
