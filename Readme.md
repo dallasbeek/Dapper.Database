@@ -4,7 +4,7 @@ Alternative database-first micro-ORM, built as an extension layer on top of [Dap
 
 Supported providers: SQL Server, SQL Server Compact Edition, PostgreSQL, MySQL/MariaDB, SQLite, Oracle, and Firebird.
 
-Targets: `netstandard2.0`, `net462`, `net8.0`, `net10.0`.
+Targets: `netstandard2.0`, `net462`, `net8.0`, `net10.0`, `net11.0`.
 
 Installation
 ------------

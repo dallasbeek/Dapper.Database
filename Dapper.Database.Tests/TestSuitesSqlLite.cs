@@ -27,7 +27,12 @@ public sealed class SQLiteTestSuite : TestSuite, IClassFixture<SqlLiteDatabaseFi
 
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
+#if NET11_0
+        SqlMapper.AddTypeHandler(new SafeDecimalTypeHandler());
+#else    
         SqlMapper.AddTypeHandler(new NumericTypeHandler());
+#endif
+
     }
 
     private void CheckSkip() => Skip.If(_fixture.Skip, "Skipping SQLite Tests - no server.");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -37,4 +38,36 @@ public class NumericTypeHandler : SqlMapper.TypeHandler<decimal>
     public override decimal Parse(object value) => Convert.ToDecimal(value);
 
     public override void SetValue(IDbDataParameter parameter, decimal value) => parameter.Value = value;
+}
+
+public sealed class SafeDecimalTypeHandler : SqlMapper.TypeHandler<decimal>
+{
+    public override void SetValue(IDbDataParameter parameter, decimal value)
+    {
+        parameter.DbType = DbType.Decimal;
+        parameter.Value = value;
+    }
+
+    public override decimal Parse(object value)
+    {
+        return value switch
+        {
+            decimal d => d,
+            double dbl when double.IsNaN(dbl) || double.IsInfinity(dbl) =>
+                throw new OverflowException($"Cannot convert non-finite Oracle BINARY_DOUBLE ({dbl}) to C# decimal."),
+            double dbl => ConvertToDecimalLikePrevious(dbl),
+            float flt => ConvertToDecimalLikePrevious(flt),
+            _ => Convert.ToDecimal(value)
+        };
+    }
+
+    static decimal ConvertToDecimalLikePrevious(float value)
+    {
+        return decimal.Parse(value.ToString("G7", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture);
+    }
+
+    static decimal ConvertToDecimalLikePrevious(double value)
+    {
+        return decimal.Parse(value.ToString("G15", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture);
+    }
 }

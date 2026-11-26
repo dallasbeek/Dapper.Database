@@ -27,6 +27,9 @@ public sealed class OracleTestSuite : TestSuite, IClassFixture<OracleDatabaseFix
         SqlDatabase.CacheQueries = false;
         ResetDapperTypes();
         SqlMapper.AddTypeHandler(new GuidTypeHandler());
+#if NET11_0
+        SqlMapper.AddTypeHandler(new SafeDecimalTypeHandler());
+#endif
     }
 
     protected override string P
